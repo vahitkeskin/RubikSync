@@ -5,6 +5,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.math.abs
 
 data class HitFaceInfo(
     val cubie: Cubie,
@@ -181,9 +182,9 @@ class GestureHandler(
 
         // Find the axes perpendicular to the normal
         val axes = mutableListOf<Vector3>()
-        if (Math.abs(worldNormal.x) < 0.5f) axes.add(Vector3.UnitX)
-        if (Math.abs(worldNormal.y) < 0.5f) axes.add(Vector3.UnitY)
-        if (Math.abs(worldNormal.z) < 0.5f) axes.add(Vector3.UnitZ)
+        if (abs(worldNormal.x) < 0.5f) axes.add(Vector3.UnitX)
+        if (abs(worldNormal.y) < 0.5f) axes.add(Vector3.UnitY)
+        if (abs(worldNormal.z) < 0.5f) axes.add(Vector3.UnitZ)
 
         if (axes.size != 2) return // Error checking
 
@@ -210,7 +211,7 @@ class GestureHandler(
             if (state.isCubieInLayer(hit.cubie, move.axis, move.layerValue)) {
                 // The rotation axis of the move must be perpendicular to the face normal
                 // (i.e. dot product of move axis and face normal is near 0)
-                if (Math.abs(move.axis.dot(worldNormal)) < 0.5f) {
+                if (abs(move.axis.dot(worldNormal)) < 0.5f) {
                     // Compute 3D direction of motion at the face center under this move
                     // velocity = axis x radius (vector from origin to face center)
                     val motionWorld = move.axis.cross(hit.worldCenter).normalized() * 0.4f

@@ -7,6 +7,8 @@ import androidx.compose.runtime.withFrameMillis
 import kotlin.math.PI
 import kotlin.math.roundToInt
 
+enum class FaceName { U, D, L, R, F, B }
+
 enum class CubeColor(val rgb: Long) {
     ORANGE(0xFFFF5F00), // Top face - rich orange matching image
     RED(0xFFD6001C),    // Bottom face - classic red
@@ -160,7 +162,7 @@ class RubikCubeState {
         isAnimating = false
     }
 
-    private fun applyDiscreteRotation(move: MoveType) {
+    fun applyDiscreteRotation(move: MoveType) {
         val angleRad = move.angleSign * (PI / 2.0).toFloat()
         cubies.forEach { cubie ->
             if (isCubieInLayer(cubie, move.axis, move.layerValue)) {
@@ -212,6 +214,124 @@ class RubikCubeState {
         // Remove the inverse move from history since executeMove will add it
         executeMove(inverseMove)
         moveHistory.removeLast() // pop the inverseMove we just added
+    }
+
+    fun setCustomState(faces: Map<FaceName, Array<Array<CubeColor>>>): Boolean {
+        if (isAnimating) return false
+        
+        fun getFaceletColor(pos: Vector3, normal: Vector3): CubeColor {
+            val px = pos.x.roundToInt()
+            val py = pos.y.roundToInt()
+            val pz = pos.z.roundToInt()
+            val nx = normal.x.roundToInt()
+            val ny = normal.y.roundToInt()
+            val nz = normal.z.roundToInt()
+            
+            return when {
+                ny == 1 -> faces[FaceName.U]!![pz + 1][px + 1]
+                ny == -1 -> faces[FaceName.D]!![1 - pz][px + 1]
+                nx == -1 -> faces[FaceName.L]!![1 - py][pz + 1]
+                nx == 1 -> faces[FaceName.R]!![1 - py][1 - pz]
+                nz == 1 -> faces[FaceName.F]!![1 - py][px + 1]
+                nz == -1 -> faces[FaceName.B]!![1 - py][1 - px]
+                else -> CubeColor.INTERNAL
+            }
+        }
+
+        val matchedCubieIds = mutableSetOf<Int>()
+        val targetStates = mutableListOf<Pair<Cubie, Vector3>>()
+        val targetBases = mutableListOf<Triple<Vector3, Vector3, Vector3>>()
+        
+        val normals = listOf(
+            Vector3(-1f, 0f, 0f), Vector3(1f, 0f, 0f),
+            Vector3(0f, -1f, 0f), Vector3(0f, 1f, 0f),
+            Vector3(0f, 0f, -1f), Vector3(0f, 0f, 1f)
+        )
+
+        for (x in -1..1) {
+            for (y in -1..1) {
+                for (z in -1..1) {
+                    if (x == 0 && y == 0 && z == 0) continue
+                    
+                    val gridPos = Vector3(x.toFloat(), y.toFloat(), z.toFloat())
+                    val colorDirections = mutableMapOf<CubeColor, Vector3>()
+                    
+                    normals.forEach { normal ->
+                        val isOutward = (normal.x < -0.5f && x == -1) ||
+                                        (normal.x > 0.5f && x == 1) ||
+                                        (normal.y < -0.5f && y == -1) ||
+                                        (normal.y > 0.5f && y == 1) ||
+                                        (normal.z < -0.5f && z == -1) ||
+                                        (normal.z > 0.5f && z == 1)
+                        if (isOutward) {
+                            val color = getFaceletColor(gridPos, normal)
+                            if (color != CubeColor.INTERNAL) {
+                                colorDirections[color] = normal
+                            }
+                        }
+                    }
+                    
+                    val requiredColors = colorDirections.keys
+                    val matchingCubie = cubies.find { cubie ->
+                        val origColors = cubie.faces
+                            .map { it.color }
+                            .filter { it != CubeColor.INTERNAL }
+                            .toSet()
+                        origColors == requiredColors
+                    }
+                    
+                    if (matchingCubie == null || matchingCubie.id in matchedCubieIds) {
+                        return false
+                    }
+                    
+                    matchedCubieIds.add(matchingCubie.id)
+                    targetStates.add(matchingCubie to gridPos)
+                    
+                    var right = Vector3.UnitX
+                    var up = Vector3.UnitY
+                    var forward = Vector3.UnitZ
+                    var rightSet = false
+                    var upSet = false
+                    var forwardSet = false
+                    
+                    matchingCubie.faces.forEach { face ->
+                        if (face.color == CubeColor.INTERNAL) return@forEach
+                        val targetDir = colorDirections[face.color] ?: return@forEach
+                        
+                        when {
+                            face.localNormal.x > 0.5f -> { right = targetDir; rightSet = true }
+                            face.localNormal.x < -0.5f -> { right = targetDir * -1f; rightSet = true }
+                            face.localNormal.y > 0.5f -> { up = targetDir; upSet = true }
+                            face.localNormal.y < -0.5f -> { up = targetDir * -1f; upSet = true }
+                            face.localNormal.z > 0.5f -> { forward = targetDir; forwardSet = true }
+                            face.localNormal.z < -0.5f -> { forward = targetDir * -1f; forwardSet = true }
+                        }
+                    }
+                    
+                    if (rightSet && upSet && !forwardSet) {
+                        forward = right.cross(up)
+                    } else if (rightSet && !upSet && forwardSet) {
+                        up = forward.cross(right)
+                    } else if (!rightSet && upSet && forwardSet) {
+                        right = up.cross(forward)
+                    }
+                    
+                    targetBases.add(Triple(right, up, forward))
+                }
+            }
+        }
+        
+        targetStates.forEachIndexed { i, (cubie, gridPos) ->
+            cubie.gridPos = gridPos
+            val (r, u, f) = targetBases[i]
+            cubie.rightBasis = r
+            cubie.upBasis = u
+            cubie.forwardBasis = f
+        }
+        
+        moveHistory.clear()
+        currentMove = null
+        return true
     }
 
     fun reset() {

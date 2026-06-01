@@ -4,5 +4,7 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Zeka küpünün renklerini tarayabilmek için kameranıza ihtiyacımız var.</string>
 </dict>
 </plist>

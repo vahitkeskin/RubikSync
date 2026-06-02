@@ -253,8 +253,9 @@ fun PlaybackController(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val currentStepDisplay = (appState.currentSolutionStep + 1).coerceAtMost(solution.size)
                 Text(
-                    text = "Çözüm Adımları (${solution.size} Hamle)",
+                    text = "Çözüm Adımları ($currentStepDisplay / ${solution.size} Hamle)",
                     color = Color(0xFF4CAF50),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold

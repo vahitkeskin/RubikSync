@@ -6,7 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,6 +18,7 @@ import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.ui.components.FaceGrid
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
+import com.vahitkeskin.rubiksync.utils.parseDetectedState
 
 @Composable
 fun EditorDialog(
@@ -27,6 +28,9 @@ fun EditorDialog(
     onStartScanWizard: () -> Unit
 ) {
     if (!show) return
+
+    var showJsonImportDialog by remember { mutableStateOf(false) }
+    var jsonInputText by remember { mutableStateOf("") }
 
     val cubeState = appState.cubeState
 
@@ -54,12 +58,26 @@ fun EditorDialog(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Küp Tasarımcısı",
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Küp Tasarımcısı",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Button(
+                            onClick = { showJsonImportDialog = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0x22FFFFFF), contentColor = Color.LightGray),
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                            modifier = Modifier.height(28.dp)
+                        ) {
+                            Text("JSON Yükle", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Küpünüzün yüzey renklerini boyayın veya fotoğraflardan algılayın",
@@ -253,6 +271,63 @@ fun EditorDialog(
                     }
                 }
             }
+        }
+
+        if (showJsonImportDialog) {
+            AlertDialog(
+                onDismissRequest = { showJsonImportDialog = false },
+                title = { Text("Küp Durumu İçe Aktar", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold) },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "Lütfen küp JSON durum metnini yapıştırın. Örnek:\n{\"U\":\"OOOOOOOOO\", \"D\":\"RRRRRRRRR\", \"L\":\"YYYYYYYYY\", \"R\":\"WWWWWWWWW\", \"F\":\"GGGGGGGGG\", \"B\":\"BBBBBBBBB\"}",
+                            color = Color.LightGray,
+                            fontSize = 11.sp
+                        )
+                        OutlinedTextField(
+                            value = jsonInputText,
+                            onValueChange = { jsonInputText = it },
+                            modifier = Modifier.fillMaxWidth().height(100.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = Color(0xFFFF8A00),
+                                unfocusedBorderColor = Color(0x33FFFFFF)
+                            )
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val parsed = parseDetectedState(jsonInputText)
+                            if (parsed != null) {
+                                appState.editorFaces = parsed
+                                showJsonImportDialog = false
+                                jsonInputText = ""
+                            } else {
+                                appState.errorMessage = "Hatalı JSON formatı! Lütfen kontrol edip tekrar deneyin."
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8A00))
+                    ) {
+                        Text("Aktar", color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            showJsonImportDialog = false
+                            jsonInputText = ""
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0x22FFFFFF))
+                    ) {
+                        Text("İptal", color = Color.White)
+                    }
+                },
+                containerColor = Color(0xFF1E2633),
+                shape = RoundedCornerShape(20.dp)
+            )
         }
     }
 }

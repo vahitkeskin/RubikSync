@@ -38,7 +38,7 @@ fun ControlPanel(
             .clip(RoundedCornerShape(24.dp))
             .background(Color(0x1A1E2633))
             .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(24.dp))
-            .padding(20.dp)
+            .padding(12.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -239,11 +239,11 @@ fun PlaybackController(
 
     Box(
         modifier = modifier
-            .fillMaxWidth(0.90f)
+            .fillMaxWidth(0.95f)
             .clip(RoundedCornerShape(20.dp))
             .background(Color(0xE61E2633))
             .border(1.5.dp, Color(0x334CAF50), RoundedCornerShape(20.dp))
-            .padding(16.dp)
+            .padding(10.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -363,6 +363,47 @@ fun PlaybackController(
                 ) {
                     Text("İleri >")
                 }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Speed Slider Row for Playback Mode
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Hız:",
+                    color = Color.LightGray,
+                    fontSize = 13.sp,
+                    modifier = Modifier.width(36.dp)
+                )
+
+                Slider(
+                    value = 400f - cubeState.rotationSpeedMs,
+                    onValueChange = { speed ->
+                        cubeState.rotationSpeedMs = 400f - speed
+                    },
+                    valueRange = 100f..350f,
+                    colors = SliderDefaults.colors(
+                        activeTrackColor = Color(0xFF4CAF50),
+                        inactiveTrackColor = Color(0x22FFFFFF),
+                        thumbColor = Color.White
+                    ),
+                    modifier = Modifier.weight(1f)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "${cubeState.rotationSpeedMs.toInt()} ms",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.width(48.dp)
+                )
             }
         }
     }

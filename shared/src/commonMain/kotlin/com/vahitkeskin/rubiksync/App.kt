@@ -67,21 +67,23 @@ fun App() {
                         .fillMaxWidth()
                 )
 
-                // 3. Playback controller (placed directly below the 3D canvas)
-                PlaybackController(
-                    appState = appState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 8.dp)
-                )
-
-                // 4. Control Panel (Always at the bottom)
-                ControlPanel(
-                    appState = appState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                )
+                // 3. Playback controller (shown directly below the 3D canvas only when solution is active)
+                if (appState.activeSolution != null) {
+                    PlaybackController(
+                        appState = appState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                    )
+                } else {
+                    // 4. Control Panel (Shown at the bottom when solver is not active)
+                    ControlPanel(
+                        appState = appState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
             }
 
             // 5. Manual Color net Editor Dialog Overlay

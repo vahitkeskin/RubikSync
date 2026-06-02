@@ -20,6 +20,9 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun ControlPanel(
@@ -275,15 +278,29 @@ fun PlaybackController(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            val scrollState = rememberScrollState()
-            Row(
+            val lazyListState = rememberLazyListState()
+            LaunchedEffect(appState.currentSolutionStep) {
+                val step = appState.currentSolutionStep
+                if (step >= 0 && step < solution.size) {
+                    val layoutInfo = lazyListState.layoutInfo
+                    val viewportWidth = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
+                    val itemSize = layoutInfo.visibleItemsInfo.find { it.index == step }?.size 
+                        ?: layoutInfo.visibleItemsInfo.firstOrNull()?.size 
+                        ?: 100
+                    val offset = - (viewportWidth / 2) + (itemSize / 2)
+                    lazyListState.animateScrollToItem(step, offset)
+                }
+            }
+
+            LazyRow(
+                state = lazyListState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(scrollState)
                     .padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                solution.forEachIndexed { index, move ->
+                items(solution.size) { index ->
+                    val move = solution[index]
                     val isCurrent = index == appState.currentSolutionStep
                     Box(
                         modifier = Modifier

@@ -55,6 +55,7 @@ fun App() {
     var currentSolutionStep by remember { mutableStateOf(0) }
     var isPlaybackRunning by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var infoMessage by remember { mutableStateOf<String?>(null) }
     var isDetecting by remember { mutableStateOf(false) }
     var isRecalculating by remember { mutableStateOf(false) }
     
@@ -752,6 +753,8 @@ fun App() {
                                             gridScales = FaceName.values().associateWith { 0.55f }.toMutableMap()
                                             gridOffsetsX = FaceName.values().associateWith { 0f }.toMutableMap()
                                             gridOffsetsY = FaceName.values().associateWith { 0f }.toMutableMap()
+                                            errorMessage = null
+                                            infoMessage = null
                                             showScannerWizard = true
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF448AFF), contentColor = Color.White),
@@ -1034,7 +1037,12 @@ fun App() {
                                                     width = if (isCurrent) 2.dp else 0.dp,
                                                     color = if (isCurrent) Color.White else Color.Transparent,
                                                     shape = RoundedCornerShape(6.dp)
-                                                ),
+                                                )
+                                                .clickable {
+                                                    scannerStep = index
+                                                    errorMessage = null
+                                                    infoMessage = null
+                                                },
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(
@@ -1044,6 +1052,28 @@ fun App() {
                                                 fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal
                                             )
                                         }
+                                    }
+                                }
+                                
+                                if (infoMessage != null) {
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(Color(0xFF1B5E20)) // Dark Forest Green
+                                            .border(1.dp, Color(0xFF2E7D32), RoundedCornerShape(10.dp))
+                                            .clickable { infoMessage = null }
+                                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "✅ $infoMessage",
+                                            color = Color.White,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            textAlign = TextAlign.Center
+                                        )
                                     }
                                 }
                             }
@@ -1090,21 +1120,47 @@ fun App() {
                                             CameraCaptureOrPicker(
                                                 faceName = currentFace.name,
                                                 onImageSelected = { filePath ->
-                                                    val updatedPaths = scannedFilePaths.toMutableMap()
-                                                    updatedPaths[currentFace] = filePath
-                                                    scannedFilePaths = updatedPaths
-                                                    
-                                                    val updatedScales = gridScales.toMutableMap()
-                                                    updatedScales[currentFace] = 0.55f
-                                                    gridScales = updatedScales
-                                                    
-                                                    val updatedOffsetsX = gridOffsetsX.toMutableMap()
-                                                    updatedOffsetsX[currentFace] = 0f
-                                                    gridOffsetsX = updatedOffsetsX
-                                                    
-                                                    val updatedOffsetsY = gridOffsetsY.toMutableMap()
-                                                    updatedOffsetsY[currentFace] = 0f
-                                                    gridOffsetsY = updatedOffsetsY
+                                                    coroutineScope.launch {
+                                                        isRecalculating = true
+                                                        errorMessage = null
+                                                        infoMessage = null
+                                                        val detectedFace = withContext(Dispatchers.Default) {
+                                                            RubikImageProcessor().detectFaceFromImage(filePath)
+                                                        }
+                                                        isRecalculating = false
+                                                        if (detectedFace != null) {
+                                                            val updatedPaths = scannedFilePaths.toMutableMap()
+                                                            updatedPaths[detectedFace] = filePath
+                                                            scannedFilePaths = updatedPaths
+                                                            
+                                                            val updatedScales = gridScales.toMutableMap()
+                                                            updatedScales[detectedFace] = 0.55f
+                                                            gridScales = updatedScales
+                                                            
+                                                            val updatedOffsetsX = gridOffsetsX.toMutableMap()
+                                                            updatedOffsetsX[detectedFace] = 0f
+                                                            gridOffsetsX = updatedOffsetsX
+                                                            
+                                                            val updatedOffsetsY = gridOffsetsY.toMutableMap()
+                                                            updatedOffsetsY[detectedFace] = 0f
+                                                            gridOffsetsY = updatedOffsetsY
+                                                            
+                                                            scannerStep = detectedFace.ordinal
+                                                            
+                                                            val faceDisplayName = faceNameTurkish[detectedFace] ?: detectedFace.name
+                                                            val centerColorTurkish = when (detectedFace) {
+                                                                FaceName.U -> "Turuncu"
+                                                                FaceName.D -> "Kırmızı"
+                                                                FaceName.L -> "Sarı"
+                                                                FaceName.R -> "Beyaz"
+                                                                FaceName.F -> "Yeşil"
+                                                                FaceName.B -> "Mavi"
+                                                            }
+                                                            infoMessage = "$centerColorTurkish merkez: $faceDisplayName yüzeyi başarıyla algılandı!"
+                                                        } else {
+                                                            errorMessage = "Yüzey algılanamadı! Lütfen küpü ortalayıp merkez karesi net görünecek şekilde tekrar deneyin."
+                                                        }
+                                                    }
                                                 },
                                                 modifier = Modifier.fillMaxWidth(0.8f)
                                             )
@@ -1406,6 +1462,8 @@ fun App() {
                                         scannedGrids = mutableMapOf()
                                         scannedRawRGBs = mutableMapOf()
                                         scannedFilePaths = mutableMapOf()
+                                        errorMessage = null
+                                        infoMessage = null
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0x22FFFFFF), contentColor = Color.White),
                                     shape = RoundedCornerShape(12.dp),
@@ -1415,7 +1473,11 @@ fun App() {
                                 }
                                 
                                 Button(
-                                    onClick = { if (scannerStep > 0) scannerStep-- },
+                                    onClick = {
+                                        errorMessage = null
+                                        infoMessage = null
+                                        if (scannerStep > 0) scannerStep--
+                                    },
                                     enabled = scannerStep > 0,
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0x22FFFFFF), contentColor = Color.White),
                                     shape = RoundedCornerShape(12.dp),
@@ -1427,7 +1489,23 @@ fun App() {
                                 val hasCurrentScan = scannedGrids.containsKey(currentFace)
                                 if (scannerStep < 5) {
                                     Button(
-                                        onClick = { scannerStep++ },
+                                        onClick = {
+                                            errorMessage = null
+                                            infoMessage = null
+                                            var foundNext = false
+                                            for (i in 1..5) {
+                                                val nextIdx = (scannerStep + i) % 6
+                                                val nextFace = FaceName.values()[nextIdx]
+                                                if (!scannedGrids.containsKey(nextFace)) {
+                                                    scannerStep = nextIdx
+                                                    foundNext = true
+                                                    break
+                                                }
+                                            }
+                                            if (!foundNext) {
+                                                scannerStep = (scannerStep + 1).coerceAtMost(5)
+                                            }
+                                        },
                                         enabled = hasCurrentScan,
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = if (hasCurrentScan) Color(0xFF448AFF) else Color(0x22FFFFFF),
@@ -1457,6 +1535,7 @@ fun App() {
                                                 showScannerWizard = false
                                                 scannerStep = 0
                                                 errorMessage = null
+                                                infoMessage = null
                                             } else {
                                                 errorMessage = "Lütfen tüm yüzeyleri taradığınızdan emin olun."
                                             }

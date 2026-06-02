@@ -477,4 +477,41 @@ class RubikImageProcessor {
 
         return resultGrids
     }
+
+    // Automatically detects which face of the Rubik's Cube is in the image by classifying the center cell's color.
+    fun detectFaceFromImage(filePath: String): FaceName? {
+        val rawGrid = processFaceImageRaw(filePath, FaceName.F) ?: return null
+        val centerRGB = rawGrid[1][1]
+        val centerLab = rgbToLab(centerRGB.x, centerRGB.y, centerRGB.z)
+
+        val defaultReferences = mapOf(
+            FaceName.U to Triple(255, 130, 0),    // ORANGE
+            FaceName.D to Triple(220, 20, 20),     // RED
+            FaceName.L to Triple(240, 240, 0),    // YELLOW
+            FaceName.R to Triple(230, 230, 230),  // WHITE
+            FaceName.F to Triple(0, 160, 0),      // GREEN
+            FaceName.B to Triple(0, 0, 200)       // BLUE
+        )
+
+        var closestFace: FaceName? = null
+        var minDistance = Double.MAX_VALUE
+
+        for ((face, rgb) in defaultReferences) {
+            val refLab = rgbToLab(rgb.first, rgb.second, rgb.third)
+            var dist = ciede2000(centerLab, refLab)
+            
+            // Add lightness constraint for white to prevent dark colors (e.g. shadowed blue) from matching white.
+            if (face == FaceName.R) {
+                if (centerLab.first < refLab.first - 22.0) {
+                    dist += 1000.0
+                }
+            }
+            if (dist < minDistance) {
+                minDistance = dist
+                closestFace = face
+            }
+        }
+        return closestFace
+    }
 }
+

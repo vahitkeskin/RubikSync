@@ -160,7 +160,9 @@ private var activeCameraDelegate: PhotoCaptureDelegate? = null
 @OptIn(ExperimentalForeignApi::class)
 class PhotoCaptureDelegate(
     private val onImageCaptured: (String) -> Unit,
-    private val onError: (String) -> Unit
+    private val onError: (String) -> Unit,
+    private val viewW: Double,
+    private val viewH: Double
 ) : NSObject(), AVCapturePhotoCaptureDelegateProtocol {
     
     override fun captureOutput(
@@ -181,14 +183,42 @@ class PhotoCaptureDelegate(
             return
         }
         
-        val image = UIImage.imageWithData(photoData)
-        if (image == null) {
+        val originalImage = UIImage.imageWithData(photoData)
+        if (originalImage == null) {
             onError("Görsel oluşturulamadı.")
             activeCameraDelegate = null
             return
         }
         
-        val data = UIImageJPEGRepresentation(image, 0.8)
+        // 1. Draw to correct orientation
+        val size = originalImage.size
+        val width = size.useContents { width }
+        val height = size.useContents { height }
+        
+        UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
+        originalImage.drawInRect(CGRectMake(0.0, 0.0, width, height))
+        val orientedImage = UIGraphicsGetImageFromCurrentImageContext() ?: originalImage
+        UIGraphicsEndImageContext()
+        
+        // 2. Crop to aspect ratio of viewW : viewH using AspectFill calculation
+        val orientedSize = orientedImage.size
+        val wImg = orientedSize.useContents { width }
+        val hImg = orientedSize.useContents { height }
+        
+        val scale = kotlin.math.max(viewW / wImg, viewH / hImg)
+        val visibleW = viewW / scale
+        val visibleH = viewH / scale
+        
+        val startX = (wImg - visibleW) / 2.0
+        val startY = (hImg - visibleH) / 2.0
+        
+        val targetSize = CGSizeMake(visibleW, visibleH)
+        UIGraphicsBeginImageContextWithOptions(targetSize, false, 1.0)
+        orientedImage.drawInRect(CGRectMake(-startX, -startY, wImg, hImg))
+        val croppedImage = UIGraphicsGetImageFromCurrentImageContext() ?: orientedImage
+        UIGraphicsEndImageContext()
+        
+        val data = UIImageJPEGRepresentation(croppedImage, 0.8)
         if (data != null) {
             val tempDir = NSTemporaryDirectory()
             val fileName = "temp_ios_camera_${NSDate().timeIntervalSince1970.toLong()}.jpg"
@@ -317,7 +347,11 @@ class CameraViewController(
             settings.flashMode = AVCaptureFlashModeOff
         }
         
-        val delegate = PhotoCaptureDelegate(onImageCaptured, onError)
+        val bounds = view.bounds
+        val viewW = bounds.useContents { size.width }
+        val viewH = bounds.useContents { size.height }
+        
+        val delegate = PhotoCaptureDelegate(onImageCaptured, onError, viewW, viewH)
         activeCameraDelegate = delegate
         photoOutput.capturePhotoWithSettings(settings, delegate)
     }

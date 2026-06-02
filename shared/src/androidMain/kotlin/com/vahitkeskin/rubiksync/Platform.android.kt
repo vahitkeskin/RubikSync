@@ -169,6 +169,76 @@ actual fun loadImageBitmap(filePath: String): ImageBitmap? {
     }
 }
 
+private fun cropImageToAspectRatio(filePath: String, targetWidth: Float, targetHeight: Float) {
+    try {
+        val file = File(filePath)
+        if (!file.exists() || targetWidth <= 0f || targetHeight <= 0f) return
+        val originalBitmap = android.graphics.BitmapFactory.decodeFile(filePath) ?: return
+        
+        val exif = android.media.ExifInterface(filePath)
+        val orientation = exif.getAttributeInt(
+            android.media.ExifInterface.TAG_ORIENTATION,
+            android.media.ExifInterface.ORIENTATION_NORMAL
+        )
+        val matrix = android.graphics.Matrix()
+        var needRotate = false
+        when (orientation) {
+            android.media.ExifInterface.ORIENTATION_ROTATE_90 -> {
+                matrix.postRotate(90f)
+                needRotate = true
+            }
+            android.media.ExifInterface.ORIENTATION_ROTATE_180 -> {
+                matrix.postRotate(180f)
+                needRotate = true
+            }
+            android.media.ExifInterface.ORIENTATION_ROTATE_270 -> {
+                matrix.postRotate(270f)
+                needRotate = true
+            }
+        }
+        val bitmap = if (needRotate) {
+            val rotated = android.graphics.Bitmap.createBitmap(
+                originalBitmap, 0, 0, originalBitmap.width, originalBitmap.height, matrix, true
+            )
+            if (rotated != originalBitmap) originalBitmap.recycle()
+            rotated
+        } else {
+            originalBitmap
+        }
+        
+        val wImg = bitmap.width.toFloat()
+        val hImg = bitmap.height.toFloat()
+        
+        val scale = kotlin.math.max(targetWidth / wImg, targetHeight / hImg)
+        val visibleW = targetWidth / scale
+        val visibleH = targetHeight / scale
+        
+        val startX = ((wImg - visibleW) / 2f).coerceAtLeast(0f).toInt()
+        val startY = ((hImg - visibleH) / 2f).coerceAtLeast(0f).toInt()
+        val cropW = visibleW.toInt().coerceAtMost(bitmap.width - startX)
+        val cropH = visibleH.toInt().coerceAtMost(bitmap.height - startY)
+        
+        if (cropW > 0 && cropH > 0) {
+            val croppedBitmap = android.graphics.Bitmap.createBitmap(bitmap, startX, startY, cropW, cropH)
+            if (croppedBitmap != bitmap) {
+                bitmap.recycle()
+            }
+            file.outputStream().use { out ->
+                croppedBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, out)
+            }
+            croppedBitmap.recycle()
+            
+            val newExif = android.media.ExifInterface(filePath)
+            newExif.setAttribute(android.media.ExifInterface.TAG_ORIENTATION, android.media.ExifInterface.ORIENTATION_NORMAL.toString())
+            newExif.saveAttributes()
+        } else {
+            if (!bitmap.isRecycled) bitmap.recycle()
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
 actual val isCameraSupported: Boolean = true
 
 @Composable
@@ -349,6 +419,7 @@ fun CameraPreviewDialog(
                                 cameraExecutor,
                                 object : ImageCapture.OnImageSavedCallback {
                                     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                                        cropImageToAspectRatio(tempFile.absolutePath, previewView.width.toFloat(), previewView.height.toFloat())
                                         onImageCaptured(tempFile.absolutePath)
                                     }
                                     

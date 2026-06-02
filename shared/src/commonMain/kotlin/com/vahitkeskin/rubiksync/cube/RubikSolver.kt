@@ -399,9 +399,9 @@ class RubikSolver {
             var i = 0
             while (i < list.size - 1) {
                 val m1 = list[i]
-                val m2 = list[i + 1]
                 
-                // Opposite moves cancel out: e.g. R R' -> nothing
+                // 1. Direct cancellation: R R' -> nothing
+                val m2 = list[i + 1]
                 if (m1.axis == m2.axis && m1.layerValue == m2.layerValue && m1.angleSign == -m2.angleSign) {
                     list.removeAt(i + 1)
                     list.removeAt(i)
@@ -409,8 +409,7 @@ class RubikSolver {
                     break
                 }
                 
-                // Same moves merge: e.g. U U -> U2 (represented as U, U in our MoveType)
-                // If there are three same moves, they merge to the inverse: e.g. U U U -> U'
+                // 2. Triple reduction: R R R -> R'
                 if (i < list.size - 2) {
                     val m3 = list[i + 2]
                     if (m1 == m2 && m2 == m3) {
@@ -420,6 +419,30 @@ class RubikSolver {
                         list.removeAt(i + 2)
                         list.removeAt(i + 1)
                         list[i] = inverse
+                        changed = true
+                        break
+                    }
+                }
+                
+                // 3. Commutation cancellation: U D U' -> D (since U and D commute)
+                if (i < list.size - 2) {
+                    val m3 = list[i + 2]
+                    val commutes = (m1.axis == m2.axis && m1.layerValue != m2.layerValue)
+                    if (commutes && m1.axis == m3.axis && m1.layerValue == m3.layerValue && m1.angleSign == -m3.angleSign) {
+                        list.removeAt(i + 2)
+                        list.removeAt(i)
+                        changed = true
+                        break
+                    }
+                }
+
+                // 4. Commutation merge: U D U -> U2 D (swapping U and D to U U D)
+                if (i < list.size - 2) {
+                    val m3 = list[i + 2]
+                    val commutes = (m1.axis == m2.axis && m1.layerValue != m2.layerValue)
+                    if (commutes && m1 == m3) {
+                        list[i + 1] = m3
+                        list[i + 2] = m2
                         changed = true
                         break
                     }

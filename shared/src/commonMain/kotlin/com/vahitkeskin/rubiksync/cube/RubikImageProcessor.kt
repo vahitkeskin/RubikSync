@@ -395,7 +395,13 @@ class RubikImageProcessor {
                         var closestColor = CubeColor.WHITE
                         var minDistance = Double.MAX_VALUE
                         for ((refColor, refLab) in referencesLab) {
-                            val dist = ciede2000(cellLab, refLab)
+                            var dist = ciede2000(cellLab, refLab)
+                            if (refColor == CubeColor.WHITE) {
+                                val whiteL = referencesLab[CubeColor.WHITE]?.first ?: 90.0
+                                if (cellLab.first < whiteL - 22.0) {
+                                    dist += 1000.0
+                                }
+                            }
                             if (dist < minDistance) {
                                 minDistance = dist
                                 closestColor = refColor
@@ -447,7 +453,14 @@ class RubikImageProcessor {
                     costMatrix[i][j] = if (targetColor == exactColorMatch) 0.0 else 10000.0
                 } else {
                     val refLab = referencesLab[targetColor]!!
-                    costMatrix[i][j] = ciede2000(cellLab, refLab)
+                    var dist = ciede2000(cellLab, refLab)
+                    if (targetColor == CubeColor.WHITE) {
+                        val whiteL = referencesLab[CubeColor.WHITE]?.first ?: 90.0
+                        if (cellLab.first < whiteL - 22.0) {
+                            dist += 1000.0
+                        }
+                    }
+                    costMatrix[i][j] = dist
                 }
             }
         }

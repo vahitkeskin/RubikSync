@@ -340,6 +340,10 @@ def main():
                 target_color = ref_colors[j // 8]
                 target_lab = ref_lab[target_color]
                 dist = ciede2000(cell_lab, target_lab)
+                if target_color == "WHITE":
+                    white_l = ref_lab["WHITE"][0] if "WHITE" in ref_lab else 90.0
+                    if cell_lab[0] < white_l - 22.0:
+                        dist += 1000.0
                 row_costs.append(dist)
             cost_matrix.append(row_costs)
             

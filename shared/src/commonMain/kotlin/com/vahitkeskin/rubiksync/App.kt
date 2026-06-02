@@ -1054,31 +1054,10 @@ fun App() {
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
                                 modifier = Modifier.weight(1f).padding(vertical = 16.dp)
                             ) {
-                                Card(
-                                    colors = CardDefaults.cardColors(containerColor = Color(0x0CFFFFFF)),
-                                    shape = RoundedCornerShape(16.dp),
-                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(14.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = "Adım ${scannerStep + 1}: ${faceNameTurkish[currentFace]} Yüzeyi",
-                                            color = faceColorMap[currentFace] ?: Color.White,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 16.sp
-                                        )
-                                        Spacer(modifier = Modifier.height(6.dp))
-                                        Text(
-                                            text = faceScanInstructions[currentFace] ?: "",
-                                            color = Color.LightGray,
-                                            fontSize = 12.sp,
-                                            textAlign = TextAlign.Center,
-                                            lineHeight = 16.sp
-                                        )
-                                    }
-                                }
+                                CubeRotationGuide(
+                                    currentFace = currentFace,
+                                    modifier = Modifier.padding(horizontal = 8.dp)
+                                )
                                 
                                 val currentPath = scannedFilePaths[currentFace]
                                 if (currentPath == null) {

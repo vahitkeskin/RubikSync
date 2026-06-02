@@ -2,12 +2,75 @@ package com.vahitkeskin.rubiksync.cube
 
 import com.vahitkeskin.rubiksync.PixelGrid
 import com.vahitkeskin.rubiksync.loadImagePixels
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
+
+// Kuhn-Munkres (Hungarian) algorithm implementation for O(N^3) assignment
+class HungarianAlgorithm(private val costMatrix: Array<DoubleArray>) {
+    private val n = costMatrix.size
+    private val u = DoubleArray(n + 1)
+    private val v = DoubleArray(n + 1)
+    private val p = IntArray(n + 1)
+    private val way = IntArray(n + 1)
+
+    fun execute(): IntArray {
+        val minv = DoubleArray(n + 1)
+        val used = BooleanArray(n + 1)
+
+        for (i in 1..n) {
+            p[0] = i
+            var j0 = 0
+            minv.fill(Double.MAX_VALUE)
+            used.fill(false)
+            do {
+                used[j0] = true
+                val i0 = p[j0]
+                var delta = Double.MAX_VALUE
+                var j1 = 0
+                for (j in 1..n) {
+                    if (!used[j]) {
+                        val cur = costMatrix[i0 - 1][j - 1] - u[i0] - v[j]
+                        if (cur < minv[j]) {
+                            minv[j] = cur
+                            way[j] = j0
+                        }
+                        if (minv[j] < delta) {
+                            delta = minv[j]
+                            j1 = j
+                        }
+                    }
+                }
+                for (j in 0..n) {
+                    if (used[j]) {
+                        u[p[j]] += delta
+                        v[j] -= delta
+                    } else {
+                        minv[j] -= delta
+                    }
+                }
+                j0 = j1
+            } while (p[j0] != 0)
+
+            do {
+                val j1 = way[j0]
+                p[j0] = p[j1]
+                j0 = j1
+            } while (j0 != 0)
+        }
+
+        val result = IntArray(n)
+        for (j in 1..n) {
+            if (p[j] > 0) {
+                result[p[j] - 1] = j - 1
+            }
+        }
+        return result
+    }
+}
 
 class RubikImageProcessor {
+
+    private fun degToRad(deg: Double): Double = deg * PI / 180.0
+    private fun radToDeg(rad: Double): Double = rad * 180.0 / PI
 
     // Converts RGB (0-255) to CIE L*a*b*
     fun rgbToLab(r: Int, g: Int, b: Int): Triple<Double, Double, Double> {
@@ -47,7 +110,95 @@ class RubikImageProcessor {
         return Triple(l, a, b)
     }
 
-    // Calculates the Euclidean distance between two CIE L*a*b* colors
+    // Calculates the CIEDE2000 distance between two CIE L*a*b* colors.
+    // Setting kL = 2.0 reduces the influence of lightness variations (shadows/intensity differences).
+    fun ciede2000(
+        lab1: Triple<Double, Double, Double>,
+        lab2: Triple<Double, Double, Double>,
+        kL: Double = 2.0,
+        kC: Double = 1.0,
+        kH: Double = 1.0
+    ): Double {
+        val l1 = lab1.first
+        val a1 = lab1.second
+        val b1 = lab1.third
+
+        val l2 = lab2.first
+        val a2 = lab2.second
+        val b2 = lab2.third
+
+        val c1 = sqrt(a1 * a1 + b1 * b1)
+        val c2 = sqrt(a2 * a2 + b2 * b2)
+
+        val cBar = (c1 + c2) / 2.0
+        val cBar7 = cBar.pow(7.0)
+        val g = 0.5 * (1.0 - sqrt(cBar7 / (cBar7 + 6103515625.0))) // 25^7 = 6103515625
+
+        val a1Prime = a1 * (1.0 + g)
+        val a2Prime = a2 * (1.0 + g)
+
+        val c1Prime = sqrt(a1Prime * a1Prime + b1 * b1)
+        val c2Prime = sqrt(a2Prime * a2Prime + b2 * b2)
+
+        val cBarPrime = (c1Prime + c2Prime) / 2.0
+
+        val h1Prime = if (a1Prime == 0.0 && b1 == 0.0) 0.0 else {
+            val deg = radToDeg(atan2(b1, a1Prime))
+            if (deg < 0.0) deg + 360.0 else deg
+        }
+        val h2Prime = if (a2Prime == 0.0 && b2 == 0.0) 0.0 else {
+            val deg = radToDeg(atan2(b2, a2Prime))
+            if (deg < 0.0) deg + 360.0 else deg
+        }
+
+        val deltaLPrime = l2 - l1
+        val deltaCPrime = c2Prime - c1Prime
+
+        val hDiff = h2Prime - h1Prime
+        val deltaHPrime = if (c1Prime * c2Prime == 0.0) 0.0 else {
+            val hD = when {
+                abs(hDiff) <= 180.0 -> hDiff
+                hDiff > 180.0 -> hDiff - 360.0
+                else -> hDiff + 360.0
+            }
+            2.0 * sqrt(c1Prime * c2Prime) * sin(degToRad(hD / 2.0))
+        }
+
+        val lBarPrime = (l1 + l2) / 2.0
+        val hBarPrime = if (c1Prime * c2Prime == 0.0) {
+            h1Prime + h2Prime
+        } else {
+            val sum = h1Prime + h2Prime
+            if (abs(hDiff) <= 180.0) {
+                sum / 2.0
+            } else {
+                if (sum < 360.0) (sum + 360.0) / 2.0 else (sum - 360.0) / 2.0
+            }
+        }
+
+        val t = 1.0 -
+                0.17 * cos(degToRad(hBarPrime - 30.0)) +
+                0.24 * cos(degToRad(2.0 * hBarPrime)) +
+                0.32 * cos(degToRad(3.0 * hBarPrime + 6.0)) -
+                0.20 * cos(degToRad(4.0 * hBarPrime - 63.0))
+
+        val sL = 1.0 + (0.015 * (lBarPrime - 50.0).pow(2.0)) / sqrt(20.0 + (lBarPrime - 50.0).pow(2.0))
+        val sC = 1.0 + 0.045 * cBarPrime
+        val sH = 1.0 + 0.015 * cBarPrime * t
+
+        val deltaTheta = 30.0 * exp(-((hBarPrime - 275.0) / 25.0).pow(2.0))
+        val cBarPrime7 = cBarPrime.pow(7.0)
+        val rC = 2.0 * sqrt(cBarPrime7 / (cBarPrime7 + 6103515625.0))
+        val rT = -sin(degToRad(2.0 * deltaTheta)) * rC
+
+        val valL = deltaLPrime / (kL * sL)
+        val valC = deltaCPrime / (kC * sC)
+        val valH = deltaHPrime / (kH * sH)
+
+        return sqrt(valL * valL + valC * valC + valH * valH + rT * valC * valH)
+    }
+
+    // Calculates the Euclidean distance between two CIE L*a*b* colors (kept for legacy support if needed)
     fun labDistance(lab1: Triple<Double, Double, Double>, lab2: Triple<Double, Double, Double>): Double {
         val dL = lab1.first - lab2.first
         val dA = lab1.second - lab2.second
@@ -89,7 +240,30 @@ class RubikImageProcessor {
                 val cx = (left + (c + 0.5f) * cellW).toInt()
                 val cy = (top + (r + 0.5f) * cellH).toInt()
                 
-                // Sample center patch to avoid black borders between facelets
+                // Pass 1: Count total valid coordinates and potential glare pixels
+                var totalPixels = 0
+                var brightNeutralCount = 0
+                for (px in cx - patchW..cx + patchW) {
+                    for (py in cy - patchH..cy + patchH) {
+                        if (px in 0 until w && py in 0 until h) {
+                            totalPixels++
+                            val rgb = grid.getRGB(px, py)
+                            val rVal = rgb.x
+                            val gVal = rgb.y
+                            val bVal = rgb.z
+                            val maxRGB = max(rVal, max(gVal, bVal))
+                            val minRGB = min(rVal, min(gVal, bVal))
+                            if (maxRGB > 245 && (maxRGB - minRGB) < 20) {
+                                brightNeutralCount++
+                            }
+                        }
+                    }
+                }
+                
+                // If more than 65% of the patch is bright & neutral, it's a white sticker, not glare!
+                val ignoreGlareFilter = totalPixels > 0 && (brightNeutralCount.toFloat() / totalPixels.toFloat()) > 0.65f
+                
+                // Pass 2: Sum pixels, filtering out black borders and (if not ignored) specular glare
                 var sumR = 0L
                 var sumG = 0L
                 var sumB = 0L
@@ -107,7 +281,7 @@ class RubikImageProcessor {
                             val minRGB = min(rVal, min(gVal, bVal))
                             
                             val isBlackBorder = rVal < 45 && gVal < 45 && bVal < 45
-                            val isSpecularGlare = maxRGB > 250 && (maxRGB - minRGB) < 15
+                            val isSpecularGlare = !ignoreGlareFilter && maxRGB > 250 && (maxRGB - minRGB) < 15
                             
                             if (!isBlackBorder && !isSpecularGlare) {
                                 sumR += rVal
@@ -145,7 +319,7 @@ class RubikImageProcessor {
         return result
     }
 
-    // Classifies all scanned face grids using self-calibrating centers
+    // Classifies all scanned face grids using self-calibrating centers and Hungarian optimization
     fun classifyAll(
         rawGrids: Map<FaceName, Array<Array<IntVector3>>>
     ): Map<FaceName, Array<Array<CubeColor>>> {
@@ -171,6 +345,7 @@ class RubikImageProcessor {
         )
 
         // Gather real centers or fallback to default
+        val referencesRGB = mutableMapOf<CubeColor, IntVector3>()
         val referencesLab = mutableMapOf<CubeColor, Triple<Double, Double, Double>>()
         for (color in CubeColor.values()) {
             if (color == CubeColor.INTERNAL) continue
@@ -184,6 +359,7 @@ class RubikImageProcessor {
             } else {
                 defaultReferences[color]!!
             }
+            referencesRGB[color] = refRGB
             referencesLab[color] = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
         }
 
@@ -197,26 +373,29 @@ class RubikImageProcessor {
             FaceName.B to CubeColor.BLUE
         )
 
-        // Classify all cells
+        // Pre-create output grids
         val resultGrids = mutableMapOf<FaceName, Array<Array<CubeColor>>>()
         for (face in FaceName.values()) {
-            val rawFaceGrid = rawGrids[face] ?: continue
             val classifiedGrid = Array(3) { Array(3) { CubeColor.INTERNAL } }
-            
-            for (r in 0..2) {
-                for (c in 0..2) {
-                    if (r == 1 && c == 1) {
-                        // Enforce center locking
-                        classifiedGrid[r][c] = lockedCenters[face]!!
-                    } else {
+            classifiedGrid[1][1] = lockedCenters[face]!!
+            resultGrids[face] = classifiedGrid
+        }
+
+        // If fewer than 6 faces are scanned, we fall back to nearest-neighbor classification in L*a*b* using CIEDE2000
+        if (rawGrids.size < 6) {
+            for (face in FaceName.values()) {
+                val rawFaceGrid = rawGrids[face] ?: continue
+                val classifiedGrid = resultGrids[face]!!
+                for (r in 0..2) {
+                    for (c in 0..2) {
+                        if (r == 1 && c == 1) continue
                         val cellRGB = rawFaceGrid[r][c]
                         val cellLab = rgbToLab(cellRGB.x, cellRGB.y, cellRGB.z)
                         
                         var closestColor = CubeColor.WHITE
                         var minDistance = Double.MAX_VALUE
-                        
                         for ((refColor, refLab) in referencesLab) {
-                            val dist = labDistance(cellLab, refLab)
+                            val dist = ciede2000(cellLab, refLab)
                             if (dist < minDistance) {
                                 minDistance = dist
                                 closestColor = refColor
@@ -226,7 +405,61 @@ class RubikImageProcessor {
                     }
                 }
             }
-            resultGrids[face] = classifiedGrid
+            return resultGrids
+        }
+
+        // --- GLOBAL HUNGARIAN OPTIMIZATION FOR 6 SCANNED FACES ---
+        // Collect 48 non-center facelets
+        data class FaceletInfo(val face: FaceName, val row: Int, val col: Int, val rgb: IntVector3)
+        val cellsList = mutableListOf<FaceletInfo>()
+        for (face in FaceName.values()) {
+            val rawFaceGrid = rawGrids[face]!!
+            for (r in 0..2) {
+                for (c in 0..2) {
+                    if (r == 1 && c == 1) continue
+                    cellsList.add(FaceletInfo(face, r, c, rawFaceGrid[r][c]))
+                }
+            }
+        }
+
+        // Build 48 x 48 cost matrix
+        val refColors = listOf(
+            CubeColor.ORANGE, CubeColor.RED, CubeColor.YELLOW,
+            CubeColor.WHITE, CubeColor.GREEN, CubeColor.BLUE
+        )
+        val costMatrix = Array(48) { DoubleArray(48) }
+        for (i in 0 until 48) {
+            val cell = cellsList[i]
+            val cellLab = rgbToLab(cell.rgb.x, cell.rgb.y, cell.rgb.z)
+            
+            // Check if cell matches a reference center EXACTLY (meaning a user manual override happened)
+            var exactColorMatch: CubeColor? = null
+            for ((color, refRGB) in referencesRGB) {
+                if (cell.rgb.x == refRGB.x && cell.rgb.y == refRGB.y && cell.rgb.z == refRGB.z) {
+                    exactColorMatch = color
+                    break
+                }
+            }
+            
+            for (j in 0 until 48) {
+                val targetColor = refColors[j / 8]
+                if (exactColorMatch != null) {
+                    costMatrix[i][j] = if (targetColor == exactColorMatch) 0.0 else 10000.0
+                } else {
+                    val refLab = referencesLab[targetColor]!!
+                    costMatrix[i][j] = ciede2000(cellLab, refLab)
+                }
+            }
+        }
+
+        // Run Kuhn-Munkres
+        val assignment = HungarianAlgorithm(costMatrix).execute()
+
+        // Assign results back to resultGrids
+        for (i in 0 until 48) {
+            val cell = cellsList[i]
+            val assignedColor = refColors[assignment[i] / 8]
+            resultGrids[cell.face]!![cell.row][cell.col] = assignedColor
         }
 
         return resultGrids

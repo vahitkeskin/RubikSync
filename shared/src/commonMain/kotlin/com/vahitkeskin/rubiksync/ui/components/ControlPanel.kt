@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.RubikSolver
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ControlPanel(
@@ -130,20 +132,34 @@ fun ControlPanel(
 
                 Button(
                     onClick = {
-                        val solver = RubikSolver()
-                        val solution = solver.solve(cubeState)
-                        if (solution != null && solution.isNotEmpty()) {
-                            appState.activeSolution = solution
-                            appState.currentSolutionStep = 0
-                            appState.isPlaybackRunning = false
-                            appState.errorMessage = null
-                        } else if (solution != null && solution.isEmpty()) {
-                            appState.errorMessage = "Küp zaten çözülmüş durumda!"
-                        } else {
-                            appState.errorMessage = "Çözüm bulunamadı! Küp yapısı hatalı olabilir."
+                        appState.isRecalculating = true
+                        appState.errorMessage = null
+                        coroutineScope.launch(Dispatchers.Default) {
+                            try {
+                                val solver = RubikSolver()
+                                val solution = solver.solve(cubeState)
+                                withContext(Dispatchers.Main) {
+                                    if (solution != null && solution.isNotEmpty()) {
+                                        appState.activeSolution = solution
+                                        appState.currentSolutionStep = 0
+                                        appState.isPlaybackRunning = false
+                                        appState.errorMessage = null
+                                    } else if (solution != null && solution.isEmpty()) {
+                                        appState.errorMessage = "Küp zaten çözülmüş durumda!"
+                                    } else {
+                                        appState.errorMessage = "Çözüm bulunamadı! Küp yapısı hatalı olabilir."
+                                    }
+                                    appState.isRecalculating = false
+                                }
+                            } catch (e: Exception) {
+                                withContext(Dispatchers.Main) {
+                                    appState.errorMessage = "Çözücü hatası: ${e.message}"
+                                    appState.isRecalculating = false
+                                }
+                            }
                         }
                     },
-                    enabled = !cubeState.isAnimating,
+                    enabled = !cubeState.isAnimating && !appState.isRecalculating,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0x334CAF50),
                         contentColor = Color(0xFF4CAF50)
@@ -153,7 +169,15 @@ fun ControlPanel(
                         .weight(1f)
                         .padding(horizontal = 6.dp)
                 ) {
-                    Text("Çözücü", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    if (appState.isRecalculating) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            color = Color(0xFF4CAF50),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text("Çözücü", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
 

@@ -3,6 +3,9 @@ package com.vahitkeskin.rubiksync.cube
 import kotlin.math.roundToInt
 
 data class IntVector3(val x: Int, val y: Int, val z: Int) {
+    private val cachedHashCode = 31 * (31 * x + y) + z
+    override fun hashCode(): Int = cachedHashCode
+
     operator fun plus(other: IntVector3) = IntVector3(x + other.x, y + other.y, z + other.z)
     operator fun minus(other: IntVector3) = IntVector3(x - other.x, y - other.y, z - other.z)
     operator fun times(factor: Int) = IntVector3(x * factor, y * factor, z * factor)
@@ -25,7 +28,7 @@ data class IntVector3(val x: Int, val y: Int, val z: Int) {
     }
 }
 
-data class CubieSnapshot(
+class CubieSnapshot(
     val id: Int,
     val originalPos: IntVector3,
     val gridPos: IntVector3,
@@ -33,6 +36,29 @@ data class CubieSnapshot(
     val upBasis: IntVector3,
     val forwardBasis: IntVector3
 ) {
+    private val cachedHashCode: Int = run {
+        var result = id
+        result = 31 * result + originalPos.hashCode()
+        result = 31 * result + gridPos.hashCode()
+        result = 31 * result + rightBasis.hashCode()
+        result = 31 * result + upBasis.hashCode()
+        result = 31 * result + forwardBasis.hashCode()
+        result
+    }
+
+    override fun hashCode() = cachedHashCode
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CubieSnapshot) return false
+        return id == other.id &&
+               originalPos == other.originalPos &&
+               gridPos == other.gridPos &&
+               rightBasis == other.rightBasis &&
+               upBasis == other.upBasis &&
+               forwardBasis == other.forwardBasis
+    }
+
     fun rotate(axis: Vector3, angleSign: Float): CubieSnapshot {
         return CubieSnapshot(
             id = id,
@@ -45,9 +71,40 @@ data class CubieSnapshot(
     }
 }
 
-data class CubeSnapshot(
+class CubeSnapshot(
     val cubies: List<CubieSnapshot>
 ) {
+    val stateArray: IntArray = IntArray(cubies.size * 12)
+
+    init {
+        var idx = 0
+        for (c in cubies) {
+            stateArray[idx++] = c.gridPos.x
+            stateArray[idx++] = c.gridPos.y
+            stateArray[idx++] = c.gridPos.z
+            stateArray[idx++] = c.rightBasis.x
+            stateArray[idx++] = c.rightBasis.y
+            stateArray[idx++] = c.rightBasis.z
+            stateArray[idx++] = c.upBasis.x
+            stateArray[idx++] = c.upBasis.y
+            stateArray[idx++] = c.upBasis.z
+            stateArray[idx++] = c.forwardBasis.x
+            stateArray[idx++] = c.forwardBasis.y
+            stateArray[idx++] = c.forwardBasis.z
+        }
+    }
+
+    private val cachedHashCode = stateArray.contentHashCode()
+
+    override fun hashCode() = cachedHashCode
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CubeSnapshot) return false
+        if (cachedHashCode != other.cachedHashCode) return false
+        return stateArray.contentEquals(other.stateArray)
+    }
+
     fun applyMove(move: MoveType): CubeSnapshot {
         return CubeSnapshot(
             cubies.map { cubie ->
@@ -85,56 +142,119 @@ fun RubikCubeState.toSnapshot(): CubeSnapshot {
     )
 }
 
+class ActiveState(
+    val positionsAndBases: IntArray
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ActiveState) return false
+        return positionsAndBases.contentEquals(other.positionsAndBases)
+    }
+
+    override fun hashCode(): Int {
+        return positionsAndBases.contentHashCode()
+    }
+}
+
+fun CubeSnapshot.toActiveState(activeIds: List<Int>): ActiveState {
+    val arr = IntArray(activeIds.size * 12)
+    var idx = 0
+    for (id in activeIds) {
+        val c = cubies[id]
+        arr[idx++] = c.gridPos.x
+        arr[idx++] = c.gridPos.y
+        arr[idx++] = c.gridPos.z
+        arr[idx++] = c.rightBasis.x
+        arr[idx++] = c.rightBasis.y
+        arr[idx++] = c.rightBasis.z
+        arr[idx++] = c.upBasis.x
+        arr[idx++] = c.upBasis.y
+        arr[idx++] = c.upBasis.z
+        arr[idx++] = c.forwardBasis.x
+        arr[idx++] = c.forwardBasis.y
+        arr[idx++] = c.forwardBasis.z
+    }
+    return ActiveState(arr)
+}
+
 class RubikSolver {
 
-    // Runs a BFS to solve the next sub-goal
+    // Runs a BFS to solve the next sub-goal, limited by decision tree depth and active-piece configurations
     private fun bfs(
         start: CubeSnapshot,
         allowedMoves: List<MoveType>,
         macroMoves: List<List<MoveType>>,
+        activeIds: List<Int>,
+        maxDepth: Int = 6,
         isGoal: (CubeSnapshot) -> Boolean
     ): Pair<CubeSnapshot, List<MoveType>>? {
         if (isGoal(start)) return start to emptyList()
 
-        val queue = ArrayDeque<Pair<CubeSnapshot, List<MoveType>>>()
-        val visited = mutableSetOf<CubeSnapshot>()
+        val queue = ArrayDeque<Triple<CubeSnapshot, List<MoveType>, Int>>()
+        val visited = mutableSetOf<ActiveState>()
 
-        queue.add(start to emptyList())
-        visited.add(start)
+        val startActive = start.toActiveState(activeIds)
+        queue.add(Triple(start, emptyList(), 0))
+        visited.add(startActive)
 
         while (queue.isNotEmpty()) {
-            val (state, path) = queue.removeFirst()
+            val (state, path, depth) = queue.removeFirst()
+
+            if (depth >= maxDepth) continue
 
             // Try single moves
             for (move in allowedMoves) {
+                // Skip direct cancellations (e.g. R followed by R') or triple redundancies (e.g. R R R)
+                if (path.isNotEmpty()) {
+                    val last = path.last()
+                    if (last.axis == move.axis && last.layerValue == move.layerValue && last.angleSign == -move.angleSign) {
+                        continue
+                    }
+                    if (path.size >= 2) {
+                        val secondLast = path[path.size - 2]
+                        if (last == move && secondLast == move) {
+                            continue
+                        }
+                    }
+                }
+
                 val nextState = state.applyMove(move)
-                if (nextState !in visited) {
+                val nextActive = nextState.toActiveState(activeIds)
+                if (nextActive !in visited) {
                     val nextPath = path + move
                     if (isGoal(nextState)) {
                         return nextState to nextPath
                     }
-                    if (nextPath.size < 5) {
-                        visited.add(nextState)
-                        queue.add(nextState to nextPath)
-                    }
+                    visited.add(nextActive)
+                    queue.add(Triple(nextState, nextPath, depth + 1))
                 }
             }
 
             // Try macro moves
             for (macro in macroMoves) {
+                if (macro.isEmpty()) continue
+
+                // Avoid applying a macro that starts with the inverse of the last move in the path
+                if (path.isNotEmpty()) {
+                    val last = path.last()
+                    val firstOfMacro = macro.first()
+                    if (last.axis == firstOfMacro.axis && last.layerValue == firstOfMacro.layerValue && last.angleSign == -firstOfMacro.angleSign) {
+                        continue
+                    }
+                }
+
                 var nextState = state
                 for (move in macro) {
                     nextState = nextState.applyMove(move)
                 }
-                if (nextState !in visited) {
+                val nextActive = nextState.toActiveState(activeIds)
+                if (nextActive !in visited) {
                     val nextPath = path + macro
                     if (isGoal(nextState)) {
                         return nextState to nextPath
                     }
-                    if (nextPath.size < 6) {
-                        visited.add(nextState)
-                        queue.add(nextState to nextPath)
-                    }
+                    visited.add(nextActive)
+                    queue.add(Triple(nextState, nextPath, depth + 1))
                 }
             }
         }
@@ -175,6 +295,12 @@ class RubikSolver {
                 c.forwardBasis == IntVector3(0, 0, 1)
     }
 
+    private fun findId(snap: CubeSnapshot, pos: IntVector3): Int {
+        val idx = snap.cubies.indexOfFirst { it.originalPos == pos }
+        if (idx == -1) throw IllegalStateException("Cubie with original position $pos not found!")
+        return idx
+    }
+
     fun solve(startState: RubikCubeState): List<MoveType>? {
         var state = startState.toSnapshot()
         val allMoves = mutableListOf<MoveType>()
@@ -186,15 +312,19 @@ class RubikSolver {
             IntVector3(0, -1, -1), // Blue-Red
             IntVector3(-1, -1, 0)  // Yellow-Red
         )
-        
+
+        val redEdgeIds = redEdges.map { findId(state, it) }
         val basicMoves = MoveType.values().toList()
 
         for (i in redEdges.indices) {
             val goalEdges = redEdges.take(i + 1)
+            val activeIds = redEdgeIds.take(i + 1)
             val result = bfs(
                 start = state,
                 allowedMoves = basicMoves,
                 macroMoves = emptyList(),
+                activeIds = activeIds,
+                maxDepth = 6,
                 isGoal = { snap -> goalEdges.all { isCubieSolved(snap, it) } }
             ) ?: return null
             state = result.first
@@ -209,6 +339,8 @@ class RubikSolver {
             IntVector3(-1, -1, 1)   // Yellow-Green-Red
         )
 
+        val redCornerIds = redCorners.map { findId(state, it) }
+
         // Restrict moves to not disrupt bottom cross permanent centers
         val crossPreservingMoves = listOf(
             MoveType.U, MoveType.U_PRIME,
@@ -218,12 +350,27 @@ class RubikSolver {
             MoveType.B, MoveType.B_PRIME
         )
 
+        // 3-move Corner Insertion / Extraction macros for Step 2
+        val cornerMacros = listOf(
+            "R U R'", "R U' R'", "R U2 R'",
+            "R' U R", "R' U' R", "R' U2 R",
+            "L U L'", "L U' L'", "L U2 L'",
+            "L' U L", "L' U' L", "L' U2 L",
+            "F U F'", "F U' F'", "F U2 F'",
+            "F' U F", "F' U' F", "F' U2 F",
+            "B U B'", "B U' B'", "B U2 B'",
+            "B' U B", "B' U' B", "B' U2 B"
+        ).map { parseAlgorithm(it) }
+
         for (i in redCorners.indices) {
             val goalCorners = redCorners.take(i + 1)
+            val activeIds = redEdgeIds + redCornerIds.take(i + 1)
             val result = bfs(
                 start = state,
                 allowedMoves = crossPreservingMoves,
-                macroMoves = emptyList(),
+                macroMoves = cornerMacros,
+                activeIds = activeIds,
+                maxDepth = 4,
                 isGoal = { snap ->
                     redEdges.all { isCubieSolved(snap, it) } && goalCorners.all { isCubieSolved(snap, it) }
                 }
@@ -240,6 +387,8 @@ class RubikSolver {
             IntVector3(-1, 0, 1)   // Yellow-Green
         )
 
+        val middleEdgeIds = middleEdges.map { findId(state, it) }
+
         // Use macro algorithms for middle layer to keep search shallow
         val middleMacros = listOf(
             "U R U' R' U' F' U F", "U' F' U F U R U' R'",
@@ -250,10 +399,13 @@ class RubikSolver {
 
         for (i in middleEdges.indices) {
             val goalEdges = middleEdges.take(i + 1)
+            val activeIds = redEdgeIds + redCornerIds + middleEdgeIds.take(i + 1)
             val result = bfs(
                 start = state,
                 allowedMoves = listOf(MoveType.U, MoveType.U_PRIME),
                 macroMoves = middleMacros,
+                activeIds = activeIds,
+                maxDepth = 4,
                 isGoal = { snap ->
                     redEdges.all { isCubieSolved(snap, it) } &&
                     redCorners.all { isCubieSolved(snap, it) } &&
@@ -272,6 +424,8 @@ class RubikSolver {
             IntVector3(-1, 1, 0)
         )
 
+        val topEdgeIds = topEdges.map { findId(state, it) }
+
         val ollMacros = listOf(
             "F R U R' U' F'",
             "F U R U' R' F'"
@@ -281,6 +435,8 @@ class RubikSolver {
             start = state,
             allowedMoves = listOf(MoveType.U, MoveType.U_PRIME),
             macroMoves = ollMacros,
+            activeIds = redEdgeIds + redCornerIds + middleEdgeIds + topEdgeIds,
+            maxDepth = 6,
             isGoal = { snap ->
                 // Check that first two layers are intact
                 redEdges.all { isCubieSolved(snap, it) } &&
@@ -298,14 +454,18 @@ class RubikSolver {
 
         // Step 5: Yellow/Orange Cross Permutation (Edges Position)
         val pllEdgeMacros = listOf(
-            "R U R' U R U2 R'",
-            "R U2 R' U' R U' R'"
+            "R U R' U R U2 R'", "R U2 R' U' R U' R'",
+            "L' U' L U' L' U2 L", "L' U2 L U L' U L",
+            "F U F' U F U2 F'", "F U2 F' U' F U' F'",
+            "B' U' B U' B' U2 B", "B' U2 B U B' U B"
         ).map { parseAlgorithm(it) }
 
         val pllEdgesResult = bfs(
             start = state,
             allowedMoves = listOf(MoveType.U, MoveType.U_PRIME),
             macroMoves = pllEdgeMacros,
+            activeIds = redEdgeIds + redCornerIds + middleEdgeIds + topEdgeIds,
+            maxDepth = 6,
             isGoal = { snap ->
                 redEdges.all { isCubieSolved(snap, it) } &&
                 redCorners.all { isCubieSolved(snap, it) } &&
@@ -325,15 +485,20 @@ class RubikSolver {
             IntVector3(-1, 1, 1)
         )
 
+        val topCornerIds = topCorners.map { findId(state, it) }
+
         val pllCornerMacros = listOf(
-            "U R U' L' U R' U' L",
-            "U' L' U R U' L U R'"
+            "U R U' L' U R' U' L", "U' L' U R U' L U R'",
+            "U F U' B' U F' U' B", "U' B' U F U' B U F'",
+            "U L U' R' U L' U' R", "U' R' U L U' R U L'"
         ).map { parseAlgorithm(it) }
 
         val pllCornersResult = bfs(
             start = state,
             allowedMoves = listOf(MoveType.U, MoveType.U_PRIME),
             macroMoves = pllCornerMacros,
+            activeIds = redEdgeIds + redCornerIds + middleEdgeIds + topEdgeIds + topCornerIds,
+            maxDepth = 6,
             isGoal = { snap ->
                 redEdges.all { isCubieSolved(snap, it) } &&
                 redCorners.all { isCubieSolved(snap, it) } &&
@@ -356,9 +521,10 @@ class RubikSolver {
         
         for (i in 0..3) {
             val cornerId = finalState.cubies.find { it.gridPos == IntVector3(1, 1, 1) }!!.id
-            while (true) {
+            var orientSafety = 0
+            while (orientSafety < 10) {
                 val c = finalState.cubies.find { it.id == cornerId }!!
-                if (c.rightBasis == IntVector3(1, 0, 0) && c.upBasis == IntVector3(0, 1, 0)) {
+                if (c.gridPos == IntVector3(1, 1, 1) && c.upBasis == IntVector3(0, 1, 0)) {
                     break
                 }
                 
@@ -368,6 +534,10 @@ class RubikSolver {
                     finalState = finalState.applyMove(move)
                     movesList.add(move)
                 }
+                orientSafety++
+            }
+            if (orientSafety == 10) {
+                return null // Unsolvable / invalid cube state!
             }
             if (i < 3) {
                 finalState = finalState.applyMove(MoveType.U)
@@ -376,13 +546,38 @@ class RubikSolver {
         }
 
         // Align top layer
-        while (true) {
+        var safety = 0
+        while (safety < 4) {
             val testEdge = finalState.cubies.find { it.originalPos == IntVector3(0, 1, 1) }!!
             if (testEdge.gridPos == IntVector3(0, 1, 1)) {
                 break
             }
             finalState = finalState.applyMove(MoveType.U)
             movesList.add(MoveType.U)
+            safety++
+        }
+        if (safety == 4) {
+            val testEdge = finalState.cubies.find { it.originalPos == IntVector3(0, 1, 1) }!!
+            if (testEdge.gridPos != IntVector3(0, 1, 1)) {
+                return null
+            }
+        }
+
+        // Final verification that the cube is indeed fully solved
+        val allCubiePositions = mutableListOf<IntVector3>()
+        for (x in -1..1) {
+            for (y in -1..1) {
+                for (z in -1..1) {
+                    allCubiePositions.add(IntVector3(x, y, z))
+                }
+            }
+        }
+        val unsolved = allCubiePositions.filter { pos ->
+            val sum = kotlin.math.abs(pos.x) + kotlin.math.abs(pos.y) + kotlin.math.abs(pos.z)
+            sum >= 2 && !isCubieSolved(finalState, pos)
+        }
+        if (unsolved.isNotEmpty()) {
+            return null
         }
 
         allMoves.addAll(movesList)

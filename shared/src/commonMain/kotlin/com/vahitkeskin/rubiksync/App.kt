@@ -52,28 +52,37 @@ fun App() {
                 )
                 .safeContentPadding()
         ) {
-            // 1. Main 3D Canvas
-            InteractiveCubeCanvas(appState = appState)
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // 1. Top Dashboard (Title & History)
+                DashboardHeader(cubeState = cubeState)
 
-            // 2. Top Dashboard (Title & History)
-            DashboardHeader(cubeState = cubeState)
+                // 2. Main 3D Canvas (occupies remaining height)
+                InteractiveCubeCanvas(
+                    appState = appState,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
 
-            // 3. Control Panel (Bottom-Centered Drawer)
-            ControlPanel(
-                appState = appState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 32.dp)
-            )
+                // 3. Playback controller (placed directly below the 3D canvas)
+                PlaybackController(
+                    appState = appState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 8.dp)
+                )
 
-            // 4. Playback overlay (placed above the Control Panel)
-            PlaybackController(
-                appState = appState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 200.dp, start = 24.dp, end = 24.dp)
-            )
+                // 4. Control Panel (Always at the bottom)
+                ControlPanel(
+                    appState = appState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                )
+            }
 
             // 5. Manual Color net Editor Dialog Overlay
             EditorDialog(

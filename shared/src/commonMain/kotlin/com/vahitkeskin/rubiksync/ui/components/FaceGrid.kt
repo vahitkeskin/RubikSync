@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
@@ -18,26 +19,33 @@ import com.vahitkeskin.rubiksync.cube.FaceName
 fun FaceGrid(
     face: FaceName,
     faces: Map<FaceName, Array<Array<CubeColor>>>,
-    onCellClick: (FaceName, Int, Int) -> Unit
+    modifier: Modifier = Modifier,
+    cellSize: Dp = 24.dp,
+    spacing: Dp = 2.dp,
+    isClickable: Boolean = true,
+    onCellClick: (FaceName, Int, Int) -> Unit = { _, _, _ -> }
 ) {
     val grid = faces[face]!!
     Column(
-        modifier = Modifier
-            .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(4.dp))
-            .padding(4.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        modifier = modifier
+            .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(8.dp))
+            .background(Color(0x0C000000), RoundedCornerShape(8.dp))
+            .padding(spacing * 2),
+        verticalArrangement = Arrangement.spacedBy(spacing)
     ) {
         for (r in 0..2) {
-            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
                 for (c in 0..2) {
                     val color = grid[r][c]
                     val isCenter = r == 1 && c == 1
+                    val canClick = isClickable && !isCenter
+                    
                     Box(
                         modifier = Modifier
-                            .size(24.dp)
-                            .clip(RoundedCornerShape(3.dp))
+                            .size(cellSize)
+                            .clip(RoundedCornerShape((cellSize.value * 0.15f).dp))
                             .background(Color(color.rgb))
-                            .clickable(enabled = !isCenter) {
+                            .clickable(enabled = canClick) {
                                 onCellClick(face, r, c)
                             },
                         contentAlignment = Alignment.Center
@@ -45,9 +53,9 @@ fun FaceGrid(
                         if (isCenter) {
                             Box(
                                 modifier = Modifier
-                                    .size(4.dp)
-                                    .clip(RoundedCornerShape(2.dp))
-                                    .background(Color.Black.copy(alpha = 0.4f))
+                                    .size((cellSize.value * 0.18f).dp)
+                                    .clip(RoundedCornerShape((cellSize.value * 0.09f).dp))
+                                    .background(Color.Black.copy(alpha = 0.35f))
                             )
                         }
                     }

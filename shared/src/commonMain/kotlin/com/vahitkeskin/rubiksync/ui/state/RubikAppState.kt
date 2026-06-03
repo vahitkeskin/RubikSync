@@ -6,6 +6,7 @@ import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.cube.IntVector3
 import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
+import com.vahitkeskin.rubiksync.cube.AnnotatedMove
 import kotlinx.coroutines.CoroutineScope
 
 class RubikAppState(
@@ -39,6 +40,7 @@ class RubikAppState(
 
     // Solution / Playback State
     var activeSolution by mutableStateOf<List<MoveType>?>(null)
+    var activeSolutionDetails by mutableStateOf<List<AnnotatedMove>?>(null)
     var currentSolutionStep by mutableStateOf(0)
     var isPlaybackRunning by mutableStateOf(false)
 

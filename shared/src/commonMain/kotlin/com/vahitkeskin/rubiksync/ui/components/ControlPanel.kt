@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.components
 
+import androidx.compose.animation.*
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -268,16 +270,22 @@ fun ControlPanel(
                                 try {
                                     val solver = RubikSolver()
                                     val solution = solver.solve(cubeState)
+                                    val details = solver.solveAnnotated(cubeState)
                                     withContext(Dispatchers.Main) {
-                                        if (solution != null && solution.isNotEmpty()) {
+                                        if (solution != null && solution.isNotEmpty() && details != null) {
                                             appState.activeSolution = solution
+                                            appState.activeSolutionDetails = details
                                             appState.currentSolutionStep = 0
                                             appState.isPlaybackRunning = false
                                             appState.errorMessage = null
                                             appState.successMessage = "${solution.size} adımda çözüm bulundu!"
                                         } else if (solution != null && solution.isEmpty()) {
+                                            appState.activeSolution = null
+                                            appState.activeSolutionDetails = null
                                             appState.successMessage = "Küp zaten çözülmüş! ✅"
                                         } else {
+                                            appState.activeSolution = null
+                                            appState.activeSolutionDetails = null
                                             appState.errorMessage = "Çözüm bulunamadı!"
                                         }
                                         appState.isRecalculating = false
@@ -451,6 +459,7 @@ fun PlaybackController(
     val solution = appState.activeSolution ?: return
     val cubeState = appState.cubeState
     val coroutineScope = appState.coroutineScope
+    var showDetails by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -506,6 +515,7 @@ fun PlaybackController(
                     .border(0.5.dp, Color(0x15FFFFFF), RoundedCornerShape(14.dp))
                     .clickable {
                         appState.activeSolution = null
+                        appState.activeSolutionDetails = null
                         appState.isPlaybackRunning = false
                     },
                 contentAlignment = Alignment.Center
@@ -684,6 +694,99 @@ fun PlaybackController(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+            }
+        }
+
+        // Technical Details Collapsible Section
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0x0AFFFFFF))
+                    .clickable { showDetails = !showDetails }
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "📖 Teknik Çözüm Detayları",
+                    color = Color(0xFF8A99AD),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = if (showDetails) "▼" else "▲",
+                    color = Color(0xFF8A99AD),
+                    fontSize = 10.sp
+                )
+            }
+
+            AnimatedVisibility(
+                visible = showDetails,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color(0xFF0A0E18))
+                        .border(0.5.dp, Color(0x10FFFFFF), RoundedCornerShape(10.dp))
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    val detailsList = appState.activeSolutionDetails
+                    val currentStep = appState.currentSolutionStep
+                    if (detailsList != null && currentStep < detailsList.size) {
+                        val activeDetail = detailsList[currentStep]
+                        Text(
+                            text = "Aşama: ${activeDetail.phaseName}",
+                            color = Color(0xFF30D158),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = activeDetail.phaseDescription,
+                            color = Color(0xFF8A99AD),
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Yapılacak Hamle: ${activeDetail.move.label}",
+                                color = Color.White,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "Kalan: ${detailsList.size - currentStep} hamle",
+                                color = Color(0xFF4A5568),
+                                fontSize = 9.sp
+                            )
+                        }
+                    } else {
+                        Text(
+                            text = "Çözüm Tamamlandı! 🎉",
+                            color = Color(0xFF30D158),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Zeka küpü başarıyla çözülmüş durumuna ulaştı.",
+                            color = Color(0xFF8A99AD),
+                            fontSize = 10.sp
+                        )
+                    }
+                }
             }
         }
 

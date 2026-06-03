@@ -648,4 +648,384 @@ class RubikSolver {
         }
         return list
     }
+
+    fun solveAnnotated(startState: RubikCubeState): List<AnnotatedMove>? {
+        var state = startState.toSnapshot()
+        val allMoves = mutableListOf<AnnotatedMove>()
+
+        // Step 1: Red Cross (Bottom Edges)
+        val redEdges = listOf(
+            IntVector3(0, -1, 1),  // Green-Red
+            IntVector3(1, -1, 0),  // White-Red
+            IntVector3(0, -1, -1), // Blue-Red
+            IntVector3(-1, -1, 0)  // Yellow-Red
+        )
+
+        val redEdgeIds = redEdges.map { findId(state, it) }
+        val basicMoves = MoveType.values().toList()
+
+        val phase1Name = "Alt Artı Oluşturma"
+        val phase1Desc = "Alt katmanda kırmızı renkte artı (cross) simgesi oluşturuluyor. Bu adım, sonraki katmanların doğru konumlandırılması için referans noktası sağlar."
+
+        for (i in redEdges.indices) {
+            val goalEdges = redEdges.take(i + 1)
+            val activeIds = redEdgeIds.take(i + 1)
+            val result = bfs(
+                start = state,
+                allowedMoves = basicMoves,
+                macroMoves = emptyList(),
+                activeIds = activeIds,
+                maxDepth = 6,
+                isGoal = { snap -> goalEdges.all { isCubieSolved(snap, it) } }
+            ) ?: return null
+            state = result.first
+            result.second.forEach {
+                allMoves.add(AnnotatedMove(it, phase1Name, phase1Desc))
+            }
+        }
+
+        // Step 2: Red Corners (Bottom Corners)
+        val redCorners = listOf(
+            IntVector3(1, -1, 1),   // Green-White-Red
+            IntVector3(1, -1, -1),  // White-Blue-Red
+            IntVector3(-1, -1, -1), // Blue-Yellow-Red
+            IntVector3(-1, -1, 1)   // Yellow-Green-Red
+        )
+
+        val redCornerIds = redCorners.map { findId(state, it) }
+
+        // Restrict moves to not disrupt bottom cross permanent centers
+        val crossPreservingMoves = listOf(
+            MoveType.U, MoveType.U_PRIME,
+            MoveType.R, MoveType.R_PRIME,
+            MoveType.L, MoveType.L_PRIME,
+            MoveType.F, MoveType.F_PRIME,
+            MoveType.B, MoveType.B_PRIME
+        )
+
+        // 3-move Corner Insertion / Extraction macros for Step 2
+        val cornerMacros = listOf(
+            "R U R'", "R U' R'", "R U2 R'",
+            "R' U R", "R' U' R", "R' U2 R",
+            "L U L'", "L U' L'", "L U2 L'",
+            "L' U L", "L' U' L", "L' U2 L",
+            "F U F'", "F U' F'", "F U2 F'",
+            "F' U F", "F' U' F", "F' U2 F",
+            "B U B'", "B U' B'", "B U2 B'",
+            "B' U B", "B' U' B", "B' U2 B"
+        ).map { parseAlgorithm(it) }
+
+        val phase2Name = "Alt Köşelerin Yerleşimi"
+        val phase2Desc = "Kırmızı renkli alt köşeler doğru yerlerine yerleştirilerek ilk katman tamamlanıyor. Bu adım, küpün tabanını tamamen çözer."
+
+        for (i in redCorners.indices) {
+            val goalCorners = redCorners.take(i + 1)
+            val activeIds = redEdgeIds + redCornerIds.take(i + 1)
+            val result = bfs(
+                start = state,
+                allowedMoves = crossPreservingMoves,
+                macroMoves = cornerMacros,
+                activeIds = activeIds,
+                maxDepth = 4,
+                isGoal = { snap ->
+                    redEdges.all { isCubieSolved(snap, it) } && goalCorners.all { isCubieSolved(snap, it) }
+                }
+            ) ?: return null
+            state = result.first
+            result.second.forEach {
+                allMoves.add(AnnotatedMove(it, phase2Name, phase2Desc))
+            }
+        }
+
+        // Step 3: Middle Layer Edges
+        val middleEdges = listOf(
+            IntVector3(1, 0, 1),   // Green-White
+            IntVector3(1, 0, -1),  // White-Blue
+            IntVector3(-1, 0, -1), // Blue-Yellow
+            IntVector3(-1, 0, 1)   // Yellow-Green
+        )
+
+        val middleEdgeIds = middleEdges.map { findId(state, it) }
+
+        // Use macro algorithms for middle layer to keep search shallow
+        val middleMacros = listOf(
+            "U R U' R' U' F' U F", "U' F' U F U R U' R'",
+            "U B U' B' U' R' U R", "U' R' U R U B U' B'",
+            "U L U' L' U' B' U B", "U' B' U B U L U' L'",
+            "U F U' F' U' L' U L", "U' L' U L U F U' F'"
+        ).map { parseAlgorithm(it) }
+
+        val phase3Name = "Orta Katman Kenarları"
+        val phase3Desc = "Orta katmandaki 4 kenar parçası, önceden çözülmüş alt katmanları bozmayacak özel algoritmalarla yerleştirilerek ikinci katman tamamlanıyor."
+
+        for (i in middleEdges.indices) {
+            val goalEdges = middleEdges.take(i + 1)
+            val activeIds = redEdgeIds + redCornerIds + middleEdgeIds.take(i + 1)
+            val result = bfs(
+                start = state,
+                allowedMoves = listOf(MoveType.U, MoveType.U_PRIME),
+                macroMoves = middleMacros,
+                activeIds = activeIds,
+                maxDepth = 4,
+                isGoal = { snap ->
+                    redEdges.all { isCubieSolved(snap, it) } &&
+                    redCorners.all { isCubieSolved(snap, it) } &&
+                    goalEdges.all { isCubieSolved(snap, it) }
+                }
+            ) ?: return null
+            state = result.first
+            result.second.forEach {
+                allMoves.add(AnnotatedMove(it, phase3Name, phase3Desc))
+            }
+        }
+
+        // Step 4: Yellow/Orange Cross (OLL Edges Orientation)
+        val topEdges = listOf(
+            IntVector3(0, 1, 1),
+            IntVector3(1, 1, 0),
+            IntVector3(0, 1, -1),
+            IntVector3(-1, 1, 0)
+        )
+
+        val topEdgeIds = topEdges.map { findId(state, it) }
+
+        val ollMacros = listOf(
+            "F R U R' U' F'",
+            "F U R U' R' F'"
+        ).map { parseAlgorithm(it) }
+
+        val phase4Name = "Turuncu Artı Yönelimi (OLL)"
+        val phase4Desc = "Üst katmanda (turuncu yüz) artı simgesi oluşturuluyor. OLL (Orientation of Last Layer) adımı ile üst yüzdeki renklerin tamamı yukarı bakar hale getirilir."
+
+        val ollResult = bfs(
+            start = state,
+            allowedMoves = listOf(MoveType.U, MoveType.U_PRIME),
+            macroMoves = ollMacros,
+            activeIds = redEdgeIds + redCornerIds + middleEdgeIds + topEdgeIds,
+            maxDepth = 6,
+            isGoal = { snap ->
+                redEdges.all { isCubieSolved(snap, it) } &&
+                redCorners.all { isCubieSolved(snap, it) } &&
+                middleEdges.all { isCubieSolved(snap, it) } &&
+                topEdges.all { pos ->
+                    val c = snap.cubies.find { it.gridPos == pos }!!
+                    c.upBasis.y == 1
+                }
+            }
+        ) ?: return null
+        state = ollResult.first
+        ollResult.second.forEach {
+            allMoves.add(AnnotatedMove(it, phase4Name, phase4Desc))
+        }
+
+        // Step 5: Yellow/Orange Cross Permutation (Edges Position)
+        val pllEdgeMacros = listOf(
+            "R U R' U R U2 R'", "R U2 R' U' R U' R'",
+            "L' U' L U' L' U2 L", "L' U2 L U L' U L",
+            "F U F' U F U2 F'", "F U2 F' U' F U' F'",
+            "B' U' B U' B' U2 B", "B' U2 B U B' U B"
+        ).map { parseAlgorithm(it) }
+
+        val phase5Name = "Turuncu Artı Konumlandırma"
+        val phase5Desc = "Üst katmandaki artı kenarları kendi yan yüz renkleriyle hizalanıyor. Bu sayede üst artı parçaları doğru yerlerine oturur."
+
+        val pllEdgesResult = bfs(
+            start = state,
+            allowedMoves = listOf(MoveType.U, MoveType.U_PRIME),
+            macroMoves = pllEdgeMacros,
+            activeIds = redEdgeIds + redCornerIds + middleEdgeIds + topEdgeIds,
+            maxDepth = 6,
+            isGoal = { snap ->
+                redEdges.all { isCubieSolved(snap, it) } &&
+                redCorners.all { isCubieSolved(snap, it) } &&
+                middleEdges.all { isCubieSolved(snap, it) } &&
+                topEdges.all { isCubieSolved(snap, it) }
+            }
+        ) ?: return null
+        state = pllEdgesResult.first
+        pllEdgesResult.second.forEach {
+            allMoves.add(AnnotatedMove(it, phase5Name, phase5Desc))
+        }
+
+        // Step 6: Yellow/Orange Corners Positioning (Corners Position)
+        val topCorners = listOf(
+            IntVector3(1, 1, 1),
+            IntVector3(1, 1, -1),
+            IntVector3(-1, 1, -1),
+            IntVector3(-1, 1, 1)
+        )
+
+        val topCornerIds = topCorners.map { findId(state, it) }
+
+        val pllCornerMacros = listOf(
+            "U R U' L' U R' U' L", "U' L' U R U' L U R'",
+            "U F U' B' U F' U' B", "U' B' U F U' B U F'",
+            "U L U' R' U L' U' R", "U' R' U L U' R U L'"
+        ).map { parseAlgorithm(it) }
+
+        val phase6Name = "Üst Köşe Konumlandırma"
+        val phase6Desc = "Üst katmandaki 4 köşenin (renkleri ters dönmüş olsa dahi) kendi doğru köşelerine yerleşmesi sağlanır."
+
+        val pllCornersResult = bfs(
+            start = state,
+            allowedMoves = listOf(MoveType.U, MoveType.U_PRIME),
+            macroMoves = pllCornerMacros,
+            activeIds = redEdgeIds + redCornerIds + middleEdgeIds + topEdgeIds + topCornerIds,
+            maxDepth = 6,
+            isGoal = { snap ->
+                redEdges.all { isCubieSolved(snap, it) } &&
+                redCorners.all { isCubieSolved(snap, it) } &&
+                middleEdges.all { isCubieSolved(snap, it) } &&
+                topEdges.all { isCubieSolved(snap, it) } &&
+                topCorners.all { pos ->
+                    val c = snap.cubies.find { it.gridPos == pos }!!
+                    c.originalPos == pos
+                }
+            }
+        ) ?: return null
+        state = pllCornersResult.first
+        pllCornersResult.second.forEach {
+            allMoves.add(AnnotatedMove(it, phase6Name, phase6Desc))
+        }
+
+        // Step 7: Yellow/Orange Corners Orientation (Solve Cube)
+        val movesList = mutableListOf<MoveType>()
+        var finalState = state
+        
+        val phase7Name = "Üst Köşe Yönelimi (Çözüm)"
+        val phase7Desc = "Üst katmandaki köşelerin renk yönleri 'R' D' R D' algoritmasıyla düzeltilerek tüm küp tamamen çözülmüş hale getirilir."
+
+        for (i in 0..3) {
+            val cornerId = finalState.cubies.find { it.gridPos == IntVector3(1, 1, 1) }!!.id
+            var orientSafety = 0
+            while (orientSafety < 10) {
+                val c = finalState.cubies.find { it.id == cornerId }!!
+                if (c.gridPos == IntVector3(1, 1, 1) && c.upBasis == IntVector3(0, 1, 0)) {
+                    break
+                }
+                
+                val stepMoves = parseAlgorithm("R' D' R D")
+                for (move in stepMoves) {
+                    finalState = finalState.applyMove(move)
+                    movesList.add(move)
+                }
+                orientSafety++
+            }
+            if (orientSafety == 10) {
+                return null
+            }
+            if (i < 3) {
+                finalState = finalState.applyMove(MoveType.U)
+                movesList.add(MoveType.U)
+            }
+        }
+
+        var safety = 0
+        while (safety < 4) {
+            val testEdge = finalState.cubies.find { it.originalPos == IntVector3(0, 1, 1) }!!
+            if (testEdge.gridPos == IntVector3(0, 1, 1)) {
+                break
+            }
+            finalState = finalState.applyMove(MoveType.U)
+            movesList.add(MoveType.U)
+            safety++
+        }
+        if (safety == 4) {
+            val testEdge = finalState.cubies.find { it.originalPos == IntVector3(0, 1, 1) }!!
+            if (testEdge.gridPos != IntVector3(0, 1, 1)) {
+                return null
+            }
+        }
+
+        movesList.forEach {
+            allMoves.add(AnnotatedMove(it, phase7Name, phase7Desc))
+        }
+
+        val allCubiePositions = mutableListOf<IntVector3>()
+        for (x in -1..1) {
+            for (y in -1..1) {
+                for (z in -1..1) {
+                    allCubiePositions.add(IntVector3(x, y, z))
+                }
+            }
+        }
+        val unsolved = allCubiePositions.filter { pos ->
+            val sum = kotlin.math.abs(pos.x) + kotlin.math.abs(pos.y) + kotlin.math.abs(pos.z)
+            sum >= 2 && !isCubieSolved(finalState, pos)
+        }
+        if (unsolved.isNotEmpty()) {
+            return null
+        }
+
+        return optimizeAnnotatedMoves(allMoves)
+    }
+
+    private fun optimizeAnnotatedMoves(moves: List<AnnotatedMove>): List<AnnotatedMove> {
+        val list = moves.toMutableList()
+        var changed = true
+        while (changed) {
+            changed = false
+            var i = 0
+            while (i < list.size - 1) {
+                val m1 = list[i]
+                
+                // 1. Direct cancellation: R R' -> nothing
+                val m2 = list[i + 1]
+                if (m1.move.axis == m2.move.axis && m1.move.layerValue == m2.move.layerValue && m1.move.angleSign == -m2.move.angleSign) {
+                    list.removeAt(i + 1)
+                    list.removeAt(i)
+                    changed = true
+                    break
+                }
+                
+                // 2. Triple reduction: R R R -> R'
+                if (i < list.size - 2) {
+                    val m3 = list[i + 2]
+                    if (m1.move == m2.move && m2.move == m3.move) {
+                        val inverse = MoveType.values().first {
+                            it.axis == m1.move.axis && it.layerValue == m1.move.layerValue && it.angleSign == -m1.move.angleSign
+                        }
+                        list.removeAt(i + 2)
+                        list.removeAt(i + 1)
+                        list[i] = AnnotatedMove(inverse, m1.phaseName, m1.phaseDescription)
+                        changed = true
+                        break
+                    }
+                }
+                
+                // 3. Commutation cancellation: U D U' -> D
+                if (i < list.size - 2) {
+                    val m3 = list[i + 2]
+                    val commutes = (m1.move.axis == m2.move.axis && m1.move.layerValue != m2.move.layerValue)
+                    if (commutes && m1.move.axis == m3.move.axis && m1.move.layerValue == m3.move.layerValue && m1.move.angleSign == -m3.move.angleSign) {
+                        list.removeAt(i + 2)
+                        list.removeAt(i)
+                        changed = true
+                        break
+                    }
+                }
+
+                // 4. Commutation merge: U D U -> U2 D
+                if (i < list.size - 2) {
+                    val m3 = list[i + 2]
+                    val commutes = (m1.move.axis == m2.move.axis && m1.move.layerValue != m2.move.layerValue)
+                    if (commutes && m1.move == m3.move) {
+                        list[i + 1] = m3
+                        list[i + 2] = m2
+                        changed = true
+                        break
+                    }
+                }
+                
+                i++
+            }
+        }
+        return list
+    }
 }
+
+data class AnnotatedMove(
+    val move: MoveType,
+    val phaseName: String,
+    val phaseDescription: String
+)

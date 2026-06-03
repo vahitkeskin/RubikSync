@@ -345,4 +345,48 @@ class RubikCubeState {
             cubie.forwardBasis = Vector3.UnitZ
         }
     }
+
+    suspend fun resetAnimated(
+        durationMs: Float = 500f,
+        onProgress: (Float) -> Unit = {}
+    ) {
+        if (isAnimating) return
+        isAnimating = true
+        currentMove = null
+        moveHistory.clear()
+        
+        val startPositions = cubies.map { it.gridPos }
+        val startRights = cubies.map { it.rightBasis }
+        val startUps = cubies.map { it.upBasis }
+        val startForwards = cubies.map { it.forwardBasis }
+        
+        val startFrameTime = withFrameMillis { it }
+        var elapsed = 0f
+        
+        while (elapsed < durationMs) {
+            val t = (elapsed / durationMs).coerceIn(0f, 1f)
+            val easedT = 1f - (1f - t) * (1f - t) * (1f - t)
+            
+            cubies.forEachIndexed { i, cubie ->
+                cubie.gridPos = startPositions[i] + (cubie.originalPos - startPositions[i]) * easedT
+                cubie.rightBasis = (startRights[i] + (Vector3.UnitX - startRights[i]) * easedT).normalized()
+                cubie.upBasis = (startUps[i] + (Vector3.UnitY - startUps[i]) * easedT).normalized()
+                cubie.forwardBasis = (startForwards[i] + (Vector3.UnitZ - startForwards[i]) * easedT).normalized()
+            }
+            onProgress(easedT)
+            
+            val now = withFrameMillis { it }
+            elapsed = (now - startFrameTime).toFloat()
+        }
+        
+        // Final state
+        cubies.forEach { cubie ->
+            cubie.gridPos = cubie.originalPos
+            cubie.rightBasis = Vector3.UnitX
+            cubie.upBasis = Vector3.UnitY
+            cubie.forwardBasis = Vector3.UnitZ
+        }
+        onProgress(1f)
+        isAnimating = false
+    }
 }

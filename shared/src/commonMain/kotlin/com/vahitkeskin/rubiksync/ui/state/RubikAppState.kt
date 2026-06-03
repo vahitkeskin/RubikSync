@@ -60,6 +60,18 @@ class RubikAppState(
             }
         }
 
+    // Computed: is the app in its initial state?
+    val isInitialState: Boolean
+        get() {
+            val isCubeInitial = cubeState.moveHistory.isEmpty() && isSolved
+            val isCameraInitial = kotlin.math.abs(yaw - (-0.55f)) < 0.01f &&
+                    kotlin.math.abs(pitch - 0.40f) < 0.01f &&
+                    kotlin.math.abs(cameraDistance - 10.0f) < 0.01f &&
+                    kotlin.math.abs(panX) < 0.01f &&
+                    kotlin.math.abs(panY) < 0.01f
+            return isCubeInitial && isCameraInitial
+        }
+
     // Scanner Wizard State
     var scannerStep by mutableStateOf(0)
     var scannedGrids by mutableStateOf(mutableMapOf<FaceName, Array<Array<CubeColor>>>())

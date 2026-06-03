@@ -185,15 +185,24 @@ fun ControlPanel(
 
                     Button(
                         onClick = {
-                            cubeState.reset()
-                            appState.yaw = -0.55f
-                            appState.pitch = 0.40f
-                            appState.cameraDistance = 10.0f
-                            appState.panX = 0f
-                            appState.panY = 0f
-                            appState.totalMoveCount = 0
+                            coroutineScope.launch {
+                                val startYaw = appState.yaw
+                                val startPitch = appState.pitch
+                                val startDist = appState.cameraDistance
+                                val startPanX = appState.panX
+                                val startPanY = appState.panY
+
+                                cubeState.resetAnimated(durationMs = 500f) { progress ->
+                                    appState.yaw = startYaw + (-0.55f - startYaw) * progress
+                                    appState.pitch = startPitch + (0.40f - startPitch) * progress
+                                    appState.cameraDistance = startDist + (10.0f - startDist) * progress
+                                    appState.panX = startPanX + (0f - startPanX) * progress
+                                    appState.panY = startPanY + (0f - startPanY) * progress
+                                }
+                                appState.totalMoveCount = 0
+                            }
                         },
-                        enabled = !cubeState.isAnimating,
+                        enabled = !cubeState.isAnimating && !appState.isInitialState,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
                             contentColor = Color(0xFFFF453A),
@@ -202,7 +211,10 @@ fun ControlPanel(
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, Color(0xFF3D1519)),
+                        border = BorderStroke(
+                            1.dp,
+                            if (!cubeState.isAnimating && !appState.isInitialState) Color(0xFF3D1519) else Color(0xFF2A3548)
+                        ),
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp)

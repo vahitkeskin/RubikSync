@@ -93,17 +93,7 @@ fun SplashScreen(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF070B14),
-                        Color(0xFF0F172A),
-                        Color(0xFF070B14)
-                    )
-                )
-            ),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         // Subtle ambient radial flare behind the cube
@@ -123,36 +113,7 @@ fun SplashScreen(
                 )
         )
 
-        // Skip / Entry Button in top right corner
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .statusBarsPadding()
-                .padding(24.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(0x14FFFFFF))
-                .border(0.5.dp, Color(0x12FFFFFF), RoundedCornerShape(12.dp))
-                .clickable { appState.showSplashScreen = false }
-                .padding(horizontal = 14.dp, vertical = 7.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = "Giriş Yap",
-                    color = Color(0xFFE2E8F0),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "➔",
-                    color = Color(0xFFFF8A00),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
+        // Skip / Entry Button removed since Giriş Yap is not needed
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -162,8 +123,8 @@ fun SplashScreen(
             // 3D Rotating Cube Canvas
             Box(
                 modifier = Modifier
-                    .size(270.dp)
-                    .padding(16.dp),
+                    .size(180.dp)
+                    .padding(12.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
@@ -177,7 +138,7 @@ fun SplashScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Animated Logo & Titles
             AnimatedVisibility(
@@ -188,13 +149,13 @@ fun SplashScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         // Title with orange dot
                         Box(
                             modifier = Modifier
-                                .size(10.dp)
-                                .clip(RoundedCornerShape(5.dp))
+                                .size(6.dp)
+                                .clip(RoundedCornerShape(3.dp))
                                 .background(
                                     Brush.linearGradient(
                                         listOf(Color(0xFFFF8A00), Color(0xFFFF5252))
@@ -204,31 +165,31 @@ fun SplashScreen(
                         Text(
                             text = "RUBIK SYNC",
                             color = Color.White,
-                            fontSize = 32.sp,
+                            fontSize = 24.sp,
                             fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = 5.sp
+                            letterSpacing = 6.sp
                         )
                     }
 
                     Text(
                         text = "3D INTERACTIVE SIMULATOR & SOLVER",
                         color = Color(0xFF5E6D82),
-                        fontSize = 9.sp,
+                        fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 2.sp,
-                        modifier = Modifier.padding(top = 6.dp)
+                        letterSpacing = 3.sp,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(36.dp))
 
             // Sleek animated horizontal progress loader
             Box(
                 modifier = Modifier
-                    .width(220.dp)
-                    .height(3.dp)
-                    .clip(RoundedCornerShape(1.5.dp))
+                    .width(160.dp)
+                    .height(2.dp)
+                    .clip(RoundedCornerShape(1.dp))
                     .background(Color(0x1AFFFFFF))
             ) {
                 Box(

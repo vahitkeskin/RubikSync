@@ -68,7 +68,6 @@ fun App() {
                         )
                     )
                 )
-                .safeDrawingPadding()
         ) {
             Crossfade(
                 targetState = appState.showSplashScreen,
@@ -77,7 +76,11 @@ fun App() {
                 if (showSplash) {
                     SplashScreen(appState = appState)
                 } else {
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .safeDrawingPadding()
+                    ) {
                         // Subtle ambient glow behind the cube area
                         Box(
                             modifier = Modifier

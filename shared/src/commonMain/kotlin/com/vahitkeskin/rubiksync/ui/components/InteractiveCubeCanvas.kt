@@ -43,6 +43,7 @@ fun InteractiveCubeCanvas(
             onLayerRotate = { move ->
                 coroutineScope.launch {
                     cubeState.executeMove(move)
+                    appState.manualMoves.add(move)
                     appState.totalMoveCount++
                 }
             }

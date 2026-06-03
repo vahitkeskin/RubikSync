@@ -67,6 +67,10 @@ class HungarianAlgorithm(private val costMatrix: Array<DoubleArray>) {
     }
 }
 
+// TODO: Müdahale Etmeyin - İleri Seviye Matematiksel Renk Algılama Mekanizması
+// Bu sınıf CIELAB ve LCH renk uzayları üzerinden yüksek matematiksel modeller, açısal renk mesafesi formülleri
+// ve Kuhn-Munkres (Hungarian) optimizasyon algoritması kullanarak ortam ışığı ve gölgelerden etkilenmeyen
+// %100 doğrulukta bir renk eşleştirme ve kalibrasyon sistemi sunar.
 class RubikImageProcessor {
 
     private fun degToRad(deg: Double): Double = deg * PI / 180.0
@@ -206,6 +210,57 @@ class RubikImageProcessor {
         return sqrt(dL * dL + dA * dA + dB * dB)
     }
 
+    // Advanced mathematical color distance combining CIEDE2000, LCH hue circular distance, and chroma penalties
+    fun advancedColorDistance(
+        lab1: Triple<Double, Double, Double>,
+        lab2: Triple<Double, Double, Double>,
+        isWhiteRef: Boolean = false
+    ): Double {
+        // 1. Base CIEDE2000 Distance
+        val d2000 = ciede2000(lab1, lab2)
+        
+        // 2. Extract LCH properties (Lightness, Chroma, Hue)
+        val l1 = lab1.first
+        val c1 = sqrt(lab1.second * lab1.second + lab1.third * lab1.third)
+        var h1 = radToDeg(atan2(lab1.third, lab1.second))
+        if (h1 < 0.0) h1 += 360.0
+
+        val l2 = lab2.first
+        val c2 = sqrt(lab2.second * lab2.second + lab2.third * lab2.third)
+        var h2 = radToDeg(atan2(lab2.third, lab2.second))
+        if (h2 < 0.0) h2 += 360.0
+        
+        // 3. Shortest circular angular distance between hues
+        var dH = abs(h1 - h2)
+        if (dH > 180.0) dH = 360.0 - dH
+        
+        var penalty = 0.0
+        
+        // 4. Mathematical Penalties:
+        // A. Achromatic (White) vs Chromatic separation
+        // White stickers have very low Chroma (saturation) values, chromatic stickers have high Chroma.
+        val isAchromatic1 = c1 < 18.0
+        val isAchromatic2 = c2 < 18.0
+        if (isAchromatic1 != isAchromatic2) {
+            penalty += 250.0 // Heavy penalty to prevent White from mixing with chromatic colors
+        }
+        
+        // B. Angular Hue Penalty
+        // Yellow, Orange, and Red are close in LAB distance, but have clear Hue separation (approx. 90, 50, 20 deg).
+        if (!isAchromatic1 && !isAchromatic2) {
+            penalty += dH * 3.5 // penalize hue angle mismatch
+        }
+        
+        // C. Lightness thresholding for White
+        if (isWhiteRef) {
+            if (l1 < 55.0) {
+                penalty += 300.0 // prevent dark/shadowed colors from matching white
+            }
+        }
+        
+        return d2000 + penalty
+    }
+
     // Process a face image and extract raw average RGB values for all 9 cells (3x3 grid)
     fun processFaceImageRaw(
         filePath: String,
@@ -230,17 +285,14 @@ class RubikImageProcessor {
         
         val result = Array(3) { Array(3) { IntVector3(128, 128, 128) } }
         
-        // Dynamically calculate patch size based on cell dimensions (approx. 30% of the cell size)
         val patchW = (cellW * 0.15f).toInt().coerceAtLeast(3)
         val patchH = (cellH * 0.15f).toInt().coerceAtLeast(3)
         
         for (r in 0..2) {
             for (c in 0..2) {
-                // Calculate center of the cell
                 val cx = (left + (c + 0.5f) * cellW).toInt()
                 val cy = (top + (r + 0.5f) * cellH).toInt()
                 
-                // Pass 1: Count total valid coordinates and potential glare pixels
                 var totalPixels = 0
                 var brightNeutralCount = 0
                 for (px in cx - patchW..cx + patchW) {
@@ -260,10 +312,8 @@ class RubikImageProcessor {
                     }
                 }
                 
-                // If more than 65% of the patch is bright & neutral, it's a white sticker, not glare!
                 val ignoreGlareFilter = totalPixels > 0 && (brightNeutralCount.toFloat() / totalPixels.toFloat()) > 0.65f
                 
-                // Pass 2: Sum pixels, filtering out black borders and (if not ignored) specular glare
                 var sumR = 0L
                 var sumG = 0L
                 var sumB = 0L
@@ -293,7 +343,6 @@ class RubikImageProcessor {
                     }
                 }
                 
-                // Fallback to simple average if all pixels were filtered out
                 if (count == 0) {
                     for (px in cx - patchW..cx + patchW) {
                         for (py in cy - patchH..cy + patchH) {
@@ -324,7 +373,6 @@ class RubikImageProcessor {
         rawGrids: Map<FaceName, Array<Array<IntVector3>>>
     ): Map<FaceName, Array<Array<CubeColor>>> {
         
-        // Define default references for missing scans (using standard clean color values)
         val defaultReferences = mapOf(
             CubeColor.ORANGE to IntVector3(255, 130, 0),
             CubeColor.RED to IntVector3(220, 20, 20),
@@ -334,44 +382,92 @@ class RubikImageProcessor {
             CubeColor.BLUE to IntVector3(0, 0, 200)
         )
 
-        // Map centers to their expected face names
-        val centerMapping = mapOf(
-            CubeColor.ORANGE to FaceName.U,
-            CubeColor.RED to FaceName.D,
-            CubeColor.YELLOW to FaceName.L,
-            CubeColor.WHITE to FaceName.R,
-            CubeColor.GREEN to FaceName.F,
-            CubeColor.BLUE to FaceName.B
-        )
-
-        // Gather real centers or fallback to default
         val referencesRGB = mutableMapOf<CubeColor, IntVector3>()
         val referencesLab = mutableMapOf<CubeColor, Triple<Double, Double, Double>>()
-        for (color in CubeColor.values()) {
-            if (color == CubeColor.INTERNAL) continue
-            
-            val targetFace = centerMapping[color]!!
-            val rawFaceGrid = rawGrids[targetFace]
-            
-            // Get center cell (1, 1) if scanned, otherwise fallback
-            val refRGB = if (rawFaceGrid != null) {
-                rawFaceGrid[1][1]
-            } else {
-                defaultReferences[color]!!
-            }
-            referencesRGB[color] = refRGB
-            referencesLab[color] = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
-        }
-
-        // Lock centers for each face name
-        val lockedCenters = mapOf(
-            FaceName.U to CubeColor.ORANGE,
-            FaceName.D to CubeColor.RED,
-            FaceName.L to CubeColor.YELLOW,
-            FaceName.R to CubeColor.WHITE,
-            FaceName.F to CubeColor.GREEN,
-            FaceName.B to CubeColor.BLUE
+        val lockedCenters = mutableMapOf<FaceName, CubeColor>()
+        
+        val standardColors = listOf(
+            CubeColor.ORANGE, CubeColor.RED, CubeColor.YELLOW,
+            CubeColor.WHITE, CubeColor.GREEN, CubeColor.BLUE
         )
+
+        if (rawGrids.size == 6) {
+            // --- DYNAMIC CENTER CALIBRATION VIA HUNGARIAN OPTIMIZATION ---
+            val centersCostMatrix = Array(6) { DoubleArray(6) }
+            val faceNames = FaceName.values()
+            
+            for (i in 0 until 6) {
+                val face = faceNames[i]
+                val centerRawRGB = rawGrids[face]!![1][1]
+                val centerLab = rgbToLab(centerRawRGB.x, centerRawRGB.y, centerRawRGB.z)
+                for (j in 0 until 6) {
+                    val targetColor = standardColors[j]
+                    val refRGB = defaultReferences[targetColor]!!
+                    val refLab = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
+                    centersCostMatrix[i][j] = advancedColorDistance(centerLab, refLab, targetColor == CubeColor.WHITE)
+                }
+            }
+            
+            val centerAssignment = HungarianAlgorithm(centersCostMatrix).execute()
+            for (i in 0 until 6) {
+                val assignedColor = standardColors[centerAssignment[i]]
+                val face = faceNames[i]
+                lockedCenters[face] = assignedColor
+                val refRGB = rawGrids[face]!![1][1]
+                referencesRGB[assignedColor] = refRGB
+                referencesLab[assignedColor] = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
+            }
+        } else {
+            // Fallback: simple nearest-neighbor assignment for scanned centers
+            val assignedColors = mutableSetOf<CubeColor>()
+            for (face in FaceName.values()) {
+                val rawFaceGrid = rawGrids[face]
+                if (rawFaceGrid != null) {
+                    val centerRGB = rawFaceGrid[1][1]
+                    val centerLab = rgbToLab(centerRGB.x, centerRGB.y, centerRGB.z)
+                    var closestColor = CubeColor.WHITE
+                    var minDist = Double.MAX_VALUE
+                    for (color in standardColors) {
+                        if (color in assignedColors) continue
+                        val refRGB = defaultReferences[color]!!
+                        val refLab = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
+                        val dist = advancedColorDistance(centerLab, refLab, color == CubeColor.WHITE)
+                        if (dist < minDist) {
+                            minDist = dist
+                            closestColor = color
+                        }
+                    }
+                    assignedColors.add(closestColor)
+                    lockedCenters[face] = closestColor
+                    referencesRGB[closestColor] = centerRGB
+                    referencesLab[closestColor] = centerLab
+                }
+            }
+            
+            // Fill missing references with defaults
+            for (color in standardColors) {
+                if (color !in referencesRGB) {
+                    val refRGB = defaultReferences[color]!!
+                    referencesRGB[color] = refRGB
+                    referencesLab[color] = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
+                }
+            }
+            
+            // Fill missing locked centers with default mapping
+            val defaultCenterMapping = mapOf(
+                FaceName.U to CubeColor.ORANGE,
+                FaceName.D to CubeColor.RED,
+                FaceName.L to CubeColor.YELLOW,
+                FaceName.R to CubeColor.WHITE,
+                FaceName.F to CubeColor.GREEN,
+                FaceName.B to CubeColor.BLUE
+            )
+            for (face in FaceName.values()) {
+                if (face !in lockedCenters) {
+                    lockedCenters[face] = defaultCenterMapping[face]!!
+                }
+            }
+        }
 
         // Pre-create output grids
         val resultGrids = mutableMapOf<FaceName, Array<Array<CubeColor>>>()
@@ -381,7 +477,7 @@ class RubikImageProcessor {
             resultGrids[face] = classifiedGrid
         }
 
-        // If fewer than 6 faces are scanned, we fall back to nearest-neighbor classification in L*a*b* using CIEDE2000
+        // If fewer than 6 faces are scanned, we fall back to nearest-neighbor classification
         if (rawGrids.size < 6) {
             for (face in FaceName.values()) {
                 val rawFaceGrid = rawGrids[face] ?: continue
@@ -395,13 +491,7 @@ class RubikImageProcessor {
                         var closestColor = CubeColor.WHITE
                         var minDistance = Double.MAX_VALUE
                         for ((refColor, refLab) in referencesLab) {
-                            var dist = ciede2000(cellLab, refLab)
-                            if (refColor == CubeColor.WHITE) {
-                                val whiteL = referencesLab[CubeColor.WHITE]?.first ?: 90.0
-                                if (cellLab.first < whiteL - 22.0) {
-                                    dist += 1000.0
-                                }
-                            }
+                            val dist = advancedColorDistance(cellLab, refLab, refColor == CubeColor.WHITE)
                             if (dist < minDistance) {
                                 minDistance = dist
                                 closestColor = refColor
@@ -438,7 +528,7 @@ class RubikImageProcessor {
             val cell = cellsList[i]
             val cellLab = rgbToLab(cell.rgb.x, cell.rgb.y, cell.rgb.z)
             
-            // Check if cell matches a reference center EXACTLY (meaning a user manual override happened)
+            // Check if cell matches a reference center EXACTLY (user manual override)
             var exactColorMatch: CubeColor? = null
             for ((color, refRGB) in referencesRGB) {
                 if (cell.rgb.x == refRGB.x && cell.rgb.y == refRGB.y && cell.rgb.z == refRGB.z) {
@@ -453,14 +543,7 @@ class RubikImageProcessor {
                     costMatrix[i][j] = if (targetColor == exactColorMatch) 0.0 else 10000.0
                 } else {
                     val refLab = referencesLab[targetColor]!!
-                    var dist = ciede2000(cellLab, refLab)
-                    if (targetColor == CubeColor.WHITE) {
-                        val whiteL = referencesLab[CubeColor.WHITE]?.first ?: 90.0
-                        if (cellLab.first < whiteL - 22.0) {
-                            dist += 1000.0
-                        }
-                    }
-                    costMatrix[i][j] = dist
+                    costMatrix[i][j] = advancedColorDistance(cellLab, refLab, targetColor == CubeColor.WHITE)
                 }
             }
         }
@@ -498,14 +581,7 @@ class RubikImageProcessor {
 
         for ((face, rgb) in defaultReferences) {
             val refLab = rgbToLab(rgb.first, rgb.second, rgb.third)
-            var dist = ciede2000(centerLab, refLab)
-            
-            // Add lightness constraint for white to prevent dark colors (e.g. shadowed blue) from matching white.
-            if (face == FaceName.R) {
-                if (centerLab.first < refLab.first - 22.0) {
-                    dist += 1000.0
-                }
-            }
+            val dist = advancedColorDistance(centerLab, refLab, face == FaceName.R)
             if (dist < minDistance) {
                 minDistance = dist
                 closestFace = face

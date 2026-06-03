@@ -302,7 +302,11 @@ class RubikSolver {
     }
 
     fun solve(startState: RubikCubeState): List<MoveType>? {
-        var state = startState.toSnapshot()
+        return solve(startState.toSnapshot())
+    }
+
+    fun solve(startSnapshot: CubeSnapshot): List<MoveType>? {
+        var state = startSnapshot
         val allMoves = mutableListOf<MoveType>()
 
         // Step 1: Red Cross (Bottom Edges)
@@ -582,8 +586,7 @@ class RubikSolver {
 
         allMoves.addAll(movesList)
 
-        // Optimize move sequence (remove redundant moves like U U U -> U', U U' -> cancel, etc.)
-        return optimizeMoves(allMoves)
+        return compressMoves(allMoves)
     }
 
     private fun optimizeMoves(moves: List<MoveType>): List<MoveType> {
@@ -650,7 +653,11 @@ class RubikSolver {
     }
 
     fun solveAnnotated(startState: RubikCubeState): List<AnnotatedMove>? {
-        var state = startState.toSnapshot()
+        return solveAnnotated(startState.toSnapshot())
+    }
+
+    fun solveAnnotated(startSnapshot: CubeSnapshot): List<AnnotatedMove>? {
+        var state = startSnapshot
         val allMoves = mutableListOf<AnnotatedMove>()
 
         // Step 1: Red Cross (Bottom Edges)
@@ -957,7 +964,7 @@ class RubikSolver {
             return null
         }
 
-        return optimizeAnnotatedMoves(allMoves)
+        return compressAnnotatedMoves(allMoves)
     }
 
     private fun optimizeAnnotatedMoves(moves: List<AnnotatedMove>): List<AnnotatedMove> {
@@ -1021,6 +1028,169 @@ class RubikSolver {
             }
         }
         return list
+    }
+
+    // Helper to generate a solved snapshot of the cube for path compression validation
+    private fun createSolvedSnapshot(): CubeSnapshot {
+        val list = mutableListOf<CubieSnapshot>()
+        var index = 0
+        for (x in -1..1) {
+            for (y in -1..1) {
+                for (z in -1..1) {
+                    val pos = IntVector3(x, y, z)
+                    list.add(
+                        CubieSnapshot(
+                            id = index++,
+                            originalPos = pos,
+                            gridPos = pos,
+                            rightBasis = IntVector3(1, 0, 0),
+                            upBasis = IntVector3(0, 1, 0),
+                            forwardBasis = IntVector3(0, 0, 1)
+                        )
+                    )
+                }
+            }
+        }
+        return CubeSnapshot(list)
+    }
+
+    // BFS search from a starting snapshot to a target state, limited by depth
+    private fun findShortestTransform(
+        start: CubeSnapshot,
+        target: CubeSnapshot,
+        maxDepth: Int
+    ): List<MoveType>? {
+        if (start == target) return emptyList()
+        if (maxDepth <= 0) return null
+        
+        val activeIds = (0 until 27).toList()
+        val targetActive = target.toActiveState(activeIds)
+        
+        val queue = ArrayDeque<Triple<CubeSnapshot, List<MoveType>, Int>>()
+        val visited = mutableSetOf<ActiveState>()
+        
+        val startActive = start.toActiveState(activeIds)
+        queue.add(Triple(start, emptyList(), 0))
+        visited.add(startActive)
+        
+        val basicMoves = MoveType.values().toList()
+        
+        while (queue.isNotEmpty()) {
+            val (state, path, depth) = queue.removeFirst()
+            
+            if (depth >= maxDepth) continue
+            
+            for (move in basicMoves) {
+                if (path.isNotEmpty()) {
+                    val last = path.last()
+                    if (last.axis == move.axis && last.layerValue == move.layerValue && last.angleSign == -move.angleSign) {
+                        continue
+                    }
+                }
+                
+                val nextState = state.applyMove(move)
+                val nextActive = nextState.toActiveState(activeIds)
+                if (nextActive !in visited) {
+                    val nextPath = path + move
+                    if (nextActive == targetActive) {
+                        return nextPath
+                    }
+                    visited.add(nextActive)
+                    queue.add(Triple(nextState, nextPath, depth + 1))
+                }
+            }
+        }
+        return null
+    }
+
+    // Window-based Path Compression via Local State-Space Exploration
+    fun compressMoves(moves: List<MoveType>, maxPasses: Int = 3): List<MoveType> {
+        var currentMoves = moves.toList()
+        var changed = true
+        var pass = 0
+        
+        while (changed && pass < maxPasses) {
+            changed = false
+            pass++
+            
+            val simplified = optimizeMoves(currentMoves)
+            if (simplified.size < currentMoves.size) {
+                currentMoves = simplified
+                changed = true
+            }
+            
+            val W = 5
+            var i = 0
+            while (i <= currentMoves.size - W) {
+                val sub = currentMoves.subList(i, i + W)
+                val solved = createSolvedSnapshot()
+                
+                var target = solved
+                for (move in sub) {
+                    target = target.applyMove(move)
+                }
+                
+                val shortestPath = findShortestTransform(solved, target, W - 1)
+                if (shortestPath != null && shortestPath.size < sub.size) {
+                    val newList = mutableListOf<MoveType>()
+                    newList.addAll(currentMoves.subList(0, i))
+                    newList.addAll(shortestPath)
+                    newList.addAll(currentMoves.subList(i + W, currentMoves.size))
+                    currentMoves = newList
+                    changed = true
+                    break
+                }
+                i++
+            }
+        }
+        return optimizeMoves(currentMoves)
+    }
+
+    // Window-based Path Compression for Annotated Moves
+    fun compressAnnotatedMoves(moves: List<AnnotatedMove>, maxPasses: Int = 3): List<AnnotatedMove> {
+        var currentMoves = moves.toList()
+        var changed = true
+        var pass = 0
+        
+        while (changed && pass < maxPasses) {
+            changed = false
+            pass++
+            
+            val simplified = optimizeAnnotatedMoves(currentMoves)
+            if (simplified.size < currentMoves.size) {
+                currentMoves = simplified
+                changed = true
+            }
+            
+            val W = 5
+            var i = 0
+            while (i <= currentMoves.size - W) {
+                val subAnnotated = currentMoves.subList(i, i + W)
+                val subMoves = subAnnotated.map { it.move }
+                val solved = createSolvedSnapshot()
+                
+                var target = solved
+                for (move in subMoves) {
+                    target = target.applyMove(move)
+                }
+                
+                val shortestPath = findShortestTransform(solved, target, W - 1)
+                if (shortestPath != null && shortestPath.size < subMoves.size) {
+                    val replacement = shortestPath.map { move ->
+                        AnnotatedMove(move, subAnnotated.first().phaseName, subAnnotated.first().phaseDescription)
+                    }
+                    val newList = mutableListOf<AnnotatedMove>()
+                    newList.addAll(currentMoves.subList(0, i))
+                    newList.addAll(replacement)
+                    newList.addAll(currentMoves.subList(i + W, currentMoves.size))
+                    currentMoves = newList
+                    changed = true
+                    break
+                }
+                i++
+            }
+        }
+        return optimizeAnnotatedMoves(currentMoves)
     }
 }
 

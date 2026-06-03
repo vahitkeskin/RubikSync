@@ -84,6 +84,8 @@ class RubikAppState(
     var gridScales by mutableStateOf(FaceName.values().associateWith { 0.55f }.toMutableMap())
     var gridOffsetsX by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
     var gridOffsetsY by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
+    
+    val manualMoves = mutableStateListOf<MoveType>()
 }
 
 @Composable

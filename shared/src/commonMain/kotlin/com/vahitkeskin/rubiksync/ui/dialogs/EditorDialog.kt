@@ -460,6 +460,7 @@ fun EditorDialog(
                     onClick = {
                         val success = cubeState.setCustomState(appState.editorFaces)
                         if (success) {
+                            appState.manualMoves.clear()
                             onDismiss()
                             appState.activeSolution = null
                             appState.errorMessage = null

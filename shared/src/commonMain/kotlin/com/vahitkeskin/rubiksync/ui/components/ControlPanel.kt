@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikSolver
+import com.vahitkeskin.rubiksync.cube.toSnapshot
+import com.vahitkeskin.rubiksync.cube.AnnotatedMove
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -131,7 +133,10 @@ fun ControlPanel(
                 ) {
                     Button(
                         onClick = {
-                            coroutineScope.launch { cubeState.scramble() }
+                            coroutineScope.launch {
+                                appState.manualMoves.clear()
+                                cubeState.scramble()
+                            }
                         },
                         enabled = !cubeState.isAnimating,
                         colors = ButtonDefaults.buttonColors(
@@ -160,7 +165,12 @@ fun ControlPanel(
 
                     Button(
                         onClick = {
-                            coroutineScope.launch { cubeState.undo() }
+                            coroutineScope.launch {
+                                if (appState.manualMoves.isNotEmpty()) {
+                                    appState.manualMoves.removeAt(appState.manualMoves.size - 1)
+                                }
+                                cubeState.undo()
+                            }
                         },
                         enabled = !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty(),
                         colors = ButtonDefaults.buttonColors(
@@ -201,6 +211,7 @@ fun ControlPanel(
                                     appState.panX = startPanX + (0f - startPanX) * progress
                                     appState.panY = startPanY + (0f - startPanY) * progress
                                 }
+                                appState.manualMoves.clear()
                                 appState.totalMoveCount = 0
                             }
                         },
@@ -263,41 +274,68 @@ fun ControlPanel(
                     }
 
                     Button(
-                        onClick = {
-                            appState.isRecalculating = true
-                            appState.errorMessage = null
-                            coroutineScope.launch(Dispatchers.Default) {
-                                try {
-                                    val solver = RubikSolver()
-                                    val solution = solver.solve(cubeState)
-                                    val details = solver.solveAnnotated(cubeState)
-                                    withContext(Dispatchers.Main) {
-                                        if (solution != null && solution.isNotEmpty() && details != null) {
-                                            appState.activeSolution = solution
-                                            appState.activeSolutionDetails = details
+                         onClick = {
+                        appState.isRecalculating = true
+                        appState.errorMessage = null
+                        coroutineScope.launch(Dispatchers.Default) {
+                            try {
+                                val solver = RubikSolver()
+                                val currentSnapshot = cubeState.toSnapshot()
+                                
+                                val backtrackMoves = appState.manualMoves.map { move ->
+                                    MoveType.values().first {
+                                        it.axis == move.axis &&
+                                        it.layerValue == move.layerValue &&
+                                        it.angleSign == -move.angleSign
+                                    }
+                                }.reversed()
+                                
+                                var originalSnapshot = currentSnapshot
+                                for (mv in backtrackMoves) {
+                                    originalSnapshot = originalSnapshot.applyMove(mv)
+                                }
+                                
+                                val coreSolution = solver.solve(originalSnapshot)
+                                val coreDetails = solver.solveAnnotated(originalSnapshot)
+                                
+                                withContext(Dispatchers.Main) {
+                                    if (coreSolution != null && coreDetails != null) {
+                                        val combinedSolution = backtrackMoves + coreSolution
+                                        val combinedDetails = backtrackMoves.map { move ->
+                                            AnnotatedMove(
+                                                move = move,
+                                                phaseName = "Tersine Mühendislik (Geri Alma)",
+                                                phaseDescription = "Kullanıcı tarafından yapılan manuel döndürme hamlesinin tersi olan '${move.label}' oynatılarak geri alınıyor."
+                                            )
+                                        } + coreDetails
+                                        
+                                        if (combinedSolution.isNotEmpty()) {
+                                            appState.activeSolution = combinedSolution
+                                            appState.activeSolutionDetails = combinedDetails
                                             appState.currentSolutionStep = 0
                                             appState.isPlaybackRunning = false
                                             appState.errorMessage = null
-                                            appState.successMessage = "${solution.size} adımda çözüm bulundu!"
-                                        } else if (solution != null && solution.isEmpty()) {
-                                            appState.activeSolution = null
-                                            appState.activeSolutionDetails = null
-                                            appState.successMessage = "Küp zaten çözülmüş! ✅"
+                                            appState.successMessage = "${combinedSolution.size} adımda çözüm bulundu!"
                                         } else {
                                             appState.activeSolution = null
                                             appState.activeSolutionDetails = null
-                                            appState.errorMessage = "Çözüm bulunamadı!"
+                                            appState.successMessage = "Küp zaten çözülmüş! ✅"
                                         }
-                                        appState.isRecalculating = false
+                                    } else {
+                                        appState.activeSolution = null
+                                        appState.activeSolutionDetails = null
+                                        appState.errorMessage = "Çözüm bulunamadı!"
                                     }
-                                } catch (e: Exception) {
-                                    withContext(Dispatchers.Main) {
-                                        appState.errorMessage = "Hata: ${e.message}"
-                                        appState.isRecalculating = false
-                                    }
+                                    appState.isRecalculating = false
+                                }
+                            } catch (e: Exception) {
+                                withContext(Dispatchers.Main) {
+                                    appState.errorMessage = "Hata: ${e.message}"
+                                    appState.isRecalculating = false
                                 }
                             }
-                        },
+                        }
+                    },
                         enabled = !cubeState.isAnimating && !appState.isRecalculating,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF0B1F12),
@@ -360,6 +398,7 @@ private fun MovesGrid(
                 .clickable(enabled = !cubeState.isAnimating) {
                     coroutineScope.launch {
                         cubeState.executeMove(move)
+                        appState.manualMoves.add(move)
                         appState.totalMoveCount++
                     }
                 },
@@ -619,6 +658,7 @@ fun PlaybackController(
             Button(
                 onClick = {
                     cubeState.setCustomState(appState.editorFaces)
+                    appState.manualMoves.clear()
                     appState.currentSolutionStep = 0
                     appState.isPlaybackRunning = false
                 },

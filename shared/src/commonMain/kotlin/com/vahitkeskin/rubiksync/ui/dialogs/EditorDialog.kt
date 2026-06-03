@@ -126,27 +126,18 @@ fun EditorDialog(
 
     val cubeState = appState.cubeState
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xE60A0D14))
-            .clickable(enabled = false) {}
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = Color(0xFF131A26),
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+        modifier = Modifier.fillMaxHeight(0.95f)
     ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF131A26)),
-            shape = RoundedCornerShape(20.dp),
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.95f)
-                .border(1.dp, Color(0x15FFFFFF), RoundedCornerShape(20.dp))
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(12.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -527,4 +518,3 @@ fun EditorDialog(
             )
         }
     }
-}

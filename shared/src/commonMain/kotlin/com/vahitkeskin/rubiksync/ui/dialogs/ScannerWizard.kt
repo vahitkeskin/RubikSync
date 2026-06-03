@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScannerWizard(
     show: Boolean,
@@ -104,26 +105,17 @@ fun ScannerWizard(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xE60A0D14))
-            .clickable(enabled = false) {}
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = Color(0xFF1E2633),
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+        modifier = Modifier.fillMaxHeight(0.95f)
     ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2633)),
-            shape = RoundedCornerShape(20.dp),
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.95f)
-                .border(1.dp, Color(0x15FFFFFF), RoundedCornerShape(20.dp))
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
+                .fillMaxSize()
+                .padding(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
@@ -224,6 +216,7 @@ fun ScannerWizard(
                             verticalArrangement = Arrangement.spacedBy(10.dp),
                             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
                         ) {
+
                             Box(
                                 modifier = Modifier
                                     .size(100.dp)
@@ -702,4 +695,3 @@ fun ScannerWizard(
             }
         }
     }
-}

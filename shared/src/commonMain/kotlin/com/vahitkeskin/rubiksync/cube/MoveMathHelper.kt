@@ -52,25 +52,23 @@ fun getMoveMathDetails(move: MoveType): String {
         else -> "N/A"
     }
 
-    return """
-        Eksen (u): $axisStr
-        Katman (d): $layerAxis = ${move.layerValue}
-        Açı (θ): $angleRadSymbol rad ($angleDeg)
-        
-        Rotasyon Koşulu (Layer Selector):
-        p • u = d
-        
-        Rodrigues Rotasyon Formülü:
-        v' = v•cos(θ) + (u × v)•sin(θ) + u•(u•v)•(1 - cos(θ))
-        
-        Rotasyon Matrisi (R):
-        $matrixStr
-        
-        Dönüşüm Eşleşmeleri:
-        p' = R • p
-        r' = R • r
-        u' = R • u
-        f' = R • f
-    """.trimIndent()
-}
+    return """Eksen (u): $axisStr
+Katman (d): $layerAxis = ${move.layerValue}
+Açı (θ): $angleRadSymbol rad ($angleDeg)
 
+Rotasyon Koşulu (Layer Selector):
+p • u = d
+
+Rodrigues Rotasyon Formülü:
+v' = v•cos(θ) + (u × v)•sin(θ) + u•(u•v)•(1 - cos(θ))
+
+Rotasyon Matrisi (R):
+$matrixStr
+
+Dönüşüm Eşleşmeleri:
+p' = R • p
+r' = R • r
+u' = R • u
+f' = R • f""".trimIndent()
+
+}

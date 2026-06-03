@@ -5,16 +5,13 @@ private fun formatMatrix(
     m21: Int, m22: Int, m23: Int,
     m31: Int, m32: Int, m33: Int
 ): String {
-    fun cell(v: Int): String = if (v < 0) " $v" else "  $v"
+    fun cell(v: Int): String = if (v < 0) "$v" else " $v"
     
-    val r1 = "│ ${cell(m11)} ${cell(m12)} ${cell(m13)} │"
-    val r2 = "│ ${cell(m21)} ${cell(m22)} ${cell(m23)} │"
-    val r3 = "│ ${cell(m31)} ${cell(m32)} ${cell(m33)} │"
+    val r1 = "      [ ${cell(m11)}  ${cell(m12)}  ${cell(m13)} ]"
+    val r2 = "R =   [ ${cell(m21)}  ${cell(m22)}  ${cell(m23)} ]"
+    val r3 = "      [ ${cell(m31)}  ${cell(m32)}  ${cell(m33)} ]"
     
-    val top = "┌" + " ".repeat(13) + "┐"
-    val bottom = "└" + " ".repeat(13) + "┘"
-    
-    return "$top\n$r1\n$r2\n$r3\n$bottom"
+    return "$r1\n$r2\n$r3"
 }
 
 fun getMoveMathDetails(move: MoveType): String {

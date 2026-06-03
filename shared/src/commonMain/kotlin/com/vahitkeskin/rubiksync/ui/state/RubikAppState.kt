@@ -22,6 +22,7 @@ class RubikAppState(
     // Dialog visibility states
     var showEditorDialog by mutableStateOf(false)
     var showScannerWizard by mutableStateOf(false)
+    var showSplashScreen by mutableStateOf(true)
 
     // Editor State
     var editorFaces by mutableStateOf(

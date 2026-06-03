@@ -26,6 +26,11 @@ fun App() {
     LaunchedEffect(appState.isPlaybackRunning, appState.currentSolutionStep, appState.activeSolution) {
         if (appState.isPlaybackRunning && appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size) {
             val nextMove = appState.activeSolution!![appState.currentSolutionStep]
+            val activeDetail = appState.activeSolutionDetails?.getOrNull(appState.currentSolutionStep)
+            val phase = activeDetail?.phaseName ?: "Çözüm"
+            val mathDetails = getMoveMathDetails(nextMove)
+            logMoveDetail(nextMove.label, phase, mathDetails)
+
             cubeState.executeMove(nextMove)
             appState.currentSolutionStep++
             appState.totalMoveCount++

@@ -139,3 +139,7 @@ actual fun CameraCaptureOrPicker(
         Text("📁 Resim Seç", fontSize = 14.sp)
     }
 }
+
+actual fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String) {
+    println("RubikSyncMath: Move: $moveLabel ($phase)\n$mathDetails")
+}

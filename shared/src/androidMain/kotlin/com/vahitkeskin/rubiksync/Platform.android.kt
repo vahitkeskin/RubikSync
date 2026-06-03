@@ -627,3 +627,7 @@ actual fun CameraCaptureOrPicker(
         }
     }
 }
+
+actual fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String) {
+    timber.log.Timber.tag("RubikSyncMath").d("Move: $moveLabel (%s)\n%s", phase, mathDetails)
+}

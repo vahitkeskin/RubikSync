@@ -48,6 +48,8 @@ import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikSolver
 import com.vahitkeskin.rubiksync.cube.toSnapshot
 import com.vahitkeskin.rubiksync.cube.AnnotatedMove
+import com.vahitkeskin.rubiksync.cube.getMoveMathDetails
+import com.vahitkeskin.rubiksync.logMoveDetail
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -709,7 +711,13 @@ fun PlaybackController(
                 onClick = {
                     if (appState.currentSolutionStep < solution.size) {
                         coroutineScope.launch {
-                            cubeState.executeMove(solution[appState.currentSolutionStep])
+                            val nextMove = solution[appState.currentSolutionStep]
+                            val activeDetail = appState.activeSolutionDetails?.getOrNull(appState.currentSolutionStep)
+                            val phase = activeDetail?.phaseName ?: "Çözüm"
+                            val mathDetails = getMoveMathDetails(nextMove)
+                            logMoveDetail(nextMove.label, phase, mathDetails)
+
+                            cubeState.executeMove(nextMove)
                             appState.currentSolutionStep++
                             appState.totalMoveCount++
                         }
@@ -813,6 +821,32 @@ fun PlaybackController(
                                 fontSize = 9.sp
                             )
                         }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        androidx.compose.material3.HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            color = Color(0x15FFFFFF)
+                        )
+                        Text(
+                            text = "🔢 Matematiksel Formül & Rotasyon",
+                            color = Color(0xFFFF8A00),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 2.dp)
+                        )
+                        val mathDetail = getMoveMathDetails(activeDetail.move)
+                        Text(
+                            text = mathDetail,
+                            color = Color(0xFF8A99AD),
+                            fontSize = 9.sp,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            lineHeight = 12.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(Color(0xFF0F1724))
+                                .border(0.5.dp, Color(0x0AFFFFFF), RoundedCornerShape(6.dp))
+                                .padding(8.dp)
+                        )
                     } else {
                         Text(
                             text = "Çözüm Tamamlandı! 🎉",

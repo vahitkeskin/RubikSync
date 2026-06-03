@@ -794,3 +794,7 @@ actual fun CameraCaptureOrPicker(
         }
     }
 }
+
+actual fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String) {
+    println("RubikSyncMath: Move: $moveLabel ($phase)\n$mathDetails")
+}

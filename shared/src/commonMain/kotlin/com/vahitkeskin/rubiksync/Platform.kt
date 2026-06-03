@@ -32,3 +32,5 @@ expect fun CameraCaptureOrPicker(
     onImageSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 )
+
+expect fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String)

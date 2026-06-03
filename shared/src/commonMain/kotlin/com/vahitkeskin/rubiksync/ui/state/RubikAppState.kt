@@ -44,8 +44,21 @@ class RubikAppState(
     // Feedback states
     var errorMessage by mutableStateOf<String?>(null)
     var infoMessage by mutableStateOf<String?>(null)
+    var successMessage by mutableStateOf<String?>(null)
     var isDetecting by mutableStateOf(false)
     var isRecalculating by mutableStateOf(false)
+
+    // Statistics
+    var totalMoveCount by mutableStateOf(0)
+
+    // Computed: is the cube solved?
+    val isSolved: Boolean
+        get() {
+            return cubeState.cubies.all { cubie ->
+                cubie.gridPos == cubie.originalPos &&
+                cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
+            }
+        }
 
     // Scanner Wizard State
     var scannerStep by mutableStateOf(0)

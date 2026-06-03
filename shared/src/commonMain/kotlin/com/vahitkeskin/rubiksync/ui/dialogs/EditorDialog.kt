@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,12 +38,15 @@ private fun MiniFaceGrid(
         modifier = Modifier
             .border(
                 width = if (isActive) 1.5.dp else 0.5.dp,
-                color = if (isActive) Color(0xFF448AFF) else Color(0x18FFFFFF),
-                shape = RoundedCornerShape(3.dp)
+                color = if (isActive) Color(0xFF448AFF) else Color(0x15FFFFFF),
+                shape = RoundedCornerShape(4.dp)
             )
             .clickable { onFaceSelect(face) }
-            .background(Color(0x08000000), RoundedCornerShape(3.dp))
-            .padding(1.5.dp),
+            .background(
+                if (isActive) Color(0x0C448AFF) else Color(0x06000000),
+                RoundedCornerShape(4.dp)
+            )
+            .padding(2.dp),
         verticalArrangement = Arrangement.spacedBy(0.5.dp)
     ) {
         for (r in 0..2) {
@@ -50,8 +54,8 @@ private fun MiniFaceGrid(
                 for (c in 0..2) {
                     Box(
                         modifier = Modifier
-                            .size(6.dp)
-                            .clip(RoundedCornerShape(1.dp))
+                            .size(7.dp)
+                            .clip(RoundedCornerShape(1.5.dp))
                             .background(Color(grid[r][c].rgb))
                     )
                 }
@@ -69,16 +73,16 @@ private fun MiniNetMap(
 ) {
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color(0xFF161D2A))
-            .border(1.dp, Color(0x0CFFFFFF), RoundedCornerShape(10.dp))
-            .padding(6.dp),
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFF111827))
+            .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(12.dp))
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Text(
             text = "KÜP HARİTASI",
-            color = Color(0xFF5A6A7D),
+            color = Color(0xFF4A5568),
             fontSize = 7.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.5.sp,
@@ -91,7 +95,7 @@ private fun MiniNetMap(
         ) {
             // U face
             Row {
-                Spacer(modifier = Modifier.width(24.dp))
+                Spacer(modifier = Modifier.width(26.dp))
                 MiniFaceGrid(FaceName.U, faces, activeFace == FaceName.U, onFaceSelect)
             }
             // L, F, R, B faces
@@ -103,7 +107,7 @@ private fun MiniNetMap(
             }
             // D face
             Row {
-                Spacer(modifier = Modifier.width(24.dp))
+                Spacer(modifier = Modifier.width(26.dp))
                 MiniFaceGrid(FaceName.D, faces, activeFace == FaceName.D, onFaceSelect)
             }
         }
@@ -129,17 +133,35 @@ fun EditorDialog(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        containerColor = Color(0xFF131A26),
-        dragHandle = { BottomSheetDefaults.DragHandle() },
+        containerColor = Color(0xFF0F1724),
+        dragHandle = {
+            // Custom drag handle with gradient accent bar
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(36.dp)
+                        .height(4.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFFF8A00), Color(0xFF448AFF))
+                            )
+                        )
+                )
+            }
+        },
         modifier = Modifier.fillMaxHeight(0.95f)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(12.dp),
+                .padding(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Header Row
             Row(
@@ -149,16 +171,16 @@ fun EditorDialog(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Küp Tasarımcısı",
+                        text = "🎨 Küp Tasarımcısı",
                         color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.ExtraBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "Renkleri boyayın veya taratın",
-                        color = Color(0xFF5A6A7D),
+                        text = "Renkleri boyayın veya kamera ile taratın",
+                        color = Color(0xFF4A5568),
                         fontSize = 10.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -168,43 +190,47 @@ fun EditorDialog(
                 Button(
                     onClick = { showJsonImportDialog = true },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1E2633),
-                        contentColor = Color(0xFFAABBCC)
+                        containerColor = Color(0xFF141B28),
+                        contentColor = Color(0xFF8A99AD)
                     ),
-                    shape = RoundedCornerShape(6.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
-                    modifier = Modifier.height(26.dp)
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                    modifier = Modifier.height(28.dp)
                 ) {
-                    Text("JSON", fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                    Text("📋 JSON", fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                 }
             }
 
-            // Scan Card — compact
+            // Scan Card — glassmorphism style
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF161D2A))
-                    .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(10.dp))
-                    .padding(10.dp),
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(Color(0xFF0F1A2E), Color(0xFF111D32))
+                        )
+                    )
+                    .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(14.dp))
+                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(
                     modifier = Modifier.weight(1f).padding(end = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(1.dp)
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     Text(
-                        text = "Kamera ile Tarama",
+                        text = "📸 Kamera ile Tarama",
                         color = Color.White,
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "6 yüzü otomatik algılatın",
-                        color = Color(0xFF5A6A7D),
+                        color = Color(0xFF4A5568),
                         fontSize = 9.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -217,20 +243,20 @@ fun EditorDialog(
                         containerColor = Color(0xFF448AFF),
                         contentColor = Color.White
                     ),
-                    shape = RoundedCornerShape(8.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                    modifier = Modifier.height(32.dp)
+                    shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                    modifier = Modifier.height(34.dp)
                 ) {
-                    Text("Tara", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                    Text("Tara", fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                 }
             }
 
-            // Face selector tabs — short labels
+            // Face selector tabs — pill chips with face colors
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FaceName.values().forEach { face ->
@@ -254,32 +280,34 @@ fun EditorDialog(
 
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(if (isSelected) Color(0xFF1E3050) else Color(0xFF161D2A))
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                if (isSelected) Color(0xFF1A2D4D) else Color(0xFF111827)
+                            )
                             .border(
                                 width = if (isSelected) 1.dp else 0.5.dp,
-                                color = if (isSelected) Color(0xFF448AFF) else Color(0x0FFFFFFF),
-                                shape = RoundedCornerShape(8.dp)
+                                color = if (isSelected) Color(0xFF448AFF) else Color(0x0AFFFFFF),
+                                shape = RoundedCornerShape(10.dp)
                             )
                             .clickable { activeFace = face }
-                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                            .padding(horizontal = 12.dp, vertical = 7.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(6.dp)
-                                    .clip(RoundedCornerShape(3.dp))
+                                    .size(8.dp)
+                                    .clip(RoundedCornerShape(4.dp))
                                     .background(centerColor)
                             )
                             Text(
                                 text = label,
-                                color = if (isSelected) Color.White else Color(0xFF8A99AD),
+                                color = if (isSelected) Color.White else Color(0xFF6B7A8D),
                                 fontSize = 11.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
                                 maxLines = 1
                             )
                         }
@@ -308,7 +336,7 @@ fun EditorDialog(
                     }
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(14.dp))
 
                 MiniNetMap(
                     faces = appState.editorFaces,
@@ -317,22 +345,32 @@ fun EditorDialog(
                 )
             }
 
-            // Color Palette
+            // Color Palette with selected color name
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                val colorName = when (appState.selectedColor) {
+                    CubeColor.ORANGE -> "Turuncu"
+                    CubeColor.RED -> "Kırmızı"
+                    CubeColor.YELLOW -> "Sarı"
+                    CubeColor.WHITE -> "Beyaz"
+                    CubeColor.GREEN -> "Yeşil"
+                    CubeColor.BLUE -> "Mavi"
+                    else -> ""
+                }
+
                 Text(
-                    text = "Boya Rengi",
-                    color = Color(0xFF5A6A7D),
+                    text = "🖌 Boya Rengi: $colorName",
+                    color = Color(0xFF6B7A8D),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 4.dp),
+                    modifier = Modifier.padding(bottom = 6.dp),
                     maxLines = 1
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val paletteColors = listOf(
@@ -344,13 +382,13 @@ fun EditorDialog(
 
                         Box(
                             modifier = Modifier
-                                .size(32.dp)
-                                .clip(RoundedCornerShape(8.dp))
+                                .size(if (isSelected) 36.dp else 32.dp)
+                                .clip(RoundedCornerShape(10.dp))
                                 .background(Color(color.rgb))
                                 .border(
                                     width = if (isSelected) 2.5.dp else 0.5.dp,
-                                    color = if (isSelected) Color.White else Color(0x22FFFFFF),
-                                    shape = RoundedCornerShape(8.dp)
+                                    color = if (isSelected) Color.White else Color(0x1AFFFFFF),
+                                    shape = RoundedCornerShape(10.dp)
                                 )
                                 .clickable { appState.selectedColor = color },
                             contentAlignment = Alignment.Center
@@ -358,8 +396,8 @@ fun EditorDialog(
                             if (isSelected) {
                                 Box(
                                     modifier = Modifier
-                                        .size(5.dp)
-                                        .clip(RoundedCornerShape(2.5.dp))
+                                        .size(6.dp)
+                                        .clip(RoundedCornerShape(3.dp))
                                         .background(if (color == CubeColor.WHITE) Color.Black else Color.White)
                                 )
                             }
@@ -368,7 +406,7 @@ fun EditorDialog(
                 }
             }
 
-            // Bottom Action Buttons
+            // Bottom Action Buttons with icons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -376,15 +414,15 @@ fun EditorDialog(
                 Button(
                     onClick = onDismiss,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1E2633),
+                        containerColor = Color(0xFF141B28),
                         contentColor = Color.White
                     ),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    modifier = Modifier.weight(1f).height(38.dp)
+                    modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
-                        text = "İptal",
+                        text = "✕ İptal",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -406,12 +444,12 @@ fun EditorDialog(
                         containerColor = Color(0xFF2A1519),
                         contentColor = Color(0xFFFF453A)
                     ),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    modifier = Modifier.weight(1f).height(38.dp)
+                    modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
-                        text = "Temizle",
+                        text = "🗑 Temizle",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -425,6 +463,7 @@ fun EditorDialog(
                             onDismiss()
                             appState.activeSolution = null
                             appState.errorMessage = null
+                            appState.successMessage = "Küp durumu uygulandı! ✅"
                         } else {
                             appState.errorMessage = "Geçersiz küp tasarımı!"
                         }
@@ -433,88 +472,92 @@ fun EditorDialog(
                         containerColor = Color(0xFFFF8A00),
                         contentColor = Color.White
                     ),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    modifier = Modifier.weight(1.1f).height(38.dp)
+                    modifier = Modifier.weight(1.1f).height(42.dp)
                 ) {
                     Text(
-                        text = "Uygula",
+                        text = "✓ Uygula",
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         maxLines = 1
                     )
                 }
             }
         }
-    }
 
-    // JSON Import Dialog
-    if (showJsonImportDialog) {
-        AlertDialog(
-            onDismissRequest = { showJsonImportDialog = false },
-            title = {
-                Text(
-                    "JSON İçe Aktar",
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1
-                )
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        // JSON Import Dialog
+        if (showJsonImportDialog) {
+            AlertDialog(
+                onDismissRequest = { showJsonImportDialog = false },
+                title = {
                     Text(
-                        text = "Küp JSON durumunu yapıştırın:",
-                        color = Color.LightGray,
-                        fontSize = 10.sp,
-                        maxLines = 2
+                        "📋 JSON İçe Aktar",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
                     )
-                    OutlinedTextField(
-                        value = jsonInputText,
-                        onValueChange = { jsonInputText = it },
-                        modifier = Modifier.fillMaxWidth().height(80.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            focusedBorderColor = Color(0xFFFF8A00),
-                            unfocusedBorderColor = Color(0x33FFFFFF)
-                        ),
-                        textStyle = LocalTextStyle.current.copy(fontSize = 10.sp)
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val parsed = parseDetectedState(jsonInputText)
-                        if (parsed != null) {
-                            appState.editorFaces = parsed
+                },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = "Küp JSON durumunu yapıştırın:",
+                            color = Color.LightGray,
+                            fontSize = 11.sp,
+                            maxLines = 2
+                        )
+                        OutlinedTextField(
+                            value = jsonInputText,
+                            onValueChange = { jsonInputText = it },
+                            modifier = Modifier.fillMaxWidth().height(100.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = Color(0xFFFF8A00),
+                                unfocusedBorderColor = Color(0xFF2A3548)
+                            ),
+                            textStyle = LocalTextStyle.current.copy(fontSize = 11.sp),
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val parsed = parseDetectedState(jsonInputText)
+                            if (parsed != null) {
+                                appState.editorFaces = parsed
+                                showJsonImportDialog = false
+                                jsonInputText = ""
+                                appState.successMessage = "JSON başarıyla içe aktarıldı!"
+                            } else {
+                                appState.errorMessage = "Hatalı JSON formatı!"
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8A00)),
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("✓ Aktar", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
                             showJsonImportDialog = false
                             jsonInputText = ""
-                        } else {
-                            appState.errorMessage = "Hatalı JSON formatı!"
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8A00)),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                ) {
-                    Text("Aktar", color = Color.White, fontSize = 11.sp, maxLines = 1)
-                }
-            },
-            dismissButton = {
-                Button(
-                    onClick = {
-                        showJsonImportDialog = false
-                        jsonInputText = ""
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E2633)),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                ) {
-                    Text("İptal", color = Color.White, fontSize = 11.sp, maxLines = 1)
-                }
-            },
-            containerColor = Color(0xFF1E2633),
-            shape = RoundedCornerShape(16.dp)
-        )
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF141B28)),
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("İptal", color = Color.White, fontSize = 12.sp, maxLines = 1)
+                    }
+                },
+                containerColor = Color(0xFF141B28),
+                shape = RoundedCornerShape(20.dp)
+            )
+        }
     }
 }

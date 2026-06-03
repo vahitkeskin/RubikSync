@@ -26,6 +26,7 @@ fun App() {
             val nextMove = appState.activeSolution!![appState.currentSolutionStep]
             cubeState.executeMove(nextMove)
             appState.currentSolutionStep++
+            appState.totalMoveCount++
             if (appState.currentSolutionStep >= appState.activeSolution!!.size) {
                 appState.isPlaybackRunning = false
             }
@@ -35,29 +36,59 @@ fun App() {
     MaterialTheme(
         colorScheme = darkColorScheme(
             primary = Color(0xFFFF8A00),
-            background = Color(0xFF0F1520),
-            surface = Color(0xFF1E2633)
+            onPrimary = Color.White,
+            secondary = Color(0xFF448AFF),
+            onSecondary = Color.White,
+            tertiary = Color(0xFF30D158),
+            background = Color(0xFF0A0E18),
+            surface = Color(0xFF141B28),
+            surfaceVariant = Color(0xFF1C2536),
+            onBackground = Color.White,
+            onSurface = Color.White,
+            outline = Color(0xFF2A3548)
         )
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    Brush.radialGradient(
+                    Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFF1A2639), // Dark steel blue center
-                            Color(0xFF0A0D14)  // Absolute deep space outer edges
+                            Color(0xFF0F1724),
+                            Color(0xFF0A0E18),
+                            Color(0xFF0D1220),
+                            Color(0xFF0A0E18)
                         )
                     )
                 )
-                .safeContentPadding()
+                .safeDrawingPadding()
         ) {
+            // Subtle ambient glow behind the cube area
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.65f)
+                    .align(Alignment.Center)
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(
+                                Color(0x0CFF8A00),
+                                Color(0x06448AFF),
+                                Color.Transparent
+                            )
+                        )
+                    )
+            )
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 1. Top Dashboard (Title & History)
-                DashboardHeader(cubeState = cubeState)
+                // 1. Top Dashboard (Title & Stats)
+                DashboardHeader(
+                    cubeState = cubeState,
+                    appState = appState
+                )
 
                 // 2. Main 3D Canvas (occupies remaining height)
                 InteractiveCubeCanvas(
@@ -73,7 +104,7 @@ fun App() {
                         appState = appState,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
                     )
                 } else {
                     // 4. Control Panel (Shown at the bottom when solver is not active)
@@ -81,7 +112,7 @@ fun App() {
                         appState = appState,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
                     )
                 }
             }

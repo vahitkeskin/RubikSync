@@ -1,55 +1,130 @@
 package com.vahitkeskin.rubiksync.ui.components
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
+import kotlinx.coroutines.delay
 
 @Composable
 fun BoxScope.FeedbackOverlay(
     appState: RubikAppState
 ) {
-    val errorMessage = appState.errorMessage
-    if (errorMessage != null) {
+    // Error message
+    FeedbackBanner(
+        message = appState.errorMessage,
+        emoji = "❌",
+        gradientColors = listOf(Color(0xFFCC2936), Color(0xFFB5001A)),
+        borderColor = Color(0xFFFF3B30),
+        onDismiss = { appState.errorMessage = null },
+        autoDismissMs = 4000
+    )
+
+    // Success message
+    FeedbackBanner(
+        message = appState.successMessage,
+        emoji = "✅",
+        gradientColors = listOf(Color(0xFF1A6B35), Color(0xFF0B4D20)),
+        borderColor = Color(0xFF30D158),
+        onDismiss = { appState.successMessage = null },
+        autoDismissMs = 3000
+    )
+
+    // Info message (only show if no error or success)
+    if (appState.errorMessage == null && appState.successMessage == null) {
+        FeedbackBanner(
+            message = appState.infoMessage,
+            emoji = "ℹ️",
+            gradientColors = listOf(Color(0xFF1A3D5C), Color(0xFF0F2640)),
+            borderColor = Color(0xFF448AFF),
+            onDismiss = { appState.infoMessage = null },
+            autoDismissMs = 3000
+        )
+    }
+}
+
+@Composable
+private fun BoxScope.FeedbackBanner(
+    message: String?,
+    emoji: String,
+    gradientColors: List<Color>,
+    borderColor: Color,
+    onDismiss: () -> Unit,
+    autoDismissMs: Long = 3000
+) {
+    // Auto-dismiss timer
+    LaunchedEffect(message) {
+        if (message != null) {
+            delay(autoDismissMs)
+            onDismiss()
+        }
+    }
+
+    AnimatedVisibility(
+        visible = message != null,
+        enter = slideInVertically(
+            initialOffsetY = { -it },
+            animationSpec = tween(durationMillis = 350)
+        ) + fadeIn(animationSpec = tween(durationMillis = 350)),
+        exit = slideOutVertically(
+            targetOffsetY = { -it },
+            animationSpec = tween(durationMillis = 250)
+        ) + fadeOut(animationSpec = tween(durationMillis = 250)),
+        modifier = Modifier.align(Alignment.TopCenter)
+    ) {
         Box(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 100.dp, start = 24.dp, end = 24.dp)
-                .fillMaxWidth(0.90f)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xEEFF3B30))
-                .border(1.dp, Color(0xFFFF3B30), RoundedCornerShape(12.dp))
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .clickable { appState.errorMessage = null }
+                .padding(top = 8.dp, start = 20.dp, end = 20.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(14.dp))
+                .background(
+                    Brush.horizontalGradient(gradientColors)
+                )
+                .border(1.dp, borderColor.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
+                .padding(horizontal = 14.dp, vertical = 10.dp)
+                .clickable { onDismiss() }
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = errorMessage,
-                    color = Color.White,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = emoji,
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = message ?: "",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 2
+                    )
+                }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "✕",
-                    color = Color.White,
-                    fontSize = 14.sp,
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Bold
                 )
             }

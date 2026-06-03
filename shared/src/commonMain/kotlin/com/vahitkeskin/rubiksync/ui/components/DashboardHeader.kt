@@ -18,85 +18,179 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
+import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 
 @Composable
 fun DashboardHeader(
     cubeState: RubikCubeState,
+    appState: RubikAppState,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 6.dp, bottom = 2.dp, start = 16.dp, end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // App Title — compact
-        Text(
-            text = "RUBIK SYNC",
-            color = Color.White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.ExtraBold,
-            letterSpacing = 4.sp,
-            maxLines = 1
-        )
-        Text(
-            text = "3D INTERACTIVE SIMULATOR",
-            color = Color(0xFF5A6A7D),
-            fontSize = 8.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 2.sp,
-            maxLines = 1
-        )
+        // Title Row — Logo-style with accent dot
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Accent dot
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(
+                            Brush.linearGradient(
+                                listOf(Color(0xFFFF8A00), Color(0xFFFF5252))
+                            )
+                        )
+                )
+                Column {
+                    Text(
+                        text = "RUBIK SYNC",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 3.sp,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = "3D INTERACTIVE SIMULATOR",
+                        color = Color(0xFF4A5568),
+                        fontSize = 7.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.5.sp,
+                        maxLines = 1
+                    )
+                }
+            }
 
-        // Move History — scrollable chips
+            // Status & Stats — mini glassmorphism cards
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Move Counter
+                StatChip(
+                    emoji = "🎯",
+                    value = "${cubeState.moveHistory.size}",
+                    label = "Hamle"
+                )
+
+                // Solved Status
+                val solved = appState.isSolved
+                StatChip(
+                    emoji = if (solved) "✅" else "🔄",
+                    value = if (solved) "Çözüldü" else "Karışık",
+                    label = "Durum",
+                    accentColor = if (solved) Color(0xFF30D158) else Color(0xFFFF8A00)
+                )
+            }
+        }
+
+        // Move History — scrollable chips with refined styling
         if (cubeState.moveHistory.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFF161D2A))
-                    .padding(vertical = 4.dp, horizontal = 6.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(0xFF141B28))
+                    .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(10.dp))
+                    .padding(vertical = 5.dp, horizontal = 8.dp)
                     .horizontalScroll(rememberScrollState(initial = 10000)),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Hamle:",
-                    color = Color(0xFF5A6A7D),
+                    text = "📝",
                     fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
                     maxLines = 1
                 )
 
-                cubeState.moveHistory.takeLast(12).forEachIndexed { idx, move ->
-                    val isLast = idx == cubeState.moveHistory.takeLast(12).lastIndex
+                cubeState.moveHistory.takeLast(14).forEachIndexed { idx, move ->
+                    val isLast = idx == cubeState.moveHistory.takeLast(14).lastIndex
 
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
+                            .clip(RoundedCornerShape(6.dp))
                             .background(
                                 if (isLast) {
                                     Brush.horizontalGradient(listOf(Color(0xFFFF8A00), Color(0xFFFF5252)))
                                 } else {
-                                    Brush.horizontalGradient(listOf(Color(0xFF1E2633), Color(0xFF1E2633)))
+                                    Brush.horizontalGradient(listOf(Color(0xFF1C2536), Color(0xFF1C2536)))
                                 }
                             )
-                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                            .then(
+                                if (!isLast) Modifier.border(0.5.dp, Color(0x0FFFFFFF), RoundedCornerShape(6.dp))
+                                else Modifier
+                            )
+                            .padding(horizontal = 7.dp, vertical = 3.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = move.label,
-                            color = if (isLast) Color.White else Color(0xFFAABBCC),
+                            color = if (isLast) Color.White else Color(0xFF8A99AD),
                             fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = if (isLast) FontWeight.ExtraBold else FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun StatChip(
+    emoji: String,
+    value: String,
+    label: String,
+    accentColor: Color = Color(0xFF448AFF),
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color(0xFF141B28))
+            .border(0.5.dp, Color(0x0CFFFFFF), RoundedCornerShape(8.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = emoji,
+            fontSize = 10.sp,
+            maxLines = 1
+        )
+        Column {
+            Text(
+                text = value,
+                color = accentColor,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1,
+                lineHeight = 12.sp
+            )
+            Text(
+                text = label,
+                color = Color(0xFF4A5568),
+                fontSize = 7.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                lineHeight = 8.sp
+            )
         }
     }
 }

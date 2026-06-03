@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikSolver
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.Dispatchers
@@ -59,35 +61,54 @@ fun ControlPanel(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp),
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .background(Color(0xFF111827))
+            .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Tab Selector — compact pill style
+        // Tab Selector — 3 tabs with animated indicator
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(36.dp)
+                .height(34.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF161D2A))
-                .border(1.dp, Color(0x12FFFFFF), RoundedCornerShape(10.dp))
+                .background(Color(0xFF0A0E18))
+                .border(1.dp, Color(0x08FFFFFF), RoundedCornerShape(10.dp))
                 .padding(2.dp)
         ) {
-            listOf("Eylemler", "Yapay Zeka").forEachIndexed { index, title ->
+            listOf("🎮 Hareketler", "⚡ Eylemler", "🧠 Yapay Zeka").forEachIndexed { index, title ->
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .height(32.dp)
+                        .height(30.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(if (selectedTab == index) Color(0xFF252E3E) else Color.Transparent)
+                        .background(
+                            if (selectedTab == index) {
+                                Brush.horizontalGradient(
+                                    when (index) {
+                                        0 -> listOf(Color(0xFF1C2536), Color(0xFF1E2A3E))
+                                        1 -> listOf(Color(0xFF1C2536), Color(0xFF1E2A3E))
+                                        else -> listOf(Color(0xFF1C2536), Color(0xFF1E2A3E))
+                                    }
+                                )
+                            } else {
+                                Brush.horizontalGradient(listOf(Color.Transparent, Color.Transparent))
+                            }
+                        )
+                        .then(
+                            if (selectedTab == index) Modifier.border(0.5.dp, Color(0x15FFFFFF), RoundedCornerShape(8.dp))
+                            else Modifier
+                        )
                         .clickable { selectedTab = index },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = title,
-                        color = if (selectedTab == index) Color.White else Color(0xFF6B7A8D),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
+                        color = if (selectedTab == index) Color.White else Color(0xFF4A5568),
+                        fontSize = 11.sp,
+                        fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Medium,
                         maxLines = 1
                     )
                 }
@@ -95,157 +116,100 @@ fun ControlPanel(
         }
 
         // Tab Content
-        if (selectedTab == 0) {
-            // ACTIONS TAB — 3 equal-width buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Button(
-                    onClick = {
-                        coroutineScope.launch { cubeState.scramble() }
-                    },
-                    enabled = !cubeState.isAnimating,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF8A00),
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    modifier = Modifier.weight(1f).height(38.dp)
-                ) {
-                    Text(
-                        text = "Karıştır",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        coroutineScope.launch { cubeState.undo() }
-                    },
-                    enabled = !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1E2633),
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    modifier = Modifier.weight(1f).height(38.dp)
-                ) {
-                    Text(
-                        text = "Geri Al",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        cubeState.reset()
-                        appState.yaw = -0.55f
-                        appState.pitch = 0.40f
-                        appState.cameraDistance = 10.0f
-                        appState.panX = 0f
-                        appState.panY = 0f
-                    },
-                    enabled = !cubeState.isAnimating,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2A1519),
-                        contentColor = Color(0xFFFF453A)
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    modifier = Modifier.weight(1f).height(38.dp)
-                ) {
-                    Text(
-                        text = "Sıfırla",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+        when (selectedTab) {
+            0 -> {
+                // MOVES TAB — 12 move buttons in 2 rows × 6 columns
+                MovesGrid(appState = appState)
             }
-        } else {
-            // AI & TOOLS TAB — 2 equal-width buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Button(
-                    onClick = { appState.showEditorDialog = true },
-                    enabled = !cubeState.isAnimating,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF172238),
-                        contentColor = Color(0xFF448AFF)
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    modifier = Modifier.weight(1f).height(38.dp)
+            1 -> {
+                // ACTIONS TAB — 3 equal-width buttons with icons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Text(
-                        text = "Tasarla",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        appState.isRecalculating = true
-                        appState.errorMessage = null
-                        coroutineScope.launch(Dispatchers.Default) {
-                            try {
-                                val solver = RubikSolver()
-                                val solution = solver.solve(cubeState)
-                                withContext(Dispatchers.Main) {
-                                    if (solution != null && solution.isNotEmpty()) {
-                                        appState.activeSolution = solution
-                                        appState.currentSolutionStep = 0
-                                        appState.isPlaybackRunning = false
-                                        appState.errorMessage = null
-                                    } else if (solution != null && solution.isEmpty()) {
-                                        appState.errorMessage = "Küp zaten çözülmüş!"
-                                    } else {
-                                        appState.errorMessage = "Çözüm bulunamadı!"
-                                    }
-                                    appState.isRecalculating = false
-                                }
-                            } catch (e: Exception) {
-                                withContext(Dispatchers.Main) {
-                                    appState.errorMessage = "Hata: ${e.message}"
-                                    appState.isRecalculating = false
-                                }
-                            }
+                    Button(
+                        onClick = {
+                            coroutineScope.launch { cubeState.scramble() }
+                        },
+                        enabled = !cubeState.isAnimating,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.White,
+                            disabledContainerColor = Color(0xFF0A0E18),
+                            disabledContentColor = Color(0xFF4A5568)
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
+                        border = BorderStroke(1.dp, Color(0xFF2A3548)),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "🎲 Karıştır",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
-                    },
-                    enabled = !cubeState.isAnimating && !appState.isRecalculating,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF132619),
-                        contentColor = Color(0xFF30D158)
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    modifier = Modifier.weight(1f).height(38.dp)
-                ) {
-                    if (appState.isRecalculating) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            color = Color(0xFF30D158),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
+                    }
+
+                    Button(
+                        onClick = {
+                            coroutineScope.launch { cubeState.undo() }
+                        },
+                        enabled = !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color.White,
+                            disabledContainerColor = Color(0xFF0A0E18),
+                            disabledContentColor = Color(0xFF4A5568)
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
+                        border = BorderStroke(1.dp, Color(0xFF2A3548)),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                    ) {
                         Text(
-                            text = "Çöz",
-                            fontSize = 12.sp,
+                            text = "↩️ Geri Al",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            cubeState.reset()
+                            appState.yaw = -0.55f
+                            appState.pitch = 0.40f
+                            appState.cameraDistance = 10.0f
+                            appState.panX = 0f
+                            appState.panY = 0f
+                            appState.totalMoveCount = 0
+                        },
+                        enabled = !cubeState.isAnimating,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = Color(0xFFFF453A),
+                            disabledContainerColor = Color(0xFF0A0E18),
+                            disabledContentColor = Color(0xFF4A5568)
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
+                        border = BorderStroke(1.dp, Color(0xFF3D1519)),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                    ) {
+                        Text(
+                            text = "🔄 Sıfırla",
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -253,46 +217,217 @@ fun ControlPanel(
                     }
                 }
             }
+            2 -> {
+                // AI & TOOLS TAB — 2 equal-width buttons with icons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Button(
+                        onClick = { appState.showEditorDialog = true },
+                        enabled = !cubeState.isAnimating,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF0F1A2E),
+                            contentColor = Color(0xFF448AFF),
+                            disabledContainerColor = Color(0xFF0A0E18),
+                            disabledContentColor = Color(0xFF4A5568)
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
+                        border = BorderStroke(1.dp, Color(0xFF1A2D4D)),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                    ) {
+                        Text(
+                            text = "🎨 Tasarla",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            appState.isRecalculating = true
+                            appState.errorMessage = null
+                            coroutineScope.launch(Dispatchers.Default) {
+                                try {
+                                    val solver = RubikSolver()
+                                    val solution = solver.solve(cubeState)
+                                    withContext(Dispatchers.Main) {
+                                        if (solution != null && solution.isNotEmpty()) {
+                                            appState.activeSolution = solution
+                                            appState.currentSolutionStep = 0
+                                            appState.isPlaybackRunning = false
+                                            appState.errorMessage = null
+                                            appState.successMessage = "${solution.size} adımda çözüm bulundu!"
+                                        } else if (solution != null && solution.isEmpty()) {
+                                            appState.successMessage = "Küp zaten çözülmüş! ✅"
+                                        } else {
+                                            appState.errorMessage = "Çözüm bulunamadı!"
+                                        }
+                                        appState.isRecalculating = false
+                                    }
+                                } catch (e: Exception) {
+                                    withContext(Dispatchers.Main) {
+                                        appState.errorMessage = "Hata: ${e.message}"
+                                        appState.isRecalculating = false
+                                    }
+                                }
+                            }
+                        },
+                        enabled = !cubeState.isAnimating && !appState.isRecalculating,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF0B1F12),
+                            contentColor = Color(0xFF30D158),
+                            disabledContainerColor = Color(0xFF0A0E18),
+                            disabledContentColor = Color(0xFF4A5568)
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
+                        border = BorderStroke(1.dp, Color(0xFF1A3D22)),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp)
+                    ) {
+                        if (appState.isRecalculating) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                color = Color(0xFF30D158),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text(
+                                text = "🧠 Çöz",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+            }
         }
 
-        // Speed Control — single compact row
-        Row(
+        // Speed Control — always visible at bottom
+        SpeedControl(cubeState = appState.cubeState, accentColor = Color(0xFFFF8A00))
+    }
+}
+
+@Composable
+private fun MovesGrid(
+    appState: RubikAppState
+) {
+    val cubeState = appState.cubeState
+    val coroutineScope = appState.coroutineScope
+
+    @Composable
+    fun RowScope.MoveBtn(move: MoveType, label: String, c1: Color, c2: Color) {
+        val isLight = label.startsWith("R") || label.startsWith("L")
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 2.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .weight(1f)
+                .height(36.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    if (!cubeState.isAnimating) Brush.verticalGradient(listOf(c1, c2))
+                    else Brush.verticalGradient(listOf(Color(0xFF1C2536), Color(0xFF1C2536)))
+                )
+                .border(0.5.dp, Color(0x22FFFFFF), RoundedCornerShape(8.dp))
+                .clickable(enabled = !cubeState.isAnimating) {
+                    coroutineScope.launch {
+                        cubeState.executeMove(move)
+                        appState.totalMoveCount++
+                    }
+                },
+            contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Hız",
-                color = Color(0xFF6B7A8D),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(28.dp)
-            )
-
-            Slider(
-                value = 400f - cubeState.rotationSpeedMs,
-                onValueChange = { speed ->
-                    cubeState.rotationSpeedMs = 400f - speed
-                },
-                valueRange = 100f..350f,
-                colors = SliderDefaults.colors(
-                    activeTrackColor = Color(0xFFFF8A00),
-                    inactiveTrackColor = Color(0xFF1E2633),
-                    thumbColor = Color.White
-                ),
-                modifier = Modifier.weight(1f)
-            )
-
-            Text(
-                text = "${cubeState.rotationSpeedMs.toInt()}ms",
-                color = Color(0xFF8A99AD),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(36.dp),
-                textAlign = TextAlign.End
+                text = label,
+                color = if (!cubeState.isAnimating) {
+                    if (isLight) Color.Black else Color.White
+                } else Color(0xFF4A5568),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1,
+                textAlign = TextAlign.Center
             )
         }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            MoveBtn(MoveType.U, "U", Color(0xFFFF7B00), Color(0xFFFF5F00))
+            MoveBtn(MoveType.D, "D", Color(0xFFD6001C), Color(0xFFB5001A))
+            MoveBtn(MoveType.R, "R", Color(0xFFCCCCCC), Color(0xFFAAAAAA))
+            MoveBtn(MoveType.L, "L", Color(0xFFFFD500), Color(0xFFDDB800))
+            MoveBtn(MoveType.F, "F", Color(0xFF009B48), Color(0xFF007A38))
+            MoveBtn(MoveType.B, "B", Color(0xFF0046AD), Color(0xFF003890))
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            MoveBtn(MoveType.U_PRIME, "U'", Color(0xFFFF7B00), Color(0xFFFF5F00))
+            MoveBtn(MoveType.D_PRIME, "D'", Color(0xFFD6001C), Color(0xFFB5001A))
+            MoveBtn(MoveType.R_PRIME, "R'", Color(0xFFCCCCCC), Color(0xFFAAAAAA))
+            MoveBtn(MoveType.L_PRIME, "L'", Color(0xFFFFD500), Color(0xFFDDB800))
+            MoveBtn(MoveType.F_PRIME, "F'", Color(0xFF009B48), Color(0xFF007A38))
+            MoveBtn(MoveType.B_PRIME, "B'", Color(0xFF0046AD), Color(0xFF003890))
+        }
+    }
+}
+
+@Composable
+fun SpeedControl(
+    cubeState: com.vahitkeskin.rubiksync.cube.RubikCubeState,
+    accentColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "⏱ Hız",
+            color = Color(0xFF4A5568),
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.width(40.dp),
+            maxLines = 1
+        )
+
+        Slider(
+            value = 400f - cubeState.rotationSpeedMs,
+            onValueChange = { speed ->
+                cubeState.rotationSpeedMs = 400f - speed
+            },
+            valueRange = 100f..350f,
+            colors = SliderDefaults.colors(
+                activeTrackColor = accentColor,
+                inactiveTrackColor = Color(0xFF1C2536),
+                thumbColor = Color.White
+            ),
+            modifier = Modifier.weight(1f)
+        )
+
+        Text(
+            text = "${cubeState.rotationSpeedMs.toInt()}ms",
+            color = Color(0xFF6B7A8D),
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.width(36.dp),
+            textAlign = TextAlign.End,
+            maxLines = 1
+        )
     }
 }
 
@@ -308,35 +443,55 @@ fun PlaybackController(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp),
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .background(Color(0xFF111827))
+            .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        // Header Row — step counter + close
+        // Header Row — step counter + progress + close
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF132619))
-                .border(1.dp, Color(0x3330D158), RoundedCornerShape(10.dp))
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    Brush.horizontalGradient(listOf(Color(0xFF0B1F12), Color(0xFF112218)))
+                )
+                .border(1.dp, Color(0x2230D158), RoundedCornerShape(12.dp))
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val currentStepDisplay = (appState.currentSolutionStep + 1).coerceAtMost(solution.size)
-            Text(
-                text = "Çözüm: $currentStepDisplay / ${solution.size}",
-                color = Color(0xFF30D158),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1
-            )
+            Column {
+                val currentStepDisplay = (appState.currentSolutionStep + 1).coerceAtMost(solution.size)
+                Text(
+                    text = "🧩 Çözüm: $currentStepDisplay / ${solution.size}",
+                    color = Color(0xFF30D158),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
+                )
+
+                // Progress percentage
+                val progress = if (solution.isNotEmpty()) {
+                    (appState.currentSolutionStep.toFloat() / solution.size * 100).toInt()
+                } else 0
+                Text(
+                    text = "%$progress tamamlandı",
+                    color = Color(0xFF5A8A62),
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1
+                )
+            }
 
             Box(
                 modifier = Modifier
-                    .size(24.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .size(28.dp)
+                    .clip(RoundedCornerShape(14.dp))
                     .background(Color(0x22FFFFFF))
+                    .border(0.5.dp, Color(0x15FFFFFF), RoundedCornerShape(14.dp))
                     .clickable {
                         appState.activeSolution = null
                         appState.isPlaybackRunning = false
@@ -346,11 +501,26 @@ fun PlaybackController(
                 Text(
                     text = "✕",
                     color = Color(0xFF8A99AD),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
         }
+
+        // Progress Bar
+        val progressFraction = if (solution.isNotEmpty()) {
+            appState.currentSolutionStep.toFloat() / solution.size
+        } else 0f
+
+        LinearProgressIndicator(
+            progress = { progressFraction },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(3.dp)
+                .clip(RoundedCornerShape(2.dp)),
+            color = Color(0xFF30D158),
+            trackColor = Color(0xFF1C2536),
+        )
 
         // Horizontally Scrollable Steps List
         val lazyListState = rememberLazyListState()
@@ -371,9 +541,10 @@ fun PlaybackController(
             state = lazyListState,
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFF161D2A))
-                .padding(vertical = 4.dp, horizontal = 4.dp),
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(0xFF0A0E18))
+                .border(0.5.dp, Color(0x08FFFFFF), RoundedCornerShape(10.dp))
+                .padding(vertical = 5.dp, horizontal = 5.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -387,36 +558,36 @@ fun PlaybackController(
                 } else if (isPast) {
                     Modifier.background(Color(0xFF1A2E1F))
                 } else {
-                    Modifier.background(Color(0xFF1E2633))
+                    Modifier.background(Color(0xFF1C2536))
                 }
 
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
+                        .clip(RoundedCornerShape(8.dp))
                         .then(bgModifier)
                         .border(
-                            width = if (isCurrent) 1.dp else 0.dp,
-                            color = if (isCurrent) Color(0xFFE5FFEA) else Color.Transparent,
-                            shape = RoundedCornerShape(6.dp)
+                            width = if (isCurrent) 1.dp else 0.5.dp,
+                            color = if (isCurrent) Color(0xFFE5FFEA) else Color(0x08FFFFFF),
+                            shape = RoundedCornerShape(8.dp)
                         )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
                 ) {
                     Text(
                         text = move.label,
                         color = when {
                             isCurrent -> Color.Black
                             isPast -> Color(0xFF5A8A62)
-                            else -> Color(0xFFAABBCC)
+                            else -> Color(0xFF8A99AD)
                         },
                         fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = if (isCurrent) FontWeight.ExtraBold else FontWeight.Bold,
                         maxLines = 1
                     )
                 }
             }
         }
 
-        // Media Controls — 3 compact buttons
+        // Media Controls — 3 compact buttons with icons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -430,12 +601,13 @@ fun PlaybackController(
                     appState.isPlaybackRunning = false
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1E2633),
+                    containerColor = Color.Transparent,
                     contentColor = Color.White
                 ),
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 6.dp),
-                modifier = Modifier.weight(1f).height(36.dp)
+                border = BorderStroke(1.dp, Color(0xFF2A3548)),
+                modifier = Modifier.weight(1f).height(38.dp)
             ) {
                 Text(
                     text = "⏮ Başa",
@@ -450,20 +622,20 @@ fun PlaybackController(
             Button(
                 onClick = { appState.isPlaybackRunning = !appState.isPlaybackRunning },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (appState.isPlaybackRunning) Color(0xFF2A1519) else Color(0xFF132619),
+                    containerColor = if (appState.isPlaybackRunning) Color(0xFF2A1519) else Color(0xFF0B1F12),
                     contentColor = if (appState.isPlaybackRunning) Color(0xFFFF453A) else Color(0xFF30D158)
                 ),
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(12.dp),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (appState.isPlaybackRunning) Color(0x33FF453A) else Color(0x3330D158)
+                    color = if (appState.isPlaybackRunning) Color(0xFF3D1519) else Color(0xFF1A3D22)
                 ),
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
-                modifier = Modifier.weight(1.3f).height(36.dp)
+                modifier = Modifier.weight(1.3f).height(38.dp)
             ) {
                 Text(
                     text = if (appState.isPlaybackRunning) "⏸ Durdur" else "▶ Oynat",
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -477,17 +649,21 @@ fun PlaybackController(
                         coroutineScope.launch {
                             cubeState.executeMove(solution[appState.currentSolutionStep])
                             appState.currentSolutionStep++
+                            appState.totalMoveCount++
                         }
                     }
                 },
                 enabled = appState.currentSolutionStep < solution.size && !cubeState.isAnimating,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1E2633),
-                    contentColor = Color.White
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White,
+                    disabledContainerColor = Color(0xFF0A0E18),
+                    disabledContentColor = Color(0xFF4A5568)
                 ),
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 6.dp),
-                modifier = Modifier.weight(1f).height(36.dp)
+                border = BorderStroke(1.dp, Color(0xFF2A3548)),
+                modifier = Modifier.weight(1f).height(38.dp)
             ) {
                 Text(
                     text = "İleri ⏭",
@@ -500,42 +676,6 @@ fun PlaybackController(
         }
 
         // Speed Control
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 2.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Hız",
-                color = Color(0xFF6B7A8D),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(28.dp)
-            )
-
-            Slider(
-                value = 400f - cubeState.rotationSpeedMs,
-                onValueChange = { speed ->
-                    cubeState.rotationSpeedMs = 400f - speed
-                },
-                valueRange = 100f..350f,
-                colors = SliderDefaults.colors(
-                    activeTrackColor = Color(0xFF30D158),
-                    inactiveTrackColor = Color(0xFF1E2633),
-                    thumbColor = Color.White
-                ),
-                modifier = Modifier.weight(1f)
-            )
-
-            Text(
-                text = "${cubeState.rotationSpeedMs.toInt()}ms",
-                color = Color(0xFF8A99AD),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(36.dp),
-                textAlign = TextAlign.End
-            )
-        }
+        SpeedControl(cubeState = cubeState, accentColor = Color(0xFF30D158))
     }
 }

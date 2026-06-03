@@ -45,6 +45,7 @@ fun InteractiveCubeCanvas(
                     cubeState.executeMove(move)
                     appState.manualMoves.add(move)
                     appState.totalMoveCount++
+                    appState.saveCurrentState()
                 }
             }
         )

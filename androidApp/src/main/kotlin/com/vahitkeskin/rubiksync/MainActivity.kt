@@ -12,6 +12,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        // Register Room & DataStore persistence
+        com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry.persistence =
+            com.vahitkeskin.rubiksync.persistence.AndroidRubikPersistence(this)
+
         setContent {
             App()
         }

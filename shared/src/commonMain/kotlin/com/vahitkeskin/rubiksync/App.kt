@@ -15,12 +15,26 @@ import com.vahitkeskin.rubiksync.ui.dialogs.*
 import com.vahitkeskin.rubiksync.ui.state.*
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
+import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
     val appState = rememberRubikAppState()
     val cubeState = appState.cubeState
+
+    // LaunchedEffect to persist camera settings when they change (with a small delay to debounce)
+    LaunchedEffect(appState.yaw, appState.pitch, appState.cameraDistance, appState.panX, appState.panY, cubeState.rotationSpeedMs) {
+        kotlinx.coroutines.delay(300)
+        RubikPersistenceRegistry.persistence?.saveCameraSettings(
+            yaw = appState.yaw,
+            pitch = appState.pitch,
+            cameraDistance = appState.cameraDistance,
+            panX = appState.panX,
+            panY = appState.panY,
+            rotationSpeedMs = cubeState.rotationSpeedMs
+        )
+    }
 
     // LaunchedEffect for automatic playback of solver steps
     LaunchedEffect(appState.isPlaybackRunning, appState.currentSolutionStep, appState.activeSolution) {

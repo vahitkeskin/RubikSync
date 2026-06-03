@@ -461,6 +461,7 @@ fun EditorDialog(
                         val success = cubeState.setCustomState(appState.editorFaces)
                         if (success) {
                             appState.manualMoves.clear()
+                            appState.saveCurrentState()
                             onDismiss()
                             appState.activeSolution = null
                             appState.errorMessage = null

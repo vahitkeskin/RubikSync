@@ -8,6 +8,12 @@ import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.cube.AnnotatedMove
 import kotlinx.coroutines.CoroutineScope
+import com.vahitkeskin.rubiksync.utils.CubiePersistable
+import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
+import kotlin.math.roundToInt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RubikAppState(
     val cubeState: RubikCubeState,
@@ -26,16 +32,22 @@ class RubikAppState(
     var showSplashScreen by mutableStateOf(true)
 
     // Editor State
-    var editorFaces by mutableStateOf(
-        mapOf(
-            FaceName.U to Array(3) { Array(3) { CubeColor.ORANGE } },
-            FaceName.D to Array(3) { Array(3) { CubeColor.RED } },
-            FaceName.L to Array(3) { Array(3) { CubeColor.YELLOW } },
-            FaceName.R to Array(3) { Array(3) { CubeColor.WHITE } },
-            FaceName.F to Array(3) { Array(3) { CubeColor.GREEN } },
-            FaceName.B to Array(3) { Array(3) { CubeColor.BLUE } }
-        )
+    private val defaultFaces = mapOf(
+        FaceName.U to Array(3) { Array(3) { CubeColor.ORANGE } },
+        FaceName.D to Array(3) { Array(3) { CubeColor.RED } },
+        FaceName.L to Array(3) { Array(3) { CubeColor.YELLOW } },
+        FaceName.R to Array(3) { Array(3) { CubeColor.WHITE } },
+        FaceName.F to Array(3) { Array(3) { CubeColor.GREEN } },
+        FaceName.B to Array(3) { Array(3) { CubeColor.BLUE } }
     )
+
+    private var _editorFaces by mutableStateOf(defaultFaces)
+    var editorFaces: Map<FaceName, Array<Array<CubeColor>>>
+        get() = _editorFaces
+        set(value) {
+            _editorFaces = value
+            saveCurrentState()
+        }
     var selectedColor by mutableStateOf(CubeColor.ORANGE)
 
     // Solution / Playback State
@@ -86,6 +98,84 @@ class RubikAppState(
     var gridOffsetsY by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
     
     val manualMoves = mutableStateListOf<MoveType>()
+
+    fun saveCurrentState() {
+        val p = RubikPersistenceRegistry.persistence ?: return
+        if (isSolved && (cubeState.moveHistory.isNotEmpty() || manualMoves.isNotEmpty())) {
+            cubeState.moveHistory.clear()
+            manualMoves.clear()
+            totalMoveCount = 0
+        }
+        coroutineScope.launch(Dispatchers.Default) {
+            val persistableCubies = cubeState.cubies.map { c ->
+                CubiePersistable(
+                    id = c.id,
+                    gridX = c.gridPos.x.roundToInt(),
+                    gridY = c.gridPos.y.roundToInt(),
+                    gridZ = c.gridPos.z.roundToInt(),
+                    rightX = c.rightBasis.x.roundToInt(),
+                    rightY = c.rightBasis.y.roundToInt(),
+                    rightZ = c.rightBasis.z.roundToInt(),
+                    upX = c.upBasis.x.roundToInt(),
+                    upY = c.upBasis.y.roundToInt(),
+                    upZ = c.upBasis.z.roundToInt(),
+                    forwardX = c.forwardBasis.x.roundToInt(),
+                    forwardY = c.forwardBasis.y.roundToInt(),
+                    forwardZ = c.forwardBasis.z.roundToInt()
+                )
+            }
+            p.saveCubeState(
+                cubies = persistableCubies,
+                moveHistory = cubeState.moveHistory.toList(),
+                manualMoves = manualMoves.toList(),
+                editorFaces = editorFaces
+            )
+        }
+    }
+
+    init {
+        cubeState.onStateChanged = { saveCurrentState() }
+        
+        coroutineScope.launch(Dispatchers.Default) {
+            val persistence = RubikPersistenceRegistry.persistence
+            if (persistence != null) {
+                val camera = persistence.loadCameraSettings()
+                if (camera != null) {
+                    withContext(Dispatchers.Main) {
+                        yaw = camera.yaw
+                        pitch = camera.pitch
+                        cameraDistance = camera.cameraDistance
+                        panX = camera.panX
+                        panY = camera.panY
+                        cubeState.rotationSpeedMs = camera.rotationSpeedMs
+                    }
+                }
+                
+                val saved = persistence.loadCubeState()
+                if (saved != null) {
+                    withContext(Dispatchers.Main) {
+                        saved.cubies.forEach { snap ->
+                            val cubie = cubeState.cubies.find { it.id == snap.id }
+                            if (cubie != null) {
+                                cubie.gridPos = com.vahitkeskin.rubiksync.cube.Vector3(snap.gridX.toFloat(), snap.gridY.toFloat(), snap.gridZ.toFloat())
+                                cubie.rightBasis = com.vahitkeskin.rubiksync.cube.Vector3(snap.rightX.toFloat(), snap.rightY.toFloat(), snap.rightZ.toFloat())
+                                cubie.upBasis = com.vahitkeskin.rubiksync.cube.Vector3(snap.upX.toFloat(), snap.upY.toFloat(), snap.upZ.toFloat())
+                                cubie.forwardBasis = com.vahitkeskin.rubiksync.cube.Vector3(snap.forwardX.toFloat(), snap.forwardY.toFloat(), snap.forwardZ.toFloat())
+                            }
+                        }
+                        
+                        cubeState.moveHistory.clear()
+                        cubeState.moveHistory.addAll(saved.moveHistory)
+                        
+                        manualMoves.clear()
+                        manualMoves.addAll(saved.manualMoves)
+                        
+                        _editorFaces = saved.editorFaces
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable

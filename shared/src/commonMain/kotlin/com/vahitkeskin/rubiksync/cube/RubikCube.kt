@@ -106,6 +106,8 @@ class RubikCubeState {
     var isAnimating by mutableStateOf(false)
         private set
 
+    var onStateChanged: (() -> Unit)? = null
+
     // Rounds coordinates to prevent floating point drift after rotations
     private fun Float.roundToHalfOrWhole(): Float {
         return (this * 2f).roundToInt() / 2f
@@ -136,6 +138,7 @@ class RubikCubeState {
             applyDiscreteRotation(move)
             moveHistory.add(move)
             isAnimating = false
+            onStateChanged?.invoke()
             return
         }
 
@@ -160,6 +163,7 @@ class RubikCubeState {
         moveHistory.add(move)
         currentMove = null
         isAnimating = false
+        onStateChanged?.invoke()
     }
 
     fun applyDiscreteRotation(move: MoveType) {
@@ -198,6 +202,7 @@ class RubikCubeState {
         }
 
         rotationSpeedMs = originalSpeed
+        onStateChanged?.invoke()
     }
 
     suspend fun undo() {
@@ -214,6 +219,7 @@ class RubikCubeState {
         // Remove the inverse move from history since executeMove will add it
         executeMove(inverseMove)
         moveHistory.removeLast() // pop the inverseMove we just added
+        onStateChanged?.invoke()
     }
 
     fun setCustomState(faces: Map<FaceName, Array<Array<CubeColor>>>): Boolean {
@@ -331,6 +337,7 @@ class RubikCubeState {
         
         moveHistory.clear()
         currentMove = null
+        onStateChanged?.invoke()
         return true
     }
 
@@ -344,6 +351,7 @@ class RubikCubeState {
             cubie.upBasis = Vector3.UnitY
             cubie.forwardBasis = Vector3.UnitZ
         }
+        onStateChanged?.invoke()
     }
 
     suspend fun resetAnimated(
@@ -388,5 +396,6 @@ class RubikCubeState {
         }
         onProgress(1f)
         isAnimating = false
+        onStateChanged?.invoke()
     }
 }

@@ -281,10 +281,26 @@ fun ControlPanel(
                         appState.errorMessage = null
                         coroutineScope.launch(Dispatchers.Default) {
                             try {
-                                val solver = RubikSolver()
                                 val currentSnapshot = cubeState.toSnapshot()
                                 
-                                val backtrackMoves = appState.manualMoves.map { move ->
+                                // Check if already solved
+                                val isSolvedNow = cubeState.cubies.all { cubie ->
+                                    cubie.gridPos == cubie.originalPos &&
+                                    cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
+                                }
+                                
+                                if (isSolvedNow) {
+                                    withContext(Dispatchers.Main) {
+                                        appState.activeSolution = null
+                                        appState.activeSolutionDetails = null
+                                        appState.successMessage = "Küp zaten çözülmüş! ✅"
+                                        appState.isRecalculating = false
+                                    }
+                                    return@launch
+                                }
+                                
+                                // 1. Try reverse engineering (backtrack moves from move history)
+                                val backtrackMoves = cubeState.moveHistory.map { move ->
                                     MoveType.values().first {
                                         it.axis == move.axis &&
                                         it.layerValue == move.layerValue &&
@@ -292,47 +308,57 @@ fun ControlPanel(
                                     }
                                 }.reversed()
                                 
-                                var originalSnapshot = currentSnapshot
-                                for (mv in backtrackMoves) {
-                                    originalSnapshot = originalSnapshot.applyMove(mv)
-                                }
+                                val solver = RubikSolver()
+                                val optimizedBacktrack = solver.compressMoves(backtrackMoves)
                                 
-                                val coreSolution = solver.solve(originalSnapshot)
-                                val coreDetails = solver.solveAnnotated(originalSnapshot)
+                                // 2. Run the layer-by-layer solver
+                                val lblDetails = solver.solveAnnotated(currentSnapshot)
                                 
-                                withContext(Dispatchers.Main) {
-                                    if (coreSolution != null && coreDetails != null) {
-                                        val combinedSolution = backtrackMoves + coreSolution
-                                        val combinedDetails = backtrackMoves.map { move ->
-                                            AnnotatedMove(
-                                                move = move,
-                                                phaseName = "Tersine Mühendislik (Geri Alma)",
-                                                phaseDescription = "Kullanıcı tarafından yapılan manuel döndürme hamlesinin tersi olan '${move.label}' oynatılarak geri alınıyor."
-                                            )
-                                        } + coreDetails
-                                        
-                                        if (combinedSolution.isNotEmpty()) {
-                                            appState.activeSolution = combinedSolution
-                                            appState.activeSolutionDetails = combinedDetails
-                                            appState.currentSolutionStep = 0
-                                            appState.isPlaybackRunning = false
-                                            appState.errorMessage = null
-                                            appState.successMessage = "${combinedSolution.size} adımda çözüm bulundu!"
-                                        } else {
-                                            appState.activeSolution = null
-                                            appState.activeSolutionDetails = null
-                                            appState.successMessage = "Küp zaten çözülmüş! ✅"
-                                        }
-                                    } else {
+                                // 3. Pick the shortest solution
+                                val finalSolution: List<MoveType>
+                                val finalDetails: List<AnnotatedMove>
+                                
+                                if (optimizedBacktrack.isNotEmpty() && (lblDetails == null || optimizedBacktrack.size <= lblDetails.size)) {
+                                    finalSolution = optimizedBacktrack
+                                    finalDetails = optimizedBacktrack.map { move ->
+                                        AnnotatedMove(
+                                            move = move,
+                                            phaseName = "Tersine Mühendislik (Geri Alma)",
+                                            phaseDescription = "Küpün karıştırma/manuel hamle geçmişi tersten oynatılarak en kısa yoldan çözülüyor."
+                                        )
+                                    }
+                                } else if (lblDetails != null) {
+                                    finalSolution = lblDetails.map { it.move }
+                                    finalDetails = lblDetails
+                                } else {
+                                    // Both failed (invalid/unsolvable state)
+                                    withContext(Dispatchers.Main) {
                                         appState.activeSolution = null
                                         appState.activeSolutionDetails = null
                                         appState.errorMessage = "Çözüm bulunamadı!"
+                                        appState.isRecalculating = false
+                                    }
+                                    return@launch
+                                }
+                                
+                                withContext(Dispatchers.Main) {
+                                    if (finalSolution.isNotEmpty()) {
+                                        appState.activeSolution = finalSolution
+                                        appState.activeSolutionDetails = finalDetails
+                                        appState.currentSolutionStep = 0
+                                        appState.isPlaybackRunning = false
+                                        appState.errorMessage = null
+                                        appState.successMessage = "${finalSolution.size} adımda çözüm bulundu!"
+                                    } else {
+                                        appState.activeSolution = null
+                                        appState.activeSolutionDetails = null
+                                        appState.successMessage = "Küp zaten çözülmüş! ✅"
                                     }
                                     appState.isRecalculating = false
                                 }
-                            } catch (e: Exception) {
+                            } catch (e: Throwable) {
                                 withContext(Dispatchers.Main) {
-                                    appState.errorMessage = "Hata: ${e.message}"
+                                    appState.errorMessage = "Hata: ${e.message ?: e.toString()}"
                                     appState.isRecalculating = false
                                 }
                             }
@@ -402,6 +428,7 @@ private fun MovesGrid(
                         cubeState.executeMove(move)
                         appState.manualMoves.add(move)
                         appState.totalMoveCount++
+                        appState.saveCurrentState()
                     }
                 },
             contentAlignment = Alignment.Center
@@ -659,8 +686,8 @@ fun PlaybackController(
             // Restart
             Button(
                 onClick = {
-                    cubeState.setCustomState(appState.editorFaces)
                     appState.manualMoves.clear()
+                    cubeState.setCustomState(appState.editorFaces)
                     appState.currentSolutionStep = 0
                     appState.isPlaybackRunning = false
                 },

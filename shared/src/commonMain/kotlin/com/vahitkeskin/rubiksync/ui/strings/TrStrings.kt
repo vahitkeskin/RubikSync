@@ -106,8 +106,11 @@ val TrStrings = AppStrings(
     playbackPlay = "▶ Oynat",
     cubeAlreadySolved = "Küp zaten çözülmüş! ✅",
     solutionNotFound = "Çözüm bulunamadı!",
-    solutionFound = "%s adımda çözüm bulundu!"
-,
+    solutionFound = "%s adımda çözüm bulundu!",
     scanGuidanceFace = "Lütfen %s (%s) yüzeyini tarayın.",
     scanGuidanceAllScanned = "Tüm yüzeyler tarandı! Artık 'Ayarla' butonuna basabilirsiniz.",
-    scanGuidanceRemaining = "Bu yüzey zaten tarandı. Lütfen kalan yüzeyleri tarayın: %s")
+    scanGuidanceRemaining = "Bu yüzey zaten tarandı. Lütfen kalan yüzeyleri tarayın: %s",
+    takePhotoLabel = "📷 Fotoğraf Çek",
+    chooseGalleryLabel = "🖼️ Galeriden Seç",
+    selectImageLabel = "📁 Görsel Seç"
+)

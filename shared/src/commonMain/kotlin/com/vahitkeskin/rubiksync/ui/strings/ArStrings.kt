@@ -106,8 +106,11 @@ val ArStrings = AppStrings(
     playbackPlay = "▶ تشغيل",
     cubeAlreadySolved = "المكعب محلول بالفعل! ✅",
     solutionNotFound = "لم يتم العثور على حل!",
-    solutionFound = "تم العثور على حل في %s خطوة!"
-,
+    solutionFound = "تم العثور على حل في %s خطوة!",
     scanGuidanceFace = "يرجى مسح وجه %s (%s).",
     scanGuidanceAllScanned = "تم مسح جميع الأوجه! يمكنك الضغط على زر 'تعيين'.",
-    scanGuidanceRemaining = "تم مسح هذا الوجه. يرجى مسح الأوجه المتبقية: %s")
+    scanGuidanceRemaining = "تم مسح هذا الوجه. يرجى مسح الأوجه المتبقية: %s",
+    takePhotoLabel = "📷 التقاط صورة",
+    chooseGalleryLabel = "🖼️ اختر من المعرض",
+    selectImageLabel = "📁 اختر صورة"
+)

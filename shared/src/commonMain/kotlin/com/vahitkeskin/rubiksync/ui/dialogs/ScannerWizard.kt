@@ -382,6 +382,9 @@ fun ScannerWizard(
                         if (!appState.isRecalculating) {
                             CameraCaptureOrPicker(
                                 faceName = currentFace.name,
+                                takePhotoLabel = appState.strings.takePhotoLabel,
+                                chooseGalleryLabel = appState.strings.chooseGalleryLabel,
+                                selectImageLabel = appState.strings.selectImageLabel,
                                 onImageSelected = { filePath ->
                                     coroutineScope.launch {
                                         appState.isRecalculating = true
@@ -788,12 +791,19 @@ fun ScannerWizard(
                     border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
-                    Text(
-                        text = appState.strings.cancelButton,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text("✕", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = appState.strings.cancelButton,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
+                        )
+                    }
                 }
 
                 Button(
@@ -814,12 +824,19 @@ fun ScannerWizard(
                     border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
-                    Text(
-                        text = appState.strings.backButton,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text("←", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = appState.strings.backButton,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
+                        )
+                    }
                 }
 
                 val hasCurrentScan = appState.scannedFilePaths.containsKey(currentFace)
@@ -854,12 +871,19 @@ fun ScannerWizard(
                         border = if (hasCurrentScan) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                         modifier = Modifier.weight(1.1f).height(42.dp)
                     ) {
-                        Text(
-                            text = appState.strings.nextButton,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = appState.strings.nextButton,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("→", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 } else {
                     Button(
@@ -894,12 +918,19 @@ fun ScannerWizard(
                         border = if (appState.scannedFilePaths.size == 6) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                         modifier = Modifier.weight(1.1f).height(42.dp)
                     ) {
-                        Text(
-                            text = appState.strings.setButton,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            maxLines = 1
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text("✓", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = appState.strings.setButton,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
 

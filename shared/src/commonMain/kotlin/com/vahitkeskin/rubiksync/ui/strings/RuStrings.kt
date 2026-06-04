@@ -106,8 +106,11 @@ val RuStrings = AppStrings(
     playbackPlay = "▶ Старт",
     cubeAlreadySolved = "Кубик уже собран! ✅",
     solutionNotFound = "Решение не найдено!",
-    solutionFound = "Решение найдено за %s шагов!"
-,
+    solutionFound = "Решение найдено за %s шагов!",
     scanGuidanceFace = "Пожалуйста, отсканируйте сторону %s (%s).",
     scanGuidanceAllScanned = "Все стороны отсканированы! Вы можете нажать кнопку 'Готово'.",
-    scanGuidanceRemaining = "Эта сторона отсканирована. Пожалуйста, отсканируйте оставшиеся стороны: %s")
+    scanGuidanceRemaining = "Эта сторона отсканирована. Пожалуйста, отсканируйте оставшиеся стороны: %s",
+    takePhotoLabel = "📷 Сделать фото",
+    chooseGalleryLabel = "🖼️ Выбрать из галереи",
+    selectImageLabel = "📁 Выбрать изображение"
+)

@@ -106,8 +106,11 @@ val KoStrings = AppStrings(
     playbackPlay = "▶ 재생",
     cubeAlreadySolved = "큐브가 이미 해결되었습니다! ✅",
     solutionNotFound = "해결책을 찾을 수 없습니다!",
-    solutionFound = "%s단계만에 해결책을 찾았습니다!"
-,
+    solutionFound = "%s단계만에 해결책을 찾았습니다!",
     scanGuidanceFace = "면 %s (%s)을(를) 스캔해 주세요.",
     scanGuidanceAllScanned = "모든 면이 스캔되었습니다! '설정' 버튼을 누르실 수 있습니다.",
-    scanGuidanceRemaining = "이 면은 스캔되었습니다. 남은 면을 스캔해 주세요: %s")
+    scanGuidanceRemaining = "이 면은 스캔되었습니다. 남은 면을 스캔해 주세요: %s",
+    takePhotoLabel = "📷 사진 촬영",
+    chooseGalleryLabel = "🖼️ 갤러리에서 선택",
+    selectImageLabel = "📁 이미지 선택"
+)

@@ -106,8 +106,11 @@ val IdStrings = AppStrings(
     playbackPlay = "▶ Putar",
     cubeAlreadySolved = "Kubus sudah selesai! ✅",
     solutionNotFound = "Solusi tidak ditemukan!",
-    solutionFound = "Solusi ditemukan dalam %s langkah!"
-,
+    solutionFound = "Solusi ditemukan dalam %s langkah!",
     scanGuidanceFace = "Silakan pindai sisi %s (%s).",
     scanGuidanceAllScanned = "Semua sisi telah dipindai! Anda dapat menekan tombol 'Atur'.",
-    scanGuidanceRemaining = "Sisi ini telah dipindai. Silakan pindai sisi yang tersisa: %s")
+    scanGuidanceRemaining = "Sisi ini telah dipindai. Silakan pindai sisi yang tersisa: %s",
+    takePhotoLabel = "📷 Ambil Foto",
+    chooseGalleryLabel = "🖼️ Pilih dari Galeri",
+    selectImageLabel = "📁 Pilih Gambar"
+)

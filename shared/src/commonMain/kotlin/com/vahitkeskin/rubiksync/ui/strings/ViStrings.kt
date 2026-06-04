@@ -106,8 +106,11 @@ val ViStrings = AppStrings(
     playbackPlay = "▶ Phát",
     cubeAlreadySolved = "Rubik đã được giải! ✅",
     solutionNotFound = "Không tìm thấy giải pháp!",
-    solutionFound = "Tìm thấy giải pháp trong %s bước!"
-,
+    solutionFound = "Tìm thấy giải pháp trong %s bước!",
     scanGuidanceFace = "Vui lòng quét mặt %s (%s).",
     scanGuidanceAllScanned = "Đã quét tất cả các mặt! Bạn có thể nhấn nút 'Thiết lập'.",
-    scanGuidanceRemaining = "Mặt này đã được quét. Vui lòng quét các mặt còn lại: %s")
+    scanGuidanceRemaining = "Mặt này đã được quét. Vui lòng quét các mặt còn lại: %s",
+    takePhotoLabel = "📷 Chụp ảnh",
+    chooseGalleryLabel = "🖼️ Chọn từ thư viện",
+    selectImageLabel = "📁 Chọn ảnh"
+)

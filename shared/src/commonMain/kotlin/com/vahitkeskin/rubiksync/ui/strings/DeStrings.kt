@@ -106,8 +106,11 @@ val DeStrings = AppStrings(
     playbackPlay = "▶ Abspielen",
     cubeAlreadySolved = "Würfel bereits gelöst! ✅",
     solutionNotFound = "Keine Lösung gefunden!",
-    solutionFound = "Lösung in %s Schritten gefunden!"
-,
+    solutionFound = "Lösung in %s Schritten gefunden!",
     scanGuidanceFace = "Bitte scannen Sie die Seite %s (%s).",
     scanGuidanceAllScanned = "Alle Seiten gescannt! Sie können auf die Schaltfläche 'Einstellen' klicken.",
-    scanGuidanceRemaining = "Diese Seite wurde gescannt. Bitte scannen Sie die verbleibenden Seiten: %s")
+    scanGuidanceRemaining = "Diese Seite wurde gescannt. Bitte scannen Sie die verbleibenden Seiten: %s",
+    takePhotoLabel = "📷 Foto aufnehmen",
+    chooseGalleryLabel = "🖼️ Aus Galerie wählen",
+    selectImageLabel = "📁 Bild auswählen"
+)

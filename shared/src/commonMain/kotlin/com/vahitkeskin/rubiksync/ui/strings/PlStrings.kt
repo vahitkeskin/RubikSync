@@ -106,8 +106,11 @@ val PlStrings = AppStrings(
     playbackPlay = "▶ Odtwórz",
     cubeAlreadySolved = "Kostka jest już ułożona! ✅",
     solutionNotFound = "Nie znaleziono rozwiązania!",
-    solutionFound = "Rozwiązanie znalezione w %s ruchach!"
-,
+    solutionFound = "Rozwiązanie znalezione w %s ruchach!",
     scanGuidanceFace = "Proszę zeskanować ścianę %s (%s).",
     scanGuidanceAllScanned = "Wszystkie ściany zeskanowane! Możesz nacisnąć przycisk 'Ustaw'.",
-    scanGuidanceRemaining = "Ta ściana jest zeskanowana. Zeskanuj pozostałe ściany: %s")
+    scanGuidanceRemaining = "Ta ściana jest zeskanowana. Zeskanuj pozostałe ściany: %s",
+    takePhotoLabel = "📷 Zrób zdjęcie",
+    chooseGalleryLabel = "🖼️ Wybierz z galerii",
+    selectImageLabel = "📁 Wybierz obraz"
+)

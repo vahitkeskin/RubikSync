@@ -15,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -471,6 +472,9 @@ fun CameraPreviewDialog(
 @Composable
 actual fun CameraCaptureOrPicker(
     faceName: String,
+    takePhotoLabel: String,
+    chooseGalleryLabel: String,
+    selectImageLabel: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -524,31 +528,69 @@ actual fun CameraCaptureOrPicker(
     
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(
+        // Camera Card
+        Card(
             onClick = { checkAndLaunchCamera() },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AccentBlue,
-                contentColor = Color.White
+            colors = CardDefaults.cardColors(
+                containerColor = AccentBlue.copy(alpha = 0.15f)
             ),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(14.dp),
+            border = BorderStroke(1.5.dp, AccentBlue.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier.weight(1f)
         ) {
-            Text("📷 Fotoğraf Çek", fontSize = 13.sp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text("📷", fontSize = 22.sp)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = takePhotoLabel,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AccentBlue,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
+                )
+            }
         }
         
-        Button(
+        // Gallery Card
+        Card(
             onClick = { galleryLauncher.launch("image/*") },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = WhiteAlpha13,
-                contentColor = Color.LightGray
+            colors = CardDefaults.cardColors(
+                containerColor = AccentOrange.copy(alpha = 0.15f)
             ),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(14.dp),
+            border = BorderStroke(1.5.dp, AccentOrange.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier.weight(1f)
         ) {
-            Text("🖼️ Galeriden Seç", fontSize = 13.sp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text("🖼️", fontSize = 22.sp)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = chooseGalleryLabel,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = AccentOrange,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
+                )
+            }
         }
     }
     

@@ -105,6 +105,9 @@ actual val isCameraSupported: Boolean = false
 @Composable
 actual fun CameraCaptureOrPicker(
     faceName: String,
+    takePhotoLabel: String,
+    chooseGalleryLabel: String,
+    selectImageLabel: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -114,7 +117,7 @@ actual fun CameraCaptureOrPicker(
         onClick = {
             coroutineScope.launch(Dispatchers.IO) {
                 try {
-                    val fileDialog = java.awt.FileDialog(null as java.awt.Frame?, "Resim Seç (${faceName})", java.awt.FileDialog.LOAD)
+                    val fileDialog = java.awt.FileDialog(null as java.awt.Frame?, selectImageLabel, java.awt.FileDialog.LOAD)
                     fileDialog.setFilenameFilter { _, name ->
                         val lower = name.lowercase()
                         lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".png")
@@ -138,7 +141,7 @@ actual fun CameraCaptureOrPicker(
         shape = RoundedCornerShape(12.dp),
         modifier = modifier
     ) {
-        Text("📁 Resim Seç", fontSize = 14.sp)
+        Text("📁 $selectImageLabel", fontSize = 14.sp)
     }
 }
 

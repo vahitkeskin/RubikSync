@@ -34,9 +34,13 @@ expect val isCameraSupported: Boolean
 @Composable
 expect fun CameraCaptureOrPicker(
     faceName: String,
+    takePhotoLabel: String,
+    chooseGalleryLabel: String,
+    selectImageLabel: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 )
+
 
 expect fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String)
 

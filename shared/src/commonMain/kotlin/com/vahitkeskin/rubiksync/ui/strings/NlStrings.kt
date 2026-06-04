@@ -106,8 +106,11 @@ val NlStrings = AppStrings(
     playbackPlay = "▶ Afspelen",
     cubeAlreadySolved = "Kubus is al opgelost! ✅",
     solutionNotFound = "Geen oplossing gevonden!",
-    solutionFound = "Oplossing gevonden in %s stappen!"
-,
+    solutionFound = "Oplossing gevonden in %s stappen!",
     scanGuidanceFace = "Scan a.u.b. het vlak %s (%s).",
     scanGuidanceAllScanned = "Alle vlakken gescand! U kunt op de knop 'Instellen' drukken.",
-    scanGuidanceRemaining = "Dit vlak is gescand. Scan de resterende vlakken: %s")
+    scanGuidanceRemaining = "Dit vlak is gescand. Scan de resterende vlakken: %s",
+    takePhotoLabel = "📷 Foto maken",
+    chooseGalleryLabel = "🖼️ Uit galerij kiezen",
+    selectImageLabel = "📁 Afbeelding selecteren"
+)

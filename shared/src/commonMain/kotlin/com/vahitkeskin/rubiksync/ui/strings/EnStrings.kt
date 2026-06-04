@@ -106,8 +106,11 @@ val EnStrings = AppStrings(
     playbackPlay = "▶ Play",
     cubeAlreadySolved = "Cube already solved! ✅",
     solutionNotFound = "Solution not found!",
-    solutionFound = "Solution found in %s steps!"
-,
+    solutionFound = "Solution found in %s steps!",
     scanGuidanceFace = "Please scan the %s (%s) face.",
     scanGuidanceAllScanned = "All faces scanned! You can now press the Set button.",
-    scanGuidanceRemaining = "This face is already scanned. Please scan the remaining faces: %s")
+    scanGuidanceRemaining = "This face is already scanned. Please scan the remaining faces: %s",
+    takePhotoLabel = "📷 Take Photo",
+    chooseGalleryLabel = "🖼️ Choose from Gallery",
+    selectImageLabel = "📁 Select Image"
+)

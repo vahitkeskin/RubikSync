@@ -106,8 +106,11 @@ val ItStrings = AppStrings(
     playbackPlay = "▶ Riproduci",
     cubeAlreadySolved = "Il cubo è già risolto! ✅",
     solutionNotFound = "Nessuna soluzione trovata!",
-    solutionFound = "Soluzione trovata in %s mosse!"
-,
+    solutionFound = "Soluzione trovata in %s mosse!",
     scanGuidanceFace = "Scansiona la faccia %s (%s).",
     scanGuidanceAllScanned = "Tutte le facce scansionate! Puoi premere il pulsante 'Imposta'.",
-    scanGuidanceRemaining = "Questa faccia è scansionata. Scansiona le facce rimanenti: %s")
+    scanGuidanceRemaining = "Questa faccia è scansionata. Scansiona le facce rimanenti: %s",
+    takePhotoLabel = "📷 Scatta foto",
+    chooseGalleryLabel = "🖼️ Scegli dalla galleria",
+    selectImageLabel = "📁 Seleziona immagine"
+)

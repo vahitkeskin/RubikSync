@@ -106,8 +106,11 @@ val HiStrings = AppStrings(
     playbackPlay = "▶ चलाएं",
     cubeAlreadySolved = "क्यूब पहले से ही हल है! ✅",
     solutionNotFound = "कोई समाधान नहीं मिला!",
-    solutionFound = "%s चालों में समाधान मिला!"
-,
+    solutionFound = "%s चालों में समाधान मिला!",
     scanGuidanceFace = "कृपया %s (%s) सतह को स्कैन करें।",
     scanGuidanceAllScanned = "सभी सतहों को स्कैन कर लिया गया है! आप 'सेट' बटन दबा सकते हैं।",
-    scanGuidanceRemaining = "यह सतह स्कैन हो चुकी है। कृपया शेष सतहों को स्कैन करें: %s")
+    scanGuidanceRemaining = "यह सतह स्कैन हो चुकी है। कृपया शेष सतहों को स्कैन करें: %s",
+    takePhotoLabel = "📷 फोटो लें",
+    chooseGalleryLabel = "🖼️ गैलरी से चुनें",
+    selectImageLabel = "📁 छवि चुनें"
+)

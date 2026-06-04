@@ -1,7 +1,5 @@
 package com.vahitkeskin.rubiksync.ui.strings
 
-import androidx.compose.ui.graphics.Color
-
 data class AppStrings(
     val appTitle: String,
     val appSubtitle: String,
@@ -111,7 +109,10 @@ data class AppStrings(
     val solutionFound: String,
     val scanGuidanceFace: String,
     val scanGuidanceAllScanned: String,
-    val scanGuidanceRemaining: String
+    val scanGuidanceRemaining: String,
+    val takePhotoLabel: String,
+    val chooseGalleryLabel: String,
+    val selectImageLabel: String
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

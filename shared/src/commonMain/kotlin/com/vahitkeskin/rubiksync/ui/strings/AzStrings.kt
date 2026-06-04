@@ -106,8 +106,11 @@ val AzStrings = AppStrings(
     playbackPlay = "▶ Oynat",
     cubeAlreadySolved = "Küp artıq həll edilib! ✅",
     solutionNotFound = "Həll tapılmadı!",
-    solutionFound = "%s addımda həll tapıldı!"
-,
+    solutionFound = "%s addımda həll tapıldı!",
     scanGuidanceFace = "Zəhmət olmasa %s (%s) üzünü skan edin.",
     scanGuidanceAllScanned = "Bütün üzlər skan edildi! 'Quraşdır' düyməsini basa bilərsiniz.",
-    scanGuidanceRemaining = "Bu üz skan edilib. Zəhmət olmasa qalan üzləri skan edin: %s")
+    scanGuidanceRemaining = "Bu üz skan edilib. Zəhmət olmasa qalan üzləri skan edin: %s",
+    takePhotoLabel = "📷 Şəkil çək",
+    chooseGalleryLabel = "🖼️ Qalereyadan seç",
+    selectImageLabel = "📁 Şəkil seç"
+)

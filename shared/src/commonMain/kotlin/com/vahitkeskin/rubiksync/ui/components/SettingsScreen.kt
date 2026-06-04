@@ -128,308 +128,308 @@ fun SettingsScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 // Tema Modu Bölümü
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(bgSecondary)
-                    .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
-                    .padding(16.dp)
-            ) {
-                // Bölüm başlığı
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(text = "🎨", fontSize = 16.sp)
-                    Column {
-                        Text(
-                            text = appState.strings.themeMode,
-                            color = textPrimary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = appState.strings.themeSubtitle,
-                            color = textSecondary,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // Tema seçenekleri
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    ThemeOptionCard(
-                        emoji = "☀️",
-                        label = appState.strings.themeLight,
-                        description = appState.strings.themeOptionLightDesc,
-                        isSelected = appState.themeMode == ThemeMode.LIGHT,
-                        onClick = { appState.updateThemeMode(ThemeMode.LIGHT) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    ThemeOptionCard(
-                        emoji = "🌙",
-                        label = appState.strings.themeDark,
-                        description = appState.strings.themeOptionDarkDesc,
-                        isSelected = appState.themeMode == ThemeMode.DARK,
-                        onClick = { appState.updateThemeMode(ThemeMode.DARK) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    ThemeOptionCard(
-                        emoji = "📱",
-                        label = appState.strings.themeSystem,
-                        description = appState.strings.themeOptionSystemDesc,
-                        isSelected = appState.themeMode == ThemeMode.SYSTEM,
-                        onClick = { appState.updateThemeMode(ThemeMode.SYSTEM) },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Dil Seçimi Bölümü
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(bgSecondary)
-                    .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
-                    .padding(16.dp)
-            ) {
-                // Bölüm başlığı
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(text = "🌐", fontSize = 16.sp)
-                    Column {
-                        Text(
-                            text = appState.strings.languageTitle,
-                            color = textPrimary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = appState.strings.languageSubtitle,
-                            color = textSecondary,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // Modern Seçici Buton
-                var isExpanded by remember { mutableStateOf(false) }
-
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(bgTertiary)
-                        .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
-                        .clickable { isExpanded = !isExpanded }
-                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(bgSecondary)
+                        .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
                 ) {
+                    // Bölüm başlığı
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = appState.appLanguage.flag, fontSize = 16.sp)
+                        Text(text = "🎨", fontSize = 16.sp)
+                        Column {
                             Text(
-                                text = "${appState.appLanguage.displayName} (${appState.appLanguage.code.uppercase()})",
+                                text = appState.strings.themeMode,
                                 color = textPrimary,
-                                fontSize = 13.sp,
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold
                             )
+                            Text(
+                                text = appState.strings.themeSubtitle,
+                                color = textSecondary,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium
+                            )
                         }
-                        Text(
-                            text = if (isExpanded) "▲" else "▼",
-                            color = textSecondary,
-                            fontSize = 10.sp
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Tema seçenekleri
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ThemeOptionCard(
+                            emoji = "☀️",
+                            label = appState.strings.themeLight,
+                            description = appState.strings.themeOptionLightDesc,
+                            isSelected = appState.themeMode == ThemeMode.LIGHT,
+                            onClick = { appState.updateThemeMode(ThemeMode.LIGHT) },
+                            modifier = Modifier.weight(1f)
+                        )
+                        ThemeOptionCard(
+                            emoji = "🌙",
+                            label = appState.strings.themeDark,
+                            description = appState.strings.themeOptionDarkDesc,
+                            isSelected = appState.themeMode == ThemeMode.DARK,
+                            onClick = { appState.updateThemeMode(ThemeMode.DARK) },
+                            modifier = Modifier.weight(1f)
+                        )
+                        ThemeOptionCard(
+                            emoji = "📱",
+                            label = appState.strings.themeSystem,
+                            description = appState.strings.themeOptionSystemDesc,
+                            isSelected = appState.themeMode == ThemeMode.SYSTEM,
+                            onClick = { appState.updateThemeMode(ThemeMode.SYSTEM) },
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }
 
-                if (isExpanded) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Dil Seçimi Bölümü
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(bgSecondary)
+                        .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                ) {
+                    // Bölüm başlığı
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(text = "🌐", fontSize = 16.sp)
+                        Column {
+                            Text(
+                                text = appState.strings.languageTitle,
+                                color = textPrimary,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = appState.strings.languageSubtitle,
+                                color = textSecondary,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Modern Seçici Buton
+                    var isExpanded by remember { mutableStateOf(false) }
+
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(max = 180.dp)
-                            .background(bgTertiary)
                             .clip(RoundedCornerShape(12.dp))
+                            .background(bgTertiary)
                             .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
+                            .clickable { isExpanded = !isExpanded }
+                            .padding(horizontal = 14.dp, vertical = 12.dp)
                     ) {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth()
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            items(AppLanguage.values().toList()) { lang ->
-                                val isSelected = appState.appLanguage == lang
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(if (isSelected) (if (isDarkTheme) Color_FF1A1510 else Color_FFFFF7ED) else Color.Transparent)
-                                        .clickable {
-                                            appState.updateLanguage(lang)
-                                            isExpanded = false
-                                        }
-                                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = appState.appLanguage.flag, fontSize = 16.sp)
+                                Text(
+                                    text = "${appState.appLanguage.displayName} (${appState.appLanguage.code.uppercase()})",
+                                    color = textPrimary,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            Text(
+                                text = if (isExpanded) "▲" else "▼",
+                                color = textSecondary,
+                                fontSize = 10.sp
+                            )
+                        }
+                    }
+
+                    if (isExpanded) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 180.dp)
+                                .background(bgTertiary)
+                                .clip(RoundedCornerShape(12.dp))
+                                .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
+                        ) {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                items(AppLanguage.values().toList()) { lang ->
+                                    val isSelected = appState.appLanguage == lang
                                     Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(text = lang.flag, fontSize = 16.sp)
-                                        Text(
-                                            text = lang.displayName,
-                                            color = if (isSelected) Color_FFFF8A00 else textPrimary,
-                                            fontSize = 13.sp,
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                        )
-                                    }
-                                    if (isSelected) {
-                                        Text(
-                                            text = "✓",
-                                            color = Color_FFFF8A00,
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
-                                if (lang != AppLanguage.values().last()) {
-                                    Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(0.5.dp)
-                                            .background(borderColor.copy(alpha = 0.5f))
-                                    )
+                                            .background(if (isSelected) (if (isDarkTheme) Color_FF1A1510 else Color_FFFFF7ED) else Color.Transparent)
+                                            .clickable {
+                                                appState.updateLanguage(lang)
+                                                isExpanded = false
+                                            }
+                                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(text = lang.flag, fontSize = 16.sp)
+                                            Text(
+                                                text = lang.displayName,
+                                                color = if (isSelected) Color_FFFF8A00 else textPrimary,
+                                                fontSize = 13.sp,
+                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                            )
+                                        }
+                                        if (isSelected) {
+                                            Text(
+                                                text = "✓",
+                                                color = Color_FFFF8A00,
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                    if (lang != AppLanguage.values().last()) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(0.5.dp)
+                                                .background(borderColor.copy(alpha = 0.5f))
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            // Uygulama bilgisi
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(bgSecondary)
-                    .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
-                    .padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                // Uygulama bilgisi
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(bgSecondary)
+                        .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
                 ) {
-                    Text(text = "ℹ️", fontSize = 16.sp)
-                    Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(text = "ℹ️", fontSize = 16.sp)
+                        Column {
+                            Text(
+                                text = appState.strings.aboutTitle,
+                                color = textPrimary,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = appState.strings.aboutSubtitle,
+                                color = textSecondary,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = appState.strings.aboutTitle,
-                            color = textPrimary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = appState.strings.aboutSubtitle,
+                            text = appState.strings.versionTitle,
                             color = textSecondary,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Medium
+                            fontSize = 12.sp
                         )
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(bgTertiary)
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = "1.0.0",
+                                color = textPrimary,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = appState.strings.versionTitle,
-                        color = textSecondary,
-                        fontSize = 12.sp
-                    )
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(bgTertiary)
-                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "1.0.0",
-                            color = textPrimary,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
+                            text = appState.strings.platformTitle,
+                            color = textSecondary,
+                            fontSize = 12.sp
                         )
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(bgTertiary)
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = "Kotlin Multiplatform",
+                                color = textPrimary,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = appState.strings.platformTitle,
-                        color = textSecondary,
-                        fontSize = 12.sp
-                    )
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(bgTertiary)
-                            .padding(horizontal = 8.dp, vertical = 3.dp)
-                    ) {
-                        Text(
-                            text = "Kotlin Multiplatform",
-                            color = textPrimary,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
+                // Alt bilgi
+                Text(
+                    text = "${appState.strings.copyright}${getCurrentYear()}",
+                    color = textSecondary.copy(alpha = 0.5f),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    letterSpacing = 2.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Alt bilgi
-            Text(
-                text = "${appState.strings.copyright}${getCurrentYear()}",
-                color = textSecondary.copy(alpha = 0.5f),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium,
-                letterSpacing = 2.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            )
         }
     }
-}
 }
 
 @Composable

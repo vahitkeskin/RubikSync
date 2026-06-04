@@ -25,6 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -276,8 +277,19 @@ fun App() {
                                 onComplete = { completeGrids ->
                                     appState.editorFaces = completeGrids
                                     appState.showScannerWizard = false
-                                    appState.errorMessage = null
-                                    appState.infoMessage = null
+                                    appState.coroutineScope.launch {
+                                        val success = cubeState.setCustomStateAnimated(completeGrids)
+                                        if (success) {
+                                            appState.showEditorDialog = false
+                                            appState.manualMoves.clear()
+                                            appState.saveCurrentState()
+                                            appState.activeSolution = null
+                                            appState.errorMessage = null
+                                            appState.successMessage = appState.strings.successScanComplete
+                                        } else {
+                                            appState.errorMessage = appState.strings.invalidCubeDesign
+                                        }
+                                    }
                                 }
                             )
 

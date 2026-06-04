@@ -31,7 +31,7 @@ fun InteractiveCubeCanvas(
     // Gesture Handler
     val gestureHandler = remember(cubeState) {
         GestureHandler(
-            state = cubeState,
+            cubeState = cubeState,
             onCameraOrbit = { dy, dp ->
                 appState.yaw = (appState.yaw + dy) % (2f * PI.toFloat())
                 appState.pitch = (appState.pitch + dp).coerceIn(-1.4f, 1.4f)

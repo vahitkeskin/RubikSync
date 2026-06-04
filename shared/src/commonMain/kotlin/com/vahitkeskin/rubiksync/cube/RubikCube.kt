@@ -5,23 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import kotlin.math.PI
-import kotlin.math.pow
 import kotlin.math.roundToInt
-
-private data class CubiePlacement(
-    val gridPos: Vector3,
-    val rightBasis: Vector3,
-    val upBasis: Vector3,
-    val forwardBasis: Vector3
-)
-
-private fun easeInOutCubic(t: Float): Float {
-    return if (t < 0.5f) {
-        4f * t * t * t
-    } else {
-        1f - (-2f * t + 2f).pow(3) / 2f
-    }
-}
 
 enum class FaceName { U, D, L, R, F, B }
 
@@ -248,40 +232,14 @@ class RubikCubeState {
 
     suspend fun setCustomStateAnimated(
         faces: Map<FaceName, Array<Array<CubeColor>>>,
-        durationMs: Float = 750f
+        durationMs: Float = 750f,
     ): Boolean {
         if (isAnimating) return false
         val targets = computeCustomStatePlacements(faces) ?: return false
 
         isAnimating = true
         currentMove = null
-
-        val startPositions = cubies.associate { it.id to it.gridPos }
-        val startRights = cubies.associate { it.id to it.rightBasis }
-        val startUps = cubies.associate { it.id to it.upBasis }
-        val startForwards = cubies.associate { it.id to it.forwardBasis }
-
-        val startFrameTime = withFrameMillis { it }
-        var elapsed = 0f
-
-        while (elapsed < durationMs) {
-            val t = (elapsed / durationMs).coerceIn(0f, 1f)
-            val easedT = easeInOutCubic(t)
-
-            cubies.forEach { cubie ->
-                val target = targets[cubie.id] ?: return@forEach
-                val startPos = startPositions.getValue(cubie.id)
-                cubie.gridPos = startPos + (target.gridPos - startPos) * easedT
-                cubie.rightBasis = (startRights.getValue(cubie.id) + (target.rightBasis - startRights.getValue(cubie.id)) * easedT).normalized()
-                cubie.upBasis = (startUps.getValue(cubie.id) + (target.upBasis - startUps.getValue(cubie.id)) * easedT).normalized()
-                cubie.forwardBasis = (startForwards.getValue(cubie.id) + (target.forwardBasis - startForwards.getValue(cubie.id)) * easedT).normalized()
-            }
-
-            val now = withFrameMillis { it }
-            elapsed = (now - startFrameTime).toFloat()
-        }
-
-        applyCustomStatePlacements(targets)
+        cubies.animateTransforms(targets, durationMs)
         moveHistory.clear()
         isAnimating = false
         onStateChanged?.invoke()
@@ -289,8 +247,8 @@ class RubikCubeState {
     }
 
     private fun computeCustomStatePlacements(
-        faces: Map<FaceName, Array<Array<CubeColor>>>
-    ): Map<Int, CubiePlacement>? {
+        faces: Map<FaceName, Array<Array<CubeColor>>>,
+    ): Map<Int, CubieTransform>? {
         fun getFaceletColor(pos: Vector3, normal: Vector3): CubeColor {
             val px = pos.x.roundToInt()
             val py = pos.y.roundToInt()
@@ -311,7 +269,7 @@ class RubikCubeState {
         }
 
         val matchedCubieIds = mutableSetOf<Int>()
-        val placements = mutableMapOf<Int, CubiePlacement>()
+        val placements = mutableMapOf<Int, CubieTransform>()
         
         val normals = listOf(
             Vector3(-1f, 0f, 0f), Vector3(1f, 0f, 0f),
@@ -386,7 +344,7 @@ class RubikCubeState {
                         right = up.cross(forward)
                     }
                     
-                    placements[matchingCubie.id] = CubiePlacement(gridPos, right, up, forward)
+                    placements[matchingCubie.id] = CubieTransform(gridPos, right, up, forward)
                 }
             }
         }
@@ -394,13 +352,9 @@ class RubikCubeState {
         return placements
     }
 
-    private fun applyCustomStatePlacements(placements: Map<Int, CubiePlacement>) {
-        placements.forEach { (cubieId, placement) ->
-            val cubie = cubies.first { it.id == cubieId }
-            cubie.gridPos = placement.gridPos
-            cubie.rightBasis = placement.rightBasis
-            cubie.upBasis = placement.upBasis
-            cubie.forwardBasis = placement.forwardBasis
+    private fun applyCustomStatePlacements(placements: Map<Int, CubieTransform>) {
+        placements.forEach { (cubieId, transform) ->
+            cubies.first { it.id == cubieId }.applyTransform(transform)
         }
     }
 
@@ -419,45 +373,23 @@ class RubikCubeState {
 
     suspend fun resetAnimated(
         durationMs: Float = 500f,
-        onProgress: (Float) -> Unit = {}
+        onProgress: (Float) -> Unit = {},
     ) {
         if (isAnimating) return
+
+        val solvedLayout = cubies.associate { cubie ->
+            cubie.id to CubieTransform(
+                gridPos = cubie.originalPos,
+                rightBasis = Vector3.UnitX,
+                upBasis = Vector3.UnitY,
+                forwardBasis = Vector3.UnitZ,
+            )
+        }
+
         isAnimating = true
         currentMove = null
         moveHistory.clear()
-        
-        val startPositions = cubies.map { it.gridPos }
-        val startRights = cubies.map { it.rightBasis }
-        val startUps = cubies.map { it.upBasis }
-        val startForwards = cubies.map { it.forwardBasis }
-        
-        val startFrameTime = withFrameMillis { it }
-        var elapsed = 0f
-        
-        while (elapsed < durationMs) {
-            val t = (elapsed / durationMs).coerceIn(0f, 1f)
-            val easedT = easeInOutCubic(t)
-
-            cubies.forEachIndexed { i, cubie ->
-                cubie.gridPos = startPositions[i] + (cubie.originalPos - startPositions[i]) * easedT
-                cubie.rightBasis = (startRights[i] + (Vector3.UnitX - startRights[i]) * easedT).normalized()
-                cubie.upBasis = (startUps[i] + (Vector3.UnitY - startUps[i]) * easedT).normalized()
-                cubie.forwardBasis = (startForwards[i] + (Vector3.UnitZ - startForwards[i]) * easedT).normalized()
-            }
-            onProgress(easedT)
-            
-            val now = withFrameMillis { it }
-            elapsed = (now - startFrameTime).toFloat()
-        }
-        
-        // Final state
-        cubies.forEach { cubie ->
-            cubie.gridPos = cubie.originalPos
-            cubie.rightBasis = Vector3.UnitX
-            cubie.upBasis = Vector3.UnitY
-            cubie.forwardBasis = Vector3.UnitZ
-        }
-        onProgress(1f)
+        cubies.animateTransforms(solvedLayout, durationMs, onProgress)
         isAnimating = false
         onStateChanged?.invoke()
     }

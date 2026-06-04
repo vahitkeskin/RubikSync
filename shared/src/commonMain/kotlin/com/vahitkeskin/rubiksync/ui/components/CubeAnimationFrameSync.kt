@@ -10,8 +10,10 @@ import androidx.compose.runtime.withFrameMillis
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 
 /**
- * Drives Compose recomposition on every animation frame.
- * Canvas draw lambdas do not observe [RubikCubeState] changes unless state is read during composition.
+ * Keeps the home-screen [androidx.compose.foundation.Canvas] in sync with cube animations.
+ *
+ * Draw scopes do not subscribe to [RubikCubeState]; reading a frame tick during composition
+ * forces a redraw while [RubikCubeState.isAnimating] is true.
  */
 @Composable
 fun rememberCubeAnimationFrameTick(cubeState: RubikCubeState): Int {
@@ -20,13 +22,11 @@ fun rememberCubeAnimationFrameTick(cubeState: RubikCubeState): Int {
     LaunchedEffect(cubeState.isAnimating) {
         if (!cubeState.isAnimating) return@LaunchedEffect
         while (cubeState.isAnimating) {
-            withFrameMillis {
-                frameTick++
-            }
+            withFrameMillis { _ -> frameTick++ }
         }
     }
 
-    // Layer-turn animation updates this property inside [RubikCubeState.executeMove]
-    val layerRotation = cubeState.currentMove?.currentAngleRad
-    return frameTick + (layerRotation?.toBits() ?: 0)
+    // Observe active layer rotation (updated each frame inside executeMove).
+    val layerAngle = cubeState.currentMove?.currentAngleRad ?: 0f
+    return frameTick + layerAngle.toBits()
 }

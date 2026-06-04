@@ -1,6 +1,8 @@
 package com.vahitkeskin.rubiksync
 
 import com.vahitkeskin.rubiksync.ui.state.*
+import com.vahitkeskin.rubiksync.ui.icons.CameraIcon
+import com.vahitkeskin.rubiksync.ui.icons.GalleryIcon
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -616,36 +618,48 @@ actual fun CameraCaptureOrPicker(
         }
     }
     
+    val isDark = RubikTheme.colors.isDark
+    val accentBlue = RubikTheme.colors.accentBlue
+    val accentOrange = RubikTheme.colors.accentOrange
+
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Camera Card
         Card(
             onClick = { checkAndLaunchCamera() },
             colors = CardDefaults.cardColors(
-                containerColor = AccentBlue.copy(alpha = 0.15f)
+                containerColor = if (isDark) accentBlue.copy(alpha = 0.16f) else accentBlue.copy(alpha = 0.08f)
             ),
-            shape = RoundedCornerShape(14.dp),
-            border = BorderStroke(1.5.dp, AccentBlue.copy(alpha = 0.5f)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(
+                width = 2.dp,
+                color = if (isDark) accentBlue.copy(alpha = 0.7f) else accentBlue
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.weight(1f)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                    .padding(vertical = 16.dp, horizontal = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text("📷", fontSize = 22.sp)
-                Spacer(modifier = Modifier.height(4.dp))
+                Icon(
+                    imageVector = CameraIcon,
+                    contentDescription = takePhotoLabel,
+                    tint = accentBlue,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = takePhotoLabel,
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AccentBlue,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = if (isDark) Color.White else accentBlue,
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )
@@ -656,27 +670,35 @@ actual fun CameraCaptureOrPicker(
         Card(
             onClick = { launchGallery() },
             colors = CardDefaults.cardColors(
-                containerColor = AccentOrange.copy(alpha = 0.15f)
+                containerColor = if (isDark) accentOrange.copy(alpha = 0.16f) else accentOrange.copy(alpha = 0.08f)
             ),
-            shape = RoundedCornerShape(14.dp),
-            border = BorderStroke(1.5.dp, AccentOrange.copy(alpha = 0.5f)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(
+                width = 2.dp,
+                color = if (isDark) accentOrange.copy(alpha = 0.7f) else accentOrange
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.weight(1f)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                    .padding(vertical = 16.dp, horizontal = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text("🖼️", fontSize = 22.sp)
-                Spacer(modifier = Modifier.height(4.dp))
+                Icon(
+                    imageVector = GalleryIcon,
+                    contentDescription = chooseGalleryLabel,
+                    tint = accentOrange,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = chooseGalleryLabel,
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AccentOrange,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = if (isDark) Color.White else accentOrange,
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )

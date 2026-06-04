@@ -35,6 +35,10 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import com.vahitkeskin.rubiksync.ui.icons.CloseIcon
+import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
+import com.vahitkeskin.rubiksync.ui.icons.ArrowForwardIcon
+import com.vahitkeskin.rubiksync.ui.icons.CheckIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -795,7 +799,12 @@ fun ScannerWizard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text("✕", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Icon(
+                            imageVector = CloseIcon,
+                            contentDescription = "Cancel",
+                            modifier = Modifier.size(14.dp),
+                            tint = RubikTheme.colors.textPrimary
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = appState.strings.cancelButton,
@@ -828,7 +837,12 @@ fun ScannerWizard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text("←", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Icon(
+                            imageVector = ArrowBackIcon,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(14.dp),
+                            tint = if (appState.scannerStep > 0) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = appState.strings.backButton,
@@ -882,7 +896,12 @@ fun ScannerWizard(
                                 maxLines = 1
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("→", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Icon(
+                                imageVector = ArrowForwardIcon,
+                                contentDescription = "Next",
+                                modifier = Modifier.size(14.dp),
+                                tint = if (hasCurrentScan) Color.White else RubikTheme.colors.textSecondary
+                            )
                         }
                     }
                 } else {
@@ -922,7 +941,12 @@ fun ScannerWizard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Text("✓", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold)
+                            Icon(
+                                imageVector = CheckIcon,
+                                contentDescription = "Set",
+                                modifier = Modifier.size(14.dp),
+                                tint = if (appState.scannedFilePaths.size == 6) Color.White else RubikTheme.colors.textSecondary
+                            )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = appState.strings.setButton,

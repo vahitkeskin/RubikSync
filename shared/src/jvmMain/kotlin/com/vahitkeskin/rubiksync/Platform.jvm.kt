@@ -1,6 +1,7 @@
 package com.vahitkeskin.rubiksync
 
 import com.vahitkeskin.rubiksync.ui.state.*
+import com.vahitkeskin.rubiksync.ui.icons.GalleryIcon
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,10 +10,20 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
@@ -135,13 +146,31 @@ actual fun CameraCaptureOrPicker(
             }
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = DarkTextMuted,
-            contentColor = Color.White
+            containerColor = RubikTheme.colors.backgroundSecondary,
+            contentColor = RubikTheme.colors.textPrimary
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = modifier
+        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
+        modifier = modifier.height(42.dp)
     ) {
-        Text("📁 $selectImageLabel", fontSize = 14.sp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = GalleryIcon,
+                contentDescription = "Select Image",
+                modifier = Modifier.size(16.dp),
+                tint = RubikTheme.colors.textPrimary
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = selectImageLabel,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
+            )
+        }
     }
 }
 

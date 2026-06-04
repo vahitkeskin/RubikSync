@@ -9,52 +9,32 @@ import random
 import os
 
 SAMPLE_RATE = 44100
-DURATION = 0.24  # 240ms — optimal duration for a layer rotation
+DURATION = 0.08  # 80ms — short, crisp click sound
 NUM_SAMPLES = int(SAMPLE_RATE * DURATION)
 
 def generate_rubik_rotate_sound():
-    """Synthesizes a realistic plastic friction + hollow core snap."""
+    """Synthesizes a clean, sharp plastic click with no friction noise."""
     samples = []
-    lpf_friction = 0.0
     lpf_click = 0.0
-    
-    # Position the alignment snap click at ~110ms into the turn
-    snap_sample = int(SAMPLE_RATE * 0.11)
     
     for i in range(NUM_SAMPLES):
         t = i / SAMPLE_RATE
         
-        # 1. Plastic Friction (Low-pass filtered white noise for scraping sound)
-        raw_noise = random.uniform(-1.0, 1.0)
-        # alpha = 0.075 (~520Hz cutoff) creates a deep, warm plastic rubbing sound
-        lpf_friction = lpf_friction + 0.075 * (raw_noise - lpf_friction)
+        # Hollow plastic core thud (180Hz sine decaying rapidly)
+        thud = math.sin(2 * math.pi * 180 * t) * math.exp(-t * 180) * 0.65
         
-        # Friction envelope: bell-shaped over the turn duration
-        friction_env = math.sin(t * math.pi / DURATION) ** 1.4
-        friction = lpf_friction * friction_env * 0.32
+        # Sharp high-frequency click (decaying almost instantly)
+        raw_click_noise = random.uniform(-1.0, 1.0)
+        lpf_click = lpf_click + 0.3 * (raw_click_noise - lpf_click)
+        click_noise = raw_click_noise - lpf_click  # High frequencies
+        click = click_noise * math.exp(-t * 900) * 0.35
         
-        # 2. Alignment snap click
-        snap = 0.0
-        if i >= snap_sample:
-            t_snap = (i - snap_sample) / SAMPLE_RATE
-            
-            # Hollow plastic core thud (160Hz sine decaying rapidly)
-            thud = math.sin(2 * math.pi * 160 * t_snap) * math.exp(-t_snap * 110) * 0.45
-            
-            # Sharp tooth contact click (High-pass filtered noise decaying instantly)
-            raw_click_noise = random.uniform(-1.0, 1.0)
-            lpf_click = lpf_click + 0.28 * (raw_click_noise - lpf_click)
-            click_noise = raw_click_noise - lpf_click  # High frequencies only
-            click = click_noise * math.exp(-t_snap * 480) * 0.22
-            
-            snap = thud + click
-            
-        # Combine friction and snap click
-        sample = friction + snap
+        # Combine to create the crisp click
+        sample = thud + click
         
-        # Master envelope with slight fade-out at the very end
-        if t > 0.21:
-            fade_out = (DURATION - t) / 0.03
+        # Fade out at the end
+        if t > 0.06:
+            fade_out = (DURATION - t) / 0.02
             sample *= max(0.0, fade_out)
             
         sample = max(-1.0, min(1.0, sample))

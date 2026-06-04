@@ -20,6 +20,7 @@ import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
 import com.vahitkeskin.rubiksync.ui.strings.AppStrings
 import com.vahitkeskin.rubiksync.ui.strings.AppStringsMap
 import com.vahitkeskin.rubiksync.ui.strings.EnStrings
+import com.vahitkeskin.rubiksync.getSystemLanguageCode
 
 class RubikAppState(
     val cubeState: RubikCubeState,
@@ -45,7 +46,12 @@ class RubikAppState(
     var isThemeLoaded by mutableStateOf(false)
 
     // App language state
-    var appLanguage by mutableStateOf(AppLanguage.TR)
+    var appLanguage by mutableStateOf(
+        run {
+            val sysCode = getSystemLanguageCode().lowercase()
+            AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
+        }
+    )
 
     // Localized strings
     val strings: AppStrings
@@ -200,7 +206,9 @@ class RubikAppState(
                     // Dil tercihini yükle
                     val savedLang = persistence.loadLanguage()
                     if (savedLang != null) {
-                        val lang = AppLanguage.values().find { it.code == savedLang } ?: AppLanguage.TR
+                        val sysCode = getSystemLanguageCode().lowercase()
+                        val defaultLang = AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
+                        val lang = AppLanguage.values().find { it.code == savedLang } ?: defaultLang
                         withContext(Dispatchers.Main) {
                             appLanguage = lang
                         }

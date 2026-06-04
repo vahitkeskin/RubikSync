@@ -234,12 +234,18 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "${appState.appLanguage.displayName} (${appState.appLanguage.code.uppercase()})",
-                            color = textPrimary,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = appState.appLanguage.flag, fontSize = 16.sp)
+                            Text(
+                                text = "${appState.appLanguage.displayName} (${appState.appLanguage.code.uppercase()})",
+                                color = textPrimary,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                         Text(
                             text = if (isExpanded) "▲" else "▼",
                             color = textSecondary,
@@ -275,12 +281,18 @@ fun SettingsScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(
-                                        text = lang.displayName,
-                                        color = if (isSelected) Color(0xFFFF8A00) else textPrimary,
-                                        fontSize = 13.sp,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                    )
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(text = lang.flag, fontSize = 16.sp)
+                                        Text(
+                                            text = lang.displayName,
+                                            color = if (isSelected) Color(0xFFFF8A00) else textPrimary,
+                                            fontSize = 13.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                        )
+                                    }
                                     if (isSelected) {
                                         Text(
                                             text = "✓",

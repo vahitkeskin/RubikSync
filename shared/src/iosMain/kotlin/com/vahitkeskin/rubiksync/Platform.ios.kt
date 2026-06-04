@@ -805,6 +805,12 @@ actual fun getCurrentYear(): Int {
     return formatter.stringFromDate(NSDate()).toIntOrNull() ?: 2026
 }
 
+actual fun getSystemLanguageCode(): String {
+    val languages = NSLocale.preferredLanguages
+    val firstLang = languages.firstOrNull() as? String ?: "en"
+    return firstLang.split("-").firstOrNull() ?: "en"
+}
+
 @Composable
 actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
     // No-op on iOS

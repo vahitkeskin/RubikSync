@@ -15,6 +15,8 @@ expect fun getPlatform(): Platform
 
 expect fun getCurrentYear(): Int
 
+expect fun getSystemLanguageCode(): String
+
 expect fun runDetectionScript(): String
 
 interface PixelGrid {

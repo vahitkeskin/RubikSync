@@ -637,6 +637,10 @@ actual fun getCurrentYear(): Int {
     return java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
 }
 
+actual fun getSystemLanguageCode(): String {
+    return java.util.Locale.getDefault().language
+}
+
 @Composable
 actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
     BackHandler(enabled = enabled, onBack = onBack)

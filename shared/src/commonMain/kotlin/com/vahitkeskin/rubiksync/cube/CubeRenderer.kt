@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
@@ -16,7 +17,8 @@ class CubeRenderer(
     private val pitch: Float, // vertical camera angle
     private val cameraDistance: Float = 7.0f,
     private val panX: Float = 0f,
-    private val panY: Float = 0f
+    private val panY: Float = 0f,
+    private val isDark: Boolean = true
 ) {
     // 3D outline of a rounded square centered at origin in the XY plane.
     // Size = 1.0f (from -0.5 to 0.5), corner radius = 0.15f for cubies
@@ -227,23 +229,27 @@ class CubeRenderer(
 
         // Step 3: Draw faces in sorted order
         renderFaces.forEach { rf ->
-            // Calculate Lighting/Shading factors
-            val ambient = 0.35f
-            val diffuse = rf.worldNormal.dot(lightDir).coerceAtLeast(0f) * 0.50f
+            // Calculate Lighting/Shading factors (brightened to remove the gray/muddy filter look)
+            val ambient = 0.70f
+            val diffuse = rf.worldNormal.dot(lightDir).coerceAtLeast(0f) * 0.30f
             
-            // Specular highlights for shiny plastic look
-            val spec = rf.worldNormal.dot(halfway).coerceAtLeast(0f).pow(24f) * 0.32f
+            // Specular highlights for shiny plastic look (tightened for elegance)
+            val spec = rf.worldNormal.dot(halfway).coerceAtLeast(0f).pow(32f) * 0.20f
 
             val totalLight = (ambient + diffuse).coerceIn(0f, 1f)
 
-            // Draw White Cubie Plastic Body
+            // Draw Premium Light/White Cubie Body
+            val bodyBase = if (isDark) 0.80f else 0.92f
             val bodyColor = Color(
-                red = (0.98f * totalLight + spec).coerceIn(0f, 1f),
-                green = (0.98f * totalLight + spec).coerceIn(0f, 1f),
-                blue = (0.98f * totalLight + spec).coerceIn(0f, 1f)
+                red = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f),
+                green = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f),
+                blue = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f)
             )
+            drawPolygon(drawScope, rf.projectedBodyPoints, bodyColor, style = Fill)
 
-            drawPolygon(drawScope, rf.projectedBodyPoints, bodyColor)
+            // Draw a subtle border around the cubie body for 3D depth and separation
+            val bodyOutlineColor = if (isDark) Color(0xFF1E1E1E) else Color(0x33000000)
+            drawPolygon(drawScope, rf.projectedBodyPoints, bodyOutlineColor, style = Stroke(width = 0.5f))
 
             // Draw Colored Sticker
             val baseColor = rf.face.color
@@ -256,12 +262,20 @@ class CubeRenderer(
                 green = (g * totalLight + spec).coerceIn(0f, 1f),
                 blue = (b * totalLight + spec).coerceIn(0f, 1f)
             )
+            drawPolygon(drawScope, rf.projectedStickerPoints, stickerColor, style = Fill)
 
-            drawPolygon(drawScope, rf.projectedStickerPoints, stickerColor)
+            // Draw a distinct, elegant border around the sticker to keep colors highly distinct
+            val stickerBorderColor = if (isDark) Color(0xFF1A1A1A) else Color(0x66000000)
+            drawPolygon(drawScope, rf.projectedStickerPoints, stickerBorderColor, style = Stroke(width = 1f))
         }
     }
 
-    private fun drawPolygon(drawScope: DrawScope, points: List<Offset>, color: Color) {
+    private fun drawPolygon(
+        drawScope: DrawScope,
+        points: List<Offset>,
+        color: Color,
+        style: androidx.compose.ui.graphics.drawscope.DrawStyle = Fill
+    ) {
         if (points.isEmpty()) return
         val path = Path()
         path.moveTo(points[0].x, points[0].y)
@@ -269,7 +283,7 @@ class CubeRenderer(
             path.lineTo(points[i].x, points[i].y)
         }
         path.close()
-        drawScope.drawPath(path, color, style = Fill)
+        drawScope.drawPath(path, color, style = style)
     }
 
     private fun drawFloorShadow(drawScope: DrawScope, centerX: Float, centerY: Float, focalLength: Float) {

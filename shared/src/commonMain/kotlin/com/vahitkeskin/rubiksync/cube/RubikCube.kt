@@ -10,13 +10,13 @@ import kotlin.math.roundToInt
 enum class FaceName { U, D, L, R, F, B }
 
 enum class CubeColor(val rgb: Long) {
-    ORANGE(0xFFFF5F00), // Top face - rich orange matching image
-    RED(0xFFD6001C),    // Bottom face - classic red
-    YELLOW(0xFFFFD500), // Left face - vibrant yellow matching image
-    WHITE(0xFFFFFFFF),  // Right face - pure white
-    GREEN(0xFF009B48),  // Front face - green matching image
-    BLUE(0xFF0046AD),   // Back face - classic blue
-    INTERNAL(0xFF1E1E1E) // Inner hidden faces - slate gray/black
+    ORANGE(0xFFFF6B00), // Top face - premium rich orange
+    RED(0xFFFF3B30),    // Bottom face - vibrant red
+    YELLOW(0xFFFFD600), // Left face - brilliant canary yellow
+    WHITE(0xFFFFFFFF),  // Right face - clean white
+    GREEN(0xFF34C759),  // Front face - modern vibrant green
+    BLUE(0xFF007AFF),   // Back face - royal vibrant blue
+    INTERNAL(0xFF151B26) // Inner hidden faces - deep matte black
 }
 
 data class CubieFace(

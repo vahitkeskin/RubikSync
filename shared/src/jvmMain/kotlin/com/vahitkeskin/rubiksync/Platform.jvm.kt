@@ -190,3 +190,17 @@ actual fun getSystemLanguageCode(): String {
 actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
     // No-op on JVM/Desktop
 }
+
+// --- Cube Sound Implementation ---
+
+actual fun initCubeSound() {
+    // No-op on JVM/Desktop
+}
+
+actual fun playCubeRotateSound() {
+    // No-op on JVM/Desktop
+}
+
+actual fun releaseCubeSound() {
+    // No-op on JVM/Desktop
+}

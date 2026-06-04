@@ -711,3 +711,54 @@ actual fun getSystemLanguageCode(): String {
 actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
     BackHandler(enabled = enabled, onBack = onBack)
 }
+
+// --- Cube Sound Implementation ---
+
+private var appContext: android.content.Context? = null
+private var soundPool: android.media.SoundPool? = null
+private var rotateSoundId: Int = 0
+private var isSoundLoaded = false
+
+fun setAppContext(context: android.content.Context) {
+    appContext = context.applicationContext
+}
+
+actual fun initCubeSound() {
+    val context = appContext ?: return
+    if (soundPool != null) return // Already initialized
+
+    val audioAttributes = android.media.AudioAttributes.Builder()
+        .setUsage(android.media.AudioAttributes.USAGE_GAME)
+        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+        .build()
+
+    val pool = android.media.SoundPool.Builder()
+        .setMaxStreams(3)
+        .setAudioAttributes(audioAttributes)
+        .build()
+
+    soundPool = pool
+
+    // Resolve resource ID dynamically to avoid compile-time dependency on app module's R class
+    val resId = context.resources.getIdentifier("cube_rotate", "raw", context.packageName)
+    if (resId != 0) {
+        rotateSoundId = pool.load(context, resId, 1)
+        pool.setOnLoadCompleteListener { _, sampleId, status ->
+            if (sampleId == rotateSoundId && status == 0) {
+                isSoundLoaded = true
+            }
+        }
+    }
+}
+
+actual fun playCubeRotateSound() {
+    if (isSoundLoaded) {
+        soundPool?.play(rotateSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
+    }
+}
+
+actual fun releaseCubeSound() {
+    soundPool?.release()
+    soundPool = null
+    isSoundLoaded = false
+}

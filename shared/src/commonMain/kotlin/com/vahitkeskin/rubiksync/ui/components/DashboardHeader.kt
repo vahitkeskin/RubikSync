@@ -141,6 +141,50 @@ fun DashboardHeader(
                     )
                 }
 
+                // Zeka küpü döndürme ses ikonu — hoparlör/sessiz
+                val soundBgColor by animateColorAsState(
+                    targetValue = if (!appState.isCubeEditable) {
+                        RubikTheme.colors.cardBackground.copy(alpha = 0.5f)
+                    } else if (appState.isSoundEnabled) {
+                        RubikTheme.colors.accentBlue.copy(alpha = 0.15f)
+                    } else {
+                        RubikTheme.colors.accentRed.copy(alpha = 0.15f)
+                    },
+                    animationSpec = tween(durationMillis = 300),
+                    label = "soundBg"
+                )
+                val soundBorderColor by animateColorAsState(
+                    targetValue = if (!appState.isCubeEditable) {
+                        RubikTheme.colors.cardBorder.copy(alpha = 0.3f)
+                    } else if (appState.isSoundEnabled) {
+                        RubikTheme.colors.accentBlue.copy(alpha = 0.35f)
+                    } else {
+                        RubikTheme.colors.accentRed.copy(alpha = 0.35f)
+                    },
+                    animationSpec = tween(durationMillis = 300),
+                    label = "soundBorder"
+                )
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(soundBgColor)
+                        .border(0.5.dp, soundBorderColor, RoundedCornerShape(8.dp))
+                        .clickable(
+                            enabled = appState.isCubeEditable && !cubeState.isAnimating
+                        ) {
+                            appState.updateSoundEnabled(!appState.isSoundEnabled)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (appState.isSoundEnabled) "🔊" else "🔇",
+                        fontSize = 13.sp,
+                        maxLines = 1,
+                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                    )
+                }
+
                 // Ayarlar butonu
                 Box(
                     modifier = Modifier

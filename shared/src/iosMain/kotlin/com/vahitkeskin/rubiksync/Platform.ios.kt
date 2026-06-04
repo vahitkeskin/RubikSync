@@ -881,3 +881,17 @@ actual fun getSystemLanguageCode(): String {
 actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
     // No-op on iOS
 }
+
+// --- Cube Sound Implementation ---
+
+actual fun initCubeSound() {
+    // No-op on iOS
+}
+
+actual fun playCubeRotateSound() {
+    // No-op on iOS
+}
+
+actual fun releaseCubeSound() {
+    // No-op on iOS
+}

@@ -33,6 +33,7 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
     private val KEY_LANGUAGE = stringPreferencesKey("app_language")
     private val KEY_CUBE_EDITABLE = booleanPreferencesKey("cube_editable")
+    private val KEY_SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
 
     override suspend fun saveCubeState(
         cubies: List<CubiePersistable>,
@@ -140,6 +141,21 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     override suspend fun loadCubeEditable(): Boolean? {
         return try {
             context.dataStore.data.first()[KEY_CUBE_EDITABLE]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun saveSoundEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_SOUND_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun loadSoundEnabled(): Boolean? {
+        return try {
+            context.dataStore.data.first()[KEY_SOUND_ENABLED]
         } catch (e: Exception) {
             e.printStackTrace()
             null

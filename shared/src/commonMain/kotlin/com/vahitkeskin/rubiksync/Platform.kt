@@ -46,3 +46,11 @@ expect fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String)
 
 @Composable
 expect fun BindBackHandler(enabled: Boolean = true, onBack: () -> Unit)
+
+// --- Cube Sound API ---
+
+expect fun initCubeSound()
+
+expect fun playCubeRotateSound()
+
+expect fun releaseCubeSound()

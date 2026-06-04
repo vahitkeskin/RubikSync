@@ -107,6 +107,7 @@ class RubikCubeState {
         private set
 
     var onStateChanged: (() -> Unit)? = null
+    var onMoveStarted: (() -> Unit)? = null
 
     // Rounds coordinates to prevent floating point drift after rotations
     private fun Float.roundToHalfOrWhole(): Float {
@@ -133,6 +134,10 @@ class RubikCubeState {
     suspend fun executeMove(move: MoveType, skipAnimation: Boolean = false, addToHistory: Boolean = true) {
         if (isAnimating) return
         isAnimating = true
+
+        if (!skipAnimation) {
+            onMoveStarted?.invoke()
+        }
 
         if (skipAnimation) {
             applyDiscreteRotation(move)

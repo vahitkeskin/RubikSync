@@ -63,6 +63,9 @@ interface RubikPersistence {
 
     suspend fun saveCubeEditable(enabled: Boolean)
     suspend fun loadCubeEditable(): Boolean?
+
+    suspend fun saveSoundEnabled(enabled: Boolean)
+    suspend fun loadSoundEnabled(): Boolean?
 }
 
 object RubikPersistenceRegistry {

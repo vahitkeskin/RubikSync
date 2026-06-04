@@ -16,6 +16,9 @@ class MainActivity : ComponentActivity() {
         com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry.persistence =
             com.vahitkeskin.rubiksync.persistence.AndroidRubikPersistence(this)
 
+        // Set platform app context for sound playback
+        com.vahitkeskin.rubiksync.setAppContext(this)
+
         setContent {
             App()
         }

@@ -29,6 +29,20 @@ fun App() {
     val appState = rememberRubikAppState()
     val cubeState = appState.cubeState
 
+    // Initialize sound player and bind sound callback
+    DisposableEffect(Unit) {
+        initCubeSound()
+        cubeState.onMoveStarted = {
+            if (appState.isSoundEnabled) {
+                playCubeRotateSound()
+            }
+        }
+        onDispose {
+            cubeState.onMoveStarted = null
+            releaseCubeSound()
+        }
+    }
+
     // Tema moduna göre karanlık mı açık mı karar ver
     val systemIsDark = isSystemInDarkTheme()
     val isDarkTheme = when (appState.themeMode) {

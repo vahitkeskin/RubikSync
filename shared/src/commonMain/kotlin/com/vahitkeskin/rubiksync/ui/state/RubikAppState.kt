@@ -97,6 +97,8 @@ class RubikAppState(
     /** When false, the 3D cube can only be orbited/zoomed — no layer turns or panel edits. */
     var isCubeEditable by mutableStateOf(true)
 
+    var isSoundEnabled by mutableStateOf(true)
+
     // Computed: is the cube solved?
     val isSolved: Boolean
         get() {
@@ -153,6 +155,13 @@ class RubikAppState(
         }
         coroutineScope.launch(Dispatchers.Default) {
             RubikPersistenceRegistry.persistence?.saveCubeEditable(enabled)
+        }
+    }
+
+    fun updateSoundEnabled(enabled: Boolean) {
+        isSoundEnabled = enabled
+        coroutineScope.launch(Dispatchers.Default) {
+            RubikPersistenceRegistry.persistence?.saveSoundEnabled(enabled)
         }
     }
 
@@ -240,6 +249,12 @@ class RubikAppState(
                     persistence.loadCubeEditable()?.let { editable ->
                         withContext(Dispatchers.Main) {
                             isCubeEditable = editable
+                        }
+                    }
+
+                    persistence.loadSoundEnabled()?.let { soundEnabled ->
+                        withContext(Dispatchers.Main) {
+                            isSoundEnabled = soundEnabled
                         }
                     }
                 }

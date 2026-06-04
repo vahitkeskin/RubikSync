@@ -303,7 +303,7 @@ fun SettingsScreen(
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .background(if (isSelected) (if (isDarkTheme) Color_FF1A1510 else Color_FFFFF7ED) else Color.Transparent)
+                                                .background(if (isSelected) (if (isDarkTheme) SelectionDarkOrange else AccentOrangeSoftBg) else Color.Transparent)
                                                 .clickable {
                                                     appState.updateLanguage(lang)
                                                     isExpanded = false
@@ -319,7 +319,7 @@ fun SettingsScreen(
                                                 Text(text = lang.flag, fontSize = 16.sp)
                                                 Text(
                                                     text = lang.displayName,
-                                                    color = if (isSelected) Color_FFFF8A00 else textPrimary,
+                                                    color = if (isSelected) AccentOrange else textPrimary,
                                                     fontSize = 13.sp,
                                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                                                 )
@@ -327,7 +327,7 @@ fun SettingsScreen(
                                             if (isSelected) {
                                                 Text(
                                                     text = "✓",
-                                                    color = Color_FFFF8A00,
+                                                    color = AccentOrange,
                                                     fontSize = 12.sp,
                                                     fontWeight = FontWeight.Bold
                                                 )
@@ -469,7 +469,7 @@ private fun ThemeOptionCard(
 
     val animatedBgColor by animateColorAsState(
         targetValue = if (isSelected) {
-            if (RubikTheme.colors.isDark) Color_FF1A1510 else Color_FFFFF7ED
+            if (RubikTheme.colors.isDark) SelectionDarkOrange else AccentOrangeSoftBg
         } else bgUnselected,
         animationSpec = tween(300)
     )
@@ -481,12 +481,12 @@ private fun ThemeOptionCard(
             .border(
                 width = if (isSelected) 1.5.dp else 0.5.dp,
                 brush = if (isSelected) {
-                    Brush.linearGradient(listOf(Color_FFFF8A00, Color_FFFF5252))
+                    Brush.linearGradient(listOf(AccentOrange, AccentRedCoral))
                 } else {
                     Brush.linearGradient(
                         listOf(
-                            if (RubikTheme.colors.isDark) Color_0AFFFFFF else Color_1A000000,
-                            if (RubikTheme.colors.isDark) Color_0AFFFFFF else Color_1A000000
+                            if (RubikTheme.colors.isDark) WhiteAlpha04 else BlackAlpha10,
+                            if (RubikTheme.colors.isDark) WhiteAlpha04 else BlackAlpha10
                         )
                     )
                 },
@@ -503,7 +503,7 @@ private fun ThemeOptionCard(
         )
         Text(
             text = label,
-            color = if (isSelected) Color_FFFF8A00 else textPrimary,
+            color = if (isSelected) AccentOrange else textPrimary,
             fontSize = 12.sp,
             fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Bold,
             maxLines = 1
@@ -525,7 +525,7 @@ private fun ThemeOptionCard(
                     .clip(RoundedCornerShape(2.dp))
                     .background(
                         Brush.horizontalGradient(
-                            listOf(Color_FFFF8A00, Color_FFFF5252)
+                            listOf(AccentOrange, AccentRedCoral)
                         )
                     )
             )

@@ -49,10 +49,10 @@ data class RubikColors(
     val buttonBorder: Color,
 
     // Vurgu (accent) renkleri — tüm temalarda aynı
-    val accentOrange: Color = Color_FFFF8A00,
-    val accentBlue: Color = Color_FF448AFF,
-    val accentGreen: Color = Color_FF30D158,
-    val accentRed: Color = Color_FFFF453A,
+    val accentOrange: Color = AccentOrange,
+    val accentBlue: Color = AccentBlue,
+    val accentGreen: Color = AccentGreen,
+    val accentRed: Color = AccentRed,
 
     // Özel bileşen renkleri
     val speedTrack: Color,
@@ -68,81 +68,81 @@ data class RubikColors(
 )
 
 val DarkRubikColors = RubikColors(
-    backgroundPrimary = Color_FF0A0E18,
-    backgroundSecondary = Color_FF141B28,
-    backgroundTertiary = Color_FF1C2536,
-    backgroundPanel = Color_FF111827,
+    backgroundPrimary = DarkBgPrimary,
+    backgroundSecondary = DarkBgTertiary,
+    backgroundTertiary = DarkBgQuaternary,
+    backgroundPanel = DarkPanelBg,
 
-    bgGradient1 = Color_FF0F1724,
-    bgGradient2 = Color_FF0A0E18,
-    bgGradient3 = Color_FF0D1220,
-    bgGradient4 = Color_FF0A0E18,
+    bgGradient1 = DarkGradientBg1,
+    bgGradient2 = DarkBgPrimary,
+    bgGradient3 = DarkBgSecondary,
+    bgGradient4 = DarkBgPrimary,
 
     textPrimary = Color.White,
-    textSecondary = Color_FF8A99AD,
-    textMuted = Color_FF4A5568,
+    textSecondary = DarkTextPrimary,
+    textMuted = DarkTextSecondary,
 
-    borderPrimary = Color_FF2A3548,
-    borderSubtle = Color_15FFFFFF,
-    borderFaint = Color_0AFFFFFF,
+    borderPrimary = DarkCardBorder,
+    borderSubtle = WhiteAlpha08,
+    borderFaint = WhiteAlpha04,
 
-    cardBackground = Color_FF141B28,
-    cardBorder = Color_0CFFFFFF,
+    cardBackground = DarkBgTertiary,
+    cardBorder = WhiteAlpha05,
 
-    tabActive = Color_FF1C2536,
+    tabActive = DarkBgQuaternary,
     tabInactive = Color.Transparent,
-    tabActiveBorder = Color_15FFFFFF,
+    tabActiveBorder = WhiteAlpha08,
 
-    buttonDisabledBg = Color_FF0A0E18,
-    buttonDisabledText = Color_FF4A5568,
-    buttonBorder = Color_FF2A3548,
+    buttonDisabledBg = DarkBgPrimary,
+    buttonDisabledText = DarkTextSecondary,
+    buttonBorder = DarkCardBorder,
 
-    speedTrack = Color_FF1C2536,
-    speedLabel = Color_FF6B7A8D,
-    progressTrack = Color_FF1C2536,
+    speedTrack = DarkBgQuaternary,
+    speedLabel = DarkTextDisabled,
+    progressTrack = DarkBgQuaternary,
 
-    glowOrange = Color_0CFF8A00,
-    glowBlue = Color_06448AFF,
+    glowOrange = AccentOrangeAlpha05,
+    glowBlue = AccentBlueAlpha04,
 
     isDark = true
 )
 
 val LightRubikColors = RubikColors(
-    backgroundPrimary = Color_FFF5F7FA,
-    backgroundSecondary = Color_FFFFFFFF,
-    backgroundTertiary = Color_FFF0F2F5,
-    backgroundPanel = Color_FFF8F9FC,
+    backgroundPrimary = LightBgPrimary,
+    backgroundSecondary = White,
+    backgroundTertiary = LightBgTertiary,
+    backgroundPanel = LightBgSecondary,
 
-    bgGradient1 = Color_FFF8F9FC,
-    bgGradient2 = Color_FFF5F7FA,
-    bgGradient3 = Color_FFF0F2F5,
-    bgGradient4 = Color_FFF5F7FA,
+    bgGradient1 = LightBgSecondary,
+    bgGradient2 = LightBgPrimary,
+    bgGradient3 = LightBgTertiary,
+    bgGradient4 = LightBgPrimary,
 
-    textPrimary = Color_FF1A1A2E,
-    textSecondary = Color_FF6B7280,
-    textMuted = Color_FF9CA3AF,
+    textPrimary = DarkThemePrimary,
+    textSecondary = LightTextPrimary,
+    textMuted = LightTextSecondary,
 
-    borderPrimary = Color_FFE5E7EB,
-    borderSubtle = Color_FFD1D5DB,
-    borderFaint = Color_FFE5E7EB,
+    borderPrimary = LightBorderPrimary,
+    borderSubtle = LightBorderSubtle,
+    borderFaint = LightBorderPrimary,
 
-    cardBackground = Color_FFFFFFFF,
-    cardBorder = Color_FFE5E7EB,
+    cardBackground = White,
+    cardBorder = LightBorderPrimary,
 
-    tabActive = Color_FFFFFFFF,
+    tabActive = White,
     tabInactive = Color.Transparent,
-    tabActiveBorder = Color_FFD1D5DB,
+    tabActiveBorder = LightBorderSubtle,
 
-    buttonDisabledBg = Color_FFF3F4F6,
-    buttonDisabledText = Color_FF9CA3AF,
-    buttonBorder = Color_FFD1D5DB,
+    buttonDisabledBg = LightPanelBg,
+    buttonDisabledText = LightTextSecondary,
+    buttonBorder = LightBorderSubtle,
 
-    speedTrack = Color_FFE5E7EB,
-    speedLabel = Color_FF6B7280,
-    progressTrack = Color_FFE5E7EB,
+    speedTrack = LightBorderPrimary,
+    speedLabel = LightTextPrimary,
+    progressTrack = LightBorderPrimary,
 
-    glowOrange = Color_08FF8A00,
-    glowBlue = Color_04448AFF,
+    glowOrange = AccentOrangeAlpha03,
+    glowBlue = AccentBlueAlpha02,
 
     isDark = false
 )

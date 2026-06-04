@@ -32,7 +32,7 @@ fun FaceGrid(
     Column(
         modifier = modifier
             .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(8.dp))
-            .background(Color_0C000000, RoundedCornerShape(8.dp))
+            .background(BlackAlpha05, RoundedCornerShape(8.dp))
             .padding(spacing * 2),
         verticalArrangement = Arrangement.spacedBy(spacing)
     ) {

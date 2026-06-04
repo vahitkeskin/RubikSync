@@ -406,7 +406,7 @@ fun CameraPreviewDialog(
                 val top = (h - gridSize) / 2f
                 
                 drawRect(
-                    color = Color_FFF1C40F,
+                    color = AccentYellowSun,
                     topLeft = androidx.compose.ui.geometry.Offset(left, top),
                     size = androidx.compose.ui.geometry.Size(gridSize, gridSize),
                     style = Stroke(
@@ -419,7 +419,7 @@ fun CameraPreviewDialog(
                 
                 for (i in 1..2) {
                     drawLine(
-                        color = Color_FF2ECC71,
+                        color = AccentGreenEmerald,
                         start = androidx.compose.ui.geometry.Offset(left + i * cellSize, top),
                         end = androidx.compose.ui.geometry.Offset(left + i * cellSize, top + gridSize),
                         strokeWidth = 2.dp.toPx()
@@ -427,7 +427,7 @@ fun CameraPreviewDialog(
                 }
                 for (i in 1..2) {
                     drawLine(
-                        color = Color_FF2ECC71,
+                        color = AccentGreenEmerald,
                         start = androidx.compose.ui.geometry.Offset(left, top + i * cellSize),
                         end = androidx.compose.ui.geometry.Offset(left + gridSize, top + i * cellSize),
                         strokeWidth = 2.dp.toPx()
@@ -439,7 +439,7 @@ fun CameraPreviewDialog(
                         val cx = left + (c + 0.5f) * cellSize
                         val cy = top + (r + 0.5f) * cellSize
                         drawCircle(
-                            color = Color_FF2ECC71,
+                            color = AccentGreenEmerald,
                             radius = 3.dp.toPx(),
                             center = androidx.compose.ui.geometry.Offset(cx, cy)
                         )
@@ -478,7 +478,7 @@ fun CameraPreviewDialog(
                     onClick = onDismiss,
                     modifier = Modifier
                         .size(48.dp)
-                        .background(Color_33FFFFFF, RoundedCornerShape(24.dp))
+                        .background(WhiteAlpha20, RoundedCornerShape(24.dp))
                 ) {
                     Text("✕", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
@@ -506,7 +506,7 @@ fun CameraPreviewDialog(
                     modifier = Modifier
                         .size(48.dp)
                         .background(
-                            if (cameraVC.flashEnabled) Color_FFFF8A00 else Color_33FFFFFF,
+                            if (cameraVC.flashEnabled) AccentOrange else WhiteAlpha20,
                             RoundedCornerShape(24.dp)
                         )
                 ) {
@@ -620,7 +620,7 @@ actual fun CameraCaptureOrPicker(
         Button(
             onClick = { checkAndLaunchCamera() },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color_FF448AFF,
+                containerColor = AccentBlue,
                 contentColor = Color.White
             ),
             shape = RoundedCornerShape(12.dp),
@@ -632,7 +632,7 @@ actual fun CameraCaptureOrPicker(
         Button(
             onClick = { launchGallery() },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color_22FFFFFF,
+                containerColor = WhiteAlpha13,
                 contentColor = Color.LightGray
             ),
             shape = RoundedCornerShape(12.dp),
@@ -656,7 +656,7 @@ actual fun CameraCaptureOrPicker(
     if (showPermissionExplanation) {
         Dialog(onDismissRequest = { showPermissionExplanation = false }) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = Color_FF1E2633),
+                colors = CardDefaults.cardColors(containerColor = DarkCardBg),
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -678,7 +678,7 @@ actual fun CameraCaptureOrPicker(
                     
                     Text(
                         text = "Zeka küpünün renklerini otomatik olarak algılamak için kameranızı kullanmamız gerekiyor. Kameranızla küpün yüzlerini fotoğraflayarak saniyeler içinde çözümü görebilirsiniz. İzniniz güvenle saklanır.",
-                        color = Color_FFB0BEC5,
+                        color = LightCardBorder,
                         fontSize = 13.sp,
                         textAlign = TextAlign.Center,
                         lineHeight = 18.sp
@@ -691,7 +691,7 @@ actual fun CameraCaptureOrPicker(
                         Button(
                             onClick = { showPermissionExplanation = false },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color_11FFFFFF,
+                                containerColor = WhiteAlpha07,
                                 contentColor = Color.LightGray
                             ),
                             shape = RoundedCornerShape(10.dp),
@@ -712,7 +712,7 @@ actual fun CameraCaptureOrPicker(
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color_FF448AFF,
+                                containerColor = AccentBlue,
                                 contentColor = Color.White
                             ),
                             shape = RoundedCornerShape(10.dp),
@@ -729,7 +729,7 @@ actual fun CameraCaptureOrPicker(
     if (showSettingsExplanation) {
         Dialog(onDismissRequest = { showSettingsExplanation = false }) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = Color_FF1E2633),
+                colors = CardDefaults.cardColors(containerColor = DarkCardBg),
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -751,7 +751,7 @@ actual fun CameraCaptureOrPicker(
                     
                     Text(
                         text = "Kamera izni daha önce reddedilmiş. Lütfen Ayarlar'dan kameraya izin verin.",
-                        color = Color_FFB0BEC5,
+                        color = LightCardBorder,
                         fontSize = 13.sp,
                         textAlign = TextAlign.Center,
                         lineHeight = 18.sp
@@ -764,7 +764,7 @@ actual fun CameraCaptureOrPicker(
                         Button(
                             onClick = { showSettingsExplanation = false },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color_11FFFFFF,
+                                containerColor = WhiteAlpha07,
                                 contentColor = Color.LightGray
                             ),
                             shape = RoundedCornerShape(10.dp),
@@ -782,7 +782,7 @@ actual fun CameraCaptureOrPicker(
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color_FF448AFF,
+                                containerColor = AccentBlue,
                                 contentColor = Color.White
                             ),
                             shape = RoundedCornerShape(10.dp),

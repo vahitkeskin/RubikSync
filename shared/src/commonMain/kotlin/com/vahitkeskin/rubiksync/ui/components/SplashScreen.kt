@@ -160,7 +160,7 @@ fun SplashScreen(
                                 .clip(RoundedCornerShape(3.dp))
                                 .background(
                                     Brush.linearGradient(
-                                        listOf(Color_FFFF8A00, Color_FFFF5252)
+                                        listOf(AccentOrange, AccentRedCoral)
                                     )
                                 )
                         )
@@ -202,8 +202,8 @@ fun SplashScreen(
                         .background(
                             Brush.horizontalGradient(
                                 listOf(
-                                    Color_FFFF8A00,
-                                    Color_FFFF5252
+                                    AccentOrange,
+                                    AccentRedCoral
                                 )
                             )
                         )

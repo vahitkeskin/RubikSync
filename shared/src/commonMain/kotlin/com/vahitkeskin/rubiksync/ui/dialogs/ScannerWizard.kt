@@ -50,12 +50,12 @@ fun ScannerWizard(
     val currentFace = FaceName.values()[appState.scannerStep]
 
     val faceColorMap = mapOf(
-        FaceName.U to Color_FFFB8C00,
-        FaceName.D to Color_FFE53935,
-        FaceName.L to Color_FFFFEB3B,
-        FaceName.R to Color_FFECEFF1,
-        FaceName.F to Color_FF4CAF50,
-        FaceName.B to Color_FF1E88E5
+        FaceName.U to AccentOrangeDark,
+        FaceName.D to AccentRedMaterial,
+        FaceName.L to AccentYellowMaterial,
+        FaceName.R to LightCardBg,
+        FaceName.F to AccentGreenMaterial,
+        FaceName.B to AccentBlueMedium
     )
 
     val faceNameLocalized = mapOf(
@@ -128,7 +128,7 @@ fun ScannerWizard(
                         .clip(RoundedCornerShape(2.dp))
                         .background(
                             Brush.horizontalGradient(
-                                listOf(Color_FF448AFF, Color_FF30D158)
+                                listOf(AccentBlue, AccentGreen)
                             )
                         )
                 )
@@ -230,20 +230,20 @@ fun ScannerWizard(
                             .background(
                                 Brush.horizontalGradient(
                                     if (RubikTheme.colors.isDark) {
-                                        listOf(Color_FF0B1F12, Color_FF112218)
+                                        listOf(AccentGreenShadow, AccentGreenVeryDark)
                                     } else {
-                                        listOf(Color_FFE8F5E9, Color_FFC8E6C9)
+                                        listOf(AccentGreenFaintBg, AccentGreenSoftBg)
                                     }
                                 )
                             )
-                            .border(0.5.dp, if (RubikTheme.colors.isDark) Color_2230D158 else Color_3330D158, RoundedCornerShape(10.dp))
+                            .border(0.5.dp, if (RubikTheme.colors.isDark) AccentGreenAlpha13 else AccentGreenAlpha20, RoundedCornerShape(10.dp))
                             .clickable { appState.infoMessage = null }
                             .padding(horizontal = 10.dp, vertical = 5.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "✅ ${appState.infoMessage ?: ""}",
-                            color = if (RubikTheme.colors.isDark) Color_FF6DD58C else Color_FF1B5E20,
+                            color = if (RubikTheme.colors.isDark) AccentGreenBright else AccentGreenDark,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,

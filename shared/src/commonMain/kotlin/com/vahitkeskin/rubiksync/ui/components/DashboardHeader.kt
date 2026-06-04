@@ -53,7 +53,7 @@ fun DashboardHeader(
                         .clip(RoundedCornerShape(4.dp))
                         .background(
                             Brush.linearGradient(
-                                listOf(Color_FFFF8A00, Color_FFFF5252)
+                                listOf(AccentOrange, AccentRedCoral)
                             )
                         )
                 )
@@ -147,7 +147,7 @@ fun DashboardHeader(
                             .clip(RoundedCornerShape(6.dp))
                             .background(
                                 if (isLast) {
-                                    Brush.horizontalGradient(listOf(Color_FFFF8A00, Color_FFFF5252))
+                                    Brush.horizontalGradient(listOf(AccentOrange, AccentRedCoral))
                                 } else {
                                     Brush.horizontalGradient(listOf(RubikTheme.colors.backgroundTertiary, RubikTheme.colors.backgroundTertiary))
                                 }

@@ -250,7 +250,7 @@ class CubeRenderer(
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyColor, style = Fill)
 
             // Draw a subtle border around the cubie body for 3D depth and separation
-            val bodyOutlineColor = if (isDark) Color_FF1E1E1E else Color_33000000
+            val bodyOutlineColor = if (isDark) DarkOutline else BlackAlpha20
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyOutlineColor, style = Stroke(width = 0.5f))
 
             // Draw Colored Sticker
@@ -267,7 +267,7 @@ class CubeRenderer(
             drawPolygon(drawScope, rf.projectedStickerPoints, stickerColor, style = Fill)
 
             // Draw a distinct, elegant border around the sticker to keep colors highly distinct
-            val stickerBorderColor = if (isDark) Color_FF1A1A1A else Color_66000000
+            val stickerBorderColor = if (isDark) DarkStickerBorder else BlackAlpha40
             drawPolygon(drawScope, rf.projectedStickerPoints, stickerBorderColor, style = Stroke(width = 1f))
         }
     }

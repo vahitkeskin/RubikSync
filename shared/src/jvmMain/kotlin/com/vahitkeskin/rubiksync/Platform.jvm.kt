@@ -132,7 +132,7 @@ actual fun CameraCaptureOrPicker(
             }
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color_FF3B4B66,
+            containerColor = DarkTextMuted,
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(12.dp),

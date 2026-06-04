@@ -34,9 +34,9 @@ fun App() {
 
     // Arka plan gradient renkleri
     val backgroundGradient = if (isDarkTheme) {
-        listOf(Color_FF0F1724, Color_FF0A0E18, Color_FF0D1220, Color_FF0A0E18)
+        listOf(DarkGradientBg1, DarkBgPrimary, DarkBgSecondary, DarkBgPrimary)
     } else {
-        listOf(Color_FFF8F9FC, Color_FFF5F7FA, Color_FFF0F2F5, Color_FFF5F7FA)
+        listOf(LightBgSecondary, LightBgPrimary, LightBgTertiary, LightBgPrimary)
     }
 
     // Tema yüklenene kadar boş bir gradyan ekranı göstererek Splash'in doğru temada açılmasını garanti et
@@ -83,31 +83,31 @@ fun App() {
     // Dinamik renk şeması
     val colorScheme = if (isDarkTheme) {
         darkColorScheme(
-            primary = Color_FFFF8A00,
+            primary = AccentOrange,
             onPrimary = Color.White,
-            secondary = Color_FF448AFF,
+            secondary = AccentBlue,
             onSecondary = Color.White,
-            tertiary = Color_FF30D158,
-            background = Color_FF0A0E18,
-            surface = Color_FF141B28,
-            surfaceVariant = Color_FF1C2536,
+            tertiary = AccentGreen,
+            background = DarkBgPrimary,
+            surface = DarkBgTertiary,
+            surfaceVariant = DarkBgQuaternary,
             onBackground = Color.White,
             onSurface = Color.White,
-            outline = Color_FF2A3548
+            outline = DarkCardBorder
         )
     } else {
         lightColorScheme(
-            primary = Color_FFFF8A00,
+            primary = AccentOrange,
             onPrimary = Color.White,
-            secondary = Color_FF2979FF,
+            secondary = AccentBlueBright,
             onSecondary = Color.White,
-            tertiary = Color_FF28A745,
-            background = Color_FFF5F7FA,
-            surface = Color_FFFFFFFF,
-            surfaceVariant = Color_FFF0F2F5,
-            onBackground = Color_FF1A1A2E,
-            onSurface = Color_FF1A1A2E,
-            outline = Color_FFE5E7EB
+            tertiary = AccentGreenSuccess,
+            background = LightBgPrimary,
+            surface = White,
+            surfaceVariant = LightBgTertiary,
+            onBackground = DarkThemePrimary,
+            onSurface = DarkThemePrimary,
+            outline = LightBorderPrimary
         )
     }
 

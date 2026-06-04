@@ -4,6 +4,8 @@ import com.vahitkeskin.rubiksync.ui.state.*
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -108,6 +110,8 @@ fun CubeRotationGuide(
     val idlePitchOffset = cos(animationProgress * 2 * PI.toFloat()) * 0.05f
 
     val yaw = prevYaw + (targetYaw - prevYaw) * t + idleYawOffset
+    val userYaw = remember { mutableStateOf(0f) }
+    val userPitch = remember { mutableStateOf(0f) }
     val pitch = prevPitch + (targetPitch - prevPitch) * t + idlePitchOffset
 
     // Static representation of a solved cube (27 cubies)
@@ -184,17 +188,23 @@ fun CubeRotationGuide(
         ) {
             // Top: 3D Animated Guide Canvas (Large, full width, 200.dp height)
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(RubikTheme.colors.backgroundPrimary),
-                contentAlignment = Alignment.Center
-            ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawGuideCube(miniCubies, yaw, pitch, currentFace, appState, isDark)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(RubikTheme.colors.backgroundPrimary)
+                        .pointerInput(Unit) {
+                            detectTransformGestures { _, _, _, rotation ->
+                                userYaw.value += rotation
+                                // optional: modify pitch if desired
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawGuideCube(miniCubies, yaw + userYaw.value, pitch + userPitch.value, currentFace, appState, isDark)
+                    }
                 }
-            }
 
             // Bottom: Details and Net
             Row(
@@ -454,18 +464,20 @@ private fun DrawScope.drawGuideCube(
         // Draw cubie plastic body
         drawGuidePolygon(projectedPoints = rf.projectedBodyPoints, color = bodyColor)
 
-        // Draw sticker
-        val baseColor = getScannedOrFaceletColor(rf.facePos, rf.face.localNormal, appState)
-        val r = ((baseColor.rgb shr 16) and 0xFF) / 255f
-        val g = ((baseColor.rgb shr 8) and 0xFF) / 255f
-        val b = (baseColor.rgb and 0xFF) / 255f
-
-        val stickerColor = Color(
-            red = r,
-            green = g,
-            blue = b,
-            alpha = 1.0f
-        )
+        // Draw sticker: only the target face shows scanned colors, others are neutral gray
+        val stickerColor = if (rf.isTarget) {
+            // scanned color for the current (target) face
+            val scannedColor = getScannedOrFaceletColor(rf.facePos, rf.face.localNormal, appState)
+            Color(
+                red = ((scannedColor.rgb shr 16) and 0xFF) / 255f,
+                green = ((scannedColor.rgb shr 8) and 0xFF) / 255f,
+                blue = (scannedColor.rgb and 0xFF) / 255f,
+                alpha = 1.0f
+            )
+        } else {
+            // neutral color for faces that are not being scanned
+            Color(0xFF555555)
+        }
         drawGuidePolygon(projectedPoints = rf.projectedStickerPoints, color = stickerColor)
     }
 }

@@ -232,13 +232,11 @@ class CubeRenderer(
         // Step 3: Draw faces in sorted order
         renderFaces.forEach { rf ->
             // Calculate Lighting/Shading factors (brightened to remove the gray/muddy filter look)
-            val ambient = 0.70f
-            val diffuse = rf.worldNormal.dot(lightDir).coerceAtLeast(0f) * 0.30f
-            
-            // Specular highlights for shiny plastic look (tightened for elegance)
-            val spec = rf.worldNormal.dot(halfway).coerceAtLeast(0f).pow(32f) * 0.20f
-
-            val totalLight = (ambient + diffuse).coerceIn(0f, 1f)
+            // Disable lighting to preserve true sticker colors
+            val ambient = 1.0f
+            val diffuse = 0.0f
+            val spec = 0.0f
+            val totalLight = 1.0f
 
             // Draw Premium Light/White Cubie Body
             val bodyBase = if (isDark) 0.80f else 0.92f
@@ -254,16 +252,9 @@ class CubeRenderer(
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyOutlineColor, style = Stroke(width = 0.5f))
 
             // Draw Colored Sticker
-            val baseColor = rf.face.color
-            val r = ((baseColor.rgb shr 16) and 0xFF) / 255f
-            val g = ((baseColor.rgb shr 8) and 0xFF) / 255f
-            val b = (baseColor.rgb and 0xFF) / 255f
+            // Use exact sticker color without lighting modifications
+            val stickerColor = Color(rf.face.color.rgb)
 
-            val stickerColor = Color(
-                red = (r * totalLight + spec).coerceIn(0f, 1f),
-                green = (g * totalLight + spec).coerceIn(0f, 1f),
-                blue = (b * totalLight + spec).coerceIn(0f, 1f)
-            )
             drawPolygon(drawScope, rf.projectedStickerPoints, stickerColor, style = Fill)
 
             // Draw a distinct, elegant border around the sticker to keep colors highly distinct

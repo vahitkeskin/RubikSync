@@ -26,7 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.FileProvider
-import com.vahitkeskin.rubiksync.cube.IntVector3
+import com.vahitkeskin.rubiksync.solver.IntVector3
 import java.io.File
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture

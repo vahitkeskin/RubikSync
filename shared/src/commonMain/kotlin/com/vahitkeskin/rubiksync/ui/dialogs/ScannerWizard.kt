@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.CameraCaptureOrPicker
 import com.vahitkeskin.rubiksync.loadImageBitmap
 import com.vahitkeskin.rubiksync.cube.*
+import com.vahitkeskin.rubiksync.solver.*
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

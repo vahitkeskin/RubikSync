@@ -2,9 +2,10 @@ package com.vahitkeskin.rubiksync
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.vahitkeskin.rubiksync.cube.IntVector3
+import com.vahitkeskin.rubiksync.solver.IntVector3
 
 import androidx.compose.ui.graphics.ImageBitmap
+
 
 interface Platform {
     val name: String

@@ -3,10 +3,12 @@ package com.vahitkeskin.rubiksync.ui.state
 import androidx.compose.runtime.*
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
-import com.vahitkeskin.rubiksync.cube.IntVector3
 import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
-import com.vahitkeskin.rubiksync.cube.AnnotatedMove
+// Core 3D integer coordinate representation used in solver algorithms
+import com.vahitkeskin.rubiksync.solver.IntVector3
+// Annotated move step carrying explanation and phase details
+import com.vahitkeskin.rubiksync.solver.AnnotatedMove
 import kotlinx.coroutines.CoroutineScope
 import com.vahitkeskin.rubiksync.utils.CubiePersistable
 import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
@@ -52,6 +54,7 @@ class RubikAppState(
 
     // Solution / Playback State
     var activeSolution by mutableStateOf<List<MoveType>?>(null)
+    // List of annotated steps computed by the solver with phase descriptions
     var activeSolutionDetails by mutableStateOf<List<AnnotatedMove>?>(null)
     var currentSolutionStep by mutableStateOf(0)
     var isPlaybackRunning by mutableStateOf(false)
@@ -90,6 +93,7 @@ class RubikAppState(
     // Scanner Wizard State
     var scannerStep by mutableStateOf(0)
     var scannedGrids by mutableStateOf(mutableMapOf<FaceName, Array<Array<CubeColor>>>())
+    // 3D vector representation of the scanned raw RGB values for cube stickers
     var scannedRawRGBs by mutableStateOf(mutableMapOf<FaceName, Array<Array<IntVector3>>>())
     var scannedFilePaths by mutableStateOf(mutableMapOf<FaceName, String>())
     

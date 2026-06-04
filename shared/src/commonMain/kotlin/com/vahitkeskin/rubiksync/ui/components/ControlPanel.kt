@@ -45,9 +45,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.MoveType
-import com.vahitkeskin.rubiksync.cube.RubikSolver
-import com.vahitkeskin.rubiksync.cube.toSnapshot
-import com.vahitkeskin.rubiksync.cube.AnnotatedMove
+import com.vahitkeskin.rubiksync.solver.RubikSolver
+import com.vahitkeskin.rubiksync.solver.toSnapshot
+import com.vahitkeskin.rubiksync.solver.AnnotatedMove
+import com.vahitkeskin.rubiksync.solver.compressMoves
 import com.vahitkeskin.rubiksync.cube.getMoveMathDetails
 import com.vahitkeskin.rubiksync.logMoveDetail
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
@@ -309,7 +310,7 @@ fun ControlPanel(
                                 }.reversed()
                                 
                                 val solver = RubikSolver()
-                                val optimizedBacktrack = solver.compressMoves(backtrackMoves)
+                                val optimizedBacktrack = compressMoves(backtrackMoves)
                                 
                                 // 2. Run the layer-by-layer solver
                                 val lblDetails = solver.solveAnnotated(currentSnapshot)

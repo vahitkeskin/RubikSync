@@ -70,12 +70,12 @@ actual fun loadImagePixels(filePath: String): PixelGrid? {
         object : PixelGrid {
             override val width: Int = image.width
             override val height: Int = image.height
-            override fun getRGB(x: Int, y: Int): com.vahitkeskin.rubiksync.cube.IntVector3 {
+            override fun getRGB(x: Int, y: Int): com.vahitkeskin.rubiksync.solver.IntVector3 {
                 val rgb = image.getRGB(x, y)
                 val r = (rgb shr 16) and 0xFF
                 val g = (rgb shr 8) and 0xFF
                 val b = rgb and 0xFF
-                return com.vahitkeskin.rubiksync.cube.IntVector3(r, g, b)
+                return com.vahitkeskin.rubiksync.solver.IntVector3(r, g, b)
             }
         }
     } catch (e: Exception) {

@@ -548,7 +548,7 @@ actual fun CameraCaptureOrPicker(
                 width = 2.dp,
                 color = if (isDark) accentBlue.copy(alpha = 0.7f) else accentBlue
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             modifier = Modifier.weight(1f)
         ) {
             Column(
@@ -587,7 +587,7 @@ actual fun CameraCaptureOrPicker(
                 width = 2.dp,
                 color = if (isDark) accentOrange.copy(alpha = 0.7f) else accentOrange
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             modifier = Modifier.weight(1f)
         ) {
             Column(

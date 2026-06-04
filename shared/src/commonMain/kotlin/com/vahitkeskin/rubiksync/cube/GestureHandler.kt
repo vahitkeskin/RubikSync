@@ -56,13 +56,15 @@ class GestureHandler(
 
         val sticker = activeSticker
 
-        if (isLayerDragActive && sticker != null) {
-            val dragVector = currentOffset - start
-            if (dragVector.getDistance() > LAYER_DRAG_THRESHOLD_PX) {
-                isLayerDragActive = false
-                val projector = projector(width, height, yaw, pitch, cameraDistance, panX, panY)
-                LayerMoveSelector.selectMove(dragVector, sticker, cubeState, projector)
-                    ?.let(onLayerRotate)
+        if (sticker != null) {
+            if (isLayerDragActive) {
+                val dragVector = currentOffset - start
+                if (dragVector.getDistance() > LAYER_DRAG_THRESHOLD_PX) {
+                    isLayerDragActive = false
+                    val projector = projector(width, height, yaw, pitch, cameraDistance, panX, panY)
+                    LayerMoveSelector.selectMove(dragVector, sticker, cubeState, projector)
+                        ?.let(onLayerRotate)
+                }
             }
             return
         }

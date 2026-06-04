@@ -32,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 
@@ -72,6 +74,7 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .safeDrawingPadding()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
         ) {
             // Top Bar
@@ -318,6 +321,8 @@ fun SettingsScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Uygulama bilgisi
             Column(
                 modifier = Modifier
@@ -403,7 +408,7 @@ fun SettingsScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Alt bilgi
             Text(

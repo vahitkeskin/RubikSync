@@ -37,3 +37,6 @@ expect fun CameraCaptureOrPicker(
 )
 
 expect fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String)
+
+@Composable
+expect fun BindBackHandler(enabled: Boolean = true, onBack: () -> Unit)

@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.BackHandler
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -634,4 +635,9 @@ actual fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String) 
 
 actual fun getCurrentYear(): Int {
     return java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+}
+
+@Composable
+actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
+    BackHandler(enabled = enabled, onBack = onBack)
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.ThemeMode
 import com.vahitkeskin.rubiksync.getCurrentYear
+import com.vahitkeskin.rubiksync.BindBackHandler
 
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 
@@ -33,6 +34,10 @@ fun SettingsScreen(
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier
 ) {
+    BindBackHandler(enabled = true) {
+        appState.showSettingsScreen = false
+    }
+
     // Tema bazlı renkler
     val bgPrimary = RubikTheme.colors.backgroundPrimary
     val bgSecondary = RubikTheme.colors.backgroundSecondary

@@ -804,3 +804,8 @@ actual fun getCurrentYear(): Int {
     formatter.dateFormat = "yyyy"
     return formatter.stringFromDate(NSDate()).toIntOrNull() ?: 2026
 }
+
+@Composable
+actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
+    // No-op on iOS
+}

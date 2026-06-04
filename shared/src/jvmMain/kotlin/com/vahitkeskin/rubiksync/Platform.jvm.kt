@@ -147,3 +147,8 @@ actual fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String) 
 actual fun getCurrentYear(): Int {
     return java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
 }
+
+@Composable
+actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
+    // No-op on JVM/Desktop
+}

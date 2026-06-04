@@ -40,7 +40,7 @@ fun DashboardHeader(
             .padding(top = 6.dp, bottom = 2.dp, start = 16.dp, end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Title Row — Logo-style with accent dot
+        // Title Row — Logo-style with accent dot and top-right actions
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -81,28 +81,11 @@ fun DashboardHeader(
                 }
             }
 
-            // Status & Stats — mini glassmorphism cards
+            // Quick Actions Cluster
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Move Counter
-                StatChip(
-                    emoji = "🎯",
-                    value = "${cubeState.moveHistory.size}",
-                    label = appState.strings.movesLabel,
-                    accentColor = RubikTheme.colors.accentBlue
-                )
-
-                // Solved Status
-                val solved = appState.isSolved
-                StatChip(
-                    emoji = if (solved) "✅" else "🔄",
-                    value = if (solved) appState.strings.solvedStatus else appState.strings.scrambledStatus,
-                    label = appState.strings.statusLabel,
-                    accentColor = if (solved) RubikTheme.colors.accentGreen else RubikTheme.colors.accentOrange
-                )
-
                 // Küp düzenleme ikonu — kilit/açık durumuna göre
                 val editableBgColor by animateColorAsState(
                     targetValue = if (appState.isCubeEditable) {
@@ -203,6 +186,34 @@ fun DashboardHeader(
                     )
                 }
             }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // Status & Stats — mini glassmorphism cards row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Move Counter
+            StatChip(
+                emoji = "🎯",
+                value = "${cubeState.moveHistory.size}",
+                label = appState.strings.movesLabel,
+                accentColor = RubikTheme.colors.accentBlue,
+                modifier = Modifier.weight(1f)
+            )
+
+            // Solved Status
+            val solved = appState.isSolved
+            StatChip(
+                emoji = if (solved) "✅" else "🔄",
+                value = if (solved) appState.strings.solvedStatus else appState.strings.scrambledStatus,
+                label = appState.strings.statusLabel,
+                accentColor = if (solved) RubikTheme.colors.accentGreen else RubikTheme.colors.accentOrange,
+                modifier = Modifier.weight(1f)
+            )
         }
 
         // Move History — scrollable chips with refined styling

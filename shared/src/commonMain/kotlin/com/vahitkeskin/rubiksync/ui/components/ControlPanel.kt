@@ -219,7 +219,7 @@ fun ControlPanel(
                                 appState.totalMoveCount = 0
                             }
                         },
-                        enabled = canEditCube && !cubeState.isAnimating && !appState.isInitialState,
+                        enabled = !cubeState.isAnimating && !appState.isInitialState,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
                             contentColor = RubikTheme.colors.accentRed,

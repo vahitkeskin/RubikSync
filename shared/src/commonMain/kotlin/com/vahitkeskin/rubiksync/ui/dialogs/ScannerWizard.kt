@@ -473,70 +473,70 @@ fun ScannerWizard(
                                         )
                                         Spacer(modifier = Modifier.height(6.dp))
 
-                                        Row(
-                                            modifier = Modifier.padding(2.dp),
-                                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                        ) {
-                                            for (row in 0..2) {
-                                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                                    for (col in 0..2) {
-                                                        val cellColor = grid[row][col]
-                                                        val isCenter = row == 1 && col == 1
+                                        Column(
+                                             modifier = Modifier.padding(2.dp),
+                                             verticalArrangement = Arrangement.spacedBy(4.dp)
+                                         ) {
+                                             for (row in 0..2) {
+                                                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                     for (col in 0..2) {
+                                                         val cellColor = grid[row][col]
+                                                         val isCenter = row == 1 && col == 1
 
-                                                        Box(
-                                                            modifier = Modifier
-                                                                .size(28.dp)
-                                                                .clip(RoundedCornerShape(5.dp))
-                                                                .background(Color(cellColor.rgb))
-                                                                .border(
-                                                                    width = if (isCenter) 1.5.dp else 0.5.dp,
-                                                                    color = if (isCenter) RubikTheme.colors.textPrimary else RubikTheme.colors.borderSubtle,
-                                                                    shape = RoundedCornerShape(5.dp)
-                                                                )
-                                                                .clickable {
-                                                                    val colorsList = listOf(
-                                                                        CubeColor.ORANGE, CubeColor.RED, CubeColor.YELLOW,
-                                                                        CubeColor.WHITE, CubeColor.GREEN, CubeColor.BLUE
-                                                                    )
-                                                                    val currentIndex = colorsList.indexOf(cellColor)
-                                                                    val nextIndex = (currentIndex + 1) % colorsList.size
-                                                                    val targetColor = colorsList[nextIndex]
+                                                         Box(
+                                                             modifier = Modifier
+                                                                 .size(28.dp)
+                                                                 .clip(RoundedCornerShape(5.dp))
+                                                                 .background(Color(cellColor.rgb))
+                                                                 .border(
+                                                                     width = if (isCenter) 1.5.dp else 0.5.dp,
+                                                                     color = if (isCenter) RubikTheme.colors.textPrimary else RubikTheme.colors.borderSubtle,
+                                                                     shape = RoundedCornerShape(5.dp)
+                                                                 )
+                                                                 .clickable {
+                                                                     val colorsList = listOf(
+                                                                         CubeColor.ORANGE, CubeColor.RED, CubeColor.YELLOW,
+                                                                         CubeColor.WHITE, CubeColor.GREEN, CubeColor.BLUE
+                                                                     )
+                                                                     val currentIndex = colorsList.indexOf(cellColor)
+                                                                     val nextIndex = (currentIndex + 1) % colorsList.size
+                                                                     val targetColor = colorsList[nextIndex]
 
-                                                                    val defaultReferences = mapOf(
-                                                                        CubeColor.ORANGE to IntVector3(255, 130, 0),
-                                                                        CubeColor.RED to IntVector3(220, 20, 20),
-                                                                        CubeColor.YELLOW to IntVector3(240, 240, 0),
-                                                                        CubeColor.WHITE to IntVector3(230, 230, 230),
-                                                                        CubeColor.GREEN to IntVector3(0, 160, 0),
-                                                                        CubeColor.BLUE to IntVector3(0, 0, 200)
-                                                                    )
-                                                                    val refRGB = defaultReferences[targetColor]!!
+                                                                     val defaultReferences = mapOf(
+                                                                         CubeColor.ORANGE to IntVector3(255, 130, 0),
+                                                                         CubeColor.RED to IntVector3(220, 20, 20),
+                                                                         CubeColor.YELLOW to IntVector3(240, 240, 0),
+                                                                         CubeColor.WHITE to IntVector3(230, 230, 230),
+                                                                         CubeColor.GREEN to IntVector3(0, 160, 0),
+                                                                         CubeColor.BLUE to IntVector3(0, 0, 200)
+                                                                     )
+                                                                     val refRGB = defaultReferences[targetColor]!!
 
-                                                                    if (!isCenter) {
-                                                                        val updatedRawGrid = rawGrid.map { it.copyOf() }.toTypedArray()
-                                                                        updatedRawGrid[row][col] = refRGB
+                                                                     if (!isCenter) {
+                                                                         val updatedRawGrid = rawGrid.map { it.copyOf() }.toTypedArray()
+                                                                         updatedRawGrid[row][col] = refRGB
 
-                                                                        val updatedRaw = appState.scannedRawRGBs.toMutableMap()
-                                                                        updatedRaw[currentFace] = updatedRawGrid
-                                                                        appState.scannedRawRGBs = updatedRaw
-                                                                    }
+                                                                         val updatedRaw = appState.scannedRawRGBs.toMutableMap()
+                                                                         updatedRaw[currentFace] = updatedRawGrid
+                                                                         appState.scannedRawRGBs = updatedRaw
+                                                                     }
 
-                                                                    val updatedGrid = grid.map { it.copyOf() }.toTypedArray()
-                                                                    updatedGrid[row][col] = targetColor
-                                                                    val updatedGrids = appState.scannedGrids.toMutableMap()
-                                                                    updatedGrids[currentFace] = updatedGrid
-                                                                    appState.scannedGrids = updatedGrids
-                                                                },
-                                                            contentAlignment = Alignment.Center
-                                                        ) {
-                                                            if (isCenter) {
-                                                                Text("🔒", fontSize = 9.sp)
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                                                     val updatedGrid = grid.map { it.copyOf() }.toTypedArray()
+                                                                     updatedGrid[row][col] = targetColor
+                                                                     val updatedGrids = appState.scannedGrids.toMutableMap()
+                                                                     updatedGrids[currentFace] = updatedGrid
+                                                                     appState.scannedGrids = updatedGrids
+                                                                 },
+                                                             contentAlignment = Alignment.Center
+                                                         ) {
+                                                             if (isCenter) {
+                                                                 Text("🔒", fontSize = 9.sp)
+                                                             }
+                                                         }
+                                                     }
+                                                 }
+                                             }
+                                         }
                                     }
                                 } else {
                                     CircularProgressIndicator(

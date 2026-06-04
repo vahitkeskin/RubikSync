@@ -32,6 +32,13 @@ class RubikAppState(
     var showEditorDialog by mutableStateOf(false)
     var showScannerWizard by mutableStateOf(false)
     var showSplashScreen by mutableStateOf(true)
+    var showSettingsScreen by mutableStateOf(false)
+
+    // Theme mode state
+    var themeMode by mutableStateOf(ThemeMode.SYSTEM)
+
+    // Theme loading state
+    var isThemeLoaded by mutableStateOf(false)
 
     // Editor State
     private val defaultFaces = mapOf(
@@ -103,6 +110,13 @@ class RubikAppState(
     
     val manualMoves = mutableStateListOf<MoveType>()
 
+    fun updateThemeMode(mode: ThemeMode) {
+        themeMode = mode
+        coroutineScope.launch(Dispatchers.Default) {
+            RubikPersistenceRegistry.persistence?.saveThemeMode(mode.name)
+        }
+    }
+
     fun saveCurrentState() {
         val p = RubikPersistenceRegistry.persistence ?: return
         if (isSolved && (cubeState.moveHistory.isNotEmpty() || manualMoves.isNotEmpty())) {
@@ -142,44 +156,41 @@ class RubikAppState(
         
         coroutineScope.launch(Dispatchers.Default) {
             val persistence = RubikPersistenceRegistry.persistence
-            if (persistence != null) {
-                val camera = persistence.loadCameraSettings()
-                if (camera != null) {
-                    withContext(Dispatchers.Main) {
-                        yaw = camera.yaw
-                        pitch = camera.pitch
-                        cameraDistance = camera.cameraDistance
-                        panX = camera.panX
-                        panY = camera.panY
-                        cubeState.rotationSpeedMs = camera.rotationSpeedMs
+            try {
+                if (persistence != null) {
+                    val camera = persistence.loadCameraSettings()
+                    if (camera != null) {
+                        withContext(Dispatchers.Main) {
+                            yaw = camera.yaw
+                            pitch = camera.pitch
+                            cameraDistance = camera.cameraDistance
+                            panX = camera.panX
+                            panY = camera.panY
+                            cubeState.rotationSpeedMs = camera.rotationSpeedMs
+                        }
+                    }
+
+                    // Tema modunu yükle
+                    val savedTheme = persistence.loadThemeMode()
+                    if (savedTheme != null) {
+                        val mode = try { ThemeMode.valueOf(savedTheme) } catch (_: Exception) { ThemeMode.SYSTEM }
+                        withContext(Dispatchers.Main) {
+                            themeMode = mode
+                        }
+                    }
+                    
+                    val saved = persistence.loadCubeState()
+                    if (saved != null) {
+                        withContext(Dispatchers.Main) {
+                            _editorFaces = saved.editorFaces
+                        }
                     }
                 }
-                
-                val saved = persistence.loadCubeState()
-                if (saved != null) {
-                    withContext(Dispatchers.Main) {
-                        // Küpün başlangıçta her zaman çözülü (solved) gelmesi istendiği için,
-                        // önceki oturumdaki karıştırılmış durumu (pozisyon ve geçmişi) geri yüklemeyi devre dışı bıraktık.
-                        /*
-                        saved.cubies.forEach { snap ->
-                            val cubie = cubeState.cubies.find { it.id == snap.id }
-                            if (cubie != null) {
-                                cubie.gridPos = com.vahitkeskin.rubiksync.cube.Vector3(snap.gridX.toFloat(), snap.gridY.toFloat(), snap.gridZ.toFloat())
-                                cubie.rightBasis = com.vahitkeskin.rubiksync.cube.Vector3(snap.rightX.toFloat(), snap.rightY.toFloat(), snap.rightZ.toFloat())
-                                cubie.upBasis = com.vahitkeskin.rubiksync.cube.Vector3(snap.upX.toFloat(), snap.upY.toFloat(), snap.upZ.toFloat())
-                                cubie.forwardBasis = com.vahitkeskin.rubiksync.cube.Vector3(snap.forwardX.toFloat(), snap.forwardY.toFloat(), snap.forwardZ.toFloat())
-                            }
-                        }
-                        
-                        cubeState.moveHistory.clear()
-                        cubeState.moveHistory.addAll(saved.moveHistory)
-                        
-                        manualMoves.clear()
-                        manualMoves.addAll(saved.manualMoves)
-                        */
-                        
-                        _editorFaces = saved.editorFaces
-                    }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                withContext(Dispatchers.Main) {
+                    isThemeLoaded = true
                 }
             }
         }

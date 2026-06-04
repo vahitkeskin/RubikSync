@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
@@ -28,6 +29,7 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     private val KEY_PAN_X = floatPreferencesKey("pan_x")
     private val KEY_PAN_Y = floatPreferencesKey("pan_y")
     private val KEY_ROTATION_SPEED = floatPreferencesKey("rotation_speed_ms")
+    private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
 
     override suspend fun saveCubeState(
         cubies: List<CubiePersistable>,
@@ -93,6 +95,22 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
             val py = prefs[KEY_PAN_Y] ?: 0f
             val speed = prefs[KEY_ROTATION_SPEED] ?: 250f
             CameraSettings(yaw, pitch, distance, px, py, speed)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun saveThemeMode(mode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_THEME_MODE] = mode
+        }
+    }
+
+    override suspend fun loadThemeMode(): String? {
+        return try {
+            val prefs = context.dataStore.data.first()
+            prefs[KEY_THEME_MODE]
         } catch (e: Exception) {
             e.printStackTrace()
             null

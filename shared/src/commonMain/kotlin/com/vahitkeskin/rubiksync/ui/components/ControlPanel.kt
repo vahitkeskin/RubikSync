@@ -56,6 +56,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+
 @Composable
 fun ControlPanel(
     appState: RubikAppState,
@@ -69,8 +71,8 @@ fun ControlPanel(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            .background(Color(0xFF111827))
-            .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .background(RubikTheme.colors.backgroundPanel)
+            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -81,8 +83,8 @@ fun ControlPanel(
                 .fillMaxWidth()
                 .height(34.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF0A0E18))
-                .border(1.dp, Color(0x08FFFFFF), RoundedCornerShape(10.dp))
+                .background(RubikTheme.colors.backgroundPrimary)
+                .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(10.dp))
                 .padding(2.dp)
         ) {
             listOf("🎮 Hareketler", "⚡ Eylemler", "🧠 Yapay Zeka").forEachIndexed { index, title ->
@@ -94,18 +96,14 @@ fun ControlPanel(
                         .background(
                             if (selectedTab == index) {
                                 Brush.horizontalGradient(
-                                    when (index) {
-                                        0 -> listOf(Color(0xFF1C2536), Color(0xFF1E2A3E))
-                                        1 -> listOf(Color(0xFF1C2536), Color(0xFF1E2A3E))
-                                        else -> listOf(Color(0xFF1C2536), Color(0xFF1E2A3E))
-                                    }
+                                    listOf(RubikTheme.colors.tabActive, RubikTheme.colors.tabActive)
                                 )
                             } else {
                                 Brush.horizontalGradient(listOf(Color.Transparent, Color.Transparent))
                             }
                         )
                         .then(
-                            if (selectedTab == index) Modifier.border(0.5.dp, Color(0x15FFFFFF), RoundedCornerShape(8.dp))
+                            if (selectedTab == index) Modifier.border(0.5.dp, RubikTheme.colors.tabActiveBorder, RoundedCornerShape(8.dp))
                             else Modifier
                         )
                         .clickable { selectedTab = index },
@@ -113,7 +111,7 @@ fun ControlPanel(
                 ) {
                     Text(
                         text = title,
-                        color = if (selectedTab == index) Color.White else Color(0xFF4A5568),
+                        color = if (selectedTab == index) RubikTheme.colors.textPrimary else RubikTheme.colors.textSecondary,
                         fontSize = 11.sp,
                         fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Medium,
                         maxLines = 1
@@ -144,13 +142,13 @@ fun ControlPanel(
                         enabled = !cubeState.isAnimating,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
-                            contentColor = Color.White,
-                            disabledContainerColor = Color(0xFF0A0E18),
-                            disabledContentColor = Color(0xFF4A5568)
+                            contentColor = RubikTheme.colors.textPrimary,
+                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                            disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, Color(0xFF2A3548)),
+                        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp)
@@ -178,13 +176,13 @@ fun ControlPanel(
                         enabled = !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
-                            contentColor = Color.White,
-                            disabledContainerColor = Color(0xFF0A0E18),
-                            disabledContentColor = Color(0xFF4A5568)
+                            contentColor = RubikTheme.colors.textPrimary,
+                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                            disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, Color(0xFF2A3548)),
+                        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp)
@@ -221,15 +219,15 @@ fun ControlPanel(
                         enabled = !cubeState.isAnimating && !appState.isInitialState,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
-                            contentColor = Color(0xFFFF453A),
-                            disabledContainerColor = Color(0xFF0A0E18),
-                            disabledContentColor = Color(0xFF4A5568)
+                            contentColor = RubikTheme.colors.accentRed,
+                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                            disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
                         border = BorderStroke(
                             1.dp,
-                            if (!cubeState.isAnimating && !appState.isInitialState) Color(0xFF3D1519) else Color(0xFF2A3548)
+                            if (!cubeState.isAnimating && !appState.isInitialState) RubikTheme.colors.accentRed.copy(alpha = 0.35f) else RubikTheme.colors.buttonBorder
                         ),
                         modifier = Modifier
                             .weight(1f)
@@ -255,14 +253,14 @@ fun ControlPanel(
                         onClick = { appState.showEditorDialog = true },
                         enabled = !cubeState.isAnimating,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF0F1A2E),
-                            contentColor = Color(0xFF448AFF),
-                            disabledContainerColor = Color(0xFF0A0E18),
-                            disabledContentColor = Color(0xFF4A5568)
+                            containerColor = if (RubikTheme.colors.isDark) Color(0xFF0F1A2E) else Color(0xFFE3F2FD),
+                            contentColor = RubikTheme.colors.accentBlue,
+                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                            disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, Color(0xFF1A2D4D)),
+                        border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color(0xFF1A2D4D) else Color(0xFFBBDEFB)),
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp)
@@ -367,14 +365,14 @@ fun ControlPanel(
                     },
                         enabled = !cubeState.isAnimating && !appState.isRecalculating,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF0B1F12),
-                            contentColor = Color(0xFF30D158),
-                            disabledContainerColor = Color(0xFF0A0E18),
-                            disabledContentColor = Color(0xFF4A5568)
+                            containerColor = if (RubikTheme.colors.isDark) Color(0xFF0B1F12) else Color(0xFFE8F5E9),
+                            contentColor = RubikTheme.colors.accentGreen,
+                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                            disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, Color(0xFF1A3D22)),
+                        border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color(0xFF1A3D22) else Color(0xFFC8E6C9)),
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp)
@@ -382,7 +380,7 @@ fun ControlPanel(
                         if (appState.isRecalculating) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(16.dp),
-                                color = Color(0xFF30D158),
+                                color = RubikTheme.colors.accentGreen,
                                 strokeWidth = 2.dp
                             )
                         } else {
@@ -400,7 +398,7 @@ fun ControlPanel(
         }
 
         // Speed Control — always visible at bottom
-        SpeedControl(cubeState = appState.cubeState, accentColor = Color(0xFFFF8A00))
+        SpeedControl(cubeState = appState.cubeState, accentColor = RubikTheme.colors.accentOrange)
     }
 }
 
@@ -421,9 +419,9 @@ private fun MovesGrid(
                 .clip(RoundedCornerShape(8.dp))
                 .background(
                     if (!cubeState.isAnimating) Brush.verticalGradient(listOf(c1, c2))
-                    else Brush.verticalGradient(listOf(Color(0xFF1C2536), Color(0xFF1C2536)))
+                    else Brush.verticalGradient(listOf(RubikTheme.colors.buttonDisabledBg, RubikTheme.colors.buttonDisabledBg))
                 )
-                .border(0.5.dp, Color(0x22FFFFFF), RoundedCornerShape(8.dp))
+                .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(8.dp))
                 .clickable(enabled = !cubeState.isAnimating) {
                     coroutineScope.launch {
                         cubeState.executeMove(move)
@@ -438,7 +436,7 @@ private fun MovesGrid(
                 text = label,
                 color = if (!cubeState.isAnimating) {
                     if (isLight) Color.Black else Color.White
-                } else Color(0xFF4A5568),
+                } else RubikTheme.colors.buttonDisabledText,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.ExtraBold,
                 maxLines = 1,
@@ -487,7 +485,7 @@ fun SpeedControl(
     ) {
         Text(
             text = "⏱ Hız",
-            color = Color(0xFF4A5568),
+            color = RubikTheme.colors.textSecondary,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.width(40.dp),
@@ -502,15 +500,15 @@ fun SpeedControl(
             valueRange = 100f..350f,
             colors = SliderDefaults.colors(
                 activeTrackColor = accentColor,
-                inactiveTrackColor = Color(0xFF1C2536),
-                thumbColor = Color.White
+                inactiveTrackColor = RubikTheme.colors.speedTrack,
+                thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentOrange
             ),
             modifier = Modifier.weight(1f)
         )
 
         Text(
             text = "${cubeState.rotationSpeedMs.toInt()}ms",
-            color = Color(0xFF6B7A8D),
+            color = RubikTheme.colors.textSecondary,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.width(36.dp),
@@ -534,8 +532,8 @@ fun PlaybackController(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            .background(Color(0xFF111827))
-            .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .background(RubikTheme.colors.backgroundPanel)
+            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -546,9 +544,15 @@ fun PlaybackController(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
                 .background(
-                    Brush.horizontalGradient(listOf(Color(0xFF0B1F12), Color(0xFF112218)))
+                    Brush.horizontalGradient(
+                        if (RubikTheme.colors.isDark) {
+                            listOf(Color(0xFF0B1F12), Color(0xFF112218))
+                        } else {
+                            listOf(Color(0xFFE8F5E9), Color(0xFFC8E6C9))
+                        }
+                    )
                 )
-                .border(1.dp, Color(0x2230D158), RoundedCornerShape(12.dp))
+                .border(1.dp, if (RubikTheme.colors.isDark) Color(0x2230D158) else Color(0x3330D158), RoundedCornerShape(12.dp))
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -557,7 +561,7 @@ fun PlaybackController(
                 val currentStepDisplay = (appState.currentSolutionStep + 1).coerceAtMost(solution.size)
                 Text(
                     text = "🧩 Çözüm: $currentStepDisplay / ${solution.size}",
-                    color = Color(0xFF30D158),
+                    color = RubikTheme.colors.accentGreen,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
@@ -569,7 +573,7 @@ fun PlaybackController(
                 } else 0
                 Text(
                     text = "%$progress tamamlandı",
-                    color = Color(0xFF5A8A62),
+                    color = if (RubikTheme.colors.isDark) Color(0xFF5A8A62) else Color(0xFF2E7D32),
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1
@@ -580,8 +584,8 @@ fun PlaybackController(
                 modifier = Modifier
                     .size(28.dp)
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0x22FFFFFF))
-                    .border(0.5.dp, Color(0x15FFFFFF), RoundedCornerShape(14.dp))
+                    .background(if (RubikTheme.colors.isDark) Color(0x22FFFFFF) else Color(0x0C000000))
+                    .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
                     .clickable {
                         appState.activeSolution = null
                         appState.activeSolutionDetails = null
@@ -591,7 +595,7 @@ fun PlaybackController(
             ) {
                 Text(
                     text = "✕",
-                    color = Color(0xFF8A99AD),
+                    color = RubikTheme.colors.textSecondary,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -609,8 +613,8 @@ fun PlaybackController(
                 .fillMaxWidth()
                 .height(3.dp)
                 .clip(RoundedCornerShape(2.dp)),
-            color = Color(0xFF30D158),
-            trackColor = Color(0xFF1C2536),
+            color = RubikTheme.colors.accentGreen,
+            trackColor = RubikTheme.colors.progressTrack,
         )
 
         // Horizontally Scrollable Steps List
@@ -633,8 +637,8 @@ fun PlaybackController(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF0A0E18))
-                .border(0.5.dp, Color(0x08FFFFFF), RoundedCornerShape(10.dp))
+                .background(RubikTheme.colors.backgroundPrimary)
+                .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(10.dp))
                 .padding(vertical = 5.dp, horizontal = 5.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -647,9 +651,9 @@ fun PlaybackController(
                 val bgModifier = if (isCurrent) {
                     Modifier.background(Brush.horizontalGradient(listOf(Color(0xFF30D158), Color(0xFF34C759))))
                 } else if (isPast) {
-                    Modifier.background(Color(0xFF1A2E1F))
+                    Modifier.background(if (RubikTheme.colors.isDark) Color(0xFF1A2E1F) else Color(0xFFE8F5E9))
                 } else {
-                    Modifier.background(Color(0xFF1C2536))
+                    Modifier.background(RubikTheme.colors.backgroundTertiary)
                 }
 
                 Box(
@@ -658,7 +662,7 @@ fun PlaybackController(
                         .then(bgModifier)
                         .border(
                             width = if (isCurrent) 1.dp else 0.5.dp,
-                            color = if (isCurrent) Color(0xFFE5FFEA) else Color(0x08FFFFFF),
+                            color = if (isCurrent) Color(0xFFE5FFEA) else RubikTheme.colors.borderFaint,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .padding(horizontal = 10.dp, vertical = 5.dp)
@@ -666,9 +670,9 @@ fun PlaybackController(
                     Text(
                         text = move.label,
                         color = when {
-                            isCurrent -> Color.Black
-                            isPast -> Color(0xFF5A8A62)
-                            else -> Color(0xFF8A99AD)
+                            isCurrent -> Color.White
+                            isPast -> if (RubikTheme.colors.isDark) Color(0xFF5A8A62) else Color(0xFF2E7D32)
+                            else -> RubikTheme.colors.textSecondary
                         },
                         fontSize = 11.sp,
                         fontWeight = if (isCurrent) FontWeight.ExtraBold else FontWeight.Bold,
@@ -694,11 +698,11 @@ fun PlaybackController(
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
-                    contentColor = Color.White
+                    contentColor = RubikTheme.colors.textPrimary
                 ),
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 6.dp),
-                border = BorderStroke(1.dp, Color(0xFF2A3548)),
+                border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                 modifier = Modifier.weight(1f).height(38.dp)
             ) {
                 Text(
@@ -714,13 +718,21 @@ fun PlaybackController(
             Button(
                 onClick = { appState.isPlaybackRunning = !appState.isPlaybackRunning },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (appState.isPlaybackRunning) Color(0xFF2A1519) else Color(0xFF0B1F12),
-                    contentColor = if (appState.isPlaybackRunning) Color(0xFFFF453A) else Color(0xFF30D158)
+                    containerColor = if (appState.isPlaybackRunning) {
+                        if (RubikTheme.colors.isDark) Color(0xFF2A1510) else Color(0xFFFFEBED)
+                    } else {
+                        if (RubikTheme.colors.isDark) Color(0xFF0B1F12) else Color(0xFFE8F5E9)
+                    },
+                    contentColor = if (appState.isPlaybackRunning) RubikTheme.colors.accentRed else RubikTheme.colors.accentGreen
                 ),
                 shape = RoundedCornerShape(12.dp),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (appState.isPlaybackRunning) Color(0xFF3D1519) else Color(0xFF1A3D22)
+                    color = if (appState.isPlaybackRunning) {
+                        if (RubikTheme.colors.isDark) Color(0xFF3D1519) else Color(0xFFFFCDD2)
+                    } else {
+                        if (RubikTheme.colors.isDark) Color(0xFF1A3D22) else Color(0xFFC8E6C9)
+                    }
                 ),
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                 modifier = Modifier.weight(1.3f).height(38.dp)
@@ -754,13 +766,13 @@ fun PlaybackController(
                 enabled = appState.currentSolutionStep < solution.size && !cubeState.isAnimating,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
-                    contentColor = Color.White,
-                    disabledContainerColor = Color(0xFF0A0E18),
-                    disabledContentColor = Color(0xFF4A5568)
+                    contentColor = RubikTheme.colors.textPrimary,
+                    disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                    disabledContentColor = RubikTheme.colors.buttonDisabledText
                 ),
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 6.dp),
-                border = BorderStroke(1.dp, Color(0xFF2A3548)),
+                border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                 modifier = Modifier.weight(1f).height(38.dp)
             ) {
                 Text(
@@ -782,7 +794,7 @@ fun PlaybackController(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0x0AFFFFFF))
+                    .background(RubikTheme.colors.backgroundTertiary)
                     .clickable { showDetails = !showDetails }
                     .padding(horizontal = 10.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -790,13 +802,13 @@ fun PlaybackController(
             ) {
                 Text(
                     text = "📖 Teknik Çözüm Detayları",
-                    color = Color(0xFF8A99AD),
+                    color = RubikTheme.colors.textSecondary,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = if (showDetails) "▼" else "▲",
-                    color = Color(0xFF8A99AD),
+                    color = RubikTheme.colors.textSecondary,
                     fontSize = 10.sp
                 )
             }
@@ -810,8 +822,8 @@ fun PlaybackController(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFF0A0E18))
-                        .border(0.5.dp, Color(0x10FFFFFF), RoundedCornerShape(10.dp))
+                        .background(RubikTheme.colors.backgroundPrimary)
+                        .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(10.dp))
                         .padding(10.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
@@ -821,13 +833,13 @@ fun PlaybackController(
                         val activeDetail = detailsList[currentStep]
                         Text(
                             text = "Aşama: ${activeDetail.phaseName}",
-                            color = Color(0xFF30D158),
+                            color = RubikTheme.colors.accentGreen,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = activeDetail.phaseDescription,
-                            color = Color(0xFF8A99AD),
+                            color = RubikTheme.colors.textSecondary,
                             fontSize = 10.sp,
                             lineHeight = 13.sp
                         )
@@ -839,24 +851,24 @@ fun PlaybackController(
                         ) {
                             Text(
                                 text = "Yapılacak Hamle: ${activeDetail.move.label}",
-                                color = Color.White,
+                                color = RubikTheme.colors.textPrimary,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Text(
                                 text = "Kalan: ${detailsList.size - currentStep} hamle",
-                                color = Color(0xFF4A5568),
+                                color = RubikTheme.colors.textMuted,
                                 fontSize = 9.sp
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         androidx.compose.material3.HorizontalDivider(
                             modifier = Modifier.padding(vertical = 4.dp),
-                            color = Color(0x15FFFFFF)
+                            color = RubikTheme.colors.borderFaint
                         )
                         Text(
                             text = "🔢 Matematiksel Formül & Rotasyon",
-                            color = Color(0xFFFF8A00),
+                            color = RubikTheme.colors.accentOrange,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(top = 2.dp)
@@ -864,27 +876,27 @@ fun PlaybackController(
                         val mathDetail = getMoveMathDetails(activeDetail.move)
                         Text(
                             text = mathDetail,
-                            color = Color(0xFF8A99AD),
+                            color = RubikTheme.colors.textSecondary,
                             fontSize = 9.sp,
                             fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
                             lineHeight = 12.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(6.dp))
-                                .background(Color(0xFF0F1724))
-                                .border(0.5.dp, Color(0x0AFFFFFF), RoundedCornerShape(6.dp))
+                                .background(RubikTheme.colors.backgroundTertiary)
+                                .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(6.dp))
                                 .padding(8.dp)
                         )
                     } else {
                         Text(
                             text = "Çözüm Tamamlandı! 🎉",
-                            color = Color(0xFF30D158),
+                            color = RubikTheme.colors.accentGreen,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "Zeka küpü başarıyla çözülmüş durumuna ulaştı.",
-                            color = Color(0xFF8A99AD),
+                            color = RubikTheme.colors.textSecondary,
                             fontSize = 10.sp
                         )
                     }
@@ -893,6 +905,6 @@ fun PlaybackController(
         }
 
         // Speed Control
-        SpeedControl(cubeState = cubeState, accentColor = Color(0xFF30D158))
+        SpeedControl(cubeState = cubeState, accentColor = RubikTheme.colors.accentGreen)
     }
 }

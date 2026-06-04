@@ -14,6 +14,7 @@ import androidx.compose.ui.input.pointer.*
 import com.vahitkeskin.rubiksync.cube.CubeRenderer
 import com.vahitkeskin.rubiksync.cube.GestureHandler
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 
@@ -60,8 +61,8 @@ fun InteractiveCubeCanvas(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0x08FF8A00),
-                            Color(0x04448AFF),
+                            RubikTheme.colors.glowOrange,
+                            RubikTheme.colors.glowBlue,
                             Color.Transparent,
                             Color.Transparent
                         ),

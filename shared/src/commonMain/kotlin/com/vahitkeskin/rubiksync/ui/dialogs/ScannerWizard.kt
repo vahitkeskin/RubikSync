@@ -1,5 +1,6 @@
 package com.vahitkeskin.rubiksync.ui.dialogs
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,6 +31,8 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
+
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,7 +113,7 @@ fun ScannerWizard(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        containerColor = Color(0xFF0F1724),
+        containerColor = RubikTheme.colors.backgroundPrimary,
         dragHandle = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -141,8 +144,8 @@ fun ScannerWizard(
             // 1. Header & Connected Step Indicators
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "📷 Küp Tarama",
-                    color = Color.White,
+                    text = "📸 Küp Tarama",
+                    color = RubikTheme.colors.textPrimary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.ExtraBold,
                     maxLines = 1
@@ -150,7 +153,7 @@ fun ScannerWizard(
 
                 Text(
                     text = "${appState.scannedGrids.size}/6 yüz tarandı",
-                    color = Color(0xFF4A5568),
+                    color = RubikTheme.colors.textSecondary,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1
@@ -169,8 +172,8 @@ fun ScannerWizard(
                         val isScanned = appState.scannedGrids.containsKey(face)
 
                         val baseColor = faceColorMap[face] ?: Color.Gray
-                        val circleBg = if (isScanned || isCurrent) baseColor.copy(alpha = 0.9f) else Color(0xFF1C2536)
-                        val textColor = if (face == FaceName.R && (isScanned || isCurrent)) Color.Black else Color.White
+                        val circleBg = if (isScanned || isCurrent) baseColor.copy(alpha = 0.9f) else RubikTheme.colors.backgroundTertiary
+                        val textColor = if (face == FaceName.R && (isScanned || isCurrent)) Color.Black else (if (isScanned || isCurrent) Color.White else RubikTheme.colors.textSecondary)
 
                         if (index > 0) {
                             // Connecting line
@@ -181,8 +184,8 @@ fun ScannerWizard(
                                     .height(2.dp)
                                     .clip(RoundedCornerShape(1.dp))
                                     .background(
-                                        if (prevScanned) Color(0xFF30D158).copy(alpha = 0.5f)
-                                        else Color(0xFF1C2536)
+                                        if (prevScanned) RubikTheme.colors.accentGreen.copy(alpha = 0.5f)
+                                        else RubikTheme.colors.borderSubtle
                                     )
                             )
                         }
@@ -194,7 +197,7 @@ fun ScannerWizard(
                                 .background(circleBg)
                                 .border(
                                     width = if (isCurrent) 2.dp else 0.dp,
-                                    color = if (isCurrent) Color.White else Color.Transparent,
+                                    color = if (isCurrent) RubikTheme.colors.textPrimary else Color.Transparent,
                                     shape = RoundedCornerShape(15.dp)
                                 )
                                 .clickable {
@@ -224,17 +227,21 @@ fun ScannerWizard(
                             .clip(RoundedCornerShape(10.dp))
                             .background(
                                 Brush.horizontalGradient(
-                                    listOf(Color(0xFF0B1F12), Color(0xFF112218))
+                                    if (RubikTheme.colors.isDark) {
+                                        listOf(Color(0xFF0B1F12), Color(0xFF112218))
+                                    } else {
+                                        listOf(Color(0xFFE8F5E9), Color(0xFFC8E6C9))
+                                    }
                                 )
                             )
-                            .border(0.5.dp, Color(0x2230D158), RoundedCornerShape(10.dp))
+                            .border(0.5.dp, if (RubikTheme.colors.isDark) Color(0x2230D158) else Color(0x3330D158), RoundedCornerShape(10.dp))
                             .clickable { appState.infoMessage = null }
                             .padding(horizontal = 10.dp, vertical = 5.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "✅ ${appState.infoMessage ?: ""}",
-                            color = Color(0xFF6DD58C),
+                            color = if (RubikTheme.colors.isDark) Color(0xFF6DD58C) else Color(0xFF1B5E20),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
@@ -268,13 +275,13 @@ fun ScannerWizard(
                             modifier = Modifier
                                 .size(110.dp)
                                 .clip(RoundedCornerShape(14.dp))
-                                .border(1.dp, Color(0x15FFFFFF), RoundedCornerShape(14.dp))
-                                .background(Color(0xFF111827)),
+                                .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
+                                .background(RubikTheme.colors.backgroundSecondary),
                             contentAlignment = Alignment.Center
                         ) {
                             if (appState.isRecalculating) {
                                 CircularProgressIndicator(
-                                    color = Color(0xFF448AFF),
+                                    color = RubikTheme.colors.accentBlue,
                                     modifier = Modifier.size(28.dp),
                                     strokeWidth = 2.dp
                                 )
@@ -286,7 +293,7 @@ fun ScannerWizard(
                                     )
                                     Text(
                                         text = "Görsel Yok",
-                                        color = Color(0xFF4A5568),
+                                        color = RubikTheme.colors.textSecondary,
                                         fontSize = 10.sp,
                                         textAlign = TextAlign.Center,
                                         maxLines = 1
@@ -360,8 +367,8 @@ fun ScannerWizard(
                             modifier = Modifier
                                 .size(190.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .border(1.dp, Color(0x15FFFFFF), RoundedCornerShape(16.dp))
-                                .background(Color(0xFF0A0E18)),
+                                .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(16.dp))
+                                .background(RubikTheme.colors.backgroundPrimary),
                             contentAlignment = Alignment.Center
                         ) {
                             if (faceImageBitmap != null) {
@@ -430,7 +437,7 @@ fun ScannerWizard(
                         ) {
                             Text(
                                 text = "🔧 Izgarayı küpün kenarlarına hizalayın",
-                                color = Color(0xFF4A5568),
+                                color = RubikTheme.colors.textSecondary,
                                 fontSize = 9.sp,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth(),
@@ -442,7 +449,7 @@ fun ScannerWizard(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "Boyut",
-                                    color = Color(0xFF6B7A8D),
+                                    color = RubikTheme.colors.textSecondary,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.width(40.dp),
@@ -458,14 +465,14 @@ fun ScannerWizard(
                                     valueRange = 0.3f..0.9f,
                                     modifier = Modifier.weight(1f),
                                     colors = SliderDefaults.colors(
-                                        activeTrackColor = Color(0xFF448AFF),
-                                        inactiveTrackColor = Color(0xFF1C2536),
-                                        thumbColor = Color.White
+                                        activeTrackColor = RubikTheme.colors.accentBlue,
+                                        inactiveTrackColor = RubikTheme.colors.speedTrack,
+                                        thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
                                     )
                                 )
                                 Text(
                                     text = "${(currentScale * 100).toInt()}%",
-                                    color = Color(0xFF6B7A8D),
+                                    color = RubikTheme.colors.textSecondary,
                                     fontSize = 9.sp,
                                     modifier = Modifier.width(32.dp),
                                     textAlign = TextAlign.End,
@@ -477,7 +484,7 @@ fun ScannerWizard(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "Yatay",
-                                    color = Color(0xFF6B7A8D),
+                                    color = RubikTheme.colors.textSecondary,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.width(40.dp),
@@ -493,14 +500,14 @@ fun ScannerWizard(
                                     valueRange = -0.3f..0.3f,
                                     modifier = Modifier.weight(1f),
                                     colors = SliderDefaults.colors(
-                                        activeTrackColor = Color(0xFF448AFF),
-                                        inactiveTrackColor = Color(0xFF1C2536),
-                                        thumbColor = Color.White
+                                        activeTrackColor = RubikTheme.colors.accentBlue,
+                                        inactiveTrackColor = RubikTheme.colors.speedTrack,
+                                        thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
                                     )
                                 )
                                 Text(
                                     text = "${(currentOffsetX * 100).toInt()}",
-                                    color = Color(0xFF6B7A8D),
+                                    color = RubikTheme.colors.textSecondary,
                                     fontSize = 9.sp,
                                     modifier = Modifier.width(32.dp),
                                     textAlign = TextAlign.End,
@@ -512,7 +519,7 @@ fun ScannerWizard(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "Dikey",
-                                    color = Color(0xFF6B7A8D),
+                                    color = RubikTheme.colors.textSecondary,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.width(40.dp),
@@ -528,14 +535,14 @@ fun ScannerWizard(
                                     valueRange = -0.3f..0.3f,
                                     modifier = Modifier.weight(1f),
                                     colors = SliderDefaults.colors(
-                                        activeTrackColor = Color(0xFF448AFF),
-                                        inactiveTrackColor = Color(0xFF1C2536),
-                                        thumbColor = Color.White
+                                        activeTrackColor = RubikTheme.colors.accentBlue,
+                                        inactiveTrackColor = RubikTheme.colors.speedTrack,
+                                        thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
                                     )
                                 )
                                 Text(
                                     text = "${(currentOffsetY * 100).toInt()}",
-                                    color = Color(0xFF6B7A8D),
+                                    color = RubikTheme.colors.textSecondary,
                                     fontSize = 9.sp,
                                     modifier = Modifier.width(32.dp),
                                     textAlign = TextAlign.End,
@@ -551,7 +558,7 @@ fun ScannerWizard(
                         if (grid != null && rawGrid != null) {
                             Text(
                                 text = "🎨 Renk Önizleme (düzeltmek için tıklayın)",
-                                color = Color(0xFF6B7A8D),
+                                color = RubikTheme.colors.textSecondary,
                                 fontSize = 9.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1,
@@ -575,7 +582,7 @@ fun ScannerWizard(
                                                     .background(Color(cellColor.rgb))
                                                     .border(
                                                         width = if (isCenter) 1.5.dp else 0.5.dp,
-                                                        color = if (isCenter) Color.White else Color(0x1AFFFFFF),
+                                                        color = if (isCenter) RubikTheme.colors.textPrimary else RubikTheme.colors.borderSubtle,
                                                         shape = RoundedCornerShape(5.dp)
                                                     )
                                                     .clickable {
@@ -632,11 +639,12 @@ fun ScannerWizard(
                                 appState.scannedFilePaths = updatedPaths
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF141B28),
-                                contentColor = Color(0xFF8A99AD)
+                                containerColor = RubikTheme.colors.backgroundSecondary,
+                                contentColor = RubikTheme.colors.textSecondary
                             ),
                             shape = RoundedCornerShape(10.dp),
                             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 5.dp),
+                            border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                             modifier = Modifier.height(32.dp)
                         ) {
                             Text(
@@ -658,11 +666,12 @@ fun ScannerWizard(
                 Button(
                     onClick = onDismiss,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF141B28),
-                        contentColor = Color.White
+                        containerColor = RubikTheme.colors.backgroundSecondary,
+                        contentColor = RubikTheme.colors.textPrimary
                     ),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                    border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
@@ -681,13 +690,14 @@ fun ScannerWizard(
                     },
                     enabled = appState.scannerStep > 0,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF141B28),
-                        contentColor = Color.White,
-                        disabledContainerColor = Color(0xFF0A0E18),
-                        disabledContentColor = Color(0xFF4A5568)
+                        containerColor = RubikTheme.colors.backgroundSecondary,
+                        contentColor = RubikTheme.colors.textPrimary,
+                        disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                        disabledContentColor = RubikTheme.colors.buttonDisabledText
                     ),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                    border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
@@ -720,13 +730,14 @@ fun ScannerWizard(
                         },
                         enabled = hasCurrentScan,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (hasCurrentScan) Color(0xFF448AFF) else Color(0xFF141B28),
-                            contentColor = Color.White,
-                            disabledContainerColor = Color(0xFF0A0E18),
-                            disabledContentColor = Color(0xFF4A5568)
+                            containerColor = if (hasCurrentScan) RubikTheme.colors.accentBlue else RubikTheme.colors.backgroundSecondary,
+                            contentColor = if (hasCurrentScan) Color.White else RubikTheme.colors.textSecondary,
+                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                            disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                        border = if (hasCurrentScan) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                         modifier = Modifier.weight(1.1f).height(42.dp)
                     ) {
                         Text(
@@ -758,13 +769,14 @@ fun ScannerWizard(
                         },
                         enabled = appState.scannedGrids.size == 6,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (appState.scannedGrids.size == 6) Color(0xFFFF8A00) else Color(0xFF141B28),
-                            contentColor = Color.White,
-                            disabledContainerColor = Color(0xFF0A0E18),
-                            disabledContentColor = Color(0xFF4A5568)
+                            containerColor = if (appState.scannedGrids.size == 6) RubikTheme.colors.accentOrange else RubikTheme.colors.backgroundSecondary,
+                            contentColor = if (appState.scannedGrids.size == 6) Color.White else RubikTheme.colors.textSecondary,
+                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                            disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                        border = if (appState.scannedGrids.size == 6) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                         modifier = Modifier.weight(1.1f).height(42.dp)
                     ) {
                         Text(

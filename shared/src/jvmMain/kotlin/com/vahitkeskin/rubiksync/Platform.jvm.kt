@@ -143,3 +143,7 @@ actual fun CameraCaptureOrPicker(
 actual fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String) {
     println("RubikSyncMath: Move: $moveLabel ($phase)\n$mathDetails")
 }
+
+actual fun getCurrentYear(): Int {
+    return java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+}

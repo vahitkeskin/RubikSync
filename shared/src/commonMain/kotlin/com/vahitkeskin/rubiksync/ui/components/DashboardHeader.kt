@@ -2,6 +2,7 @@ package com.vahitkeskin.rubiksync.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 
 @Composable
 fun DashboardHeader(
@@ -56,7 +58,7 @@ fun DashboardHeader(
                 Column {
                     Text(
                         text = "RUBIK SYNC",
-                        color = Color.White,
+                        color = RubikTheme.colors.textPrimary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = 3.sp,
@@ -64,7 +66,7 @@ fun DashboardHeader(
                     )
                     Text(
                         text = "3D INTERACTIVE SIMULATOR",
-                        color = Color(0xFF4A5568),
+                        color = RubikTheme.colors.textSecondary,
                         fontSize = 7.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.5.sp,
@@ -82,7 +84,8 @@ fun DashboardHeader(
                 StatChip(
                     emoji = "🎯",
                     value = "${cubeState.moveHistory.size}",
-                    label = "Hamle"
+                    label = "Hamle",
+                    accentColor = RubikTheme.colors.accentBlue
                 )
 
                 // Solved Status
@@ -91,8 +94,25 @@ fun DashboardHeader(
                     emoji = if (solved) "✅" else "🔄",
                     value = if (solved) "Çözüldü" else "Karışık",
                     label = "Durum",
-                    accentColor = if (solved) Color(0xFF30D158) else Color(0xFFFF8A00)
+                    accentColor = if (solved) RubikTheme.colors.accentGreen else RubikTheme.colors.accentOrange
                 )
+
+                // Ayarlar butonu
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(RubikTheme.colors.cardBackground)
+                        .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(8.dp))
+                        .clickable { appState.showSettingsScreen = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "⚙️",
+                        fontSize = 14.sp,
+                        maxLines = 1
+                    )
+                }
             }
         }
 
@@ -104,8 +124,8 @@ fun DashboardHeader(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF141B28))
-                    .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(10.dp))
+                    .background(RubikTheme.colors.cardBackground)
+                    .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(10.dp))
                     .padding(vertical = 5.dp, horizontal = 8.dp)
                     .horizontalScroll(rememberScrollState(initial = 10000)),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -127,11 +147,11 @@ fun DashboardHeader(
                                 if (isLast) {
                                     Brush.horizontalGradient(listOf(Color(0xFFFF8A00), Color(0xFFFF5252)))
                                 } else {
-                                    Brush.horizontalGradient(listOf(Color(0xFF1C2536), Color(0xFF1C2536)))
+                                    Brush.horizontalGradient(listOf(RubikTheme.colors.backgroundTertiary, RubikTheme.colors.backgroundTertiary))
                                 }
                             )
                             .then(
-                                if (!isLast) Modifier.border(0.5.dp, Color(0x0FFFFFFF), RoundedCornerShape(6.dp))
+                                if (!isLast) Modifier.border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(6.dp))
                                 else Modifier
                             )
                             .padding(horizontal = 7.dp, vertical = 3.dp),
@@ -139,7 +159,7 @@ fun DashboardHeader(
                     ) {
                         Text(
                             text = move.label,
-                            color = if (isLast) Color.White else Color(0xFF8A99AD),
+                            color = if (isLast) Color.White else RubikTheme.colors.textSecondary,
                             fontSize = 10.sp,
                             fontWeight = if (isLast) FontWeight.ExtraBold else FontWeight.Bold,
                             maxLines = 1,
@@ -157,14 +177,14 @@ private fun StatChip(
     emoji: String,
     value: String,
     label: String,
-    accentColor: Color = Color(0xFF448AFF),
+    accentColor: Color,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF141B28))
-            .border(0.5.dp, Color(0x0CFFFFFF), RoundedCornerShape(8.dp))
+            .background(RubikTheme.colors.cardBackground)
+            .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(8.dp))
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -185,7 +205,7 @@ private fun StatChip(
             )
             Text(
                 text = label,
-                color = Color(0xFF4A5568),
+                color = RubikTheme.colors.textSecondary,
                 fontSize = 7.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,

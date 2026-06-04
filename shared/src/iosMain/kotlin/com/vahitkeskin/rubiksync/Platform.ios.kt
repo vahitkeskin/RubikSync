@@ -798,3 +798,9 @@ actual fun CameraCaptureOrPicker(
 actual fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String) {
     println("RubikSyncMath: Move: $moveLabel ($phase)\n$mathDetails")
 }
+
+actual fun getCurrentYear(): Int {
+    val formatter = NSDateFormatter()
+    formatter.dateFormat = "yyyy"
+    return formatter.stringFromDate(NSDate()).toIntOrNull() ?: 2026
+}

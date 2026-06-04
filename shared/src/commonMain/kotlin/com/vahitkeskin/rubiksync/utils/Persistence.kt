@@ -54,6 +54,9 @@ interface RubikPersistence {
         rotationSpeedMs: Float
     )
     suspend fun loadCameraSettings(): CameraSettings?
+
+    suspend fun saveThemeMode(mode: String)
+    suspend fun loadThemeMode(): String?
 }
 
 object RubikPersistenceRegistry {

@@ -22,6 +22,7 @@ import com.vahitkeskin.rubiksync.cube.CubeRenderer
 import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import kotlinx.coroutines.delay
 import kotlin.math.PI
 import kotlin.math.sin
@@ -103,9 +104,8 @@ fun SplashScreen(
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0x18FF8A00),
-                            Color(0x0C448AFF),
-                            Color.Transparent,
+                            RubikTheme.colors.glowOrange,
+                            RubikTheme.colors.glowBlue,
                             Color.Transparent
                         ),
                         radius = 800f
@@ -164,7 +164,7 @@ fun SplashScreen(
                         )
                         Text(
                             text = "RUBIK SYNC",
-                            color = Color.White,
+                            color = RubikTheme.colors.textPrimary,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.ExtraBold,
                             letterSpacing = 6.sp
@@ -173,7 +173,7 @@ fun SplashScreen(
 
                     Text(
                         text = "3D INTERACTIVE SIMULATOR & SOLVER",
-                        color = Color(0xFF5E6D82),
+                        color = RubikTheme.colors.textSecondary,
                         fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 3.sp,
@@ -190,7 +190,7 @@ fun SplashScreen(
                     .width(160.dp)
                     .height(2.dp)
                     .clip(RoundedCornerShape(1.dp))
-                    .background(Color(0x1AFFFFFF))
+                    .background(RubikTheme.colors.borderSubtle)
             ) {
                 Box(
                     modifier = Modifier

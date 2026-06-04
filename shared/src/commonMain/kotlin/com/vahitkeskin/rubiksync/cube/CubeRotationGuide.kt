@@ -27,6 +27,8 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+
 @Composable
 fun CubeRotationGuide(
     currentFace: FaceName,
@@ -115,11 +117,11 @@ fun CubeRotationGuide(
     }
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = Color(0x0CFFFFFF)),
+        colors = CardDefaults.cardColors(containerColor = RubikTheme.colors.cardBackground),
         shape = RoundedCornerShape(20.dp),
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0x11FFFFFF), RoundedCornerShape(20.dp))
+            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(20.dp))
     ) {
         Row(
             modifier = Modifier
@@ -132,7 +134,7 @@ fun CubeRotationGuide(
                 modifier = Modifier
                     .size(130.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFF0A0D14)),
+                    .background(RubikTheme.colors.backgroundPrimary),
                 contentAlignment = Alignment.Center
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
@@ -155,7 +157,7 @@ fun CubeRotationGuide(
                     Column {
                         Text(
                             text = faceTitle,
-                            color = Color.White,
+                            color = RubikTheme.colors.textPrimary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -173,7 +175,7 @@ fun CubeRotationGuide(
 
                 Text(
                     text = guideInstruction,
-                    color = Color.LightGray,
+                    color = RubikTheme.colors.textSecondary,
                     fontSize = 11.sp,
                     lineHeight = 15.sp
                 )
@@ -204,7 +206,7 @@ private fun Mini2DNet(targetFace: FaceName) {
                 .background(color)
                 .border(
                     width = if (isTarget) 1.5.dp else 0.5.dp,
-                    color = if (isTarget) Color.White else Color(0x33FFFFFF),
+                    color = if (isTarget) RubikTheme.colors.textPrimary else RubikTheme.colors.borderSubtle,
                     shape = RoundedCornerShape(2.dp)
                 )
         )

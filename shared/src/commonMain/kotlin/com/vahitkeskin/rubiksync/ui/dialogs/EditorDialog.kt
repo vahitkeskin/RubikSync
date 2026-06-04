@@ -22,8 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
+import androidx.compose.foundation.BorderStroke
 import com.vahitkeskin.rubiksync.ui.components.FaceGrid
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.utils.parseDetectedState
 
 @Composable
@@ -38,12 +40,12 @@ private fun MiniFaceGrid(
         modifier = Modifier
             .border(
                 width = if (isActive) 1.5.dp else 0.5.dp,
-                color = if (isActive) Color(0xFF448AFF) else Color(0x15FFFFFF),
+                color = if (isActive) RubikTheme.colors.accentBlue else RubikTheme.colors.borderSubtle,
                 shape = RoundedCornerShape(4.dp)
             )
             .clickable { onFaceSelect(face) }
             .background(
-                if (isActive) Color(0x0C448AFF) else Color(0x06000000),
+                if (isActive) RubikTheme.colors.accentBlue.copy(alpha = 0.08f) else Color(0x06000000),
                 RoundedCornerShape(4.dp)
             )
             .padding(2.dp),
@@ -74,15 +76,15 @@ private fun MiniNetMap(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFF111827))
-            .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(12.dp))
+            .background(RubikTheme.colors.backgroundPanel)
+            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(12.dp))
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Text(
             text = "KÜP HARİTASI",
-            color = Color(0xFF4A5568),
+            color = RubikTheme.colors.textSecondary,
             fontSize = 7.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.5.sp,
@@ -133,7 +135,7 @@ fun EditorDialog(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        containerColor = Color(0xFF0F1724),
+        containerColor = RubikTheme.colors.backgroundPrimary,
         dragHandle = {
             // Custom drag handle with gradient accent bar
             Column(
@@ -172,7 +174,7 @@ fun EditorDialog(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "🎨 Küp Tasarımcısı",
-                        color = Color.White,
+                        color = RubikTheme.colors.textPrimary,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.ExtraBold,
                         maxLines = 1,
@@ -180,7 +182,7 @@ fun EditorDialog(
                     )
                     Text(
                         text = "Renkleri boyayın veya kamera ile taratın",
-                        color = Color(0xFF4A5568),
+                        color = RubikTheme.colors.textSecondary,
                         fontSize = 10.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -190,8 +192,8 @@ fun EditorDialog(
                 Button(
                     onClick = { showJsonImportDialog = true },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF141B28),
-                        contentColor = Color(0xFF8A99AD)
+                        containerColor = RubikTheme.colors.backgroundSecondary,
+                        contentColor = RubikTheme.colors.textSecondary
                     ),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
@@ -208,10 +210,14 @@ fun EditorDialog(
                     .clip(RoundedCornerShape(14.dp))
                     .background(
                         Brush.horizontalGradient(
-                            listOf(Color(0xFF0F1A2E), Color(0xFF111D32))
+                            if (RubikTheme.colors.isDark) {
+                                listOf(Color(0xFF0F1A2E), Color(0xFF111D32))
+                            } else {
+                                listOf(Color(0xFFE3F2FD), Color(0xFFBBDEFB))
+                            }
                         )
                     )
-                    .border(1.dp, Color(0x0AFFFFFF), RoundedCornerShape(14.dp))
+                    .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -222,7 +228,7 @@ fun EditorDialog(
                 ) {
                     Text(
                         text = "📸 Kamera ile Tarama",
-                        color = Color.White,
+                        color = RubikTheme.colors.textPrimary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -230,7 +236,7 @@ fun EditorDialog(
                     )
                     Text(
                         text = "6 yüzü otomatik algılatın",
-                        color = Color(0xFF4A5568),
+                        color = RubikTheme.colors.textSecondary,
                         fontSize = 9.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -240,7 +246,7 @@ fun EditorDialog(
                 Button(
                     onClick = onStartScanWizard,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF448AFF),
+                        containerColor = RubikTheme.colors.accentBlue,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(10.dp),
@@ -282,11 +288,15 @@ fun EditorDialog(
                         modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))
                             .background(
-                                if (isSelected) Color(0xFF1A2D4D) else Color(0xFF111827)
+                                if (isSelected) {
+                                    if (RubikTheme.colors.isDark) Color(0xFF1A2D4D) else Color(0xFFE3F2FD)
+                                } else {
+                                    RubikTheme.colors.backgroundSecondary
+                                }
                             )
                             .border(
                                 width = if (isSelected) 1.dp else 0.5.dp,
-                                color = if (isSelected) Color(0xFF448AFF) else Color(0x0AFFFFFF),
+                                color = if (isSelected) RubikTheme.colors.accentBlue else RubikTheme.colors.borderSubtle,
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .clickable { activeFace = face }
@@ -305,7 +315,11 @@ fun EditorDialog(
                             )
                             Text(
                                 text = label,
-                                color = if (isSelected) Color.White else Color(0xFF6B7A8D),
+                                color = if (isSelected) {
+                                    if (RubikTheme.colors.isDark) Color.White else Color(0xFF0D47A1)
+                                } else {
+                                    RubikTheme.colors.textSecondary
+                                },
                                 fontSize = 11.sp,
                                 fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
                                 maxLines = 1
@@ -362,7 +376,7 @@ fun EditorDialog(
 
                 Text(
                     text = "🖌 Boya Rengi: $colorName",
-                    color = Color(0xFF6B7A8D),
+                    color = RubikTheme.colors.textSecondary,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 6.dp),
@@ -387,7 +401,7 @@ fun EditorDialog(
                                 .background(Color(color.rgb))
                                 .border(
                                     width = if (isSelected) 2.5.dp else 0.5.dp,
-                                    color = if (isSelected) Color.White else Color(0x1AFFFFFF),
+                                    color = if (isSelected) RubikTheme.colors.textPrimary else RubikTheme.colors.borderSubtle,
                                     shape = RoundedCornerShape(10.dp)
                                 )
                                 .clickable { appState.selectedColor = color },
@@ -414,11 +428,12 @@ fun EditorDialog(
                 Button(
                     onClick = onDismiss,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF141B28),
-                        contentColor = Color.White
+                        containerColor = RubikTheme.colors.backgroundSecondary,
+                        contentColor = RubikTheme.colors.textPrimary
                     ),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                    border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
@@ -441,11 +456,12 @@ fun EditorDialog(
                         )
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2A1519),
-                        contentColor = Color(0xFFFF453A)
+                        containerColor = if (RubikTheme.colors.isDark) Color(0xFF2A1519) else Color(0xFFFFEBEE),
+                        contentColor = RubikTheme.colors.accentRed
                     ),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                    border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color(0xFF3D1519) else Color(0xFFFFCDD2)),
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
@@ -471,7 +487,7 @@ fun EditorDialog(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF8A00),
+                        containerColor = RubikTheme.colors.accentOrange,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(12.dp),
@@ -495,7 +511,7 @@ fun EditorDialog(
                 title = {
                     Text(
                         "📋 JSON İçe Aktar",
-                        color = Color.White,
+                        color = RubikTheme.colors.textPrimary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -505,7 +521,7 @@ fun EditorDialog(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             text = "Küp JSON durumunu yapıştırın:",
-                            color = Color.LightGray,
+                            color = RubikTheme.colors.textSecondary,
                             fontSize = 11.sp,
                             maxLines = 2
                         )
@@ -514,10 +530,10 @@ fun EditorDialog(
                             onValueChange = { jsonInputText = it },
                             modifier = Modifier.fillMaxWidth().height(100.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
-                                focusedBorderColor = Color(0xFFFF8A00),
-                                unfocusedBorderColor = Color(0xFF2A3548)
+                                focusedTextColor = RubikTheme.colors.textPrimary,
+                                unfocusedTextColor = RubikTheme.colors.textPrimary,
+                                focusedBorderColor = RubikTheme.colors.accentOrange,
+                                unfocusedBorderColor = RubikTheme.colors.borderPrimary
                             ),
                             textStyle = LocalTextStyle.current.copy(fontSize = 11.sp),
                             shape = RoundedCornerShape(10.dp)
@@ -537,7 +553,7 @@ fun EditorDialog(
                                 appState.errorMessage = "Hatalı JSON formatı!"
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8A00)),
+                        colors = ButtonDefaults.buttonColors(containerColor = RubikTheme.colors.accentOrange),
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                         shape = RoundedCornerShape(10.dp)
                     ) {
@@ -550,14 +566,15 @@ fun EditorDialog(
                             showJsonImportDialog = false
                             jsonInputText = ""
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF141B28)),
+                        colors = ButtonDefaults.buttonColors(containerColor = RubikTheme.colors.backgroundSecondary),
+                        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("İptal", color = Color.White, fontSize = 12.sp, maxLines = 1)
+                        Text("İptal", color = RubikTheme.colors.textPrimary, fontSize = 12.sp, maxLines = 1)
                     }
                 },
-                containerColor = Color(0xFF141B28),
+                containerColor = RubikTheme.colors.cardBackground,
                 shape = RoundedCornerShape(20.dp)
             )
         }

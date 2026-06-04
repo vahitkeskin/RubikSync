@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 
 @Composable
 fun FaceGrid(
@@ -28,7 +29,7 @@ fun FaceGrid(
     val grid = faces[face]!!
     Column(
         modifier = modifier
-            .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(8.dp))
+            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(8.dp))
             .background(Color(0x0C000000), RoundedCornerShape(8.dp))
             .padding(spacing * 2),
         verticalArrangement = Arrangement.spacedBy(spacing)

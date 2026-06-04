@@ -1,6 +1,7 @@
 package com.vahitkeskin.rubiksync
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,6 +23,31 @@ import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
 fun App() {
     val appState = rememberRubikAppState()
     val cubeState = appState.cubeState
+
+    // Tema moduna göre karanlık mı açık mı karar ver
+    val systemIsDark = isSystemInDarkTheme()
+    val isDarkTheme = when (appState.themeMode) {
+        ThemeMode.DARK -> true
+        ThemeMode.LIGHT -> false
+        ThemeMode.SYSTEM -> systemIsDark
+    }
+
+    // Arka plan gradient renkleri
+    val backgroundGradient = if (isDarkTheme) {
+        listOf(Color(0xFF0F1724), Color(0xFF0A0E18), Color(0xFF0D1220), Color(0xFF0A0E18))
+    } else {
+        listOf(Color(0xFFF8F9FC), Color(0xFFF5F7FA), Color(0xFFF0F2F5), Color(0xFFF5F7FA))
+    }
+
+    // Tema yüklenene kadar boş bir gradyan ekranı göstererek Splash'in doğru temada açılmasını garanti et
+    if (!appState.isThemeLoaded) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Brush.verticalGradient(colors = backgroundGradient))
+        )
+        return
+    }
 
     // LaunchedEffect to persist camera settings when they change (with a small delay to debounce)
     LaunchedEffect(appState.yaw, appState.pitch, appState.cameraDistance, appState.panX, appState.panY, cubeState.rotationSpeedMs) {
@@ -54,8 +80,9 @@ fun App() {
         }
     }
 
-    MaterialTheme(
-        colorScheme = darkColorScheme(
+    // Dinamik renk şeması
+    val colorScheme = if (isDarkTheme) {
+        darkColorScheme(
             primary = Color(0xFFFF8A00),
             onPrimary = Color.White,
             secondary = Color(0xFF448AFF),
@@ -68,49 +95,59 @@ fun App() {
             onSurface = Color.White,
             outline = Color(0xFF2A3548)
         )
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF0F1724),
-                            Color(0xFF0A0E18),
-                            Color(0xFF0D1220),
-                            Color(0xFF0A0E18)
-                        )
-                    )
-                )
-        ) {
-            Crossfade(
-                targetState = appState.showSplashScreen,
-                animationSpec = tween(600)
-            ) { showSplash ->
-                if (showSplash) {
-                    SplashScreen(appState = appState)
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .safeDrawingPadding()
-                    ) {
-                        // Subtle ambient glow behind the cube area
+    } else {
+        lightColorScheme(
+            primary = Color(0xFFFF8A00),
+            onPrimary = Color.White,
+            secondary = Color(0xFF2979FF),
+            onSecondary = Color.White,
+            tertiary = Color(0xFF28A745),
+            background = Color(0xFFF5F7FA),
+            surface = Color(0xFFFFFFFF),
+            surfaceVariant = Color(0xFFF0F2F5),
+            onBackground = Color(0xFF1A1A2E),
+            onSurface = Color(0xFF1A1A2E),
+            outline = Color(0xFFE5E7EB)
+        )
+    }
+
+    val rubikColors = if (isDarkTheme) DarkRubikColors else LightRubikColors
+
+    ProvideRubikColors(colors = rubikColors) {
+        MaterialTheme(colorScheme = colorScheme) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Brush.verticalGradient(colors = backgroundGradient))
+            ) {
+                Crossfade(
+                    targetState = appState.showSplashScreen,
+                    animationSpec = tween(600)
+                ) { showSplash ->
+                    if (showSplash) {
+                        SplashScreen(appState = appState)
+                    } else {
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.65f)
-                                .align(Alignment.Center)
-                                .background(
-                                    Brush.radialGradient(
-                                        colors = listOf(
-                                            Color(0x0CFF8A00),
-                                            Color(0x06448AFF),
-                                            Color.Transparent
+                                .fillMaxSize()
+                                .safeDrawingPadding()
+                        ) {
+                            // Subtle ambient glow behind the cube area
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.65f)
+                                    .align(Alignment.Center)
+                                    .background(
+                                        Brush.radialGradient(
+                                            colors = listOf(
+                                                RubikTheme.colors.glowOrange,
+                                                RubikTheme.colors.glowBlue,
+                                                Color.Transparent
+                                            )
                                         )
                                     )
-                                )
-                        )
+                            )
 
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -192,6 +229,15 @@ fun App() {
                     }
                 }
             }
+
+            // 8. Ayarlar Ekranı Overlay
+            if (appState.showSettingsScreen) {
+                SettingsScreen(
+                    appState = appState,
+                    isDarkTheme = isDarkTheme
+                )
+            }
         }
     }
+}
 }

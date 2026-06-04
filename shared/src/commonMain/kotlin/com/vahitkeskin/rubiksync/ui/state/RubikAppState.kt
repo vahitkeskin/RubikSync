@@ -78,6 +78,7 @@ class RubikAppState(
 
     // Solution / Playback State
     var activeSolution by mutableStateOf<List<MoveType>?>(null)
+
     // List of annotated steps computed by the solver with phase descriptions
     var activeSolutionDetails by mutableStateOf<List<AnnotatedMove>?>(null)
     var currentSolutionStep by mutableStateOf(0)
@@ -101,7 +102,7 @@ class RubikAppState(
         get() {
             return cubeState.cubies.all { cubie ->
                 cubie.gridPos == cubie.originalPos &&
-                cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
+                        cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
             }
         }
 
@@ -120,14 +121,15 @@ class RubikAppState(
     // Scanner Wizard State
     var scannerStep by mutableStateOf(0)
     var scannedGrids by mutableStateOf(mutableMapOf<FaceName, Array<Array<CubeColor>>>())
+
     // 3D vector representation of the scanned raw RGB values for cube stickers
     var scannedRawRGBs by mutableStateOf(mutableMapOf<FaceName, Array<Array<IntVector3>>>())
     var scannedFilePaths by mutableStateOf(mutableMapOf<FaceName, String>())
-    
+
     var gridScales by mutableStateOf(FaceName.values().associateWith { 0.55f }.toMutableMap())
     var gridOffsetsX by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
     var gridOffsetsY by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
-    
+
     val manualMoves = mutableStateListOf<MoveType>()
 
     fun updateThemeMode(mode: ThemeMode) {
@@ -190,7 +192,7 @@ class RubikAppState(
 
     init {
         cubeState.onStateChanged = { saveCurrentState() }
-        
+
         coroutineScope.launch(Dispatchers.Default) {
             val persistence = RubikPersistenceRegistry.persistence
             try {
@@ -198,11 +200,7 @@ class RubikAppState(
                     val camera = persistence.loadCameraSettings()
                     if (camera != null) {
                         withContext(Dispatchers.Main) {
-                            yaw = camera.yaw
-                            pitch = camera.pitch
-                            cameraDistance = camera.cameraDistance
-                            panX = camera.panX
-                            panY = camera.panY
+                            // Kamera pozisyonu yüklenmez — her açılışta sıfırlama konumunda başlar
                             cubeState.rotationSpeedMs = camera.rotationSpeedMs
                         }
                     }
@@ -210,7 +208,11 @@ class RubikAppState(
                     // Tema modunu yükle
                     val savedTheme = persistence.loadThemeMode()
                     if (savedTheme != null) {
-                        val mode = try { ThemeMode.valueOf(savedTheme) } catch (_: Exception) { ThemeMode.SYSTEM }
+                        val mode = try {
+                            ThemeMode.valueOf(savedTheme)
+                        } catch (_: Exception) {
+                            ThemeMode.SYSTEM
+                        }
                         withContext(Dispatchers.Main) {
                             themeMode = mode
                         }
@@ -220,13 +222,14 @@ class RubikAppState(
                     val savedLang = persistence.loadLanguage()
                     if (savedLang != null) {
                         val sysCode = getSystemLanguageCode().lowercase()
-                        val defaultLang = AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
+                        val defaultLang =
+                            AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
                         val lang = AppLanguage.values().find { it.code == savedLang } ?: defaultLang
                         withContext(Dispatchers.Main) {
                             appLanguage = lang
                         }
                     }
-                    
+
                     val saved = persistence.loadCubeState()
                     if (saved != null) {
                         withContext(Dispatchers.Main) {

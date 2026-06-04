@@ -75,33 +75,33 @@ fun CubeRotationGuide(
     }
 
     val prevYaw = when (prevFaceState) {
-        FaceName.U -> -0.5f
-        FaceName.D -> -0.5f
-        FaceName.L -> 1.0f
-        FaceName.R -> -1.0f
+        FaceName.U -> 0.0f
+        FaceName.D -> 0.0f
+        FaceName.L -> 1.5708f
+        FaceName.R -> -1.5708f
         FaceName.F -> 0.0f
         FaceName.B -> 3.14159f
     }
     val targetYaw = when (currentFace) {
-        FaceName.U -> -0.5f
-        FaceName.D -> -0.5f
-        FaceName.L -> 1.0f
-        FaceName.R -> -1.0f
+        FaceName.U -> 0.0f
+        FaceName.D -> 0.0f
+        FaceName.L -> 1.5708f
+        FaceName.R -> -1.5708f
         FaceName.F -> 0.0f
         FaceName.B -> 3.14159f
     }
 
     val prevPitch = when (prevFaceState) {
-        FaceName.U -> 0.5f
-        FaceName.D -> -0.5f
+        FaceName.U -> 1.1f
+        FaceName.D -> -1.1f
         FaceName.L -> 0.2f
         FaceName.R -> 0.2f
         FaceName.F -> 0.2f
         FaceName.B -> 0.2f
     }
     val targetPitch = when (currentFace) {
-        FaceName.U -> 0.5f
-        FaceName.D -> -0.5f
+        FaceName.U -> 1.1f
+        FaceName.D -> -1.1f
         FaceName.L -> 0.2f
         FaceName.R -> 0.2f
         FaceName.F -> 0.2f
@@ -121,7 +121,12 @@ fun CubeRotationGuide(
     val idleYawOffset = sin(animationProgress * 2 * PI.toFloat()) * 0.08f
     val idlePitchOffset = cos(animationProgress * 2 * PI.toFloat()) * 0.05f
 
-    val yaw = prevYaw + (targetYaw - prevYaw) * t + idleYawOffset
+    // Shortest path interpolation for yaw angle
+    var diffYaw = targetYaw - prevYaw
+    if (diffYaw > PI.toFloat()) diffYaw -= 2 * PI.toFloat()
+    if (diffYaw < -PI.toFloat()) diffYaw += 2 * PI.toFloat()
+
+    val yaw = prevYaw + diffYaw * t + idleYawOffset
     val userYaw = remember { mutableStateOf(0f) }
     val userPitch = remember { mutableStateOf(0f) }
     val pitch = prevPitch + (targetPitch - prevPitch) * t + idlePitchOffset
@@ -475,9 +480,23 @@ private fun DrawScope.drawGuideCube(
         // Draw cubie plastic body
         drawGuidePolygon(projectedPoints = rf.projectedBodyPoints, color = bodyColor)
 
-        // Draw sticker: only the target face shows scanned colors, others are neutral gray
-        val stickerColor = if (rf.isTarget) {
-            // scanned color for the current (target) face
+        // Draw sticker: show scanned colors for the target face and all previously scanned faces
+        val localN = rf.face.localNormal
+        val nx = localN.x.roundToInt()
+        val ny = localN.y.roundToInt()
+        val nz = localN.z.roundToInt()
+        val faceName = when {
+            ny == 1 -> FaceName.U
+            ny == -1 -> FaceName.D
+            nx == -1 -> FaceName.L
+            nx == 1 -> FaceName.R
+            nz == 1 -> FaceName.F
+            nz == -1 -> FaceName.B
+            else -> null
+        }
+
+        val showColors = faceName != null && (faceName == targetFace || appState.scannedFilePaths.containsKey(faceName))
+        val stickerColor = if (showColors) {
             val scannedColor = getScannedOrFaceletColor(rf.facePos, rf.face.localNormal, appState)
             Color(
                 red = ((scannedColor.rgb shr 16) and 0xFF) / 255f,
@@ -486,7 +505,6 @@ private fun DrawScope.drawGuideCube(
                 alpha = 1.0f
             )
         } else {
-            // neutral color for faces that are not being scanned
             Color(0xFF555555)
         }
         drawGuidePolygon(projectedPoints = rf.projectedStickerPoints, color = stickerColor)

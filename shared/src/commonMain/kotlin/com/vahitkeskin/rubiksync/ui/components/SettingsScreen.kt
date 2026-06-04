@@ -49,10 +49,11 @@ import androidx.compose.foundation.lazy.items
 fun SettingsScreen(
     appState: RubikAppState,
     isDarkTheme: Boolean,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     BindBackHandler(enabled = true) {
-        appState.showSettingsScreen = false
+        onBack()
     }
 
     // Tema bazlı renkler
@@ -98,7 +99,7 @@ fun SettingsScreen(
                         .clip(RoundedCornerShape(12.dp))
                         .background(bgSecondary)
                         .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
-                        .clickable { appState.showSettingsScreen = false },
+                        .clickable { onBack() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

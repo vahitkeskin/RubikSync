@@ -21,6 +21,9 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -156,13 +159,25 @@ fun App() {
                     .fillMaxSize()
                     .background(Brush.verticalGradient(colors = backgroundGradient))
             ) {
-                Crossfade(
-                    targetState = appState.showSplashScreen,
-                    animationSpec = tween(600)
-                ) { showSplash ->
-                    if (showSplash) {
-                        SplashScreen(appState = appState)
-                    } else {
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = "splash",
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    composable("splash") {
+                        SplashScreen(
+                            appState = appState,
+                            onSplashComplete = {
+                                navController.navigate("dashboard") {
+                                    popUpTo("splash") { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+
+                    composable("dashboard") {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -192,7 +207,10 @@ fun App() {
                                 // 1. Top Dashboard (Title & Stats)
                                 DashboardHeader(
                                     cubeState = cubeState,
-                                    appState = appState
+                                    appState = appState,
+                                    onNavigateToSettings = {
+                                        navController.navigate("settings")
+                                    }
                                 )
 
                                 // 2. Main 3D Canvas (occupies remaining height)
@@ -267,24 +285,30 @@ fun App() {
                             FeedbackOverlay(appState = appState)
                         }
                     }
-                }
 
-                // 8. Ayarlar Ekranı Overlay
-                AnimatedVisibility(
-                    visible = appState.showSettingsScreen,
-                    enter = slideInHorizontally(
-                        initialOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(durationMillis = 450)
-                    ) + fadeIn(animationSpec = tween(durationMillis = 450)),
-                    exit = slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> fullWidth },
-                        animationSpec = tween(durationMillis = 450)
-                    ) + fadeOut(animationSpec = tween(durationMillis = 450))
-                ) {
-                    SettingsScreen(
-                        appState = appState,
-                        isDarkTheme = isDarkTheme
-                    )
+                    composable(
+                        route = "settings",
+                        enterTransition = {
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> fullWidth },
+                                animationSpec = tween(durationMillis = 450)
+                            ) + fadeIn(animationSpec = tween(durationMillis = 450))
+                        },
+                        exitTransition = {
+                            slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> fullWidth },
+                                animationSpec = tween(durationMillis = 450)
+                            ) + fadeOut(animationSpec = tween(durationMillis = 450))
+                        }
+                    ) {
+                        SettingsScreen(
+                            appState = appState,
+                            isDarkTheme = isDarkTheme,
+                            onBack = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
                 }
             }
         }

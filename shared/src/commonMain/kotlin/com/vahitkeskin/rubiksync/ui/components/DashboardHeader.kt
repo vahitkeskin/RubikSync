@@ -32,6 +32,7 @@ import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 fun DashboardHeader(
     cubeState: RubikCubeState,
     appState: RubikAppState,
+    onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -193,7 +194,7 @@ fun DashboardHeader(
                         .clip(RoundedCornerShape(10.dp))
                         .background(RubikTheme.colors.cardBackground)
                         .border(0.8.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(10.dp))
-                        .clickable { appState.showSettingsScreen = true },
+                        .clickable { onNavigateToSettings() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

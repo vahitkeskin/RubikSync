@@ -33,6 +33,7 @@ import kotlin.math.sin
 @Composable
 fun SplashScreen(
     appState: RubikAppState,
+    onSplashComplete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // 1. Separate state for the preview cube
@@ -92,7 +93,7 @@ fun SplashScreen(
         
         progress = 1f
         delay(300) // small pause at 100%
-        appState.showSplashScreen = false
+        onSplashComplete()
     }
 
     Box(

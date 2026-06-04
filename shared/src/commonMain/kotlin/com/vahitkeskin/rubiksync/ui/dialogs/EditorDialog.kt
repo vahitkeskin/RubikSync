@@ -28,6 +28,7 @@ import androidx.compose.foundation.BorderStroke
 import com.vahitkeskin.rubiksync.ui.components.FaceGrid
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
 import com.vahitkeskin.rubiksync.utils.parseDetectedState
 
 @Composable
@@ -171,9 +172,28 @@ fun EditorDialog(
             // Header Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Geri butonu
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(RubikTheme.colors.backgroundSecondary)
+                        .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(12.dp))
+                        .clickable { onDismiss() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = ArrowBackIcon,
+                        contentDescription = "Geri",
+                        tint = RubikTheme.colors.textPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = appState.strings.editorTitle,
@@ -191,6 +211,8 @@ fun EditorDialog(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
                     onClick = { showJsonImportDialog = true },

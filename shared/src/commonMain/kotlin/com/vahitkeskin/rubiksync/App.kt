@@ -80,7 +80,12 @@ fun App() {
         appState.currentSolutionStep,
         appState.activeSolution
     ) {
-        if (appState.isPlaybackRunning && appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size) {
+        if (
+            appState.isCubeEditable &&
+            appState.isPlaybackRunning &&
+            appState.activeSolution != null &&
+            appState.currentSolutionStep < appState.activeSolution!!.size
+        ) {
             val nextMove = appState.activeSolution!![appState.currentSolutionStep]
             val activeDetail =
                 appState.activeSolutionDetails?.getOrNull(appState.currentSolutionStep)

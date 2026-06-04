@@ -93,6 +93,9 @@ class RubikAppState(
     // Statistics
     var totalMoveCount by mutableStateOf(0)
 
+    /** When false, the 3D cube can only be orbited/zoomed — no layer turns or panel edits. */
+    var isCubeEditable by mutableStateOf(true)
+
     // Computed: is the cube solved?
     val isSolved: Boolean
         get() {
@@ -138,6 +141,16 @@ class RubikAppState(
         appLanguage = lang
         coroutineScope.launch(Dispatchers.Default) {
             RubikPersistenceRegistry.persistence?.saveLanguage(lang.code)
+        }
+    }
+
+    fun updateCubeEditable(enabled: Boolean) {
+        isCubeEditable = enabled
+        if (!enabled) {
+            isPlaybackRunning = false
+        }
+        coroutineScope.launch(Dispatchers.Default) {
+            RubikPersistenceRegistry.persistence?.saveCubeEditable(enabled)
         }
     }
 
@@ -218,6 +231,12 @@ class RubikAppState(
                     if (saved != null) {
                         withContext(Dispatchers.Main) {
                             _editorFaces = saved.editorFaces
+                        }
+                    }
+
+                    persistence.loadCubeEditable()?.let { editable ->
+                        withContext(Dispatchers.Main) {
+                            isCubeEditable = editable
                         }
                     }
                 }

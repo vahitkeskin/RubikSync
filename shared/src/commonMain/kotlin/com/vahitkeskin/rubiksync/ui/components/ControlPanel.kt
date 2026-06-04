@@ -67,6 +67,7 @@ fun ControlPanel(
 ) {
     val cubeState = appState.cubeState
     val coroutineScope = appState.coroutineScope
+    val canEditCube = appState.isCubeEditable
     var selectedTab by remember { mutableStateOf(0) }
 
     Column(
@@ -126,7 +127,7 @@ fun ControlPanel(
         when (selectedTab) {
             0 -> {
                 // MOVES TAB — 12 move buttons in 2 rows × 6 columns
-                MovesGrid(appState = appState)
+                MovesGrid(appState = appState, canEditCube = canEditCube)
             }
             1 -> {
                 // ACTIONS TAB — 3 equal-width buttons with icons
@@ -141,7 +142,7 @@ fun ControlPanel(
                                 cubeState.scramble()
                             }
                         },
-                        enabled = !cubeState.isAnimating,
+                        enabled = canEditCube && !cubeState.isAnimating,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
                             contentColor = RubikTheme.colors.textPrimary,
@@ -175,7 +176,7 @@ fun ControlPanel(
                                 cubeState.undo()
                             }
                         },
-                        enabled = !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty(),
+                        enabled = canEditCube && !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
                             contentColor = RubikTheme.colors.textPrimary,
@@ -218,7 +219,7 @@ fun ControlPanel(
                                 appState.totalMoveCount = 0
                             }
                         },
-                        enabled = !cubeState.isAnimating && !appState.isInitialState,
+                        enabled = canEditCube && !cubeState.isAnimating && !appState.isInitialState,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent,
                             contentColor = RubikTheme.colors.accentRed,
@@ -253,7 +254,7 @@ fun ControlPanel(
                 ) {
                     Button(
                         onClick = { appState.showEditorDialog = true },
-                        enabled = !cubeState.isAnimating,
+                        enabled = canEditCube && !cubeState.isAnimating,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (RubikTheme.colors.isDark) DarkGradientBg2 else AccentBlueFaintBg,
                             contentColor = RubikTheme.colors.accentBlue,
@@ -365,7 +366,7 @@ fun ControlPanel(
                             }
                         }
                     },
-                        enabled = !cubeState.isAnimating && !appState.isRecalculating,
+                        enabled = canEditCube && !cubeState.isAnimating && !appState.isRecalculating,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (RubikTheme.colors.isDark) AccentGreenShadow else AccentGreenFaintBg,
                             contentColor = RubikTheme.colors.accentGreen,
@@ -406,7 +407,8 @@ fun ControlPanel(
 
 @Composable
 private fun MovesGrid(
-    appState: RubikAppState
+    appState: RubikAppState,
+    canEditCube: Boolean,
 ) {
     val cubeState = appState.cubeState
     val coroutineScope = appState.coroutineScope
@@ -420,11 +422,11 @@ private fun MovesGrid(
                 .height(36.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(
-                    if (!cubeState.isAnimating) Brush.verticalGradient(listOf(c1, c2))
+                    if (canEditCube && !cubeState.isAnimating) Brush.verticalGradient(listOf(c1, c2))
                     else Brush.verticalGradient(listOf(RubikTheme.colors.buttonDisabledBg, RubikTheme.colors.buttonDisabledBg))
                 )
                 .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(8.dp))
-                .clickable(enabled = !cubeState.isAnimating) {
+                .clickable(enabled = canEditCube && !cubeState.isAnimating) {
                     coroutineScope.launch {
                         cubeState.executeMove(move)
                         appState.manualMoves.add(move)
@@ -436,7 +438,7 @@ private fun MovesGrid(
         ) {
             Text(
                 text = label,
-                color = if (!cubeState.isAnimating) {
+                color = if (canEditCube && !cubeState.isAnimating) {
                     if (isLight) Color.Black else Color.White
                 } else RubikTheme.colors.buttonDisabledText,
                 fontSize = 13.sp,
@@ -529,6 +531,7 @@ fun PlaybackController(
     val solution = appState.activeSolution ?: return
     val cubeState = appState.cubeState
     val coroutineScope = appState.coroutineScope
+    val canEditCube = appState.isCubeEditable
     var showDetails by remember { mutableStateOf(false) }
 
     Column(
@@ -701,7 +704,7 @@ fun PlaybackController(
                         appState.isPlaybackRunning = false
                     }
                 },
-                enabled = !cubeState.isAnimating,
+                enabled = canEditCube && !cubeState.isAnimating,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = RubikTheme.colors.textPrimary
@@ -723,6 +726,7 @@ fun PlaybackController(
             // Play / Pause — wider, accent color
             Button(
                 onClick = { appState.isPlaybackRunning = !appState.isPlaybackRunning },
+                enabled = canEditCube,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (appState.isPlaybackRunning) {
                         if (RubikTheme.colors.isDark) SelectionMediumOrange else AccentRedPinkBg
@@ -769,7 +773,7 @@ fun PlaybackController(
                         }
                     }
                 },
-                enabled = appState.currentSolutionStep < solution.size && !cubeState.isAnimating,
+                enabled = canEditCube && appState.currentSolutionStep < solution.size && !cubeState.isAnimating,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = RubikTheme.colors.textPrimary,

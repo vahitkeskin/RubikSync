@@ -60,6 +60,9 @@ interface RubikPersistence {
 
     suspend fun saveLanguage(langCode: String)
     suspend fun loadLanguage(): String?
+
+    suspend fun saveCubeEditable(enabled: Boolean)
+    suspend fun loadCubeEditable(): Boolean?
 }
 
 object RubikPersistenceRegistry {

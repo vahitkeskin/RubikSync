@@ -22,12 +22,13 @@ class GestureHandler(
         cameraDistance: Float,
         panX: Float,
         panY: Float,
+        layerTurnsEnabled: Boolean,
     ) {
         dragStart = pressOffset
         activeSticker = null
         isLayerDragActive = false
 
-        if (cubeState.isAnimating) return
+        if (cubeState.isAnimating || !layerTurnsEnabled) return
 
         val projector = projector(width, height, yaw, pitch, cameraDistance, panX, panY)
         activeSticker = findFrontmostSticker(pressOffset, projector)
@@ -44,8 +45,15 @@ class GestureHandler(
         cameraDistance: Float,
         panX: Float,
         panY: Float,
+        layerTurnsEnabled: Boolean,
     ) {
         val start = dragStart ?: return
+
+        if (!layerTurnsEnabled) {
+            onCameraOrbit(-dragAmount.x * ORBIT_RADIANS_PER_PIXEL, -dragAmount.y * ORBIT_RADIANS_PER_PIXEL)
+            return
+        }
+
         val sticker = activeSticker
 
         if (isLayerDragActive && sticker != null) {

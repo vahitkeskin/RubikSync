@@ -27,8 +27,8 @@ fun InteractiveCubeCanvas(
     val coroutineScope = rememberCoroutineScope()
     val isDarkTheme = RubikTheme.colors.isDark
     val animationFrameTick = rememberCubeAnimationFrameTick(cubeState)
+    val layerTurnsEnabled = appState.isCubeEditable
 
-    // Gesture Handler
     val gestureHandler = remember(cubeState) {
         GestureHandler(
             cubeState = cubeState,
@@ -76,7 +76,7 @@ fun InteractiveCubeCanvas(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
+                .pointerInput(layerTurnsEnabled) {
                     awaitPointerEventScope {
                         while (true) {
                             val event = awaitPointerEvent()
@@ -107,7 +107,8 @@ fun InteractiveCubeCanvas(
                                             appState.pitch,
                                             appState.cameraDistance,
                                             appState.panX,
-                                            appState.panY
+                                            appState.panY,
+                                            layerTurnsEnabled,
                                         )
                                         change.consume()
                                     } else if (change.previousPressed) {
@@ -121,7 +122,8 @@ fun InteractiveCubeCanvas(
                                             appState.pitch,
                                             appState.cameraDistance,
                                             appState.panX,
-                                            appState.panY
+                                            appState.panY,
+                                            layerTurnsEnabled,
                                         )
                                         change.consume()
                                     }

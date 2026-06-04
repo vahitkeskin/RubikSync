@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -31,6 +32,7 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     private val KEY_ROTATION_SPEED = floatPreferencesKey("rotation_speed_ms")
     private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
     private val KEY_LANGUAGE = stringPreferencesKey("app_language")
+    private val KEY_CUBE_EDITABLE = booleanPreferencesKey("cube_editable")
 
     override suspend fun saveCubeState(
         cubies: List<CubiePersistable>,
@@ -123,6 +125,21 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
         return try {
             val prefs = context.dataStore.data.first()
             prefs[KEY_LANGUAGE]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun saveCubeEditable(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_CUBE_EDITABLE] = enabled
+        }
+    }
+
+    override suspend fun loadCubeEditable(): Boolean? {
+        return try {
+            context.dataStore.data.first()[KEY_CUBE_EDITABLE]
         } catch (e: Exception) {
             e.printStackTrace()
             null

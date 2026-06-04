@@ -2,6 +2,8 @@ package com.vahitkeskin.rubiksync.ui.components
 
 import com.vahitkeskin.rubiksync.ui.state.*
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -99,6 +102,45 @@ fun DashboardHeader(
                     accentColor = if (solved) RubikTheme.colors.accentGreen else RubikTheme.colors.accentOrange
                 )
 
+                // Küp düzenleme ikonu — kilit/açık durumuna göre
+                val editableBgColor by animateColorAsState(
+                    targetValue = if (appState.isCubeEditable) {
+                        RubikTheme.colors.accentGreen.copy(alpha = 0.15f)
+                    } else {
+                        RubikTheme.colors.accentRed.copy(alpha = 0.15f)
+                    },
+                    animationSpec = tween(durationMillis = 300),
+                    label = "editableBg"
+                )
+                val editableBorderColor by animateColorAsState(
+                    targetValue = if (appState.isCubeEditable) {
+                        RubikTheme.colors.accentGreen.copy(alpha = 0.35f)
+                    } else {
+                        RubikTheme.colors.accentRed.copy(alpha = 0.35f)
+                    },
+                    animationSpec = tween(durationMillis = 300),
+                    label = "editableBorder"
+                )
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(editableBgColor)
+                        .border(0.5.dp, editableBorderColor, RoundedCornerShape(8.dp))
+                        .clickable(
+                            enabled = !cubeState.isAnimating
+                        ) {
+                            appState.updateCubeEditable(!appState.isCubeEditable)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (appState.isCubeEditable) "🔓" else "🔒",
+                        fontSize = 13.sp,
+                        maxLines = 1
+                    )
+                }
+
                 // Ayarlar butonu
                 Box(
                     modifier = Modifier
@@ -173,6 +215,8 @@ fun DashboardHeader(
         }
     }
 }
+
+
 
 @Composable
 private fun StatChip(

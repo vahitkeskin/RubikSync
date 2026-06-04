@@ -94,15 +94,26 @@ fun ScannerWizard(
         "$name ($color)"
     }
 
+    val currentGuide = when (currentFace) {
+        FaceName.U -> appState.strings.guideU
+        FaceName.D -> appState.strings.guideD
+        FaceName.L -> appState.strings.guideL
+        FaceName.R -> appState.strings.guideR
+        FaceName.F -> appState.strings.guideF
+        FaceName.B -> appState.strings.guideB
+    }
+
     val guidanceMessage = if (unscannedFaces.isEmpty()) {
         appState.strings.scanGuidanceAllScanned
     } else if (isCurrentFaceScanned) {
         appState.strings.scanGuidanceRemaining.replaceFirst("%s", remainingList)
     } else {
-        appState.strings.scanGuidanceFace
+        val baseMsg = appState.strings.scanGuidanceFace
             .replaceFirst("%s", faceDisplayName)
             .replaceFirst("%s", centerColorLocalized)
+        "$baseMsg ($currentGuide)"
     }
+
 
 
 
@@ -308,8 +319,9 @@ fun ScannerWizard(
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center,
-                        maxLines = 2,
+                        maxLines = 4,
                         overflow = TextOverflow.Ellipsis
+
                     )
                 }
             }

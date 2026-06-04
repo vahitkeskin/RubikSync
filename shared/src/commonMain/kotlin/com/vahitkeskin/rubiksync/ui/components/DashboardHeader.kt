@@ -37,80 +37,97 @@ fun DashboardHeader(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 6.dp, bottom = 2.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 8.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Title Row — Logo-style with accent dot and top-right actions
+        // Title Row — Brand & Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Brand Logo & Title Area
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Accent dot
-                Box(
+                // Stylized Mini 3D-looking Rubik Cube Badge
+                Column(
                     modifier = Modifier
-                        .size(8.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(
-                            Brush.linearGradient(
-                                listOf(AccentOrange, AccentRedCoral)
-                            )
-                        )
-                )
+                        .size(24.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(RubikTheme.colors.cardBackground)
+                        .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(6.dp))
+                        .padding(3.dp),
+                    verticalArrangement = Arrangement.spacedBy(1.5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(1.5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp)).background(CubeOrange))
+                        Box(modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp)).background(CubeGreen))
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(1.5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp)).background(CubeBlue))
+                        Box(modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp)).background(CubeYellow))
+                    }
+                }
+
                 Column {
                     Text(
                         text = appState.strings.appTitle,
                         color = RubikTheme.colors.textPrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 3.sp,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 2.5.sp,
                         maxLines = 1
                     )
                     Text(
                         text = appState.strings.appSubtitle,
                         color = RubikTheme.colors.textSecondary,
-                        fontSize = 7.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.5.sp,
+                        fontSize = 7.5.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 1.2.sp,
                         maxLines = 1
                     )
                 }
             }
 
-            // Quick Actions Cluster
+            // Quick Control Actions Cluster (Glassmorphic Buttons)
             Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Küp düzenleme ikonu — kilit/açık durumuna göre
                 val editableBgColor by animateColorAsState(
                     targetValue = if (appState.isCubeEditable) {
-                        RubikTheme.colors.accentGreen.copy(alpha = 0.15f)
+                        RubikTheme.colors.accentGreen.copy(alpha = 0.12f)
                     } else {
-                        RubikTheme.colors.accentRed.copy(alpha = 0.15f)
+                        RubikTheme.colors.accentRed.copy(alpha = 0.12f)
                     },
                     animationSpec = tween(durationMillis = 300),
                     label = "editableBg"
                 )
                 val editableBorderColor by animateColorAsState(
                     targetValue = if (appState.isCubeEditable) {
-                        RubikTheme.colors.accentGreen.copy(alpha = 0.35f)
+                        RubikTheme.colors.accentGreen.copy(alpha = 0.3f)
                     } else {
-                        RubikTheme.colors.accentRed.copy(alpha = 0.35f)
+                        RubikTheme.colors.accentRed.copy(alpha = 0.3f)
                     },
                     animationSpec = tween(durationMillis = 300),
                     label = "editableBorder"
                 )
                 Box(
                     modifier = Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(editableBgColor)
-                        .border(0.5.dp, editableBorderColor, RoundedCornerShape(8.dp))
+                        .border(0.8.dp, editableBorderColor, RoundedCornerShape(10.dp))
                         .clickable(
                             enabled = !cubeState.isAnimating
                         ) {
@@ -120,7 +137,7 @@ fun DashboardHeader(
                 ) {
                     Text(
                         text = if (appState.isCubeEditable) "🔓" else "🔒",
-                        fontSize = 13.sp,
+                        fontSize = 14.sp,
                         maxLines = 1
                     )
                 }
@@ -128,32 +145,32 @@ fun DashboardHeader(
                 // Zeka küpü döndürme ses ikonu — hoparlör/sessiz
                 val soundBgColor by animateColorAsState(
                     targetValue = if (!appState.isCubeEditable) {
-                        RubikTheme.colors.cardBackground.copy(alpha = 0.5f)
+                        RubikTheme.colors.cardBackground.copy(alpha = 0.4f)
                     } else if (appState.isSoundEnabled) {
-                        RubikTheme.colors.accentBlue.copy(alpha = 0.15f)
+                        RubikTheme.colors.accentBlue.copy(alpha = 0.12f)
                     } else {
-                        RubikTheme.colors.accentRed.copy(alpha = 0.15f)
+                        RubikTheme.colors.accentRed.copy(alpha = 0.12f)
                     },
                     animationSpec = tween(durationMillis = 300),
                     label = "soundBg"
                 )
                 val soundBorderColor by animateColorAsState(
                     targetValue = if (!appState.isCubeEditable) {
-                        RubikTheme.colors.cardBorder.copy(alpha = 0.3f)
+                        RubikTheme.colors.cardBorder.copy(alpha = 0.2f)
                     } else if (appState.isSoundEnabled) {
-                        RubikTheme.colors.accentBlue.copy(alpha = 0.35f)
+                        RubikTheme.colors.accentBlue.copy(alpha = 0.3f)
                     } else {
-                        RubikTheme.colors.accentRed.copy(alpha = 0.35f)
+                        RubikTheme.colors.accentRed.copy(alpha = 0.3f)
                     },
                     animationSpec = tween(durationMillis = 300),
                     label = "soundBorder"
                 )
                 Box(
                     modifier = Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(soundBgColor)
-                        .border(0.5.dp, soundBorderColor, RoundedCornerShape(8.dp))
+                        .border(0.8.dp, soundBorderColor, RoundedCornerShape(10.dp))
                         .clickable(
                             enabled = appState.isCubeEditable && !cubeState.isAnimating
                         ) {
@@ -163,40 +180,40 @@ fun DashboardHeader(
                 ) {
                     Text(
                         text = if (appState.isSoundEnabled) "🔊" else "🔇",
-                        fontSize = 13.sp,
+                        fontSize = 14.sp,
                         maxLines = 1,
-                        modifier = Modifier.alpha(if (appState.isCubeEditable) 1f else 0.4f)
+                        modifier = Modifier.alpha(if (appState.isCubeEditable) 1f else 0.35f)
                     )
                 }
 
                 // Ayarlar butonu
                 Box(
                     modifier = Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(RubikTheme.colors.cardBackground)
-                        .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(8.dp))
+                        .border(0.8.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(10.dp))
                         .clickable { appState.showSettingsScreen = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "⚙️",
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         maxLines = 1
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Status & Stats — mini glassmorphism cards row
+        // Status & Stats — Professional Dashboard Cards Row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Move Counter
+            // Move Counter Card
             StatChip(
                 emoji = "🎯",
                 value = "${cubeState.moveHistory.size}",
@@ -205,7 +222,7 @@ fun DashboardHeader(
                 modifier = Modifier.weight(1f)
             )
 
-            // Solved Status
+            // Solved Status Card
             val solved = appState.isSolved
             StatChip(
                 emoji = if (solved) "✅" else "🔄",
@@ -218,22 +235,22 @@ fun DashboardHeader(
 
         // Move History — scrollable chips with refined styling
         if (cubeState.moveHistory.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
                     .background(RubikTheme.colors.cardBackground)
-                    .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(10.dp))
-                    .padding(vertical = 5.dp, horizontal = 8.dp)
+                    .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(10.dp))
+                    .padding(vertical = 6.dp, horizontal = 10.dp)
                     .horizontalScroll(rememberScrollState(initial = 10000)),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "📝",
-                    fontSize = 9.sp,
+                    fontSize = 10.sp,
                     maxLines = 1
                 )
 
@@ -254,7 +271,7 @@ fun DashboardHeader(
                                 if (!isLast) Modifier.border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(6.dp))
                                 else Modifier
                             )
-                            .padding(horizontal = 7.dp, vertical = 3.dp),
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -284,34 +301,51 @@ private fun StatChip(
 ) {
     Row(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(RubikTheme.colors.cardBackground)
-            .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(8.dp))
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .border(0.8.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(12.dp))
+            .padding(start = 0.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.Start
     ) {
+        // Vertical indicator stripe on the left side of the dashboard card
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .height(30.dp)
+                .clip(RoundedCornerShape(topEnd = 2.dp, bottomEnd = 2.dp))
+                .background(accentColor)
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
         Text(
             text = emoji,
-            fontSize = 10.sp,
+            fontSize = 12.sp,
             maxLines = 1
         )
-        Column {
+
+        Spacer(modifier = Modifier.width(6.dp))
+
+        Column(
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
                 text = value,
                 color = accentColor,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.ExtraBold,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Black,
                 maxLines = 1,
-                lineHeight = 12.sp
+                lineHeight = 13.sp
             )
             Text(
-                text = label,
+                text = label.uppercase(),
                 color = RubikTheme.colors.textSecondary,
                 fontSize = 7.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                lineHeight = 8.sp
+                lineHeight = 9.sp,
+                letterSpacing = 0.5.sp
             )
         }
     }

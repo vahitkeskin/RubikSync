@@ -7,6 +7,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +45,16 @@ fun CubeRotationGuide(
 ) {
     val isDark = RubikTheme.colors.isDark
     val infiniteTransition = rememberInfiniteTransition(label = "CubeGuideInfinite")
+    // Height animation for the guide canvas (opens on launch)
+    var guideTargetHeight by remember { mutableStateOf(0.dp) }
+    val animatedGuideHeight by animateDpAsState(
+        targetValue = guideTargetHeight,
+        animationSpec = tween(durationMillis = 600, easing = LinearOutSlowInEasing)
+    )
+    // Trigger the opening animation after composition
+    LaunchedEffect(Unit) {
+        guideTargetHeight = 200.dp
+    }
     val animationProgress by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
@@ -188,24 +200,23 @@ fun CubeRotationGuide(
         ) {
             // Top: 3D Animated Guide Canvas (Large, full width, 200.dp height)
             Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(RubikTheme.colors.backgroundPrimary)
-                        .pointerInput(Unit) {
-                            detectTransformGestures { _, _, _, rotation ->
-                                userYaw.value += rotation
-                                // optional: modify pitch if desired
-                            }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Canvas(modifier = Modifier.fillMaxSize()) {
-                        drawGuideCube(miniCubies, yaw + userYaw.value, pitch + userPitch.value, currentFace, appState, isDark)
-                    }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(animatedGuideHeight)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(RubikTheme.colors.backgroundPrimary)
+                    .pointerInput(Unit) {
+                        detectTransformGestures { _, pan, _, rotation ->
+                            userYaw.value += rotation
+                            userPitch.value += pan.y * 0.01f
+                        }
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    drawGuideCube(miniCubies, yaw + userYaw.value, pitch + userPitch.value, currentFace, appState, isDark)
                 }
-
+            }
             // Bottom: Details and Net
             Row(
                 modifier = Modifier.fillMaxWidth(),

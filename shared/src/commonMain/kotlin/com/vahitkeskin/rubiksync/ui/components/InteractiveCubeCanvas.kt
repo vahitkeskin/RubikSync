@@ -26,6 +26,7 @@ fun InteractiveCubeCanvas(
     val cubeState = appState.cubeState
     val coroutineScope = rememberCoroutineScope()
     val isDarkTheme = RubikTheme.colors.isDark
+    val animationFrameTick = rememberCubeAnimationFrameTick(cubeState)
 
     // Gesture Handler
     val gestureHandler = remember(cubeState) {

@@ -694,11 +694,14 @@ fun PlaybackController(
             // Restart
             Button(
                 onClick = {
-                    appState.manualMoves.clear()
-                    cubeState.setCustomState(appState.editorFaces)
-                    appState.currentSolutionStep = 0
-                    appState.isPlaybackRunning = false
+                    coroutineScope.launch {
+                        appState.manualMoves.clear()
+                        cubeState.setCustomStateAnimated(appState.editorFaces)
+                        appState.currentSolutionStep = 0
+                        appState.isPlaybackRunning = false
+                    }
                 },
+                enabled = !cubeState.isAnimating,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = RubikTheme.colors.textPrimary

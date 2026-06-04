@@ -30,6 +30,7 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
 import com.vahitkeskin.rubiksync.utils.parseDetectedState
+import kotlinx.coroutines.launch
 
 @Composable
 private fun MiniFaceGrid(
@@ -500,18 +501,21 @@ fun EditorDialog(
 
                 Button(
                     onClick = {
-                        val success = cubeState.setCustomState(appState.editorFaces)
-                        if (success) {
-                            appState.manualMoves.clear()
-                            appState.saveCurrentState()
-                            onDismiss()
-                            appState.activeSolution = null
-                            appState.errorMessage = null
-                            appState.successMessage = appState.strings.cubeStateApplied
-                        } else {
-                            appState.errorMessage = appState.strings.invalidCubeDesign
+                        onDismiss()
+                        appState.coroutineScope.launch {
+                            val success = cubeState.setCustomStateAnimated(appState.editorFaces)
+                            if (success) {
+                                appState.manualMoves.clear()
+                                appState.saveCurrentState()
+                                appState.activeSolution = null
+                                appState.errorMessage = null
+                                appState.successMessage = appState.strings.cubeStateApplied
+                            } else {
+                                appState.errorMessage = appState.strings.invalidCubeDesign
+                            }
                         }
                     },
+                    enabled = !cubeState.isAnimating,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = RubikTheme.colors.accentOrange,
                         contentColor = Color.White

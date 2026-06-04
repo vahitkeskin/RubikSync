@@ -87,7 +87,7 @@ fun ControlPanel(
                 .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(10.dp))
                 .padding(2.dp)
         ) {
-            listOf("🎮 Hareketler", "⚡ Eylemler", "🧠 Yapay Zeka").forEachIndexed { index, title ->
+            listOf(appState.strings.tabMoves, appState.strings.tabActions, appState.strings.tabAI).forEachIndexed { index, title ->
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -155,7 +155,7 @@ fun ControlPanel(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "🎲 Karıştır",
+                                text = appState.strings.scrambleButton,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1,
@@ -188,7 +188,7 @@ fun ControlPanel(
                             .height(44.dp)
                     ) {
                         Text(
-                            text = "↩️ Geri Al",
+                            text = appState.strings.undoButton,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
@@ -234,7 +234,7 @@ fun ControlPanel(
                             .height(44.dp)
                     ) {
                         Text(
-                            text = "🔄 Sıfırla",
+                            text = appState.strings.resetButton,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
@@ -266,7 +266,7 @@ fun ControlPanel(
                             .height(44.dp)
                     ) {
                         Text(
-                            text = "🎨 Tasarla",
+                            text = appState.strings.designButton,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
@@ -292,7 +292,7 @@ fun ControlPanel(
                                     withContext(Dispatchers.Main) {
                                         appState.activeSolution = null
                                         appState.activeSolutionDetails = null
-                                        appState.successMessage = "Küp zaten çözülmüş! ✅"
+                                        appState.successMessage = appState.strings.cubeAlreadySolved
                                         appState.isRecalculating = false
                                     }
                                     return@launch
@@ -334,7 +334,7 @@ fun ControlPanel(
                                     withContext(Dispatchers.Main) {
                                         appState.activeSolution = null
                                         appState.activeSolutionDetails = null
-                                        appState.errorMessage = "Çözüm bulunamadı!"
+                                        appState.errorMessage = appState.strings.solutionNotFound
                                         appState.isRecalculating = false
                                     }
                                     return@launch
@@ -347,11 +347,11 @@ fun ControlPanel(
                                         appState.currentSolutionStep = 0
                                         appState.isPlaybackRunning = false
                                         appState.errorMessage = null
-                                        appState.successMessage = "${finalSolution.size} adımda çözüm bulundu!"
+                                        appState.successMessage = appState.strings.solutionFound.replace("%s", finalSolution.size.toString())
                                     } else {
                                         appState.activeSolution = null
                                         appState.activeSolutionDetails = null
-                                        appState.successMessage = "Küp zaten çözülmüş! ✅"
+                                        appState.successMessage = appState.strings.cubeAlreadySolved
                                     }
                                     appState.isRecalculating = false
                                 }
@@ -385,7 +385,7 @@ fun ControlPanel(
                             )
                         } else {
                             Text(
-                                text = "🧠 Çöz",
+                                text = appState.strings.solveButton,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1,
@@ -398,7 +398,7 @@ fun ControlPanel(
         }
 
         // Speed Control — always visible at bottom
-        SpeedControl(cubeState = appState.cubeState, accentColor = RubikTheme.colors.accentOrange)
+        SpeedControl(appState = appState, accentColor = RubikTheme.colors.accentOrange)
     }
 }
 
@@ -473,10 +473,11 @@ private fun MovesGrid(
 
 @Composable
 fun SpeedControl(
-    cubeState: com.vahitkeskin.rubiksync.cube.RubikCubeState,
+    appState: RubikAppState,
     accentColor: Color,
     modifier: Modifier = Modifier
 ) {
+    val cubeState = appState.cubeState
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -484,7 +485,7 @@ fun SpeedControl(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "⏱ Hız",
+            text = appState.strings.speedLabel,
             color = RubikTheme.colors.textSecondary,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
@@ -560,7 +561,7 @@ fun PlaybackController(
             Column {
                 val currentStepDisplay = (appState.currentSolutionStep + 1).coerceAtMost(solution.size)
                 Text(
-                    text = "🧩 Çözüm: $currentStepDisplay / ${solution.size}",
+                    text = "${appState.strings.solutionTitle}$currentStepDisplay / ${solution.size}",
                     color = RubikTheme.colors.accentGreen,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -572,7 +573,7 @@ fun PlaybackController(
                     (appState.currentSolutionStep.toFloat() / solution.size * 100).toInt()
                 } else 0
                 Text(
-                    text = "%$progress tamamlandı",
+                    text = "$progress%${appState.strings.progressLabel}",
                     color = if (RubikTheme.colors.isDark) Color(0xFF5A8A62) else Color(0xFF2E7D32),
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Medium,
@@ -706,7 +707,7 @@ fun PlaybackController(
                 modifier = Modifier.weight(1f).height(38.dp)
             ) {
                 Text(
-                    text = "⏮ Başa",
+                    text = appState.strings.backToStart,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -738,7 +739,7 @@ fun PlaybackController(
                 modifier = Modifier.weight(1.3f).height(38.dp)
             ) {
                 Text(
-                    text = if (appState.isPlaybackRunning) "⏸ Durdur" else "▶ Oynat",
+                    text = if (appState.isPlaybackRunning) appState.strings.playbackPause else appState.strings.playbackPlay,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -776,7 +777,7 @@ fun PlaybackController(
                 modifier = Modifier.weight(1f).height(38.dp)
             ) {
                 Text(
-                    text = "İleri ⏭",
+                    text = appState.strings.nextStep,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -801,7 +802,7 @@ fun PlaybackController(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "📖 Teknik Çözüm Detayları",
+                    text = appState.strings.technicalDetails,
                     color = RubikTheme.colors.textSecondary,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold
@@ -832,7 +833,7 @@ fun PlaybackController(
                     if (detailsList != null && currentStep < detailsList.size) {
                         val activeDetail = detailsList[currentStep]
                         Text(
-                            text = "Aşama: ${activeDetail.phaseName}",
+                            text = "${appState.strings.phaseLabel}${activeDetail.phaseName}",
                             color = RubikTheme.colors.accentGreen,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
@@ -850,13 +851,13 @@ fun PlaybackController(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Yapılacak Hamle: ${activeDetail.move.label}",
+                                text = "${appState.strings.nextMoveLabel}${activeDetail.move.label}",
                                 color = RubikTheme.colors.textPrimary,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Text(
-                                text = "Kalan: ${detailsList.size - currentStep} hamle",
+                                text = appState.strings.remainingLabel.replace("%s", (detailsList.size - currentStep).toString()),
                                 color = RubikTheme.colors.textMuted,
                                 fontSize = 9.sp
                             )
@@ -867,7 +868,7 @@ fun PlaybackController(
                             color = RubikTheme.colors.borderFaint
                         )
                         Text(
-                            text = "🔢 Matematiksel Formül & Rotasyon",
+                            text = appState.strings.mathFormulaTitle,
                             color = RubikTheme.colors.accentOrange,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
@@ -889,13 +890,13 @@ fun PlaybackController(
                         )
                     } else {
                         Text(
-                            text = "Çözüm Tamamlandı! 🎉",
+                            text = appState.strings.solutionComplete,
                             color = RubikTheme.colors.accentGreen,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Zeka küpü başarıyla çözülmüş durumuna ulaştı.",
+                            text = appState.strings.solvedSuccessDesc,
                             color = RubikTheme.colors.textSecondary,
                             fontSize = 10.sp
                         )
@@ -905,6 +906,6 @@ fun PlaybackController(
         }
 
         // Speed Control
-        SpeedControl(cubeState = cubeState, accentColor = RubikTheme.colors.accentGreen)
+        SpeedControl(appState = appState, accentColor = RubikTheme.colors.accentGreen)
     }
 }

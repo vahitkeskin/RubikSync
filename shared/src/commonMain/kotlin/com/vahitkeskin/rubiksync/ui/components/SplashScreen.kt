@@ -163,7 +163,7 @@ fun SplashScreen(
                                 )
                         )
                         Text(
-                            text = "RUBIK SYNC",
+                            text = appState.strings.appTitle,
                             color = RubikTheme.colors.textPrimary,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.ExtraBold,
@@ -172,7 +172,7 @@ fun SplashScreen(
                     }
 
                     Text(
-                        text = "3D INTERACTIVE SIMULATOR & SOLVER",
+                        text = appState.strings.splashSubtitle,
                         color = RubikTheme.colors.textSecondary,
                         fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,

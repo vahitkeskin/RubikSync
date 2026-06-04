@@ -68,6 +68,7 @@ private fun MiniFaceGrid(
 
 @Composable
 private fun MiniNetMap(
+    appState: RubikAppState,
     faces: Map<FaceName, Array<Array<CubeColor>>>,
     activeFace: FaceName,
     onFaceSelect: (FaceName) -> Unit,
@@ -83,7 +84,7 @@ private fun MiniNetMap(
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Text(
-            text = "KÜP HARİTASI",
+            text = appState.strings.cubeMapTitle,
             color = RubikTheme.colors.textSecondary,
             fontSize = 7.sp,
             fontWeight = FontWeight.Bold,
@@ -173,7 +174,7 @@ fun EditorDialog(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "🎨 Küp Tasarımcısı",
+                        text = appState.strings.editorTitle,
                         color = RubikTheme.colors.textPrimary,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.ExtraBold,
@@ -181,7 +182,7 @@ fun EditorDialog(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "Renkleri boyayın veya kamera ile taratın",
+                        text = appState.strings.editorSubtitle,
                         color = RubikTheme.colors.textSecondary,
                         fontSize = 10.sp,
                         maxLines = 1,
@@ -227,7 +228,7 @@ fun EditorDialog(
                     verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     Text(
-                        text = "📸 Kamera ile Tarama",
+                        text = appState.strings.cameraScanTitle,
                         color = RubikTheme.colors.textPrimary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -235,7 +236,7 @@ fun EditorDialog(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "6 yüzü otomatik algılatın",
+                        text = appState.strings.cameraScanSubtitle,
                         color = RubikTheme.colors.textSecondary,
                         fontSize = 9.sp,
                         maxLines = 1,
@@ -253,7 +254,7 @@ fun EditorDialog(
                     contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                     modifier = Modifier.height(34.dp)
                 ) {
-                    Text("Tara", fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                    Text(appState.strings.scanAction, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                 }
             }
 
@@ -276,12 +277,12 @@ fun EditorDialog(
                         FaceName.B -> Color(0xFF1E88E5)
                     }
                     val label = when (face) {
-                        FaceName.U -> "Üst"
-                        FaceName.D -> "Alt"
-                        FaceName.L -> "Sol"
-                        FaceName.R -> "Sağ"
-                        FaceName.F -> "Ön"
-                        FaceName.B -> "Arka"
+                        FaceName.U -> appState.strings.faceU
+                        FaceName.D -> appState.strings.faceD
+                        FaceName.L -> appState.strings.faceL
+                        FaceName.R -> appState.strings.faceR
+                        FaceName.F -> appState.strings.faceF
+                        FaceName.B -> appState.strings.faceB
                     }
 
                     Box(
@@ -353,6 +354,7 @@ fun EditorDialog(
                 Spacer(modifier = Modifier.width(14.dp))
 
                 MiniNetMap(
+                    appState = appState,
                     faces = appState.editorFaces,
                     activeFace = activeFace,
                     onFaceSelect = { activeFace = it }
@@ -365,17 +367,17 @@ fun EditorDialog(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 val colorName = when (appState.selectedColor) {
-                    CubeColor.ORANGE -> "Turuncu"
-                    CubeColor.RED -> "Kırmızı"
-                    CubeColor.YELLOW -> "Sarı"
-                    CubeColor.WHITE -> "Beyaz"
-                    CubeColor.GREEN -> "Yeşil"
-                    CubeColor.BLUE -> "Mavi"
+                    CubeColor.ORANGE -> appState.strings.colorOrange
+                    CubeColor.RED -> appState.strings.colorRed
+                    CubeColor.YELLOW -> appState.strings.colorYellow
+                    CubeColor.WHITE -> appState.strings.colorWhite
+                    CubeColor.GREEN -> appState.strings.colorGreen
+                    CubeColor.BLUE -> appState.strings.colorBlue
                     else -> ""
                 }
 
                 Text(
-                    text = "🖌 Boya Rengi: $colorName",
+                    text = "${appState.strings.brushColorPrefix}$colorName",
                     color = RubikTheme.colors.textSecondary,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
@@ -437,7 +439,7 @@ fun EditorDialog(
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
-                        text = "✕ İptal",
+                        text = appState.strings.cancelButton,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -465,7 +467,7 @@ fun EditorDialog(
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
-                        text = "🗑 Temizle",
+                        text = appState.strings.clearButton,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -481,9 +483,9 @@ fun EditorDialog(
                             onDismiss()
                             appState.activeSolution = null
                             appState.errorMessage = null
-                            appState.successMessage = "Küp durumu uygulandı! ✅"
+                            appState.successMessage = appState.strings.cubeStateApplied
                         } else {
-                            appState.errorMessage = "Geçersiz küp tasarımı!"
+                            appState.errorMessage = appState.strings.invalidCubeDesign
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -495,7 +497,7 @@ fun EditorDialog(
                     modifier = Modifier.weight(1.1f).height(42.dp)
                 ) {
                     Text(
-                        text = "✓ Uygula",
+                        text = appState.strings.applyButton,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.ExtraBold,
                         maxLines = 1
@@ -510,7 +512,7 @@ fun EditorDialog(
                 onDismissRequest = { showJsonImportDialog = false },
                 title = {
                     Text(
-                        "📋 JSON İçe Aktar",
+                        appState.strings.importJsonTitle,
                         color = RubikTheme.colors.textPrimary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
@@ -520,7 +522,7 @@ fun EditorDialog(
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            text = "Küp JSON durumunu yapıştırın:",
+                            text = appState.strings.pasteJsonDesc,
                             color = RubikTheme.colors.textSecondary,
                             fontSize = 11.sp,
                             maxLines = 2
@@ -548,16 +550,16 @@ fun EditorDialog(
                                 appState.editorFaces = parsed
                                 showJsonImportDialog = false
                                 jsonInputText = ""
-                                appState.successMessage = "JSON başarıyla içe aktarıldı!"
+                                appState.successMessage = appState.strings.jsonImportSuccess
                             } else {
-                                appState.errorMessage = "Hatalı JSON formatı!"
+                                appState.errorMessage = appState.strings.jsonImportError
                             }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = RubikTheme.colors.accentOrange),
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("✓ Aktar", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                        Text(appState.strings.importJsonButton, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                     }
                 },
                 dismissButton = {
@@ -571,7 +573,7 @@ fun EditorDialog(
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("İptal", color = RubikTheme.colors.textPrimary, fontSize = 12.sp, maxLines = 1)
+                        Text(appState.strings.cancelAction, color = RubikTheme.colors.textPrimary, fontSize = 12.sp, maxLines = 1)
                     }
                 },
                 containerColor = RubikTheme.colors.cardBackground,

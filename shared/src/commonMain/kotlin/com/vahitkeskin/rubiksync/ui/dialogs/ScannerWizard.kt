@@ -56,13 +56,13 @@ fun ScannerWizard(
         FaceName.B to Color(0xFF1E88E5)
     )
 
-    val faceNameTurkish = mapOf(
-        FaceName.U to "Üst",
-        FaceName.D to "Alt",
-        FaceName.L to "Sol",
-        FaceName.R to "Sağ",
-        FaceName.F to "Ön",
-        FaceName.B to "Arka"
+    val faceNameLocalized = mapOf(
+        FaceName.U to appState.strings.faceU,
+        FaceName.D to appState.strings.faceD,
+        FaceName.L to appState.strings.faceL,
+        FaceName.R to appState.strings.faceR,
+        FaceName.F to appState.strings.faceF,
+        FaceName.B to appState.strings.faceB
     )
 
     val faceImageBitmap = remember(currentFace, appState.scannedFilePaths[currentFace]) {
@@ -105,7 +105,7 @@ fun ScannerWizard(
 
                 appState.scannedGrids = RubikImageProcessor().classifyAll(appState.scannedRawRGBs).toMutableMap()
             } else {
-                appState.errorMessage = "Fotoğraf çözümlenemedi."
+                appState.errorMessage = appState.strings.errorPhotoResolution
             }
         }
     }
@@ -144,7 +144,7 @@ fun ScannerWizard(
             // 1. Header & Connected Step Indicators
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "📸 Küp Tarama",
+                    text = appState.strings.scannerTitle,
                     color = RubikTheme.colors.textPrimary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.ExtraBold,
@@ -152,7 +152,7 @@ fun ScannerWizard(
                 )
 
                 Text(
-                    text = "${appState.scannedGrids.size}/6 yüz tarandı",
+                    text = "${appState.scannedGrids.size}/6${appState.strings.facesScanned}",
                     color = RubikTheme.colors.textSecondary,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
@@ -259,6 +259,7 @@ fun ScannerWizard(
                 modifier = Modifier.weight(1f).padding(vertical = 8.dp)
             ) {
                 CubeRotationGuide(
+                    appState = appState,
                     currentFace = currentFace,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
@@ -292,7 +293,7 @@ fun ScannerWizard(
                                         fontSize = 24.sp
                                     )
                                     Text(
-                                        text = "Görsel Yok",
+                                        text = appState.strings.noImage,
                                         color = RubikTheme.colors.textSecondary,
                                         fontSize = 10.sp,
                                         textAlign = TextAlign.Center,
@@ -333,18 +334,20 @@ fun ScannerWizard(
 
                                             appState.scannerStep = detectedFace.ordinal
 
-                                            val faceDisplayName = faceNameTurkish[detectedFace] ?: detectedFace.name
-                                            val centerColorTurkish = when (detectedFace) {
-                                                FaceName.U -> "Turuncu"
-                                                FaceName.D -> "Kırmızı"
-                                                FaceName.L -> "Sarı"
-                                                FaceName.R -> "Beyaz"
-                                                FaceName.F -> "Yeşil"
-                                                FaceName.B -> "Mavi"
+                                            val faceDisplayName = faceNameLocalized[detectedFace] ?: detectedFace.name
+                                            val centerColorLocalized = when (detectedFace) {
+                                                FaceName.U -> appState.strings.colorOrange
+                                                FaceName.D -> appState.strings.colorRed
+                                                FaceName.L -> appState.strings.colorYellow
+                                                FaceName.R -> appState.strings.colorWhite
+                                                FaceName.F -> appState.strings.colorGreen
+                                                FaceName.B -> appState.strings.colorBlue
                                             }
-                                            appState.infoMessage = "$centerColorTurkish: $faceDisplayName yüz algılandı"
+                                            appState.infoMessage = appState.strings.faceDetectedMessage
+                                                .replaceFirst("%s", centerColorLocalized)
+                                                .replaceFirst("%s", faceDisplayName)
                                         } else {
-                                            appState.errorMessage = "Yüz algılanamadı!"
+                                            appState.errorMessage = appState.strings.faceNotDetected
                                         }
                                     }
                                 },
@@ -436,7 +439,7 @@ fun ScannerWizard(
                             verticalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
                             Text(
-                                text = "🔧 Izgarayı küpün kenarlarına hizalayın",
+                                text = appState.strings.alignGridDesc,
                                 color = RubikTheme.colors.textSecondary,
                                 fontSize = 9.sp,
                                 textAlign = TextAlign.Center,
@@ -448,7 +451,7 @@ fun ScannerWizard(
                             // Scale
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "Boyut",
+                                    text = appState.strings.sizeLabel,
                                     color = RubikTheme.colors.textSecondary,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
@@ -483,7 +486,7 @@ fun ScannerWizard(
                             // Offset X
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "Yatay",
+                                    text = appState.strings.horizontalLabel,
                                     color = RubikTheme.colors.textSecondary,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
@@ -518,7 +521,7 @@ fun ScannerWizard(
                             // Offset Y
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "Dikey",
+                                    text = appState.strings.verticalLabel,
                                     color = RubikTheme.colors.textSecondary,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
@@ -557,7 +560,7 @@ fun ScannerWizard(
 
                         if (grid != null && rawGrid != null) {
                             Text(
-                                text = "🎨 Renk Önizleme (düzeltmek için tıklayın)",
+                                text = appState.strings.colorPreview,
                                 color = RubikTheme.colors.textSecondary,
                                 fontSize = 9.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -648,7 +651,7 @@ fun ScannerWizard(
                             modifier = Modifier.height(32.dp)
                         ) {
                             Text(
-                                text = "📸 Yeniden Çek",
+                                text = appState.strings.retakePhoto,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1
@@ -675,7 +678,7 @@ fun ScannerWizard(
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
-                        text = "✕ İptal",
+                        text = appState.strings.cancelButton,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -701,7 +704,7 @@ fun ScannerWizard(
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(
-                        text = "← Geri",
+                        text = appState.strings.backButton,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -741,7 +744,7 @@ fun ScannerWizard(
                         modifier = Modifier.weight(1.1f).height(42.dp)
                     ) {
                         Text(
-                            text = "İleri →",
+                            text = appState.strings.nextButton,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1
@@ -762,9 +765,9 @@ fun ScannerWizard(
                             }
                             if (isValid) {
                                 onComplete(completeGrids)
-                                appState.successMessage = "Küp başarıyla tarandı! ✅"
+                                appState.successMessage = appState.strings.successScanComplete
                             } else {
-                                appState.errorMessage = "Tüm yüzeyleri tarayın."
+                                appState.errorMessage = appState.strings.errorScanAllFaces
                             }
                         },
                         enabled = appState.scannedGrids.size == 6,
@@ -780,7 +783,7 @@ fun ScannerWizard(
                         modifier = Modifier.weight(1.1f).height(42.dp)
                     ) {
                         Text(
-                            text = "✓ Ayarla",
+                            text = appState.strings.setButton,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.ExtraBold,
                             maxLines = 1

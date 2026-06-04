@@ -28,9 +28,11 @@ import kotlin.math.pow
 import kotlin.math.sin
 
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 
 @Composable
 fun CubeRotationGuide(
+    appState: RubikAppState,
     currentFace: FaceName,
     modifier: Modifier = Modifier
 ) {
@@ -79,24 +81,31 @@ fun CubeRotationGuide(
         list
     }
 
-    // Details for each face
-    val faceTitle = when (currentFace) {
-        FaceName.U -> "Üst (U) Yüzeyi"
-        FaceName.D -> "Alt (D) Yüzeyi"
-        FaceName.L -> "Sol (L) Yüzeyi"
-        FaceName.R -> "Sağ (R) Yüzeyi"
-        FaceName.F -> "Ön (F) Yüzeyi"
-        FaceName.B -> "Arka (B) Yüzeyi"
+    val faceDisplayName = when (currentFace) {
+        FaceName.U -> appState.strings.faceU
+        FaceName.D -> appState.strings.faceD
+        FaceName.L -> appState.strings.faceL
+        FaceName.R -> appState.strings.faceR
+        FaceName.F -> appState.strings.faceF
+        FaceName.B -> appState.strings.faceB
     }
 
-    val faceColorName = when (currentFace) {
-        FaceName.U -> "Turuncu Merkez"
-        FaceName.D -> "Kırmızı Merkez"
-        FaceName.L -> "Sarı Merkez"
-        FaceName.R -> "Beyaz Merkez"
-        FaceName.F -> "Yeşil Merkez"
-        FaceName.B -> "Mavi Merkez"
+    val centerColorLocalized = when (currentFace) {
+        FaceName.U -> appState.strings.colorOrange
+        FaceName.D -> appState.strings.colorRed
+        FaceName.L -> appState.strings.colorYellow
+        FaceName.R -> appState.strings.colorWhite
+        FaceName.F -> appState.strings.colorGreen
+        FaceName.B -> appState.strings.colorBlue
     }
+
+    // Details for each face
+    val faceTitle = appState.strings.faceTitleLabel
+        .replaceFirst("%s", faceDisplayName)
+        .replaceFirst("%s", currentFace.name)
+
+    val faceColorName = appState.strings.centerColorLabel
+        .replace("%s", centerColorLocalized)
 
     val faceColorHex = when (currentFace) {
         FaceName.U -> Color(0xFFFF5F00)
@@ -108,12 +117,12 @@ fun CubeRotationGuide(
     }
 
     val guideInstruction = when (currentFace) {
-        FaceName.U -> "Turuncu merkez üste gelsin. Yeşil yüzey size baksın, Beyaz yüzey sağınızda kalsın."
-        FaceName.D -> "Kırmızı merkez üste gelsin. Yeşil yüzey size baksın, Beyaz yüzey sağınızda kalsın."
-        FaceName.L -> "Sarı merkez üste gelsin. Turuncu yüzey üstte kalsın, Yeşil yüzey sağınızda kalsın."
-        FaceName.R -> "Beyaz merkez üste gelsin. Turuncu yüzey üstte kalsın, Mavi yüzey sağınızda kalsın."
-        FaceName.F -> "Yeşil merkez üste gelsin. Turuncu yüzey üstte kalsın, Beyaz yüzey sağınızda kalsın."
-        FaceName.B -> "Mavi merkez üste gelsin. Turuncu yüzey üstte kalsın, Sarı yüzey sağınızda kalsın."
+        FaceName.U -> appState.strings.guideU
+        FaceName.D -> appState.strings.guideD
+        FaceName.L -> appState.strings.guideL
+        FaceName.R -> appState.strings.guideR
+        FaceName.F -> appState.strings.guideF
+        FaceName.B -> appState.strings.guideB
     }
 
     Card(

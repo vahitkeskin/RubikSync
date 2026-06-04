@@ -16,6 +16,10 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
+import com.vahitkeskin.rubiksync.ui.strings.AppStrings
+import com.vahitkeskin.rubiksync.ui.strings.AppStringsMap
+import com.vahitkeskin.rubiksync.ui.strings.EnStrings
 
 class RubikAppState(
     val cubeState: RubikCubeState,
@@ -39,6 +43,13 @@ class RubikAppState(
 
     // Theme loading state
     var isThemeLoaded by mutableStateOf(false)
+
+    // App language state
+    var appLanguage by mutableStateOf(AppLanguage.TR)
+
+    // Localized strings
+    val strings: AppStrings
+        get() = AppStringsMap[appLanguage] ?: EnStrings
 
     // Editor State
     private val defaultFaces = mapOf(
@@ -117,6 +128,13 @@ class RubikAppState(
         }
     }
 
+    fun updateLanguage(lang: AppLanguage) {
+        appLanguage = lang
+        coroutineScope.launch(Dispatchers.Default) {
+            RubikPersistenceRegistry.persistence?.saveLanguage(lang.code)
+        }
+    }
+
     fun saveCurrentState() {
         val p = RubikPersistenceRegistry.persistence ?: return
         if (isSolved && (cubeState.moveHistory.isNotEmpty() || manualMoves.isNotEmpty())) {
@@ -176,6 +194,15 @@ class RubikAppState(
                         val mode = try { ThemeMode.valueOf(savedTheme) } catch (_: Exception) { ThemeMode.SYSTEM }
                         withContext(Dispatchers.Main) {
                             themeMode = mode
+                        }
+                    }
+
+                    // Dil tercihini yükle
+                    val savedLang = persistence.loadLanguage()
+                    if (savedLang != null) {
+                        val lang = AppLanguage.values().find { it.code == savedLang } ?: AppLanguage.TR
+                        withContext(Dispatchers.Main) {
+                            appLanguage = lang
                         }
                     }
                     

@@ -57,6 +57,9 @@ interface RubikPersistence {
 
     suspend fun saveThemeMode(mode: String)
     suspend fun loadThemeMode(): String?
+
+    suspend fun saveLanguage(langCode: String)
+    suspend fun loadLanguage(): String?
 }
 
 object RubikPersistenceRegistry {

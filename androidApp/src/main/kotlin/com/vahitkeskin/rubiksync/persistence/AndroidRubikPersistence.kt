@@ -30,6 +30,7 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     private val KEY_PAN_Y = floatPreferencesKey("pan_y")
     private val KEY_ROTATION_SPEED = floatPreferencesKey("rotation_speed_ms")
     private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
+    private val KEY_LANGUAGE = stringPreferencesKey("app_language")
 
     override suspend fun saveCubeState(
         cubies: List<CubiePersistable>,
@@ -38,33 +39,27 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
         editorFaces: Map<FaceName, Array<Array<CubeColor>>>
     ) {
         val cubiesStr = serializeCubies(cubies)
-        val moveHistoryStr = serializeMoves(moveHistory)
-        val manualMovesStr = serializeMoves(manualMoves)
-        val editorFacesStr = serializeEditorFaces(editorFaces)
-
+        val historyStr = serializeMoves(moveHistory)
+        val manualStr = serializeMoves(manualMoves)
+        val editorStr = serializeEditorFaces(editorFaces)
+        
         val entity = CubeStateEntity(
             id = 1,
             cubiesData = cubiesStr,
-            moveHistoryData = moveHistoryStr,
-            manualMovesData = manualMovesStr,
-            editorFacesData = editorFacesStr
+            moveHistoryData = historyStr,
+            manualMovesData = manualStr,
+            editorFacesData = editorStr
         )
         cubeDao.insertCubeState(entity)
     }
 
     override suspend fun loadCubeState(): LoadedCubeState? {
         val entity = cubeDao.getCubeState() ?: return null
-        return try {
-            LoadedCubeState(
-                cubies = deserializeCubies(entity.cubiesData),
-                moveHistory = deserializeMoves(entity.moveHistoryData),
-                manualMoves = deserializeMoves(entity.manualMovesData),
-                editorFaces = deserializeEditorFaces(entity.editorFacesData)
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
+        val cubies = deserializeCubies(entity.cubiesData) ?: return null
+        val history = deserializeMoves(entity.moveHistoryData)
+        val manual = deserializeMoves(entity.manualMovesData)
+        val editor = deserializeEditorFaces(entity.editorFacesData) ?: return null
+        return LoadedCubeState(cubies, history, manual, editor)
     }
 
     override suspend fun saveCameraSettings(
@@ -88,13 +83,14 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     override suspend fun loadCameraSettings(): CameraSettings? {
         return try {
             val prefs = context.dataStore.data.first()
-            val yaw = prefs[KEY_YAW] ?: return null
-            val pitch = prefs[KEY_PITCH] ?: 0.40f
-            val distance = prefs[KEY_CAMERA_DISTANCE] ?: 10.0f
-            val px = prefs[KEY_PAN_X] ?: 0f
-            val py = prefs[KEY_PAN_Y] ?: 0f
-            val speed = prefs[KEY_ROTATION_SPEED] ?: 250f
-            CameraSettings(yaw, pitch, distance, px, py, speed)
+            CameraSettings(
+                yaw = prefs[KEY_YAW] ?: -0.55f,
+                pitch = prefs[KEY_PITCH] ?: 0.40f,
+                cameraDistance = prefs[KEY_CAMERA_DISTANCE] ?: 10f,
+                panX = prefs[KEY_PAN_X] ?: 0f,
+                panY = prefs[KEY_PAN_Y] ?: 0f,
+                rotationSpeedMs = prefs[KEY_ROTATION_SPEED] ?: 400f
+            )
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -111,6 +107,22 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
         return try {
             val prefs = context.dataStore.data.first()
             prefs[KEY_THEME_MODE]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun saveLanguage(langCode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_LANGUAGE] = langCode
+        }
+    }
+
+    override suspend fun loadLanguage(): String? {
+        return try {
+            val prefs = context.dataStore.data.first()
+            prefs[KEY_LANGUAGE]
         } catch (e: Exception) {
             e.printStackTrace()
             null

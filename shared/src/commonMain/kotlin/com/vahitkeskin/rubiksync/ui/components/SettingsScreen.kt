@@ -25,8 +25,13 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.ThemeMode
 import com.vahitkeskin.rubiksync.getCurrentYear
 import com.vahitkeskin.rubiksync.BindBackHandler
-
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 @Composable
 fun SettingsScreen(
@@ -96,14 +101,14 @@ fun SettingsScreen(
 
                 Column {
                     Text(
-                        text = "Ayarlar",
+                        text = appState.strings.settingsTitle,
                         color = textPrimary,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = 1.sp
                     )
                     Text(
-                        text = "Uygulama tercihlerini özelleştir",
+                        text = appState.strings.settingsSubtitle,
                         color = textSecondary,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
@@ -129,13 +134,13 @@ fun SettingsScreen(
                     Text(text = "🎨", fontSize = 16.sp)
                     Column {
                         Text(
-                            text = "Tema Modu",
+                            text = appState.strings.themeMode,
                             color = textPrimary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Uygulamanın görünümünü ayarlayın",
+                            text = appState.strings.themeSubtitle,
                             color = textSecondary,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Medium
@@ -152,24 +157,24 @@ fun SettingsScreen(
                 ) {
                     ThemeOptionCard(
                         emoji = "☀️",
-                        label = "Açık",
-                        description = "Aydınlık tema",
+                        label = appState.strings.themeLight,
+                        description = appState.strings.themeOptionLightDesc,
                         isSelected = appState.themeMode == ThemeMode.LIGHT,
                         onClick = { appState.updateThemeMode(ThemeMode.LIGHT) },
                         modifier = Modifier.weight(1f)
                     )
                     ThemeOptionCard(
                         emoji = "🌙",
-                        label = "Koyu",
-                        description = "Karanlık tema",
+                        label = appState.strings.themeDark,
+                        description = appState.strings.themeOptionDarkDesc,
                         isSelected = appState.themeMode == ThemeMode.DARK,
                         onClick = { appState.updateThemeMode(ThemeMode.DARK) },
                         modifier = Modifier.weight(1f)
                     )
                     ThemeOptionCard(
                         emoji = "📱",
-                        label = "Sistem",
-                        description = "Otomatik",
+                        label = appState.strings.themeSystem,
+                        description = appState.strings.themeOptionSystemDesc,
                         isSelected = appState.themeMode == ThemeMode.SYSTEM,
                         onClick = { appState.updateThemeMode(ThemeMode.SYSTEM) },
                         modifier = Modifier.weight(1f)
@@ -178,6 +183,126 @@ fun SettingsScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            // Dil Seçimi Bölümü
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(bgSecondary)
+                    .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
+                    .padding(16.dp)
+            ) {
+                // Bölüm başlığı
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(text = "🌐", fontSize = 16.sp)
+                    Column {
+                        Text(
+                            text = appState.strings.languageTitle,
+                            color = textPrimary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = appState.strings.languageSubtitle,
+                            color = textSecondary,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Modern Seçici Buton
+                var isExpanded by remember { mutableStateOf(false) }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(bgTertiary)
+                        .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
+                        .clickable { isExpanded = !isExpanded }
+                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${appState.appLanguage.displayName} (${appState.appLanguage.code.uppercase()})",
+                            color = textPrimary,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = if (isExpanded) "▲" else "▼",
+                            color = textSecondary,
+                            fontSize = 10.sp
+                        )
+                    }
+                }
+
+                if (isExpanded) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 180.dp)
+                            .background(bgTertiary)
+                            .clip(RoundedCornerShape(12.dp))
+                            .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
+                    ) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(AppLanguage.values().toList()) { lang ->
+                                val isSelected = appState.appLanguage == lang
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(if (isSelected) (if (isDarkTheme) Color(0xFF1A1510) else Color(0xFFFFF7ED)) else Color.Transparent)
+                                        .clickable {
+                                            appState.updateLanguage(lang)
+                                            isExpanded = false
+                                        }
+                                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = lang.displayName,
+                                        color = if (isSelected) Color(0xFFFF8A00) else textPrimary,
+                                        fontSize = 13.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    )
+                                    if (isSelected) {
+                                        Text(
+                                            text = "✓",
+                                            color = Color(0xFFFF8A00),
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                                if (lang != AppLanguage.values().last()) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(0.5.dp)
+                                            .background(borderColor.copy(alpha = 0.5f))
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             // Uygulama bilgisi
             Column(
@@ -195,13 +320,13 @@ fun SettingsScreen(
                     Text(text = "ℹ️", fontSize = 16.sp)
                     Column {
                         Text(
-                            text = "Hakkında",
+                            text = appState.strings.aboutTitle,
                             color = textPrimary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Uygulama bilgileri",
+                            text = appState.strings.aboutSubtitle,
                             color = textSecondary,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Medium
@@ -217,7 +342,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Versiyon",
+                        text = appState.strings.versionTitle,
                         color = textSecondary,
                         fontSize = 12.sp
                     )
@@ -244,7 +369,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Platform",
+                        text = appState.strings.platformTitle,
                         color = textSecondary,
                         fontSize = 12.sp
                     )
@@ -268,7 +393,7 @@ fun SettingsScreen(
 
             // Alt bilgi
             Text(
-                text = "RUBIK SYNC © ${getCurrentYear()}",
+                text = "${appState.strings.copyright}${getCurrentYear()}",
                 color = textSecondary.copy(alpha = 0.5f),
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,

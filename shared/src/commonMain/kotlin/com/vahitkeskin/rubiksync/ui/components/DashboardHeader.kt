@@ -57,7 +57,7 @@ fun DashboardHeader(
                 )
                 Column {
                     Text(
-                        text = "RUBIK SYNC",
+                        text = appState.strings.appTitle,
                         color = RubikTheme.colors.textPrimary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.ExtraBold,
@@ -65,7 +65,7 @@ fun DashboardHeader(
                         maxLines = 1
                     )
                     Text(
-                        text = "3D INTERACTIVE SIMULATOR",
+                        text = appState.strings.appSubtitle,
                         color = RubikTheme.colors.textSecondary,
                         fontSize = 7.sp,
                         fontWeight = FontWeight.Bold,
@@ -84,7 +84,7 @@ fun DashboardHeader(
                 StatChip(
                     emoji = "🎯",
                     value = "${cubeState.moveHistory.size}",
-                    label = "Hamle",
+                    label = appState.strings.movesLabel,
                     accentColor = RubikTheme.colors.accentBlue
                 )
 
@@ -92,8 +92,8 @@ fun DashboardHeader(
                 val solved = appState.isSolved
                 StatChip(
                     emoji = if (solved) "✅" else "🔄",
-                    value = if (solved) "Çözüldü" else "Karışık",
-                    label = "Durum",
+                    value = if (solved) appState.strings.solvedStatus else appState.strings.scrambledStatus,
+                    label = appState.strings.statusLabel,
                     accentColor = if (solved) RubikTheme.colors.accentGreen else RubikTheme.colors.accentOrange
                 )
 

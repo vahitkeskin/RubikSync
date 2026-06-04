@@ -16,6 +16,11 @@ import com.vahitkeskin.rubiksync.ui.dialogs.*
 import com.vahitkeskin.rubiksync.ui.state.*
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -231,7 +236,17 @@ fun App() {
             }
 
             // 8. Ayarlar Ekranı Overlay
-            if (appState.showSettingsScreen) {
+            AnimatedVisibility(
+                visible = appState.showSettingsScreen,
+                enter = slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = 450)
+                ) + fadeIn(animationSpec = tween(durationMillis = 450)),
+                exit = slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(durationMillis = 450)
+                ) + fadeOut(animationSpec = tween(durationMillis = 450))
+            ) {
                 SettingsScreen(
                     appState = appState,
                     isDarkTheme = isDarkTheme

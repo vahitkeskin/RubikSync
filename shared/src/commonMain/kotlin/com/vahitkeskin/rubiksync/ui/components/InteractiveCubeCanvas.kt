@@ -150,9 +150,8 @@ fun InteractiveCubeCanvas(
 
                                     // Pan (average movement of two fingers)
                                     val panDelta = ((pos1 - prev1) + (pos2 - prev2)) * 0.5f
-                                    // Adjust pan sensitivity relative to zoom distance
-                                    appState.panX += panDelta.x * 0.005f * appState.cameraDistance
-                                    appState.panY += -panDelta.y * 0.005f * appState.cameraDistance
+                                    appState.panX += panDelta.x
+                                    appState.panY += -panDelta.y
 
                                     p1.consume()
                                     p2.consume()

@@ -78,8 +78,9 @@ fun ScannerWizard(
 
     val faceDisplayName = faceNameLocalized[currentFace] ?: currentFace.name
 
-    val isCurrentFaceScanned = appState.scannedGrids.containsKey(currentFace)
-    val unscannedFaces = FaceName.values().filter { !appState.scannedGrids.containsKey(it) }
+    val isCurrentFaceScanned = appState.scannedFilePaths.containsKey(currentFace)
+    val unscannedFaces = FaceName.values().filter { !appState.scannedFilePaths.containsKey(it) }
+
 
     val remainingList = unscannedFaces.joinToString(", ") { face ->
         val name = faceNameLocalized[face] ?: face.name
@@ -204,7 +205,7 @@ fun ScannerWizard(
                 )
 
                 Text(
-                    text = "${appState.scannedGrids.size}/6${appState.strings.facesScanned}",
+                    text = "${appState.scannedFilePaths.size}/6${appState.strings.facesScanned}",
                     color = RubikTheme.colors.textSecondary,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
@@ -221,7 +222,7 @@ fun ScannerWizard(
                 ) {
                     FaceName.values().forEachIndexed { index, face ->
                         val isCurrent = (appState.scannerStep == index)
-                        val isScanned = appState.scannedGrids.containsKey(face)
+                        val isScanned = appState.scannedFilePaths.containsKey(face)
 
                         val baseColor = faceColorMap[face] ?: Color.Gray
                         val circleBg = if (isScanned || isCurrent) baseColor.copy(alpha = 0.9f) else RubikTheme.colors.backgroundTertiary
@@ -229,7 +230,8 @@ fun ScannerWizard(
 
                         if (index > 0) {
                             // Connecting line
-                            val prevScanned = appState.scannedGrids.containsKey(FaceName.values()[index - 1])
+                            val prevScanned = appState.scannedFilePaths.containsKey(FaceName.values()[index - 1])
+
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
@@ -820,7 +822,7 @@ fun ScannerWizard(
                     )
                 }
 
-                val hasCurrentScan = appState.scannedGrids.containsKey(currentFace)
+                val hasCurrentScan = appState.scannedFilePaths.containsKey(currentFace)
                 if (appState.scannerStep < 5) {
                     Button(
                         onClick = {
@@ -830,7 +832,7 @@ fun ScannerWizard(
                             for (i in 1..5) {
                                 val nextIdx = (appState.scannerStep + i) % 6
                                 val nextFace = FaceName.values()[nextIdx]
-                                if (!appState.scannedGrids.containsKey(nextFace)) {
+                                if (!appState.scannedFilePaths.containsKey(nextFace)) {
                                     appState.scannerStep = nextIdx
                                     foundNext = true
                                     break
@@ -866,7 +868,8 @@ fun ScannerWizard(
                             var isValid = true
                             for (face in FaceName.values()) {
                                 val gridVal = appState.scannedGrids[face]
-                                if (gridVal != null) {
+                                val hasPath = appState.scannedFilePaths.containsKey(face)
+                                if (gridVal != null && hasPath) {
                                     completeGrids[face] = gridVal
                                 } else {
                                     isValid = false
@@ -879,16 +882,16 @@ fun ScannerWizard(
                                 appState.errorMessage = appState.strings.errorScanAllFaces
                             }
                         },
-                        enabled = appState.scannedGrids.size == 6,
+                        enabled = appState.scannedFilePaths.size == 6,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (appState.scannedGrids.size == 6) RubikTheme.colors.accentOrange else RubikTheme.colors.backgroundSecondary,
-                            contentColor = if (appState.scannedGrids.size == 6) Color.White else RubikTheme.colors.textSecondary,
+                            containerColor = if (appState.scannedFilePaths.size == 6) RubikTheme.colors.accentOrange else RubikTheme.colors.backgroundSecondary,
+                            contentColor = if (appState.scannedFilePaths.size == 6) Color.White else RubikTheme.colors.textSecondary,
                             disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
                             disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                        border = if (appState.scannedGrids.size == 6) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
+                        border = if (appState.scannedFilePaths.size == 6) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                         modifier = Modifier.weight(1.1f).height(42.dp)
                     ) {
                         Text(
@@ -899,6 +902,7 @@ fun ScannerWizard(
                         )
                     }
                 }
+
             }
         }
     }

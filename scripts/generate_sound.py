@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Rubik küpü döndürme sesi oluşturucu.
-Gerçekçi bir plastik tıklama + sürtünme sesi sentezler.
+Rubik's Cube rotation sound generator.
+Synthesizes a realistic plastic scraping friction sound followed by a hollow mechanical snap.
 """
 import struct
 import math
@@ -9,75 +9,61 @@ import random
 import os
 
 SAMPLE_RATE = 44100
-DURATION = 0.18  # 180ms — kısa, keskin bir döndürme sesi
+DURATION = 0.24  # 240ms — optimal duration for a layer rotation
 NUM_SAMPLES = int(SAMPLE_RATE * DURATION)
 
 def generate_rubik_rotate_sound():
-    """Plastik mekanizma tıklaması + sürtünme sesi sentezler."""
+    """Synthesizes a realistic plastic friction + hollow core snap."""
     samples = []
+    lpf_friction = 0.0
+    lpf_click = 0.0
+    
+    # Position the alignment snap click at ~110ms into the turn
+    snap_sample = int(SAMPLE_RATE * 0.11)
     
     for i in range(NUM_SAMPLES):
         t = i / SAMPLE_RATE
-        progress = i / NUM_SAMPLES  # 0.0 → 1.0
         
-        # 1. Başlangıç tıklaması — keskin, kısa darbe (ilk 15ms)
-        click = 0.0
-        if t < 0.015:
-            click_env = math.exp(-t * 300)
-            click = click_env * (
-                math.sin(2 * math.pi * 2200 * t) * 0.4 +
-                math.sin(2 * math.pi * 3800 * t) * 0.25 +
-                math.sin(2 * math.pi * 5500 * t) * 0.15
-            )
+        # 1. Plastic Friction (Low-pass filtered white noise for scraping sound)
+        raw_noise = random.uniform(-1.0, 1.0)
+        # alpha = 0.075 (~520Hz cutoff) creates a deep, warm plastic rubbing sound
+        lpf_friction = lpf_friction + 0.075 * (raw_noise - lpf_friction)
         
-        # 2. Plastik sürtünme gürültüsü — band-limited noise
-        noise = 0.0
-        friction_env = math.exp(-t * 18) * (1 - math.exp(-t * 200))
-        for freq in [1800, 2600, 3400, 4200]:
-            phase = random.uniform(0, 2 * math.pi) if i == 0 else 0
-            noise += math.sin(2 * math.pi * freq * t + phase * (1 + 0.3 * math.sin(t * 50)))
-        noise *= friction_env * 0.08
+        # Friction envelope: bell-shaped over the turn duration
+        friction_env = math.sin(t * math.pi / DURATION) ** 1.4
+        friction = lpf_friction * friction_env * 0.32
         
-        # 3. Mekanizma vurma sesi — düşük frekanslı thud
-        thud = 0.0
-        if t < 0.03:
-            thud_env = math.exp(-t * 150)
-            thud = thud_env * math.sin(2 * math.pi * 400 * t) * 0.3
+        # 2. Alignment snap click
+        snap = 0.0
+        if i >= snap_sample:
+            t_snap = (i - snap_sample) / SAMPLE_RATE
+            
+            # Hollow plastic core thud (160Hz sine decaying rapidly)
+            thud = math.sin(2 * math.pi * 160 * t_snap) * math.exp(-t_snap * 110) * 0.45
+            
+            # Sharp tooth contact click (High-pass filtered noise decaying instantly)
+            raw_click_noise = random.uniform(-1.0, 1.0)
+            lpf_click = lpf_click + 0.28 * (raw_click_noise - lpf_click)
+            click_noise = raw_click_noise - lpf_click  # High frequencies only
+            click = click_noise * math.exp(-t_snap * 480) * 0.22
+            
+            snap = thud + click
+            
+        # Combine friction and snap click
+        sample = friction + snap
         
-        # 4. Bitiş tıklaması — yerine oturma (son 20ms)
-        end_click = 0.0
-        end_t = DURATION - t
-        if end_t < 0.02 and end_t > 0:
-            end_env = math.exp(-end_t * 200) * 0.5
-            end_click = end_env * (
-                math.sin(2 * math.pi * 2800 * t) * 0.3 +
-                math.sin(2 * math.pi * 4500 * t) * 0.2
-            )
-        
-        # 5. Rastgele mikro tıklamalar (plastik dişliler)
-        micro_clicks = 0.0
-        for click_time in [0.04, 0.07, 0.10, 0.13]:
-            dt = abs(t - click_time)
-            if dt < 0.003:
-                micro_env = math.exp(-dt * 800)
-                micro_clicks += micro_env * math.sin(2 * math.pi * 3200 * t) * 0.1
-        
-        # Tüm bileşenleri birleştir
-        sample = click + noise + thud + end_click + micro_clicks
-        
-        # Genel zarf — yumuşak fade out
-        master_env = 1.0 - progress ** 3
-        sample *= master_env * 0.7
-        
-        # -1.0 ile 1.0 arasında sınırla
+        # Master envelope with slight fade-out at the very end
+        if t > 0.21:
+            fade_out = (DURATION - t) / 0.03
+            sample *= max(0.0, fade_out)
+            
         sample = max(-1.0, min(1.0, sample))
         samples.append(sample)
-    
+        
     return samples
 
-
 def write_wav(filename, samples, sample_rate=44100):
-    """PCM WAV dosyası yazar."""
+    """Writes a standard mono 16-bit PCM WAV file."""
     num_channels = 1
     bits_per_sample = 16
     byte_rate = sample_rate * num_channels * bits_per_sample // 8
@@ -111,10 +97,10 @@ def write_wav(filename, samples, sample_rate=44100):
 
 
 if __name__ == '__main__':
-    random.seed(42)  # Tutarlı sonuç için sabit seed
+    random.seed(42)  # Fixed seed for deterministic build output
     samples = generate_rubik_rotate_sound()
     
     wav_path = '/Users/vahitkeskin/AndroidStudioProjects/RubikSync/androidApp/src/main/res/raw/cube_rotate.wav'
     write_wav(wav_path, samples)
-    print(f"WAV oluşturuldu: {wav_path}")
-    print(f"Süre: {DURATION*1000:.0f}ms, Örnekler: {len(samples)}")
+    print(f"WAV created at: {wav_path}")
+    print(f"Duration: {DURATION*1000:.0f}ms, Samples: {len(samples)}")

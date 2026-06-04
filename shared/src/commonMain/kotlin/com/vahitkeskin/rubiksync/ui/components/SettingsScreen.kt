@@ -289,12 +289,14 @@ fun SettingsScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .heightIn(max = 180.dp)
-                                    .background(bgTertiary)
                                     .clip(RoundedCornerShape(12.dp))
+                                    .background(bgTertiary)
                                     .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
                             ) {
                                 LazyColumn(
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(12.dp))
                                 ) {
                                     items(AppLanguage.values().toList()) { lang ->
                                         val isSelected = appState.appLanguage == lang

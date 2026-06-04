@@ -4,6 +4,14 @@ import com.vahitkeskin.rubiksync.ui.state.*
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.draw.rotate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -198,6 +206,7 @@ fun SettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .animateContentSize(animationSpec = tween(300))
                         .clip(RoundedCornerShape(16.dp))
                         .background(bgSecondary)
                         .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
@@ -229,6 +238,10 @@ fun SettingsScreen(
 
                     // Modern Seçici Buton
                     var isExpanded by remember { mutableStateOf(false) }
+                    val rotationAngle by animateFloatAsState(
+                        targetValue = if (isExpanded) 180f else 0f,
+                        animationSpec = tween(300)
+                    )
 
                     Box(
                         modifier = Modifier
@@ -257,68 +270,75 @@ fun SettingsScreen(
                                 )
                             }
                             Text(
-                                text = if (isExpanded) "▲" else "▼",
+                                text = "▼",
                                 color = textSecondary,
-                                fontSize = 10.sp
+                                fontSize = 10.sp,
+                                modifier = Modifier.rotate(rotationAngle)
                             )
                         }
                     }
 
-                    if (isExpanded) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 180.dp)
-                                .background(bgTertiary)
-                                .clip(RoundedCornerShape(12.dp))
-                                .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
-                        ) {
-                            LazyColumn(
-                                modifier = Modifier.fillMaxWidth()
+                    AnimatedVisibility(
+                        visible = isExpanded,
+                        enter = expandVertically(animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)),
+                        exit = shrinkVertically(animationSpec = tween(300)) + fadeOut(animationSpec = tween(300))
+                    ) {
+                        Column {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = 180.dp)
+                                    .background(bgTertiary)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
                             ) {
-                                items(AppLanguage.values().toList()) { lang ->
-                                    val isSelected = appState.appLanguage == lang
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(if (isSelected) (if (isDarkTheme) Color_FF1A1510 else Color_FFFFF7ED) else Color.Transparent)
-                                            .clickable {
-                                                appState.updateLanguage(lang)
-                                                isExpanded = false
-                                            }
-                                            .padding(horizontal = 14.dp, vertical = 12.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    items(AppLanguage.values().toList()) { lang ->
+                                        val isSelected = appState.appLanguage == lang
                                         Row(
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(text = lang.flag, fontSize = 16.sp)
-                                            Text(
-                                                text = lang.displayName,
-                                                color = if (isSelected) Color_FFFF8A00 else textPrimary,
-                                                fontSize = 13.sp,
-                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                            )
-                                        }
-                                        if (isSelected) {
-                                            Text(
-                                                text = "✓",
-                                                color = Color_FFFF8A00,
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        }
-                                    }
-                                    if (lang != AppLanguage.values().last()) {
-                                        Box(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .height(0.5.dp)
-                                                .background(borderColor.copy(alpha = 0.5f))
-                                        )
+                                                .background(if (isSelected) (if (isDarkTheme) Color_FF1A1510 else Color_FFFFF7ED) else Color.Transparent)
+                                                .clickable {
+                                                    appState.updateLanguage(lang)
+                                                    isExpanded = false
+                                                }
+                                                .padding(horizontal = 14.dp, vertical = 12.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(text = lang.flag, fontSize = 16.sp)
+                                                Text(
+                                                    text = lang.displayName,
+                                                    color = if (isSelected) Color_FFFF8A00 else textPrimary,
+                                                    fontSize = 13.sp,
+                                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                                )
+                                            }
+                                            if (isSelected) {
+                                                Text(
+                                                    text = "✓",
+                                                    color = Color_FFFF8A00,
+                                                    fontSize = 12.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
+                                        }
+                                        if (lang != AppLanguage.values().last()) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(0.5.dp)
+                                                    .background(borderColor.copy(alpha = 0.5f))
+                                            )
+                                        }
                                     }
                                 }
                             }

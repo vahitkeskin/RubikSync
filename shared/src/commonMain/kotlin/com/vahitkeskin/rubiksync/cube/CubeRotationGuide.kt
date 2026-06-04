@@ -28,6 +28,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.math.roundToInt
 
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
@@ -38,35 +39,76 @@ fun CubeRotationGuide(
     currentFace: FaceName,
     modifier: Modifier = Modifier
 ) {
-    // Smoothly animate yaw and pitch to match the target face's camera viewing angle
-    val transition = updateTransition(currentFace, label = "CubeRotationGuide")
-    val yaw by transition.animateFloat(
-        transitionSpec = { tween(durationMillis = 700, easing = FastOutSlowInEasing) },
-        label = "yaw"
-    ) { face ->
-        when (face) {
-            FaceName.U -> -0.5f
-            FaceName.D -> -0.5f
-            FaceName.L -> 1.0f
-            FaceName.R -> -1.0f
-            FaceName.F -> 0.0f
-            FaceName.B -> 3.14159f
+    val isDark = RubikTheme.colors.isDark
+    val infiniteTransition = rememberInfiniteTransition(label = "CubeGuideInfinite")
+    val animationProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotationProgress"
+    )
+
+    // Track state transitions to show turn direction
+    var prevFaceState by remember { mutableStateOf(currentFace) }
+    var lastTargetFace by remember { mutableStateOf(currentFace) }
+
+    if (currentFace != lastTargetFace) {
+        prevFaceState = lastTargetFace
+        lastTargetFace = currentFace
+    }
+
+    val prevYaw = when (prevFaceState) {
+        FaceName.U -> -0.5f
+        FaceName.D -> -0.5f
+        FaceName.L -> 1.0f
+        FaceName.R -> -1.0f
+        FaceName.F -> 0.0f
+        FaceName.B -> 3.14159f
+    }
+    val targetYaw = when (currentFace) {
+        FaceName.U -> -0.5f
+        FaceName.D -> -0.5f
+        FaceName.L -> 1.0f
+        FaceName.R -> -1.0f
+        FaceName.F -> 0.0f
+        FaceName.B -> 3.14159f
+    }
+
+    val prevPitch = when (prevFaceState) {
+        FaceName.U -> 0.5f
+        FaceName.D -> -0.5f
+        FaceName.L -> 0.2f
+        FaceName.R -> 0.2f
+        FaceName.F -> 0.2f
+        FaceName.B -> 0.2f
+    }
+    val targetPitch = when (currentFace) {
+        FaceName.U -> 0.5f
+        FaceName.D -> -0.5f
+        FaceName.L -> 0.2f
+        FaceName.R -> 0.2f
+        FaceName.F -> 0.2f
+        FaceName.B -> 0.2f
+    }
+
+    val t = when {
+        animationProgress < 0.2f -> 0f
+        animationProgress > 0.7f -> 1f
+        else -> {
+            val normalized = (animationProgress - 0.2f) / 0.5f
+            normalized * normalized * (3f - 2f * normalized) // smooth easing
         }
     }
-    
-    val pitch by transition.animateFloat(
-        transitionSpec = { tween(durationMillis = 700, easing = FastOutSlowInEasing) },
-        label = "pitch"
-    ) { face ->
-        when (face) {
-            FaceName.U -> 0.5f
-            FaceName.D -> -0.5f
-            FaceName.L -> 0.2f
-            FaceName.R -> 0.2f
-            FaceName.F -> 0.2f
-            FaceName.B -> 0.2f
-        }
-    }
+
+    // Add a premium subtle idle breathing motion
+    val idleYawOffset = sin(animationProgress * 2 * PI.toFloat()) * 0.08f
+    val idlePitchOffset = cos(animationProgress * 2 * PI.toFloat()) * 0.05f
+
+    val yaw = prevYaw + (targetYaw - prevYaw) * t + idleYawOffset
+    val pitch = prevPitch + (targetPitch - prevPitch) * t + idlePitchOffset
 
     // Static representation of a solved cube (27 cubies)
     val miniCubies = remember {
@@ -134,63 +176,58 @@ fun CubeRotationGuide(
             .fillMaxWidth()
             .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(20.dp))
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Left Column: 3D Animated Guide Canvas
+            // Top: 3D Animated Guide Canvas (Large, full width, 200.dp height)
             Box(
                 modifier = Modifier
-                    .size(130.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(RubikTheme.colors.backgroundPrimary),
                 contentAlignment = Alignment.Center
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawGuideCube(miniCubies, yaw, pitch, currentFace)
+                    drawGuideCube(miniCubies, yaw, pitch, currentFace, appState, isDark)
                 }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Right Column: Instructions and 2D Unfolded Map
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            // Bottom: Details and Net
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column {
-                        Text(
-                            text = faceTitle,
-                            color = RubikTheme.colors.textPrimary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = faceColorName,
-                            color = faceColorHex,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    
-                    // Small 2D Net Indicator
-                    Mini2DNet(currentFace)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = faceTitle,
+                        color = RubikTheme.colors.textPrimary,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = faceColorName,
+                        color = faceColorHex,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
-
-                Text(
-                    text = guideInstruction,
-                    color = RubikTheme.colors.textSecondary,
-                    fontSize = 11.sp,
-                    lineHeight = 15.sp
-                )
+                
+                // Small 2D Net Indicator
+                Mini2DNet(currentFace)
             }
+
+            Text(
+                text = guideInstruction,
+                color = RubikTheme.colors.textSecondary,
+                fontSize = 12.sp,
+                lineHeight = 16.sp
+            )
         }
     }
 }
@@ -257,16 +294,68 @@ private fun Mini2DNet(targetFace: FaceName) {
 }
 
 // 3D Projection & Rendering for the Mini Guide Cube
+private fun getScannedOrFaceletColor(
+    pos: Vector3,
+    localNormal: Vector3,
+    appState: RubikAppState
+): CubeColor {
+    val px = pos.x.roundToInt()
+    val py = pos.y.roundToInt()
+    val pz = pos.z.roundToInt()
+    val nx = localNormal.x.roundToInt()
+    val ny = localNormal.y.roundToInt()
+    val nz = localNormal.z.roundToInt()
+
+    val faceName = when {
+        ny == 1 -> FaceName.U
+        ny == -1 -> FaceName.D
+        nx == -1 -> FaceName.L
+        nx == 1 -> FaceName.R
+        nz == 1 -> FaceName.F
+        nz == -1 -> FaceName.B
+        else -> return CubeColor.INTERNAL
+    }
+
+    val scannedGrid = appState.scannedGrids[faceName]
+    if (scannedGrid != null) {
+        try {
+            return when (faceName) {
+                FaceName.U -> scannedGrid[pz + 1][px + 1]
+                FaceName.D -> scannedGrid[1 - pz][px + 1]
+                FaceName.L -> scannedGrid[1 - py][pz + 1]
+                FaceName.R -> scannedGrid[1 - py][1 - pz]
+                FaceName.F -> scannedGrid[1 - py][px + 1]
+                FaceName.B -> scannedGrid[1 - py][1 - px]
+            }
+        } catch (e: Exception) {
+            // Fallback in case of index out of bounds
+        }
+    }
+
+    // Default face colors if not scanned yet
+    return when (faceName) {
+        FaceName.U -> CubeColor.ORANGE
+        FaceName.D -> CubeColor.RED
+        FaceName.L -> CubeColor.YELLOW
+        FaceName.R -> CubeColor.WHITE
+        FaceName.F -> CubeColor.GREEN
+        FaceName.B -> CubeColor.BLUE
+    }
+}
+
 private fun DrawScope.drawGuideCube(
     cubies: List<Cubie>,
     yaw: Float,
     pitch: Float,
-    targetFace: FaceName
+    targetFace: FaceName,
+    appState: RubikAppState,
+    isDark: Boolean
 ) {
     val centerX = size.width / 2f
     val centerY = size.height / 2f
     val cameraDistance = 6.5f
-    val focalLength = size.width * 1.5f
+    val minSize = size.width.coerceAtMost(size.height)
+    val focalLength = minSize * 1.5f
 
     // Bounding outlines for cubies and stickers
     val cubieOutline = getGuideRoundedPoints(0.96f, 0.16f)
@@ -274,6 +363,7 @@ private fun DrawScope.drawGuideCube(
 
     class GuideRenderFace(
         val face: CubieFace,
+        val facePos: Vector3,
         val projectedBodyPoints: List<Offset>,
         val projectedStickerPoints: List<Offset>,
         val depth: Float,
@@ -343,6 +433,7 @@ private fun DrawScope.drawGuideCube(
             renderFaces.add(
                 GuideRenderFace(
                     face = face,
+                    facePos = cubie.originalPos,
                     projectedBodyPoints = projectedBody,
                     projectedStickerPoints = projectedSticker,
                     depth = cameraCenter.z,
@@ -356,41 +447,24 @@ private fun DrawScope.drawGuideCube(
     // Sort by depth
     renderFaces.sortByDescending { it.depth }
 
-    val lightDir = Vector3(1.2f, 1.8f, 2.2f).normalized()
-    val viewDir = Vector3(0f, 0f, -1f).rotateX(-pitch).rotateY(-yaw).normalized()
-    val halfway = (lightDir + viewDir).normalized()
+    val bodyColor = if (isDark) Color(0xFF151B22) else Color(0xFFD1D5DB)
 
     // Draw faces
     renderFaces.forEach { rf ->
-        val ambient = 0.35f
-        val diffuse = rf.worldNormal.dot(lightDir).coerceAtLeast(0f) * 0.50f
-        val spec = rf.worldNormal.dot(halfway).coerceAtLeast(0f).pow(24f) * 0.32f
-        val totalLight = (ambient + diffuse).coerceIn(0f, 1f)
-
-        // Fade/Desaturate non-target faces to highlight target
-        val highlightFactor = if (rf.isTarget) 1.0f else 0.22f
-        val targetAlpha = if (rf.isTarget) 1.0f else 0.35f
-
         // Draw cubie plastic body
-        val bodyColor = Color(
-            red = ((0.98f * totalLight + spec) * (if (rf.isTarget) 1f else 0.5f)).coerceIn(0f, 1f),
-            green = ((0.98f * totalLight + spec) * (if (rf.isTarget) 1f else 0.5f)).coerceIn(0f, 1f),
-            blue = ((0.98f * totalLight + spec) * (if (rf.isTarget) 1f else 0.5f)).coerceIn(0f, 1f),
-            alpha = targetAlpha
-        )
         drawGuidePolygon(projectedPoints = rf.projectedBodyPoints, color = bodyColor)
 
         // Draw sticker
-        val baseColor = rf.face.color
+        val baseColor = getScannedOrFaceletColor(rf.facePos, rf.face.localNormal, appState)
         val r = ((baseColor.rgb shr 16) and 0xFF) / 255f
         val g = ((baseColor.rgb shr 8) and 0xFF) / 255f
         val b = (baseColor.rgb and 0xFF) / 255f
 
         val stickerColor = Color(
-            red = (r * totalLight + spec).coerceIn(0f, 1f),
-            green = (g * totalLight + spec).coerceIn(0f, 1f),
-            blue = (b * totalLight + spec).coerceIn(0f, 1f),
-            alpha = targetAlpha * highlightFactor
+            red = r,
+            green = g,
+            blue = b,
+            alpha = 1.0f
         )
         drawGuidePolygon(projectedPoints = rf.projectedStickerPoints, color = stickerColor)
     }

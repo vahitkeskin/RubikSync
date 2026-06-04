@@ -379,38 +379,13 @@ fun ScannerWizard(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(110.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
-                                .background(RubikTheme.colors.backgroundSecondary),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (appState.isRecalculating) {
-                                CircularProgressIndicator(
-                                    color = RubikTheme.colors.accentBlue,
-                                    modifier = Modifier.size(28.dp),
-                                    strokeWidth = 2.dp
-                                )
-                            } else {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        text = "📸",
-                                        fontSize = 24.sp
-                                    )
-                                    Text(
-                                        text = appState.strings.noImage,
-                                        color = RubikTheme.colors.textSecondary,
-                                        fontSize = 10.sp,
-                                        textAlign = TextAlign.Center,
-                                        maxLines = 1
-                                    )
-                                }
-                            }
-                        }
-
-                        if (!appState.isRecalculating) {
+                        if (appState.isRecalculating) {
+                            CircularProgressIndicator(
+                                color = RubikTheme.colors.accentBlue,
+                                modifier = Modifier.size(36.dp),
+                                strokeWidth = 3.dp
+                            )
+                        } else {
                             CameraCaptureOrPicker(
                                 faceName = currentFace.name,
                                 takePhotoLabel = appState.strings.takePhotoLabel,

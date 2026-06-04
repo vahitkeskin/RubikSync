@@ -207,7 +207,6 @@ fun SettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateContentSize(animationSpec = tween(300))
                         .clip(RoundedCornerShape(16.dp))
                         .background(bgSecondary)
                         .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -78,11 +79,11 @@ fun SettingsScreen(
                         .clickable { appState.showSettingsScreen = false },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "←",
-                        color = textPrimary,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                    Icon(
+                        imageVector = ArrowBackIcon,
+                        contentDescription = "Geri",
+                        tint = textPrimary,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 

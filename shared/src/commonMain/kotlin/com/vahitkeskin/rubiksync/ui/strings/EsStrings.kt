@@ -107,4 +107,7 @@ val EsStrings = AppStrings(
     cubeAlreadySolved = "¡El cubo ya está resuelto! ✅",
     solutionNotFound = "¡No se encontró solución!",
     solutionFound = "¡Solución encontrada en %s pasos!"
-)
+,
+    scanGuidanceFace = "Por favor, escanea la cara %s (%s).",
+    scanGuidanceAllScanned = "¡Todas las caras escaneadas! Puedes presionar el botón 'Establecer'.",
+    scanGuidanceRemaining = "Esta cara ya está escaneada. Por favor, escanea las caras restantes: %s")

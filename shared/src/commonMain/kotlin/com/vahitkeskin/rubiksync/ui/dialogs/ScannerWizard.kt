@@ -67,6 +67,45 @@ fun ScannerWizard(
         FaceName.B to appState.strings.faceB
     )
 
+    val centerColorLocalized = when (currentFace) {
+        FaceName.U -> appState.strings.colorOrange
+        FaceName.D -> appState.strings.colorRed
+        FaceName.L -> appState.strings.colorYellow
+        FaceName.R -> appState.strings.colorWhite
+        FaceName.F -> appState.strings.colorGreen
+        FaceName.B -> appState.strings.colorBlue
+    }
+
+    val faceDisplayName = faceNameLocalized[currentFace] ?: currentFace.name
+
+    val isCurrentFaceScanned = appState.scannedGrids.containsKey(currentFace)
+    val unscannedFaces = FaceName.values().filter { !appState.scannedGrids.containsKey(it) }
+
+    val remainingList = unscannedFaces.joinToString(", ") { face ->
+        val name = faceNameLocalized[face] ?: face.name
+        val color = when (face) {
+            FaceName.U -> appState.strings.colorOrange
+            FaceName.D -> appState.strings.colorRed
+            FaceName.L -> appState.strings.colorYellow
+            FaceName.R -> appState.strings.colorWhite
+            FaceName.F -> appState.strings.colorGreen
+            FaceName.B -> appState.strings.colorBlue
+        }
+        "$name ($color)"
+    }
+
+    val guidanceMessage = if (unscannedFaces.isEmpty()) {
+        appState.strings.scanGuidanceAllScanned
+    } else if (isCurrentFaceScanned) {
+        appState.strings.scanGuidanceRemaining.replaceFirst("%s", remainingList)
+    } else {
+        appState.strings.scanGuidanceFace
+            .replaceFirst("%s", faceDisplayName)
+            .replaceFirst("%s", centerColorLocalized)
+    }
+
+
+
     val faceImageBitmap = remember(currentFace, appState.scannedFilePaths[currentFace]) {
         val path = appState.scannedFilePaths[currentFace]
         if (path != null) {
@@ -220,37 +259,58 @@ fun ScannerWizard(
                     }
                 }
 
-                // Info message
-                if (appState.infoMessage != null) {
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(
-                                Brush.horizontalGradient(
+                // Info / Guidance message
+                val displayMessage = appState.infoMessage ?: guidanceMessage
+                val isSuccess = appState.infoMessage != null
+
+                Spacer(modifier = Modifier.height(6.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                if (isSuccess) {
                                     if (RubikTheme.colors.isDark) {
                                         listOf(AccentGreenShadow, AccentGreenVeryDark)
                                     } else {
                                         listOf(AccentGreenFaintBg, AccentGreenSoftBg)
                                     }
-                                )
+                                } else {
+                                    if (RubikTheme.colors.isDark) {
+                                        listOf(DarkBgSecondary, DarkBgTertiary)
+                                    } else {
+                                        listOf(LightBgPrimary, LightBgTertiary)
+                                    }
+                                }
                             )
-                            .border(0.5.dp, if (RubikTheme.colors.isDark) AccentGreenAlpha13 else AccentGreenAlpha20, RoundedCornerShape(10.dp))
-                            .clickable { appState.infoMessage = null }
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "✅ ${appState.infoMessage ?: ""}",
-                            color = if (RubikTheme.colors.isDark) AccentGreenBright else AccentGreenDark,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.Center,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
                         )
-                    }
+                        .border(
+                            width = 0.5.dp,
+                            color = if (isSuccess) {
+                                if (RubikTheme.colors.isDark) AccentGreenAlpha13 else AccentGreenAlpha20
+                            } else {
+                                RubikTheme.colors.borderSubtle
+                            },
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .clickable(enabled = isSuccess) { appState.infoMessage = null }
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (isSuccess) "✅ $displayMessage" else "📸 $displayMessage",
+                        color = if (isSuccess) {
+                            if (RubikTheme.colors.isDark) AccentGreenBright else AccentGreenDark
+                        } else {
+                            RubikTheme.colors.textPrimary
+                        },
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
 

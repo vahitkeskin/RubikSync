@@ -108,7 +108,10 @@ data class AppStrings(
     val playbackPlay: String,
     val cubeAlreadySolved: String,
     val solutionNotFound: String,
-    val solutionFound: String
+    val solutionFound: String,
+    val scanGuidanceFace: String,
+    val scanGuidanceAllScanned: String,
+    val scanGuidanceRemaining: String
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

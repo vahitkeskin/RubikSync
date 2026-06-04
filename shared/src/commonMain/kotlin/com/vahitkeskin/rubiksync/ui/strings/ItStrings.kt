@@ -107,4 +107,7 @@ val ItStrings = AppStrings(
     cubeAlreadySolved = "Il cubo è già risolto! ✅",
     solutionNotFound = "Nessuna soluzione trovata!",
     solutionFound = "Soluzione trovata in %s mosse!"
-)
+,
+    scanGuidanceFace = "Scansiona la faccia %s (%s).",
+    scanGuidanceAllScanned = "Tutte le facce scansionate! Puoi premere il pulsante 'Imposta'.",
+    scanGuidanceRemaining = "Questa faccia è scansionata. Scansiona le facce rimanenti: %s")

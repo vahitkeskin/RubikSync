@@ -107,4 +107,7 @@ val ThStrings = AppStrings(
     cubeAlreadySolved = "รูบิกแก้เสร็จแล้ว! ✅",
     solutionNotFound = "ไม่พบวิธีการแก้!",
     solutionFound = "พบวิธีการแก้ใน %s ขั้นตอน!"
-)
+,
+    scanGuidanceFace = "กรุณาสแกนด้าน %s (%s)",
+    scanGuidanceAllScanned = "สแกนทุกด้านเรียบร้อยแล้ว! คุณสามารถกดปุ่ม 'ตั้งค่า' ได้",
+    scanGuidanceRemaining = "ด้านนี้สแกนแล้ว กรุณาสแกนด้านที่เหลือ: %s")

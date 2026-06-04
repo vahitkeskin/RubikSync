@@ -107,4 +107,7 @@ val AzStrings = AppStrings(
     cubeAlreadySolved = "Küp artıq həll edilib! ✅",
     solutionNotFound = "Həll tapılmadı!",
     solutionFound = "%s addımda həll tapıldı!"
-)
+,
+    scanGuidanceFace = "Zəhmət olmasa %s (%s) üzünü skan edin.",
+    scanGuidanceAllScanned = "Bütün üzlər skan edildi! 'Quraşdır' düyməsini basa bilərsiniz.",
+    scanGuidanceRemaining = "Bu üz skan edilib. Zəhmət olmasa qalan üzləri skan edin: %s")

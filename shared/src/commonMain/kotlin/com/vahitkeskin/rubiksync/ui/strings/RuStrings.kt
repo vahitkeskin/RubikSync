@@ -107,4 +107,7 @@ val RuStrings = AppStrings(
     cubeAlreadySolved = "Кубик уже собран! ✅",
     solutionNotFound = "Решение не найдено!",
     solutionFound = "Решение найдено за %s шагов!"
-)
+,
+    scanGuidanceFace = "Пожалуйста, отсканируйте сторону %s (%s).",
+    scanGuidanceAllScanned = "Все стороны отсканированы! Вы можете нажать кнопку 'Готово'.",
+    scanGuidanceRemaining = "Эта сторона отсканирована. Пожалуйста, отсканируйте оставшиеся стороны: %s")

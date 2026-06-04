@@ -107,4 +107,7 @@ val PtStrings = AppStrings(
     cubeAlreadySolved = "O cubo já está resolvido! ✅",
     solutionNotFound = "Nenhuma solução encontrada!",
     solutionFound = "Solução encontrada em %s movimentos!"
-)
+,
+    scanGuidanceFace = "Por favor, escaneie a face %s (%s).",
+    scanGuidanceAllScanned = "Todas as faces escaneadas! Você pode pressionar o botão 'Definir'.",
+    scanGuidanceRemaining = "Esta face está escaneada. Por favor, escaneie as faces restantes: %s")

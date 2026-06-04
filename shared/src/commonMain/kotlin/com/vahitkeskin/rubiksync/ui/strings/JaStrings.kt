@@ -107,4 +107,7 @@ val JaStrings = AppStrings(
     cubeAlreadySolved = "キューブは既に揃っています！ ✅",
     solutionNotFound = "解決策が見つかりませんでした！",
     solutionFound = "%s手で解決策が見つかりました！"
-)
+,
+    scanGuidanceFace = "%s (%s) 面をスキャンしてください。",
+    scanGuidanceAllScanned = "すべての面がスキャンされました！'設定'ボタンを押してください。",
+    scanGuidanceRemaining = "この面はスキャン済みです。残りの面をスキャンしてください：%s")

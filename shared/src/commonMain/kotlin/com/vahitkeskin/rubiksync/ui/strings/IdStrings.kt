@@ -107,4 +107,7 @@ val IdStrings = AppStrings(
     cubeAlreadySolved = "Kubus sudah selesai! ✅",
     solutionNotFound = "Solusi tidak ditemukan!",
     solutionFound = "Solusi ditemukan dalam %s langkah!"
-)
+,
+    scanGuidanceFace = "Silakan pindai sisi %s (%s).",
+    scanGuidanceAllScanned = "Semua sisi telah dipindai! Anda dapat menekan tombol 'Atur'.",
+    scanGuidanceRemaining = "Sisi ini telah dipindai. Silakan pindai sisi yang tersisa: %s")

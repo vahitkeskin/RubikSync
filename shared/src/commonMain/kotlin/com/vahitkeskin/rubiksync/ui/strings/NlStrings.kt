@@ -107,4 +107,7 @@ val NlStrings = AppStrings(
     cubeAlreadySolved = "Kubus is al opgelost! ✅",
     solutionNotFound = "Geen oplossing gevonden!",
     solutionFound = "Oplossing gevonden in %s stappen!"
-)
+,
+    scanGuidanceFace = "Scan a.u.b. het vlak %s (%s).",
+    scanGuidanceAllScanned = "Alle vlakken gescand! U kunt op de knop 'Instellen' drukken.",
+    scanGuidanceRemaining = "Dit vlak is gescand. Scan de resterende vlakken: %s")

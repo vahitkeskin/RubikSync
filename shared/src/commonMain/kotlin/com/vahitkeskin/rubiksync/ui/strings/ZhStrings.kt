@@ -107,4 +107,7 @@ val ZhStrings = AppStrings(
     cubeAlreadySolved = "魔方已经还原！ ✅",
     solutionNotFound = "未找到解法！",
     solutionFound = "在 %s 步内找到解法！"
-)
+,
+    scanGuidanceFace = "请扫描 %s (%s) 面。",
+    scanGuidanceAllScanned = "所有面已扫描！您可以点击'设置'按钮。",
+    scanGuidanceRemaining = "该面已扫描。请扫描剩余的面：%s")

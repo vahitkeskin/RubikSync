@@ -107,4 +107,7 @@ val TrStrings = AppStrings(
     cubeAlreadySolved = "Küp zaten çözülmüş! ✅",
     solutionNotFound = "Çözüm bulunamadı!",
     solutionFound = "%s adımda çözüm bulundu!"
-)
+,
+    scanGuidanceFace = "Lütfen %s (%s) yüzeyini tarayın.",
+    scanGuidanceAllScanned = "Tüm yüzeyler tarandı! Artık 'Ayarla' butonuna basabilirsiniz.",
+    scanGuidanceRemaining = "Bu yüzey zaten tarandı. Lütfen kalan yüzeyleri tarayın: %s")

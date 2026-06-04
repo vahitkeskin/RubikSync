@@ -107,4 +107,7 @@ val DeStrings = AppStrings(
     cubeAlreadySolved = "Würfel bereits gelöst! ✅",
     solutionNotFound = "Keine Lösung gefunden!",
     solutionFound = "Lösung in %s Schritten gefunden!"
-)
+,
+    scanGuidanceFace = "Bitte scannen Sie die Seite %s (%s).",
+    scanGuidanceAllScanned = "Alle Seiten gescannt! Sie können auf die Schaltfläche 'Einstellen' klicken.",
+    scanGuidanceRemaining = "Diese Seite wurde gescannt. Bitte scannen Sie die verbleibenden Seiten: %s")

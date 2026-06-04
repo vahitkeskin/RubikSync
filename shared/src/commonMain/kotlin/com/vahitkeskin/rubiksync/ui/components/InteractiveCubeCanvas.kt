@@ -148,10 +148,12 @@ fun InteractiveCubeCanvas(
                                     val zoomDelta = (prevDist - currentDist) * 0.015f
                                     appState.cameraDistance = (appState.cameraDistance + zoomDelta).coerceIn(4f, 12f)
 
-                                    // Pan (average movement of two fingers)
-                                    val panDelta = ((pos1 - prev1) + (pos2 - prev2)) * 0.5f
-                                    appState.panX += panDelta.x
-                                    appState.panY += -panDelta.y
+                                    // Orbit/Rotate the entire cube (average movement of two fingers)
+                                    val rotateDelta = ((pos1 - prev1) + (pos2 - prev2)) * 0.5f
+                                    val dy = -rotateDelta.x * 0.007f
+                                    val dp = -rotateDelta.y * 0.007f
+                                    appState.yaw = (appState.yaw + dy) % (2f * PI.toFloat())
+                                    appState.pitch = (appState.pitch + dp).coerceIn(-1.4f, 1.4f)
 
                                     p1.consume()
                                     p2.consume()

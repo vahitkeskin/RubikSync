@@ -61,9 +61,9 @@ Uygulama; gelişmiş renk analizi filtreleri, platforma özgü yerel kamera akı
 ### 11. 🎧 Akustik Sentez ve Düşük Gecikmeli Ses Motoru (High-Fidelity Click SoundEngine)
 - Küp katmanlarının her dönüş hareketinde, sürtünme ve yankı gürültülerinden tamamen arındırılmış, 80 ms süreli keskin plastik tık tık ses efekti çalınır. Android tarafında yerel `SoundPool` API entegrasyonu ile sıfır gecikme hedeflenmiştir.
 
-### 12. 🔒 Katman Dönüşlerinde Kamera Yörünge Kilidi (Layer Drag Isolation)
-- Kullanıcı parmağını küp üzerindeki bir çıkartmaya dokundurup bir katmanı (satır veya sütun) döndürdüğünde, tüm jest oturumu boyunca kameranın orbit dönüşü (tüm küpün dönmesi) kilitlenir.
-- Bu sayede kullanıcı katmanı çevirirken tüm küp hareketsiz kalır ve yanlışlıkla bakış açısının sapması tamamen önlenerek kusursuz bir döndürme deneyimi sağlanır.
+### 12. 🔒 Katman Dönüş Kilidi & İki Parmakla Genel Döndürme (Layer Drag Isolation & Dual-Finger Orbit)
+- Kullanıcı tek parmağıyla küp üzerindeki bir çıkartmaya dokunup bir katmanı (satır/sütun) döndürdüğünde, sürükleme boyunca tüm küpün dönmesi (kamera yörüngesi) kilitlenir ve küp sabit kalır.
+- Kullanıcı istediği zaman küpün tamamını incelemek/çevirmek için **iki parmağını ekranda sürükleyerek** kamerayı yörüngede döndürebilir ve küpün tamamını kontrol edebilir. Bu sayede düzenleme modunda (unlocked) dahi katman çevirme hareketleriyle çakışmadan küpün arkasını ve altını zahmetsizce incelemek mümkün kılınmıştır.
 
 ---
 

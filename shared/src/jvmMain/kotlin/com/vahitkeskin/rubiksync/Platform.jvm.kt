@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -130,7 +132,7 @@ actual fun CameraCaptureOrPicker(
             }
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF3B4B66),
+            containerColor = Color_FF3B4B66,
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(12.dp),

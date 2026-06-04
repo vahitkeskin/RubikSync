@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.components
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -158,7 +160,7 @@ fun SplashScreen(
                                 .clip(RoundedCornerShape(3.dp))
                                 .background(
                                     Brush.linearGradient(
-                                        listOf(Color(0xFFFF8A00), Color(0xFFFF5252))
+                                        listOf(Color_FFFF8A00, Color_FFFF5252)
                                     )
                                 )
                         )
@@ -200,8 +202,8 @@ fun SplashScreen(
                         .background(
                             Brush.horizontalGradient(
                                 listOf(
-                                    Color(0xFFFF8A00),
-                                    Color(0xFFFF5252)
+                                    Color_FFFF8A00,
+                                    Color_FFFF5252
                                 )
                             )
                         )

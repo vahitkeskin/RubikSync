@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.components
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.animation.*
 
 import androidx.compose.foundation.BorderStroke
@@ -253,14 +255,14 @@ fun ControlPanel(
                         onClick = { appState.showEditorDialog = true },
                         enabled = !cubeState.isAnimating,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (RubikTheme.colors.isDark) Color(0xFF0F1A2E) else Color(0xFFE3F2FD),
+                            containerColor = if (RubikTheme.colors.isDark) Color_FF0F1A2E else Color_FFE3F2FD,
                             contentColor = RubikTheme.colors.accentBlue,
                             disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
                             disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color(0xFF1A2D4D) else Color(0xFFBBDEFB)),
+                        border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color_FF1A2D4D else Color_FFBBDEFB),
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp)
@@ -365,14 +367,14 @@ fun ControlPanel(
                     },
                         enabled = !cubeState.isAnimating && !appState.isRecalculating,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (RubikTheme.colors.isDark) Color(0xFF0B1F12) else Color(0xFFE8F5E9),
+                            containerColor = if (RubikTheme.colors.isDark) Color_FF0B1F12 else Color_FFE8F5E9,
                             contentColor = RubikTheme.colors.accentGreen,
                             disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
                             disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color(0xFF1A3D22) else Color(0xFFC8E6C9)),
+                        border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color_FF1A3D22 else Color_FFC8E6C9),
                         modifier = Modifier
                             .weight(1f)
                             .height(44.dp)
@@ -450,23 +452,23 @@ private fun MovesGrid(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            MoveBtn(MoveType.U, "U", Color(0xFFFF7B00), Color(0xFFFF5F00))
-            MoveBtn(MoveType.D, "D", Color(0xFFD6001C), Color(0xFFB5001A))
-            MoveBtn(MoveType.R, "R", Color(0xFFCCCCCC), Color(0xFFAAAAAA))
-            MoveBtn(MoveType.L, "L", Color(0xFFFFD500), Color(0xFFDDB800))
-            MoveBtn(MoveType.F, "F", Color(0xFF009B48), Color(0xFF007A38))
-            MoveBtn(MoveType.B, "B", Color(0xFF0046AD), Color(0xFF003890))
+            MoveBtn(MoveType.U, "U", Color_FFFF7B00, Color_FFFF5F00)
+            MoveBtn(MoveType.D, "D", Color_FFD6001C, Color_FFB5001A)
+            MoveBtn(MoveType.R, "R", Color_FFCCCCCC, Color_FFAAAAAA)
+            MoveBtn(MoveType.L, "L", Color_FFFFD500, Color_FFDDB800)
+            MoveBtn(MoveType.F, "F", Color_FF009B48, Color_FF007A38)
+            MoveBtn(MoveType.B, "B", Color_FF0046AD, Color_FF003890)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            MoveBtn(MoveType.U_PRIME, "U'", Color(0xFFFF7B00), Color(0xFFFF5F00))
-            MoveBtn(MoveType.D_PRIME, "D'", Color(0xFFD6001C), Color(0xFFB5001A))
-            MoveBtn(MoveType.R_PRIME, "R'", Color(0xFFCCCCCC), Color(0xFFAAAAAA))
-            MoveBtn(MoveType.L_PRIME, "L'", Color(0xFFFFD500), Color(0xFFDDB800))
-            MoveBtn(MoveType.F_PRIME, "F'", Color(0xFF009B48), Color(0xFF007A38))
-            MoveBtn(MoveType.B_PRIME, "B'", Color(0xFF0046AD), Color(0xFF003890))
+            MoveBtn(MoveType.U_PRIME, "U'", Color_FFFF7B00, Color_FFFF5F00)
+            MoveBtn(MoveType.D_PRIME, "D'", Color_FFD6001C, Color_FFB5001A)
+            MoveBtn(MoveType.R_PRIME, "R'", Color_FFCCCCCC, Color_FFAAAAAA)
+            MoveBtn(MoveType.L_PRIME, "L'", Color_FFFFD500, Color_FFDDB800)
+            MoveBtn(MoveType.F_PRIME, "F'", Color_FF009B48, Color_FF007A38)
+            MoveBtn(MoveType.B_PRIME, "B'", Color_FF0046AD, Color_FF003890)
         }
     }
 }
@@ -547,13 +549,13 @@ fun PlaybackController(
                 .background(
                     Brush.horizontalGradient(
                         if (RubikTheme.colors.isDark) {
-                            listOf(Color(0xFF0B1F12), Color(0xFF112218))
+                            listOf(Color_FF0B1F12, Color_FF112218)
                         } else {
-                            listOf(Color(0xFFE8F5E9), Color(0xFFC8E6C9))
+                            listOf(Color_FFE8F5E9, Color_FFC8E6C9)
                         }
                     )
                 )
-                .border(1.dp, if (RubikTheme.colors.isDark) Color(0x2230D158) else Color(0x3330D158), RoundedCornerShape(12.dp))
+                .border(1.dp, if (RubikTheme.colors.isDark) Color_2230D158 else Color_3330D158, RoundedCornerShape(12.dp))
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -574,7 +576,7 @@ fun PlaybackController(
                 } else 0
                 Text(
                     text = "$progress%${appState.strings.progressLabel}",
-                    color = if (RubikTheme.colors.isDark) Color(0xFF5A8A62) else Color(0xFF2E7D32),
+                    color = if (RubikTheme.colors.isDark) Color_FF5A8A62 else Color_FF2E7D32,
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1
@@ -585,7 +587,7 @@ fun PlaybackController(
                 modifier = Modifier
                     .size(28.dp)
                     .clip(RoundedCornerShape(14.dp))
-                    .background(if (RubikTheme.colors.isDark) Color(0x22FFFFFF) else Color(0x0C000000))
+                    .background(if (RubikTheme.colors.isDark) Color_22FFFFFF else Color_0C000000)
                     .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
                     .clickable {
                         appState.activeSolution = null
@@ -650,9 +652,9 @@ fun PlaybackController(
                 val isPast = index < appState.currentSolutionStep
 
                 val bgModifier = if (isCurrent) {
-                    Modifier.background(Brush.horizontalGradient(listOf(Color(0xFF30D158), Color(0xFF34C759))))
+                    Modifier.background(Brush.horizontalGradient(listOf(Color_FF30D158, Color_FF34C759)))
                 } else if (isPast) {
-                    Modifier.background(if (RubikTheme.colors.isDark) Color(0xFF1A2E1F) else Color(0xFFE8F5E9))
+                    Modifier.background(if (RubikTheme.colors.isDark) Color_FF1A2E1F else Color_FFE8F5E9)
                 } else {
                     Modifier.background(RubikTheme.colors.backgroundTertiary)
                 }
@@ -663,7 +665,7 @@ fun PlaybackController(
                         .then(bgModifier)
                         .border(
                             width = if (isCurrent) 1.dp else 0.5.dp,
-                            color = if (isCurrent) Color(0xFFE5FFEA) else RubikTheme.colors.borderFaint,
+                            color = if (isCurrent) Color_FFE5FFEA else RubikTheme.colors.borderFaint,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .padding(horizontal = 10.dp, vertical = 5.dp)
@@ -672,7 +674,7 @@ fun PlaybackController(
                         text = move.label,
                         color = when {
                             isCurrent -> Color.White
-                            isPast -> if (RubikTheme.colors.isDark) Color(0xFF5A8A62) else Color(0xFF2E7D32)
+                            isPast -> if (RubikTheme.colors.isDark) Color_FF5A8A62 else Color_FF2E7D32
                             else -> RubikTheme.colors.textSecondary
                         },
                         fontSize = 11.sp,
@@ -720,9 +722,9 @@ fun PlaybackController(
                 onClick = { appState.isPlaybackRunning = !appState.isPlaybackRunning },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (appState.isPlaybackRunning) {
-                        if (RubikTheme.colors.isDark) Color(0xFF2A1510) else Color(0xFFFFEBED)
+                        if (RubikTheme.colors.isDark) Color_FF2A1510 else Color_FFFFEBED
                     } else {
-                        if (RubikTheme.colors.isDark) Color(0xFF0B1F12) else Color(0xFFE8F5E9)
+                        if (RubikTheme.colors.isDark) Color_FF0B1F12 else Color_FFE8F5E9
                     },
                     contentColor = if (appState.isPlaybackRunning) RubikTheme.colors.accentRed else RubikTheme.colors.accentGreen
                 ),
@@ -730,9 +732,9 @@ fun PlaybackController(
                 border = BorderStroke(
                     width = 1.dp,
                     color = if (appState.isPlaybackRunning) {
-                        if (RubikTheme.colors.isDark) Color(0xFF3D1519) else Color(0xFFFFCDD2)
+                        if (RubikTheme.colors.isDark) Color_FF3D1519 else Color_FFFFCDD2
                     } else {
-                        if (RubikTheme.colors.isDark) Color(0xFF1A3D22) else Color(0xFFC8E6C9)
+                        if (RubikTheme.colors.isDark) Color_FF1A3D22 else Color_FFC8E6C9
                     }
                 ),
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),

@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.components
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -272,7 +274,7 @@ fun SettingsScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(if (isSelected) (if (isDarkTheme) Color(0xFF1A1510) else Color(0xFFFFF7ED)) else Color.Transparent)
+                                        .background(if (isSelected) (if (isDarkTheme) Color_FF1A1510 else Color_FFFFF7ED) else Color.Transparent)
                                         .clickable {
                                             appState.updateLanguage(lang)
                                             isExpanded = false
@@ -288,7 +290,7 @@ fun SettingsScreen(
                                         Text(text = lang.flag, fontSize = 16.sp)
                                         Text(
                                             text = lang.displayName,
-                                            color = if (isSelected) Color(0xFFFF8A00) else textPrimary,
+                                            color = if (isSelected) Color_FFFF8A00 else textPrimary,
                                             fontSize = 13.sp,
                                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                                         )
@@ -296,7 +298,7 @@ fun SettingsScreen(
                                     if (isSelected) {
                                         Text(
                                             text = "✓",
-                                            color = Color(0xFFFF8A00),
+                                            color = Color_FFFF8A00,
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -434,7 +436,7 @@ private fun ThemeOptionCard(
 
     val animatedBgColor by animateColorAsState(
         targetValue = if (isSelected) {
-            if (RubikTheme.colors.isDark) Color(0xFF1A1510) else Color(0xFFFFF7ED)
+            if (RubikTheme.colors.isDark) Color_FF1A1510 else Color_FFFFF7ED
         } else bgUnselected,
         animationSpec = tween(300)
     )
@@ -446,12 +448,12 @@ private fun ThemeOptionCard(
             .border(
                 width = if (isSelected) 1.5.dp else 0.5.dp,
                 brush = if (isSelected) {
-                    Brush.linearGradient(listOf(Color(0xFFFF8A00), Color(0xFFFF5252)))
+                    Brush.linearGradient(listOf(Color_FFFF8A00, Color_FFFF5252))
                 } else {
                     Brush.linearGradient(
                         listOf(
-                            if (RubikTheme.colors.isDark) Color(0x0AFFFFFF) else Color(0x1A000000),
-                            if (RubikTheme.colors.isDark) Color(0x0AFFFFFF) else Color(0x1A000000)
+                            if (RubikTheme.colors.isDark) Color_0AFFFFFF else Color_1A000000,
+                            if (RubikTheme.colors.isDark) Color_0AFFFFFF else Color_1A000000
                         )
                     )
                 },
@@ -468,7 +470,7 @@ private fun ThemeOptionCard(
         )
         Text(
             text = label,
-            color = if (isSelected) Color(0xFFFF8A00) else textPrimary,
+            color = if (isSelected) Color_FFFF8A00 else textPrimary,
             fontSize = 12.sp,
             fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Bold,
             maxLines = 1
@@ -490,7 +492,7 @@ private fun ThemeOptionCard(
                     .clip(RoundedCornerShape(2.dp))
                     .background(
                         Brush.horizontalGradient(
-                            listOf(Color(0xFFFF8A00), Color(0xFFFF5252))
+                            listOf(Color_FFFF8A00, Color_FFFF5252)
                         )
                     )
             )

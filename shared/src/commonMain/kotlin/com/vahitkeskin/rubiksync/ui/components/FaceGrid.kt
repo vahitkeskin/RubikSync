@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.components
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,7 +32,7 @@ fun FaceGrid(
     Column(
         modifier = modifier
             .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(8.dp))
-            .background(Color(0x0C000000), RoundedCornerShape(8.dp))
+            .background(Color_0C000000, RoundedCornerShape(8.dp))
             .padding(spacing * 2),
         verticalArrangement = Arrangement.spacedBy(spacing)
     ) {

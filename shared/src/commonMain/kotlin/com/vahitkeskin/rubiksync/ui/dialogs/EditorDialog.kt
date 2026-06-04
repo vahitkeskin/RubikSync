@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.dialogs
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -45,7 +47,7 @@ private fun MiniFaceGrid(
             )
             .clickable { onFaceSelect(face) }
             .background(
-                if (isActive) RubikTheme.colors.accentBlue.copy(alpha = 0.08f) else Color(0x06000000),
+                if (isActive) RubikTheme.colors.accentBlue.copy(alpha = 0.08f) else Color_06000000,
                 RoundedCornerShape(4.dp)
             )
             .padding(2.dp),
@@ -150,7 +152,7 @@ fun EditorDialog(
                         .clip(RoundedCornerShape(2.dp))
                         .background(
                             Brush.horizontalGradient(
-                                listOf(Color(0xFFFF8A00), Color(0xFF448AFF))
+                                listOf(Color_FFFF8A00, Color_FF448AFF)
                             )
                         )
                 )
@@ -212,9 +214,9 @@ fun EditorDialog(
                     .background(
                         Brush.horizontalGradient(
                             if (RubikTheme.colors.isDark) {
-                                listOf(Color(0xFF0F1A2E), Color(0xFF111D32))
+                                listOf(Color_FF0F1A2E, Color_FF111D32)
                             } else {
-                                listOf(Color(0xFFE3F2FD), Color(0xFFBBDEFB))
+                                listOf(Color_FFE3F2FD, Color_FFBBDEFB)
                             }
                         )
                     )
@@ -269,12 +271,12 @@ fun EditorDialog(
                 FaceName.values().forEach { face ->
                     val isSelected = face == activeFace
                     val centerColor = when (face) {
-                        FaceName.U -> Color(0xFFFB8C00)
-                        FaceName.D -> Color(0xFFE53935)
-                        FaceName.L -> Color(0xFFFFEB3B)
-                        FaceName.R -> Color(0xFFECEFF1)
-                        FaceName.F -> Color(0xFF4CAF50)
-                        FaceName.B -> Color(0xFF1E88E5)
+                        FaceName.U -> Color_FFFB8C00
+                        FaceName.D -> Color_FFE53935
+                        FaceName.L -> Color_FFFFEB3B
+                        FaceName.R -> Color_FFECEFF1
+                        FaceName.F -> Color_FF4CAF50
+                        FaceName.B -> Color_FF1E88E5
                     }
                     val label = when (face) {
                         FaceName.U -> appState.strings.faceU
@@ -290,7 +292,7 @@ fun EditorDialog(
                             .clip(RoundedCornerShape(10.dp))
                             .background(
                                 if (isSelected) {
-                                    if (RubikTheme.colors.isDark) Color(0xFF1A2D4D) else Color(0xFFE3F2FD)
+                                    if (RubikTheme.colors.isDark) Color_FF1A2D4D else Color_FFE3F2FD
                                 } else {
                                     RubikTheme.colors.backgroundSecondary
                                 }
@@ -317,7 +319,7 @@ fun EditorDialog(
                             Text(
                                 text = label,
                                 color = if (isSelected) {
-                                    if (RubikTheme.colors.isDark) Color.White else Color(0xFF0D47A1)
+                                    if (RubikTheme.colors.isDark) Color.White else Color_FF0D47A1
                                 } else {
                                     RubikTheme.colors.textSecondary
                                 },
@@ -458,12 +460,12 @@ fun EditorDialog(
                         )
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (RubikTheme.colors.isDark) Color(0xFF2A1519) else Color(0xFFFFEBEE),
+                        containerColor = if (RubikTheme.colors.isDark) Color_FF2A1519 else Color_FFFFEBEE,
                         contentColor = RubikTheme.colors.accentRed
                     ),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color(0xFF3D1519) else Color(0xFFFFCDD2)),
+                    border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) Color_FF3D1519 else Color_FFFFCDD2),
                     modifier = Modifier.weight(1f).height(42.dp)
                 ) {
                     Text(

@@ -34,9 +34,9 @@ fun App() {
 
     // Arka plan gradient renkleri
     val backgroundGradient = if (isDarkTheme) {
-        listOf(Color(0xFF0F1724), Color(0xFF0A0E18), Color(0xFF0D1220), Color(0xFF0A0E18))
+        listOf(Color_FF0F1724, Color_FF0A0E18, Color_FF0D1220, Color_FF0A0E18)
     } else {
-        listOf(Color(0xFFF8F9FC), Color(0xFFF5F7FA), Color(0xFFF0F2F5), Color(0xFFF5F7FA))
+        listOf(Color_FFF8F9FC, Color_FFF5F7FA, Color_FFF0F2F5, Color_FFF5F7FA)
     }
 
     // Tema yüklenene kadar boş bir gradyan ekranı göstererek Splash'in doğru temada açılmasını garanti et
@@ -83,31 +83,31 @@ fun App() {
     // Dinamik renk şeması
     val colorScheme = if (isDarkTheme) {
         darkColorScheme(
-            primary = Color(0xFFFF8A00),
+            primary = Color_FFFF8A00,
             onPrimary = Color.White,
-            secondary = Color(0xFF448AFF),
+            secondary = Color_FF448AFF,
             onSecondary = Color.White,
-            tertiary = Color(0xFF30D158),
-            background = Color(0xFF0A0E18),
-            surface = Color(0xFF141B28),
-            surfaceVariant = Color(0xFF1C2536),
+            tertiary = Color_FF30D158,
+            background = Color_FF0A0E18,
+            surface = Color_FF141B28,
+            surfaceVariant = Color_FF1C2536,
             onBackground = Color.White,
             onSurface = Color.White,
-            outline = Color(0xFF2A3548)
+            outline = Color_FF2A3548
         )
     } else {
         lightColorScheme(
-            primary = Color(0xFFFF8A00),
+            primary = Color_FFFF8A00,
             onPrimary = Color.White,
-            secondary = Color(0xFF2979FF),
+            secondary = Color_FF2979FF,
             onSecondary = Color.White,
-            tertiary = Color(0xFF28A745),
-            background = Color(0xFFF5F7FA),
-            surface = Color(0xFFFFFFFF),
-            surfaceVariant = Color(0xFFF0F2F5),
-            onBackground = Color(0xFF1A1A2E),
-            onSurface = Color(0xFF1A1A2E),
-            outline = Color(0xFFE5E7EB)
+            tertiary = Color_FF28A745,
+            background = Color_FFF5F7FA,
+            surface = Color_FFFFFFFF,
+            surfaceVariant = Color_FFF0F2F5,
+            onBackground = Color_FF1A1A2E,
+            onSurface = Color_FF1A1A2E,
+            outline = Color_FFE5E7EB
         )
     }
 

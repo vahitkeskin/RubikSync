@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.components
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -28,8 +30,8 @@ fun BoxScope.FeedbackOverlay(
     FeedbackBanner(
         message = appState.errorMessage,
         emoji = "❌",
-        gradientColors = listOf(Color(0xFFCC2936), Color(0xFFB5001A)),
-        borderColor = Color(0xFFFF3B30),
+        gradientColors = listOf(Color_FFCC2936, Color_FFB5001A),
+        borderColor = Color_FFFF3B30,
         onDismiss = { appState.errorMessage = null },
         autoDismissMs = 4000
     )
@@ -38,8 +40,8 @@ fun BoxScope.FeedbackOverlay(
     FeedbackBanner(
         message = appState.successMessage,
         emoji = "✅",
-        gradientColors = listOf(Color(0xFF1A6B35), Color(0xFF0B4D20)),
-        borderColor = Color(0xFF30D158),
+        gradientColors = listOf(Color_FF1A6B35, Color_FF0B4D20),
+        borderColor = Color_FF30D158,
         onDismiss = { appState.successMessage = null },
         autoDismissMs = 3000
     )
@@ -49,8 +51,8 @@ fun BoxScope.FeedbackOverlay(
         FeedbackBanner(
             message = appState.infoMessage,
             emoji = "ℹ️",
-            gradientColors = listOf(Color(0xFF1A3D5C), Color(0xFF0F2640)),
-            borderColor = Color(0xFF448AFF),
+            gradientColors = listOf(Color_FF1A3D5C, Color_FF0F2640),
+            borderColor = Color_FF448AFF,
             onDismiss = { appState.infoMessage = null },
             autoDismissMs = 3000
         )

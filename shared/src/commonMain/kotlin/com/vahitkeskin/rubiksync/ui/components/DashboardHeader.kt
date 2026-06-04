@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.components
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,7 +53,7 @@ fun DashboardHeader(
                         .clip(RoundedCornerShape(4.dp))
                         .background(
                             Brush.linearGradient(
-                                listOf(Color(0xFFFF8A00), Color(0xFFFF5252))
+                                listOf(Color_FFFF8A00, Color_FFFF5252)
                             )
                         )
                 )
@@ -145,7 +147,7 @@ fun DashboardHeader(
                             .clip(RoundedCornerShape(6.dp))
                             .background(
                                 if (isLast) {
-                                    Brush.horizontalGradient(listOf(Color(0xFFFF8A00), Color(0xFFFF5252)))
+                                    Brush.horizontalGradient(listOf(Color_FFFF8A00, Color_FFFF5252))
                                 } else {
                                     Brush.horizontalGradient(listOf(RubikTheme.colors.backgroundTertiary, RubikTheme.colors.backgroundTertiary))
                                 }

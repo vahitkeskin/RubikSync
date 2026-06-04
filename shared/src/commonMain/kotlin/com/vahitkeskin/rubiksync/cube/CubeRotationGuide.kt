@@ -1,5 +1,7 @@
 package com.vahitkeskin.rubiksync.cube
 
+import com.vahitkeskin.rubiksync.ui.state.*
+
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -108,12 +110,12 @@ fun CubeRotationGuide(
         .replace("%s", centerColorLocalized)
 
     val faceColorHex = when (currentFace) {
-        FaceName.U -> Color(0xFFFF5F00)
-        FaceName.D -> Color(0xFFD6001C)
-        FaceName.L -> Color(0xFFFFD500)
-        FaceName.R -> Color(0xFFFFFFFF)
-        FaceName.F -> Color(0xFF009B48)
-        FaceName.B -> Color(0xFF0046AD)
+        FaceName.U -> Color_FFFF5F00
+        FaceName.D -> Color_FFD6001C
+        FaceName.L -> Color_FFFFD500
+        FaceName.R -> Color_FFFFFFFF
+        FaceName.F -> Color_FF009B48
+        FaceName.B -> Color_FF0046AD
     }
 
     val guideInstruction = when (currentFace) {
@@ -196,12 +198,12 @@ fun CubeRotationGuide(
 @Composable
 private fun Mini2DNet(targetFace: FaceName) {
     val faceColorMap = mapOf(
-        FaceName.U to Color(0xFFFF5F00),
-        FaceName.D to Color(0xFFD6001C),
-        FaceName.L to Color(0xFFFFD500),
-        FaceName.R to Color(0xFFFFFFFF),
-        FaceName.F to Color(0xFF009B48),
-        FaceName.B to Color(0xFF0046AD)
+        FaceName.U to Color_FFFF5F00,
+        FaceName.D to Color_FFD6001C,
+        FaceName.L to Color_FFFFD500,
+        FaceName.R to Color_FFFFFFFF,
+        FaceName.F to Color_FF009B48,
+        FaceName.B to Color_FF0046AD
     )
 
     @Composable

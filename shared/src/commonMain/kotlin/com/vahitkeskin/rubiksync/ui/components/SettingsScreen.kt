@@ -74,7 +74,6 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .safeDrawingPadding()
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
         ) {
             // Top Bar
@@ -122,7 +121,13 @@ fun SettingsScreen(
                 }
             }
 
-            // Tema Modu Bölümü
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Tema Modu Bölümü
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -424,6 +429,7 @@ fun SettingsScreen(
             )
         }
     }
+}
 }
 
 @Composable

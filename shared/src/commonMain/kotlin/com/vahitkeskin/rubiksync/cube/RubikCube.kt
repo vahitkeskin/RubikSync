@@ -130,13 +130,13 @@ class RubikCubeState {
         }
     }
 
-    suspend fun executeMove(move: MoveType, skipAnimation: Boolean = false) {
+    suspend fun executeMove(move: MoveType, skipAnimation: Boolean = false, addToHistory: Boolean = true) {
         if (isAnimating) return
         isAnimating = true
 
         if (skipAnimation) {
             applyDiscreteRotation(move)
-            moveHistory.add(move)
+            if (addToHistory) moveHistory.add(move)
             isAnimating = false
             onStateChanged?.invoke()
             return
@@ -160,7 +160,7 @@ class RubikCubeState {
         }
 
         applyDiscreteRotation(move)
-        moveHistory.add(move)
+        if (addToHistory) moveHistory.add(move)
         currentMove = null
         isAnimating = false
         onStateChanged?.invoke()
@@ -217,9 +217,8 @@ class RubikCubeState {
         }
         
         // Remove the inverse move from history since executeMove will add it
-        executeMove(inverseMove)
-        moveHistory.removeLast() // pop the inverseMove we just added
-        onStateChanged?.invoke()
+        executeMove(inverseMove, addToHistory = false)
+        // onStateChanged is called by executeMove
     }
 
     fun setCustomState(faces: Map<FaceName, Array<Array<CubeColor>>>): Boolean {

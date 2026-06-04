@@ -158,6 +158,9 @@ class RubikAppState(
                 val saved = persistence.loadCubeState()
                 if (saved != null) {
                     withContext(Dispatchers.Main) {
+                        // Küpün başlangıçta her zaman çözülü (solved) gelmesi istendiği için,
+                        // önceki oturumdaki karıştırılmış durumu (pozisyon ve geçmişi) geri yüklemeyi devre dışı bıraktık.
+                        /*
                         saved.cubies.forEach { snap ->
                             val cubie = cubeState.cubies.find { it.id == snap.id }
                             if (cubie != null) {
@@ -173,6 +176,7 @@ class RubikAppState(
                         
                         manualMoves.clear()
                         manualMoves.addAll(saved.manualMoves)
+                        */
                         
                         _editorFaces = saved.editorFaces
                     }

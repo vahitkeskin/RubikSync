@@ -7,13 +7,10 @@ import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
-// Core 3D integer coordinate representation used in solver algorithms
 import com.vahitkeskin.rubiksync.solver.IntVector3
-// Annotated move step carrying explanation and phase details
 import com.vahitkeskin.rubiksync.solver.AnnotatedMove
 import kotlinx.coroutines.CoroutineScope
 import com.vahitkeskin.rubiksync.utils.CubiePersistable
-import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,10 +20,22 @@ import com.vahitkeskin.rubiksync.ui.strings.AppStrings
 import com.vahitkeskin.rubiksync.ui.strings.AppStringsMap
 import com.vahitkeskin.rubiksync.ui.strings.EnStrings
 import com.vahitkeskin.rubiksync.getSystemLanguageCode
+import com.vahitkeskin.rubiksync.di.DIContainer
+import com.vahitkeskin.rubiksync.domain.usecase.*
 
 class RubikAppState(
     val cubeState: RubikCubeState,
-    val coroutineScope: CoroutineScope
+    val coroutineScope: CoroutineScope,
+    private val getCubeStateUseCase: GetCubeStateUseCase = DIContainer.getCubeStateUseCase,
+    private val saveCubeStateUseCase: SaveCubeStateUseCase = DIContainer.saveCubeStateUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase = DIContainer.getSettingsUseCase,
+    private val saveThemeUseCase: SaveThemeUseCase = DIContainer.saveThemeUseCase,
+    private val saveLanguageUseCase: SaveLanguageUseCase = DIContainer.saveLanguageUseCase,
+    private val saveSoundEnabledUseCase: SaveSoundEnabledUseCase = DIContainer.saveSoundEnabledUseCase,
+    private val saveCubeEditableUseCase: SaveCubeEditableUseCase = DIContainer.saveCubeEditableUseCase,
+    private val saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase = DIContainer.saveShowcaseCompletedUseCase,
+    private val getCameraSettingsUseCase: GetCameraSettingsUseCase = DIContainer.getCameraSettingsUseCase,
+    private val saveCameraSettingsUseCase: SaveCameraSettingsUseCase = DIContainer.saveCameraSettingsUseCase
 ) {
     // Camera State
     var yaw by mutableStateOf(-0.55f)
@@ -347,14 +356,14 @@ class RubikAppState(
     fun updateThemeMode(mode: ThemeMode) {
         themeMode = mode
         coroutineScope.launch(Dispatchers.Default) {
-            RubikPersistenceRegistry.persistence?.saveThemeMode(mode.name)
+            saveThemeUseCase(mode.name)
         }
     }
 
     fun updateLanguage(lang: AppLanguage) {
         appLanguage = lang
         coroutineScope.launch(Dispatchers.Default) {
-            RubikPersistenceRegistry.persistence?.saveLanguage(lang.code)
+            saveLanguageUseCase(lang.code)
         }
     }
 
@@ -364,21 +373,21 @@ class RubikAppState(
             isPlaybackRunning = false
         }
         coroutineScope.launch(Dispatchers.Default) {
-            RubikPersistenceRegistry.persistence?.saveCubeEditable(enabled)
+            saveCubeEditableUseCase(enabled)
         }
     }
 
     fun updateSoundEnabled(enabled: Boolean) {
         isSoundEnabled = enabled
         coroutineScope.launch(Dispatchers.Default) {
-            RubikPersistenceRegistry.persistence?.saveSoundEnabled(enabled)
+            saveSoundEnabledUseCase(enabled)
         }
     }
 
     fun updateShowcaseCompleted(completed: Boolean) {
         isShowcaseCompleted = completed
         coroutineScope.launch(Dispatchers.Default) {
-            RubikPersistenceRegistry.persistence?.saveShowcaseCompleted(completed)
+            saveShowcaseCompletedUseCase(completed)
         }
     }
 
@@ -401,7 +410,6 @@ class RubikAppState(
     }
 
     fun saveCurrentState() {
-        val p = RubikPersistenceRegistry.persistence ?: return
         if (isSolved && (cubeState.moveHistory.isNotEmpty() || manualMoves.isNotEmpty())) {
             cubeState.moveHistory.clear()
             _manualMoves.clear()
@@ -425,7 +433,7 @@ class RubikAppState(
                     forwardZ = c.forwardBasis.z.roundToInt()
                 )
             }
-            p.saveCubeState(
+            saveCubeStateUseCase(
                 cubies = persistableCubies,
                 moveHistory = cubeState.moveHistory.toList(),
                 manualMoves = manualMoves.toList(),
@@ -434,68 +442,66 @@ class RubikAppState(
         }
     }
 
+    fun saveCameraSettings(
+        yaw: Float,
+        pitch: Float,
+        cameraDistance: Float,
+        panX: Float,
+        panY: Float,
+        rotationSpeedMs: Float
+    ) {
+        coroutineScope.launch(Dispatchers.Default) {
+            saveCameraSettingsUseCase(yaw, pitch, cameraDistance, panX, panY, rotationSpeedMs)
+        }
+    }
+
     init {
         cubeState.onStateChanged = { saveCurrentState() }
 
         coroutineScope.launch(Dispatchers.Default) {
-            val persistence = RubikPersistenceRegistry.persistence
             try {
-                if (persistence != null) {
-                    val camera = persistence.loadCameraSettings()
+                val settings = getSettingsUseCase()
+                val camera = getCameraSettingsUseCase()
+
+                withContext(Dispatchers.Main) {
                     if (camera != null) {
-                        withContext(Dispatchers.Main) {
-                            // Kamera pozisyonu yüklenmez — her açılışta sıfırlama konumunda başlar
-                            cubeState.rotationSpeedMs = camera.rotationSpeedMs
-                        }
+                        cubeState.rotationSpeedMs = camera.rotationSpeedMs
                     }
 
-                    // Tema modunu yükle
-                    val savedTheme = persistence.loadThemeMode()
-                    if (savedTheme != null) {
+                    if (settings.themeMode != null) {
                         val mode = try {
-                            ThemeMode.valueOf(savedTheme)
+                            ThemeMode.valueOf(settings.themeMode)
                         } catch (_: Exception) {
                             ThemeMode.SYSTEM
                         }
-                        withContext(Dispatchers.Main) {
-                            themeMode = mode
-                        }
+                        themeMode = mode
                     }
 
-                    // Dil tercihini yükle
-                    val savedLang = persistence.loadLanguage()
-                    if (savedLang != null) {
+                    if (settings.languageCode != null) {
                         val sysCode = getSystemLanguageCode().lowercase()
                         val defaultLang =
                             AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
-                        val lang = AppLanguage.values().find { it.code == savedLang } ?: defaultLang
-                        withContext(Dispatchers.Main) {
-                            appLanguage = lang
-                        }
+                        val lang = AppLanguage.values().find { it.code == settings.languageCode } ?: defaultLang
+                        appLanguage = lang
                     }
 
-                    val saved = persistence.loadCubeState()
-                    if (saved != null) {
-                        withContext(Dispatchers.Main) {
-                            editorFaces = saved.editorFaces
-                        }
+                    if (settings.isCubeEditable != null) {
+                        isCubeEditable = settings.isCubeEditable
                     }
 
-                    persistence.loadCubeEditable()?.let { editable ->
-                        withContext(Dispatchers.Main) {
-                            isCubeEditable = editable
-                        }
+                    if (settings.isSoundEnabled != null) {
+                        isSoundEnabled = settings.isSoundEnabled
                     }
 
-                    persistence.loadSoundEnabled()?.let { soundEnabled ->
-                        withContext(Dispatchers.Main) {
-                            isSoundEnabled = soundEnabled
-                        }
+                    if (settings.isShowcaseCompleted != null) {
+                        isShowcaseCompleted = settings.isShowcaseCompleted
                     }
+                }
 
-                    val showcaseCompleted = persistence.loadShowcaseCompleted() ?: false
+                val saved = getCubeStateUseCase()
+                if (saved != null) {
                     withContext(Dispatchers.Main) {
-                        isShowcaseCompleted = showcaseCompleted
+                        editorFaces = saved.editorFaces
                     }
                 }
             } catch (e: Exception) {
@@ -514,5 +520,5 @@ fun rememberRubikAppState(
     cubeState: RubikCubeState = remember { RubikCubeState() },
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) = remember(cubeState, coroutineScope) {
-    RubikAppState(cubeState, coroutineScope)
+    RubikAppState(cubeState = cubeState, coroutineScope = coroutineScope)
 }

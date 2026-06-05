@@ -34,7 +34,6 @@ import androidx.compose.animation.fadeOut
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,7 +91,7 @@ fun App() {
         cubeState.rotationSpeedMs
     ) {
         kotlinx.coroutines.delay(300)
-        RubikPersistenceRegistry.persistence?.saveCameraSettings(
+        appState.saveCameraSettings(
             yaw = appState.yaw,
             pitch = appState.pitch,
             cameraDistance = appState.cameraDistance,

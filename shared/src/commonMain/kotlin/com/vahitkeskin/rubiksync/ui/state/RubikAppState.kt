@@ -155,6 +155,11 @@ class RubikAppState(
     var scannerShowcaseStep by mutableStateOf(0)
         private set
 
+    // User-triggered active tooltip ID (locks, sounds, shake, etc.)
+    var activeTooltipId by mutableStateOf<String?>(null)
+        private set
+
+
     // Computed: is the cube solved?
     val isSolved: Boolean
         get() {
@@ -437,6 +442,20 @@ class RubikAppState(
 
     fun updateEditorShowcaseCompleted(completed: Boolean) {
         isEditorShowcaseCompleted = completed
+    }
+
+    fun showTooltip(id: String) {
+        activeTooltipId = id
+    }
+
+    fun dismissTooltip(id: String) {
+        if (activeTooltipId == id) {
+            activeTooltipId = null
+        }
+    }
+
+    fun clearActiveTooltip() {
+        activeTooltipId = null
     }
 
     fun advanceEditorShowcase(totalSteps: Int = 5) {

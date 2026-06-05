@@ -49,10 +49,7 @@ fun DashboardHeader(
     onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showLockTooltip by remember { mutableStateOf(false) }
-    var showShakeTooltip by remember { mutableStateOf(false) }
-    var showSoundTooltip by remember { mutableStateOf(false) }
-    var showSettingsTooltip by remember { mutableStateOf(false) }
+    // Tooltips are now managed globally via appState.activeTooltipId
 
     Column(
         modifier = modifier
@@ -169,7 +166,7 @@ fun DashboardHeader(
                                 }
                             },
                             onLongClick = {
-                                showLockTooltip = true
+                                appState.showTooltip("lock")
                             }
                         ),
                     contentAlignment = Alignment.Center
@@ -181,11 +178,11 @@ fun DashboardHeader(
                     )
                     AuraBalloon(
                         text = appState.strings.showcaseEditableText,
-                        isVisible = (appState.showcaseStep == 1 && !appState.isShowcaseCompleted) || showLockTooltip,
+                        isVisible = (appState.showcaseStep == 1 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "lock",
                         isBelow = true,
                         onDismiss = {
-                            if (showLockTooltip) {
-                                showLockTooltip = false
+                            if (appState.activeTooltipId == "lock") {
+                                appState.dismissTooltip("lock")
                             } else {
                                 appState.advanceShowcase()
                             }
@@ -243,7 +240,7 @@ fun DashboardHeader(
                                 }
                             },
                             onLongClick = {
-                                showShakeTooltip = true
+                                appState.showTooltip("shake")
                             }
                         ),
                     contentAlignment = Alignment.Center
@@ -256,11 +253,11 @@ fun DashboardHeader(
                     )
                     AuraBalloon(
                         text = appState.strings.showcaseShakeToScrambleText,
-                        isVisible = (appState.showcaseStep == 2 && !appState.isShowcaseCompleted) || showShakeTooltip,
+                        isVisible = (appState.showcaseStep == 2 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "shake",
                         isBelow = true,
                         onDismiss = {
-                            if (showShakeTooltip) {
-                                showShakeTooltip = false
+                            if (appState.activeTooltipId == "shake") {
+                                appState.dismissTooltip("shake")
                             } else {
                                 appState.advanceShowcase()
                             }
@@ -318,7 +315,7 @@ fun DashboardHeader(
                                 }
                             },
                             onLongClick = {
-                                showSoundTooltip = true
+                                appState.showTooltip("sound")
                             }
                         ),
                     contentAlignment = Alignment.Center
@@ -331,11 +328,11 @@ fun DashboardHeader(
                     )
                     AuraBalloon(
                         text = appState.strings.showcaseSoundText,
-                        isVisible = (appState.showcaseStep == 3 && !appState.isShowcaseCompleted) || showSoundTooltip,
+                        isVisible = (appState.showcaseStep == 3 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "sound",
                         isBelow = true,
                         onDismiss = {
-                            if (showSoundTooltip) {
-                                showSoundTooltip = false
+                            if (appState.activeTooltipId == "sound") {
+                                appState.dismissTooltip("sound")
                             } else {
                                 appState.advanceShowcase()
                             }
@@ -365,7 +362,7 @@ fun DashboardHeader(
                                 onNavigateToSettings()
                             },
                             onLongClick = {
-                                showSettingsTooltip = true
+                                appState.showTooltip("settings")
                             }
                         ),
                     contentAlignment = Alignment.Center
@@ -377,11 +374,11 @@ fun DashboardHeader(
                     )
                     AuraBalloon(
                         text = appState.strings.showcaseSettingsText,
-                        isVisible = (appState.showcaseStep == 4 && !appState.isShowcaseCompleted) || showSettingsTooltip,
+                        isVisible = (appState.showcaseStep == 4 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "settings",
                         isBelow = true,
                         onDismiss = {
-                            if (showSettingsTooltip) {
-                                showSettingsTooltip = false
+                            if (appState.activeTooltipId == "settings") {
+                                appState.dismissTooltip("settings")
                             } else {
                                 appState.advanceShowcase()
                             }

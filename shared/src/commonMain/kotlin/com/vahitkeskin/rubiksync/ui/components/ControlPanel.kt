@@ -89,11 +89,7 @@ fun ControlPanel(
     val canEditCube = appState.isCubeEditable
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
 
-    var showScrambleTooltip by remember { mutableStateOf(false) }
-    var showUndoTooltip by remember { mutableStateOf(false) }
-    var showResetTooltip by remember { mutableStateOf(false) }
-    var showDesignTooltip by remember { mutableStateOf(false) }
-    var showSolveTooltip by remember { mutableStateOf(false) }
+    // Tooltips are now managed globally via appState.activeTooltipId
 
     var wasShowcaseActive by remember { mutableStateOf(false) }
 
@@ -299,7 +295,7 @@ fun ControlPanel(
                                                 }
                                             },
                                             onLongClick = {
-                                                showScrambleTooltip = true
+                                                appState.showTooltip("scramble")
                                             }
                                         ),
                                     contentAlignment = Alignment.Center
@@ -315,11 +311,11 @@ fun ControlPanel(
                                 }
                                 AuraBalloon(
                                     text = appState.strings.showcaseScrambleText,
-                                    isVisible = (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) || showScrambleTooltip,
+                                    isVisible = (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "scramble",
                                     isBelow = false,
                                     onDismiss = {
-                                        if (showScrambleTooltip) {
-                                            showScrambleTooltip = false
+                                        if (appState.activeTooltipId == "scramble") {
+                                            appState.dismissTooltip("scramble")
                                         } else {
                                             appState.advanceShowcase()
                                         }
@@ -377,7 +373,7 @@ fun ControlPanel(
                                                 }
                                             },
                                             onLongClick = {
-                                                showUndoTooltip = true
+                                                appState.showTooltip("undo")
                                             }
                                         ),
                                     contentAlignment = Alignment.Center
@@ -393,11 +389,11 @@ fun ControlPanel(
                                 }
                                 AuraBalloon(
                                     text = appState.strings.showcaseUndoText,
-                                    isVisible = (appState.showcaseStep == 8 && !appState.isShowcaseCompleted) || showUndoTooltip,
+                                    isVisible = (appState.showcaseStep == 8 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "undo",
                                     isBelow = false,
                                     onDismiss = {
-                                        if (showUndoTooltip) {
-                                            showUndoTooltip = false
+                                        if (appState.activeTooltipId == "undo") {
+                                            appState.dismissTooltip("undo")
                                         } else {
                                             appState.advanceShowcase()
                                         }
@@ -470,7 +466,7 @@ fun ControlPanel(
                                                 }
                                             },
                                             onLongClick = {
-                                                showResetTooltip = true
+                                                appState.showTooltip("reset")
                                             }
                                         ),
                                     contentAlignment = Alignment.Center
@@ -486,11 +482,11 @@ fun ControlPanel(
                                 }
                                 AuraBalloon(
                                     text = appState.strings.showcaseResetText,
-                                    isVisible = (appState.showcaseStep == 9 && !appState.isShowcaseCompleted) || showResetTooltip,
+                                    isVisible = (appState.showcaseStep == 9 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "reset",
                                     isBelow = false,
                                     onDismiss = {
-                                        if (showResetTooltip) {
-                                            showResetTooltip = false
+                                        if (appState.activeTooltipId == "reset") {
+                                            appState.dismissTooltip("reset")
                                         } else {
                                             appState.advanceShowcase()
                                         }
@@ -559,7 +555,7 @@ fun ControlPanel(
                                             }
                                         },
                                         onLongClick = {
-                                            showDesignTooltip = true
+                                            appState.showTooltip("design")
                                         }
                                     ),
                                 contentAlignment = Alignment.Center
@@ -575,11 +571,11 @@ fun ControlPanel(
                             }
                             AuraBalloon(
                                 text = appState.strings.showcaseDesignText,
-                                isVisible = (appState.showcaseStep == 10 && !appState.isShowcaseCompleted) || showDesignTooltip,
+                                isVisible = (appState.showcaseStep == 10 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "design",
                                 isBelow = false,
                                 onDismiss = {
-                                    if (showDesignTooltip) {
-                                        showDesignTooltip = false
+                                    if (appState.activeTooltipId == "design") {
+                                        appState.dismissTooltip("design")
                                     } else {
                                         appState.advanceShowcase()
                                     }
@@ -750,7 +746,7 @@ fun ControlPanel(
                                             }
                                         },
                                         onLongClick = {
-                                            showSolveTooltip = true
+                                            appState.showTooltip("solve")
                                         }
                                     ),
                                 contentAlignment = Alignment.Center
@@ -774,11 +770,11 @@ fun ControlPanel(
                             }
                             AuraBalloon(
                                 text = appState.strings.showcaseSolveText,
-                                isVisible = (appState.showcaseStep == 11 && !appState.isShowcaseCompleted) || showSolveTooltip,
+                                isVisible = (appState.showcaseStep == 11 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "solve",
                                 isBelow = false,
                                 onDismiss = {
-                                    if (showSolveTooltip) {
-                                        showSolveTooltip = false
+                                    if (appState.activeTooltipId == "solve") {
+                                        appState.dismissTooltip("solve")
                                     } else {
                                         appState.advanceShowcase()
                                     }

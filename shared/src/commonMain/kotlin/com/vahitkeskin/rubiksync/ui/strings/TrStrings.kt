@@ -2,8 +2,8 @@ package com.vahitkeskin.rubiksync.ui.strings
 
 val TrStrings = AppStrings(
     appTitle = "RUBIK SYNC",
-    appSubtitle = "3D INTERACTIVE SIMULATOR",
-    splashSubtitle = "3D INTERACTIVE SIMULATOR & SOLVER",
+    appSubtitle = "3D İNTERAKTİF SİMÜLATÖR",
+    splashSubtitle = "3D İNTERAKTİF SİMÜLATÖR & ÇÖZÜCÜ",
     settingsTitle = "Ayarlar",
     settingsSubtitle = "Uygulama tercihlerini özelleştir",
     themeMode = "Tema Modu",
@@ -81,7 +81,7 @@ val TrStrings = AppStrings(
     faceL = "Sol",
     faceR = "Sağ",
     faceF = "Ön",
-    faceB = "Arxa",
+    faceB = "Arka",
     colorOrange = "Turuncu",
     colorRed = "Kırmızı",
     colorYellow = "Sarı",

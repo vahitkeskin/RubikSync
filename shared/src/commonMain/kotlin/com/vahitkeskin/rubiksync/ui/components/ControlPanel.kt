@@ -13,6 +13,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,10 +21,15 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -72,15 +78,17 @@ fun ControlPanel(
     val cubeState = appState.cubeState
     val coroutineScope = appState.coroutineScope
     val canEditCube = appState.isCubeEditable
-    var selectedTab by remember { mutableStateOf(0) }
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
 
     LaunchedEffect(appState.showcaseStep) {
-        if (appState.showcaseStep == 5) {
-            selectedTab = 0
-        } else if (appState.showcaseStep in 6..8) {
-            selectedTab = 1
-        } else if (appState.showcaseStep in 9..10) {
-            selectedTab = 2
+        val targetPage = when (appState.showcaseStep) {
+            5 -> 0
+            in 6..8 -> 1
+            in 9..10 -> 2
+            else -> null
+        }
+        if (targetPage != null && pagerState.currentPage != targetPage) {
+            pagerState.animateScrollToPage(targetPage)
         }
     }
 
@@ -104,41 +112,64 @@ fun ControlPanel(
                 .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(10.dp))
                 .padding(2.dp)
         ) {
-            listOf(appState.strings.tabMoves, appState.strings.tabActions, appState.strings.tabAI).forEachIndexed { index, title ->
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val tabWidth = maxWidth / 3
+                val pageOffset by remember {
+                    derivedStateOf {
+                        pagerState.currentPage + pagerState.currentPageOffsetFraction
+                    }
+                }
+
+                // Active Tab background slider
                 Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .height(30.dp)
+                        .width(tabWidth)
+                        .fillMaxHeight()
+                        .offset(x = tabWidth * pageOffset)
                         .clip(RoundedCornerShape(8.dp))
                         .background(
-                            if (selectedTab == index) {
-                                Brush.horizontalGradient(
-                                    listOf(RubikTheme.colors.tabActive, RubikTheme.colors.tabActive)
-                                )
-                            } else {
-                                Brush.horizontalGradient(listOf(Color.Transparent, Color.Transparent))
-                            }
+                            Brush.horizontalGradient(
+                                listOf(RubikTheme.colors.tabActive, RubikTheme.colors.tabActive)
+                            )
                         )
-                        .then(
-                            if (selectedTab == index) Modifier.border(0.5.dp, RubikTheme.colors.tabActiveBorder, RoundedCornerShape(8.dp))
-                            else Modifier
-                        )
-                        .clickable { selectedTab = index },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = title,
-                        color = if (selectedTab == index) RubikTheme.colors.textPrimary else RubikTheme.colors.textSecondary,
-                        fontSize = 11.sp,
-                        fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Medium,
-                        maxLines = 1
-                    )
+                        .border(0.5.dp, RubikTheme.colors.tabActiveBorder, RoundedCornerShape(8.dp))
+                )
+
+                // Tab Text buttons
+                Row(modifier = Modifier.fillMaxSize()) {
+                    listOf(appState.strings.tabMoves, appState.strings.tabActions, appState.strings.tabAI).forEachIndexed { index, title ->
+                        val isSelected = pagerState.currentPage == index
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(index)
+                                    }
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = title,
+                                color = if (isSelected) RubikTheme.colors.textPrimary else RubikTheme.colors.textSecondary,
+                                fontSize = 11.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                maxLines = 1
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        // Tab Content
-        when (selectedTab) {
+        // Tab Content Pager
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth()
+        ) { page ->
+            when (page) {
             0 -> {
                 Box(
                     modifier = Modifier
@@ -546,6 +577,7 @@ fun ControlPanel(
                     }
                 }
             }
+        }
         }
 
         // Speed Control — always visible at bottom

@@ -118,5 +118,6 @@ val PlStrings = AppStrings(
     showcaseSoundText = "Dotknij ikony dźwięku, aby włączyć/wyłączyć dźwięk obrotu.",
     showcaseSettingsText = "Otwórz ustawienia, aby zmienić motyw i język.",
     showcaseMovesText = "Użyj tego panelu, aby obracać warstwy kostki.",
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Użyj zakładki AI, aby automatycznie rozwiązać kostkę."
 )

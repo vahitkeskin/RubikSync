@@ -117,6 +117,7 @@ val KoStrings = AppStrings(
     showcaseEditableText = "잠금 아이콘을 탭하여 큐브 편집을 활성화/비활성화하세요.",
     showcaseSoundText = "소리 아이콘을 탭하여 회전 소리를 켜거나 끄세요.",
     showcaseSettingsText = "설정을 열어 테마와 언어를 변경하세요.",
-    showcaseMovesText = "이 패널에서 큐브 레이어를 회전할 수 있습니다.",
-    showcaseSolveText = "AI 탭에서 큐브를 자동으로 풀 수 있습니다."
+    showcaseMovesText = "이 패널에서 큐브 레이어를 회전할 수 있습니다。",
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
+    showcaseSolveText = "AI 탭에서 큐브를 자동으로 풀 수 있습니다。"
 )

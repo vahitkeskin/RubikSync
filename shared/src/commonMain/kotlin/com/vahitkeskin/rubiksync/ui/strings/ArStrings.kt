@@ -118,5 +118,6 @@ val ArStrings = AppStrings(
     showcaseSoundText = "انقر على أيقونة الصوت لتشغيل أو إيقاف صوت الدوران.",
     showcaseSettingsText = "افتح الإعدادات لتغيير السمة واللغة.",
     showcaseMovesText = "استخدم هذه اللوحة لتدوير طبقات المكعب.",
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "استخدم علامة تبويب الذكاء الاصطناعي لحل المكعب تلقائيًا."
 )

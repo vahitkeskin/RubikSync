@@ -118,5 +118,6 @@ val ThStrings = AppStrings(
     showcaseSoundText = "แตะไอคอนเสียงเพื่อเปิด/ปิดเสียงหมุน",
     showcaseSettingsText = "เปิดการตั้งค่าเพื่อเปลี่ยนธีมและภาษา",
     showcaseMovesText = "ใช้แผงนี้หมุนชั้นของลูกบาศก์",
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "ใช้แท็บ AI เพื่อแก้ลูกบาศก์อัตโนมัติ"
 )

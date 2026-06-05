@@ -118,5 +118,6 @@ val FrStrings = AppStrings(
     showcaseSoundText = "Appuyez sur l'icône du son pour activer/désactiver le son de rotation.",
     showcaseSettingsText = "Ouvrez les paramètres pour changer le thème et la langue.",
     showcaseMovesText = "Utilisez ce panneau pour faire tourner les couches du cube.",
-    showcaseSolveText = "Utilisez l'onglet IA pour résoudre automatiquement votre cube."
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
+    showcaseSolveText = "Utilisez l'onglet IA para résoudre automatiquement votre cube."
 )

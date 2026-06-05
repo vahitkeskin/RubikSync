@@ -71,7 +71,7 @@ fun AuraBalloon(
     val animationProgress by animateFloatAsState(
         targetValue = if (isAnimatedVisible) 1f else 0f,
         animationSpec = tween(
-            durationMillis = 1000,
+            durationMillis = 300,
             easing = FastOutSlowInEasing
         )
     )
@@ -98,16 +98,18 @@ fun AuraBalloon(
                     var x = anchorCenter - popupContentSize.width / 2
                     x = x.coerceIn(screenPadding, windowSize.width - popupContentSize.width - screenPadding)
                     
+                    // Ok ucunun (pointer) balon üzerindeki yatay konumu - balon gövdesinden dışarı taşmayı önle
+                    balloonWidth = popupContentSize.width.toFloat()
+                    val minArrowX = with(density) { 16.dp.toPx() }
+                    val maxArrowX = if (balloonWidth > 0f) (balloonWidth - minArrowX).coerceAtLeast(minArrowX) else minArrowX
+                    arrowX = (anchorCenter - x).toFloat().coerceIn(minArrowX, maxArrowX)
+                    
                     // Balonun dikey konumu: İkonun hemen üstünde veya altında
                     val y = if (isBelow) {
                         anchorBounds.bottom + with(density) { 4.dp.toPx() }.toInt()
                     } else {
                         anchorBounds.top - popupContentSize.height - with(density) { 4.dp.toPx() }.toInt()
                     }
-                    
-                    // Ok ucunun (pointer) balon üzerindeki yatay konumu
-                    arrowX = (anchorCenter - x).toFloat()
-                    balloonWidth = popupContentSize.width.toFloat()
                     
                     return IntOffset(x, y)
                 }
@@ -177,6 +179,7 @@ private fun BalloonContent(
         // Balon gövdesi (Açık Renk)
         Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .shadow(12.dp, RoundedCornerShape(16.dp))
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
@@ -187,7 +190,8 @@ private fun BalloonContent(
                     ),
                     shape = RoundedCornerShape(16.dp)
                 )
-                .padding(horizontal = 14.dp, vertical = 12.dp)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = text,

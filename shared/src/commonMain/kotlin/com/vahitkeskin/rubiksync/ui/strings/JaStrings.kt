@@ -118,5 +118,6 @@ val JaStrings = AppStrings(
     showcaseSoundText = "サウンドアイコンをタップして、回転音のオン/オフを切り替えます。",
     showcaseSettingsText = "設定ボタンからテーマと言語を変更できます。",
     showcaseMovesText = "このパネルからキューブのレイヤーを回転できます。",
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "AIタブからキューブを自動的に解くことができます。"
 )

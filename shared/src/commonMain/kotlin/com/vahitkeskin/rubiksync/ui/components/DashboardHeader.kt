@@ -157,7 +157,7 @@ fun DashboardHeader(
                         isVisible = appState.showcaseStep == 1 && !appState.isShowcaseCompleted,
                         isBelow = true,
                         onDismiss = {
-                            appState.showcaseStep = 2
+                            appState.advanceShowcase()
                         }
                     )
                 }
@@ -217,7 +217,7 @@ fun DashboardHeader(
                         isVisible = appState.showcaseStep == 2 && !appState.isShowcaseCompleted,
                         isBelow = true,
                         onDismiss = {
-                            appState.showcaseStep = 3
+                            appState.advanceShowcase()
                         }
                     )
                 }
@@ -250,7 +250,7 @@ fun DashboardHeader(
                         isVisible = appState.showcaseStep == 3 && !appState.isShowcaseCompleted,
                         isBelow = true,
                         onDismiss = {
-                            appState.showcaseStep = 4
+                            appState.advanceShowcase()
                         }
                     )
                 }

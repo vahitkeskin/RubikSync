@@ -118,5 +118,6 @@ val AzStrings = AppStrings(
     showcaseSoundText = "Dönmə səsini açmaq/söndürmək üçün səs ikonuna toxunun.",
     showcaseSettingsText = "Tema və dil dəyişdirmək üçün parametrləri açın.",
     showcaseMovesText = "Bu paneldən kubun qatlarını döndürə bilərsiniz.",
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Süni intellekt tabından kubunuzu avtomatik həll edə bilərsiniz."
 )

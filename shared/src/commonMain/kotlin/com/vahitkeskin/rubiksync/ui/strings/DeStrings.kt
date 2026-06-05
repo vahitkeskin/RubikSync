@@ -118,5 +118,6 @@ val DeStrings = AppStrings(
     showcaseSoundText = "Tippen Sie auf das Lautsprecher-Symbol, um den Drehsound ein-/auszuschalten.",
     showcaseSettingsText = "Öffnen Sie die Einstellungen, um Design und Sprache zu ändern.",
     showcaseMovesText = "Verwenden Sie dieses Panel, um die Würfelschichten zu drehen.",
-    showcaseSolveText = "Verwenden Sie den KI-Tab, um Ihren Würfel automatisch zu lösen."
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
+    showcaseSolveText = "Verwenden den KI-Tab, um Ihren Würfel automatisch zu lösen."
 )

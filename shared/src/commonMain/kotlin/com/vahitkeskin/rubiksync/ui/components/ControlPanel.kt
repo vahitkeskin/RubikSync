@@ -78,6 +78,8 @@ fun ControlPanel(
         if (appState.showcaseStep == 4) {
             selectedTab = 0
         } else if (appState.showcaseStep == 5) {
+            selectedTab = 1
+        } else if (appState.showcaseStep == 6) {
             selectedTab = 2
         }
     }
@@ -156,41 +158,132 @@ fun ControlPanel(
                         isVisible = appState.showcaseStep == 4 && !appState.isShowcaseCompleted,
                         isBelow = false,
                         onDismiss = {
-                            appState.showcaseStep = 5
+                            appState.advanceShowcase()
                         }
                     )
                 }
             }
             1 -> {
-                // ACTIONS TAB — 3 equal-width buttons with icons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                appState.manualMoves.clear()
-                                cubeState.scramble()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onGloballyPositioned { coords ->
+                            if (appState.showcaseStep == 5 && !appState.isShowcaseCompleted) {
+                                val pos = coords.positionInRoot()
+                                val size = coords.size
+                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                appState.targetCornerRadius = 16.dp
                             }
-                        },
-                        enabled = canEditCube && !cubeState.isAnimating,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = RubikTheme.colors.textPrimary,
-                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
-                            disabledContentColor = RubikTheme.colors.buttonDisabledText
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp)
+                        }
+                ) {
+                    // ACTIONS TAB — 3 equal-width buttons with icons
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Button(
+                            onClick = {
+                                coroutineScope.launch {
+                                    appState.manualMoves.clear()
+                                    cubeState.scramble()
+                                }
+                            },
+                            enabled = canEditCube && !cubeState.isAnimating,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = RubikTheme.colors.textPrimary,
+                                disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                                disabledContentColor = RubikTheme.colors.buttonDisabledText
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
+                            border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = appState.strings.scrambleButton,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = {
+                                coroutineScope.launch {
+                                    if (appState.manualMoves.isNotEmpty()) {
+                                        appState.manualMoves.removeAt(appState.manualMoves.size - 1)
+                                    }
+                                    cubeState.undo()
+                                }
+                            },
+                            enabled = canEditCube && !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = RubikTheme.colors.textPrimary,
+                                disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                                disabledContentColor = RubikTheme.colors.buttonDisabledText
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
+                            border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
+                        ) {
                             Text(
-                                text = appState.strings.scrambleButton,
+                                text = appState.strings.undoButton,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                coroutineScope.launch {
+                                    val startYaw = appState.yaw
+                                    val startPitch = appState.pitch
+                                    val startDist = appState.cameraDistance
+                                    val startPanX = appState.panX
+                                    val startPanY = appState.panY
+
+                                    cubeState.resetAnimated(durationMs = 500f) { progress ->
+                                        appState.yaw = startYaw + (-0.55f - startYaw) * progress
+                                        appState.pitch = startPitch + (0.40f - startPitch) * progress
+                                        appState.cameraDistance = startDist + (10.0f - startDist) * progress
+                                        appState.panX = startPanX + (0f - startPanX) * progress
+                                        appState.panY = startPanY + (0f - startPanY) * progress
+                                    }
+                                    appState.manualMoves.clear()
+                                    appState.totalMoveCount = 0
+                                }
+                            },
+                            enabled = !cubeState.isAnimating && !appState.isInitialState,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = RubikTheme.colors.accentRed,
+                                disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                                disabledContentColor = RubikTheme.colors.buttonDisabledText
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
+                            border = BorderStroke(
+                                1.dp,
+                                if (!cubeState.isAnimating && !appState.isInitialState) RubikTheme.colors.accentRed.copy(alpha = 0.35f) else RubikTheme.colors.buttonBorder
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
+                        ) {
+                            Text(
+                                text = appState.strings.resetButton,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1,
@@ -198,84 +291,14 @@ fun ControlPanel(
                             )
                         }
                     }
-
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                if (appState.manualMoves.isNotEmpty()) {
-                                    appState.manualMoves.removeAt(appState.manualMoves.size - 1)
-                                }
-                                cubeState.undo()
-                            }
-                        },
-                        enabled = canEditCube && !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = RubikTheme.colors.textPrimary,
-                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
-                            disabledContentColor = RubikTheme.colors.buttonDisabledText
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
-                        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp)
-                    ) {
-                        Text(
-                            text = appState.strings.undoButton,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                val startYaw = appState.yaw
-                                val startPitch = appState.pitch
-                                val startDist = appState.cameraDistance
-                                val startPanX = appState.panX
-                                val startPanY = appState.panY
-
-                                cubeState.resetAnimated(durationMs = 500f) { progress ->
-                                    appState.yaw = startYaw + (-0.55f - startYaw) * progress
-                                    appState.pitch = startPitch + (0.40f - startPitch) * progress
-                                    appState.cameraDistance = startDist + (10.0f - startDist) * progress
-                                    appState.panX = startPanX + (0f - startPanX) * progress
-                                    appState.panY = startPanY + (0f - startPanY) * progress
-                                }
-                                appState.manualMoves.clear()
-                                appState.totalMoveCount = 0
-                            }
-                        },
-                        enabled = !cubeState.isAnimating && !appState.isInitialState,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = RubikTheme.colors.accentRed,
-                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
-                            disabledContentColor = RubikTheme.colors.buttonDisabledText
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
-                        border = BorderStroke(
-                            1.dp,
-                            if (!cubeState.isAnimating && !appState.isInitialState) RubikTheme.colors.accentRed.copy(alpha = 0.35f) else RubikTheme.colors.buttonBorder
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp)
-                    ) {
-                        Text(
-                            text = appState.strings.resetButton,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    AuraBalloon(
+                        text = appState.strings.showcaseActionsText,
+                        isVisible = appState.showcaseStep == 5 && !appState.isShowcaseCompleted,
+                        isBelow = false,
+                        onDismiss = {
+                            appState.advanceShowcase()
+                        }
+                    )
                 }
             }
             2 -> {
@@ -314,7 +337,7 @@ fun ControlPanel(
                             .weight(1f)
                             .height(44.dp)
                             .onGloballyPositioned { coords ->
-                                if (appState.showcaseStep == 5 && !appState.isShowcaseCompleted) {
+                                if (appState.showcaseStep == 6 && !appState.isShowcaseCompleted) {
                                     val pos = coords.positionInRoot()
                                     val size = coords.size
                                     appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
@@ -441,12 +464,10 @@ fun ControlPanel(
                         }
                         AuraBalloon(
                             text = appState.strings.showcaseSolveText,
-                            isVisible = appState.showcaseStep == 5 && !appState.isShowcaseCompleted,
+                            isVisible = appState.showcaseStep == 6 && !appState.isShowcaseCompleted,
                             isBelow = false,
                             onDismiss = {
-                                appState.showcaseStep = 0
-                                appState.updateShowcaseCompleted(true)
-                                appState.targetBounds = null
+                                appState.advanceShowcase()
                             }
                         )
                     }

@@ -180,6 +180,24 @@ class RubikAppState(
         }
     }
 
+    fun advanceShowcase() {
+        if (isShowcaseCompleted) return
+        val currentStep = showcaseStep
+        coroutineScope.launch {
+            if (currentStep in 1..6) {
+                showcaseStep = -currentStep
+            }
+            targetBounds = null
+            kotlinx.coroutines.delay(350)
+            if (currentStep in 1..5) {
+                showcaseStep = currentStep + 1
+            } else if (currentStep == 6) {
+                showcaseStep = 0
+                updateShowcaseCompleted(true)
+            }
+        }
+    }
+
     fun saveCurrentState() {
         val p = RubikPersistenceRegistry.persistence ?: return
         if (isSolved && (cubeState.moveHistory.isNotEmpty() || manualMoves.isNotEmpty())) {

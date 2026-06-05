@@ -118,5 +118,6 @@ val TrStrings = AppStrings(
     showcaseSoundText = "Ses simgesine tıklayarak döndürme sesini açıp kapatabilirsiniz.",
     showcaseSettingsText = "Ayarlar butonundan tema ve dil tercihlerinizi değiştirebilirsiniz.",
     showcaseMovesText = "Bu panelden küpün katmanlarını döndürebilirsiniz.",
+    showcaseActionsText = "Bu panelden küpü karıştırabilir, hamlelerinizi geri alabilir ve sıfırlayabilirsiniz.",
     showcaseSolveText = "Yapay Zeka sekmesinden küpünüzü otomatik çözdürebilirsiniz."
 )

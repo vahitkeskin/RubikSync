@@ -118,6 +118,7 @@ data class AppStrings(
     val showcaseSoundText: String,
     val showcaseSettingsText: String,
     val showcaseMovesText: String,
+    val showcaseActionsText: String,
     val showcaseSolveText: String
 )
 

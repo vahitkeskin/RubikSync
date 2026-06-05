@@ -118,5 +118,6 @@ val RuStrings = AppStrings(
     showcaseSoundText = "Нажмите на значок звука, чтобы включить или выключить звук вращения.",
     showcaseSettingsText = "Откройте настройки для изменения темы и языка.",
     showcaseMovesText = "Используйте эту панель для вращения слоёв куба.",
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Используйте вкладку ИИ для автоматического решения куба."
 )

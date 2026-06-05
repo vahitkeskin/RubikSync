@@ -118,5 +118,6 @@ val EnStrings = AppStrings(
     showcaseSoundText = "Tap the sound icon to toggle rotation sound on or off.",
     showcaseSettingsText = "Open settings to change theme and language preferences.",
     showcaseMovesText = "Use this panel to rotate the cube layers.",
+    showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Use the AI tab to automatically solve your cube."
 )

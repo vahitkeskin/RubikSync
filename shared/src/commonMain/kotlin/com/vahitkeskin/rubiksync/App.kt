@@ -187,10 +187,9 @@ fun App() {
                             }
                         )
                     }
-
                     composable("dashboard") {
                         val overlayAlpha by animateFloatAsState(
-                            targetValue = if (appState.showcaseStep in 1..5 && !appState.isShowcaseCompleted) 0.6f else 0f,
+                            targetValue = if (appState.showcaseStep != 0 && !appState.isShowcaseCompleted) 0.85f else 0f,
                             animationSpec = tween(durationMillis = 300)
                         )
 
@@ -202,123 +201,127 @@ fun App() {
                         }
 
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .safeDrawingPadding()
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            // Subtle ambient glow behind the cube area
                             Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(0.65f)
-                                    .align(Alignment.Center)
-                                    .background(
-                                        Brush.radialGradient(
-                                            colors = listOf(
-                                                RubikTheme.colors.glowOrange,
-                                                RubikTheme.colors.glowBlue,
-                                                Color.Transparent
+                                    .fillMaxSize()
+                                    .safeDrawingPadding()
+                            ) {
+                                // Subtle ambient glow behind the cube area
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight(0.65f)
+                                        .align(Alignment.Center)
+                                        .background(
+                                            Brush.radialGradient(
+                                                colors = listOf(
+                                                    RubikTheme.colors.glowOrange,
+                                                    RubikTheme.colors.glowBlue,
+                                                    Color.Transparent
+                                                )
                                             )
                                         )
-                                    )
-                            )
+                                )
 
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                // 1. Top Dashboard (Title & Stats)
-                                DashboardHeader(
-                                    cubeState = cubeState,
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    // 1. Top Dashboard (Title & Stats)
+                                    DashboardHeader(
+                                        cubeState = cubeState,
+                                        appState = appState,
+                                        onNavigateToSettings = {
+                                            navController.navigate("settings")
+                                        }
+                                    )
+
+                                    // 2. Main 3D Canvas (occupies remaining height)
+                                    InteractiveCubeCanvas(
+                                        appState = appState,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxWidth()
+                                    )
+
+                                    // 3. Playback controller (shown directly below the 3D canvas only when solution is active)
+                                    if (appState.activeSolution != null) {
+                                        PlaybackController(
+                                            appState = appState,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                                        )
+                                    } else {
+                                        // 4. Control Panel (Shown at the bottom when solver is not active)
+                                        ControlPanel(
+                                            appState = appState,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                                        )
+                                    }
+                                }
+
+                                // 5. Manual Color net Editor Dialog Overlay
+                                EditorDialog(
+                                    show = appState.showEditorDialog,
                                     appState = appState,
-                                    onNavigateToSettings = {
-                                        navController.navigate("settings")
+                                    onDismiss = { appState.showEditorDialog = false },
+                                    onStartScanWizard = {
+                                        appState.scannerStep = 0
+                                        appState.scannedGrids = mutableMapOf()
+                                        appState.scannedRawRGBs = mutableMapOf()
+                                        appState.scannedFilePaths = mutableMapOf()
+                                        appState.gridScales =
+                                            FaceName.values().associateWith { 0.55f }.toMutableMap()
+                                        appState.gridOffsetsX =
+                                            FaceName.values().associateWith { 0f }.toMutableMap()
+                                        appState.gridOffsetsY =
+                                            FaceName.values().associateWith { 0f }.toMutableMap()
+                                        appState.errorMessage = null
+                                        appState.infoMessage = null
+                                        appState.showScannerWizard = true
                                     }
                                 )
 
-                                // 2. Main 3D Canvas (occupies remaining height)
-                                InteractiveCubeCanvas(
+                                // 6. Camera Scan Wizard Overlay
+                                ScannerWizard(
+                                    show = appState.showScannerWizard,
                                     appState = appState,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxWidth()
-                                )
-
-                                // 3. Playback controller (shown directly below the 3D canvas only when solution is active)
-                                if (appState.activeSolution != null) {
-                                    PlaybackController(
-                                        appState = appState,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 12.dp, vertical = 4.dp)
-                                    )
-                                } else {
-                                    // 4. Control Panel (Shown at the bottom when solver is not active)
-                                    ControlPanel(
-                                        appState = appState,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 12.dp, vertical = 4.dp)
-                                    )
-                                }
-                            }
-
-                            // 5. Manual Color net Editor Dialog Overlay
-                            EditorDialog(
-                                show = appState.showEditorDialog,
-                                appState = appState,
-                                onDismiss = { appState.showEditorDialog = false },
-                                onStartScanWizard = {
-                                    appState.scannerStep = 0
-                                    appState.scannedGrids = mutableMapOf()
-                                    appState.scannedRawRGBs = mutableMapOf()
-                                    appState.scannedFilePaths = mutableMapOf()
-                                    appState.gridScales =
-                                        FaceName.values().associateWith { 0.55f }.toMutableMap()
-                                    appState.gridOffsetsX =
-                                        FaceName.values().associateWith { 0f }.toMutableMap()
-                                    appState.gridOffsetsY =
-                                        FaceName.values().associateWith { 0f }.toMutableMap()
-                                    appState.errorMessage = null
-                                    appState.infoMessage = null
-                                    appState.showScannerWizard = true
-                                }
-                            )
-
-                            // 6. Camera Scan Wizard Overlay
-                            ScannerWizard(
-                                show = appState.showScannerWizard,
-                                appState = appState,
-                                onDismiss = {
-                                    appState.showScannerWizard = false
-                                    appState.scannerStep = 0
-                                    appState.scannedGrids = mutableMapOf()
-                                    appState.scannedRawRGBs = mutableMapOf()
-                                    appState.scannedFilePaths = mutableMapOf()
-                                },
-                                onComplete = { completeGrids ->
-                                    appState.editorFaces = completeGrids
-                                    appState.showScannerWizard = false
-                                    appState.coroutineScope.launch {
-                                        val success = cubeState.setCustomStateAnimated(completeGrids)
-                                        if (success) {
-                                            appState.showEditorDialog = false
-                                            appState.manualMoves.clear()
-                                            appState.saveCurrentState()
-                                            appState.activeSolution = null
-                                            appState.errorMessage = null
-                                            appState.successMessage = appState.strings.successScanComplete
-                                        } else {
-                                            appState.errorMessage = appState.strings.invalidCubeDesign
+                                    onDismiss = {
+                                        appState.showScannerWizard = false
+                                        appState.scannerStep = 0
+                                        appState.scannedGrids = mutableMapOf()
+                                        appState.scannedRawRGBs = mutableMapOf()
+                                        appState.scannedFilePaths = mutableMapOf()
+                                    },
+                                    onComplete = { completeGrids ->
+                                        appState.editorFaces = completeGrids
+                                        appState.showScannerWizard = false
+                                        appState.coroutineScope.launch {
+                                            val success = cubeState.setCustomStateAnimated(completeGrids)
+                                            if (success) {
+                                                appState.showEditorDialog = false
+                                                appState.manualMoves.clear()
+                                                appState.saveCurrentState()
+                                                appState.activeSolution = null
+                                                appState.errorMessage = null
+                                                appState.successMessage = appState.strings.successScanComplete
+                                            } else {
+                                                appState.errorMessage = appState.strings.invalidCubeDesign
+                                            }
                                         }
                                     }
-                                }
-                            )
+                                )
 
-                            // 7. Global Feedback Overlays
-                            FeedbackOverlay(appState = appState)
+                                // 7. Global Feedback Overlays
+                                FeedbackOverlay(appState = appState)
+                            }
 
-                            // 8. Showcase Spotlight Overlay
+                            // 8. Showcase Spotlight Overlay (drawn outside safearea, aligned with root)
                             if (overlayAlpha > 0f) {
                                 Canvas(
                                     modifier = Modifier
@@ -326,20 +329,14 @@ fun App() {
                                         .graphicsLayer(alpha = 0.99f)
                                         .clickable(
                                             onClick = {
-                                                if (appState.showcaseStep in 1..4) {
-                                                    appState.showcaseStep++
-                                                } else if (appState.showcaseStep == 5) {
-                                                    appState.showcaseStep = 0
-                                                    appState.updateShowcaseCompleted(true)
-                                                    appState.targetBounds = null
-                                                }
+                                                appState.advanceShowcase()
                                             },
                                             indication = null,
                                             interactionSource = remember { MutableInteractionSource() }
                                         )
                                 ) {
                                     drawRect(
-                                        color = Color.Black.copy(alpha = overlayAlpha)
+                                        color = Color(0xFF0F172A).copy(alpha = overlayAlpha)
                                     )
                                     appState.targetBounds?.let { rect ->
                                         drawRoundRect(

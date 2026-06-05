@@ -1,49 +1,92 @@
 package com.vahitkeskin.rubiksync
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.border
-import com.vahitkeskin.rubiksync.cube.*
-import com.vahitkeskin.rubiksync.ui.components.*
-import com.vahitkeskin.rubiksync.ui.dialogs.*
-import com.vahitkeskin.rubiksync.ui.state.*
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.vahitkeskin.rubiksync.cube.FaceName
+import com.vahitkeskin.rubiksync.cube.getMoveMathDetails
+import com.vahitkeskin.rubiksync.di.appModule
+import com.vahitkeskin.rubiksync.ui.components.ControlPanel
+import com.vahitkeskin.rubiksync.ui.components.DashboardHeader
+import com.vahitkeskin.rubiksync.ui.components.FeedbackOverlay
+import com.vahitkeskin.rubiksync.ui.components.InteractiveCubeCanvas
+import com.vahitkeskin.rubiksync.ui.components.PlaybackController
+import com.vahitkeskin.rubiksync.ui.components.SettingsScreen
+import com.vahitkeskin.rubiksync.ui.components.SplashScreen
+import com.vahitkeskin.rubiksync.ui.dialogs.EditorDialog
+import com.vahitkeskin.rubiksync.ui.dialogs.ScannerWizard
+import com.vahitkeskin.rubiksync.ui.state.AccentBlue
+import com.vahitkeskin.rubiksync.ui.state.AccentBlueBright
+import com.vahitkeskin.rubiksync.ui.state.AccentGreen
+import com.vahitkeskin.rubiksync.ui.state.AccentGreenSuccess
+import com.vahitkeskin.rubiksync.ui.state.AccentOrange
+import com.vahitkeskin.rubiksync.ui.state.DarkBgPrimary
+import com.vahitkeskin.rubiksync.ui.state.DarkBgQuaternary
+import com.vahitkeskin.rubiksync.ui.state.DarkBgSecondary
+import com.vahitkeskin.rubiksync.ui.state.DarkBgTertiary
+import com.vahitkeskin.rubiksync.ui.state.DarkCardBorder
+import com.vahitkeskin.rubiksync.ui.state.DarkGradientBg1
+import com.vahitkeskin.rubiksync.ui.state.DarkRubikColors
+import com.vahitkeskin.rubiksync.ui.state.DarkThemePrimary
+import com.vahitkeskin.rubiksync.ui.state.LightBgPrimary
+import com.vahitkeskin.rubiksync.ui.state.LightBgSecondary
+import com.vahitkeskin.rubiksync.ui.state.LightBgTertiary
+import com.vahitkeskin.rubiksync.ui.state.LightBorderPrimary
+import com.vahitkeskin.rubiksync.ui.state.LightRubikColors
+import com.vahitkeskin.rubiksync.ui.state.ProvideRubikColors
+import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import com.vahitkeskin.rubiksync.ui.state.ThemeMode
+import com.vahitkeskin.rubiksync.ui.state.White
+import com.vahitkeskin.rubiksync.ui.state.initializePreviewPersistence
+import com.vahitkeskin.rubiksync.ui.state.rememberRubikAppState
 import kotlinx.coroutines.launch
 import org.koin.compose.KoinApplication
-import com.vahitkeskin.rubiksync.di.appModule
-import androidx.compose.ui.tooling.preview.Preview
-import com.vahitkeskin.rubiksync.ui.state.initializePreviewPersistence
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -204,6 +247,15 @@ fun App() {
                             animationSpec = tween(durationMillis = 1000)
                         )
 
+                        val isShowcaseActive = appState.showcaseStep != 0 && !appState.isShowcaseCompleted
+                        val buttonScaleAndAlpha by animateFloatAsState(
+                            targetValue = if (isShowcaseActive) 1f else 0f,
+                            animationSpec = tween(
+                                durationMillis = 800,
+                                easing = FastOutSlowInEasing
+                            )
+                        )
+
                         // Shake to scramble feature detection
                         rememberShakeDetector(
                             enabled = appState.isShakeToScrambleEnabled && appState.isCubeEditable && !cubeState.isAnimating
@@ -216,7 +268,7 @@ fun App() {
 
                         LaunchedEffect(appState.isShowcaseCompleted) {
                             if (!appState.isShowcaseCompleted && appState.showcaseStep == 0) {
-                                kotlinx.coroutines.delay(1500)
+                                kotlinx.coroutines.delay(1000)
                                 appState.updateShowcaseStep(1)
                             }
                         }
@@ -370,40 +422,36 @@ fun App() {
                                         }
                                     }
 
-                                    // Skip Showcase/Tutorial Button (styled as glassmorphism, top-left status bar aware)
+                                    // Skip Showcase/Tutorial Button (polite, solid background, top-left status bar aware)
                                     Box(
                                         modifier = Modifier
                                             .align(Alignment.TopStart)
                                             .statusBarsPadding()
                                             .padding(start = 16.dp, top = 12.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .background(Color.White.copy(alpha = 0.12f))
-                                            .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
-                                            .clickable {
+                                            .graphicsLayer {
+                                                scaleX = buttonScaleAndAlpha
+                                                scaleY = buttonScaleAndAlpha
+                                                alpha = buttonScaleAndAlpha
+                                            }
+                                            .clip(RoundedCornerShape(20.dp))
+                                            .background(Color(0xFF1E293B)) // Solid Slate 800
+                                            .border(1.dp, Color(0xFF475569), RoundedCornerShape(20.dp)) // Solid Slate 600 border
+                                            .clickable(enabled = isShowcaseActive) {
                                                 appState.updateShowcaseStep(0)
                                                 appState.updateShowcaseCompleted(true)
                                                 appState.updateEditorShowcaseCompleted(true)
                                                 appState.updateScannerShowcaseCompleted(true)
                                             }
-                                            .padding(horizontal = 14.dp, vertical = 8.dp),
+                                            .padding(horizontal = 16.dp, vertical = 6.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                                        ) {
-                                            Text(
-                                                text = "⏭️",
-                                                fontSize = 12.sp
-                                            )
-                                            Text(
-                                                text = appState.strings.skipShowcase,
-                                                color = Color.White,
-                                                fontSize = 11.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                letterSpacing = 0.5.sp
-                                            )
-                                        }
+                                        Text(
+                                            text = appState.strings.skipShowcase,
+                                            color = Color(0xFFF1F5F9), // Slate 100
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            letterSpacing = 0.5.sp
+                                        )
                                     }
                                 }
                             }

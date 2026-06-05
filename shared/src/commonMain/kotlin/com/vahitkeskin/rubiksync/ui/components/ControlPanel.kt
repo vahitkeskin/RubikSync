@@ -3,6 +3,7 @@ package com.vahitkeskin.rubiksync.ui.components
 import com.vahitkeskin.rubiksync.ui.state.*
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -102,7 +103,13 @@ fun ControlPanel(
             else -> null
         }
         if (targetPage != null && pagerState.currentPage != targetPage) {
-            pagerState.animateScrollToPage(targetPage)
+            pagerState.animateScrollToPage(
+                page = targetPage,
+                animationSpec = tween(
+                    durationMillis = 1200, // Smoothly transition over 1.2 seconds for tutorial readability
+                    easing = FastOutSlowInEasing
+                )
+            )
         }
     }
 

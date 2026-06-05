@@ -116,8 +116,11 @@ fun AuraBalloon(
                     return IntOffset(x, y)
                 }
             },
-            onDismissRequest = onDismiss,
-            properties = PopupProperties(focusable = true)
+            properties = PopupProperties(
+                focusable = false,
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            )
         ) {
             BalloonContent(
                 text = text, 

@@ -217,19 +217,49 @@ fun ScannerWizard(
         },
         modifier = Modifier.fillMaxHeight(0.95f)
     ) {
-        var scannerTargetBounds by remember { mutableStateOf<Rect?>(null) }
-        var scannerTargetCornerRadius by remember { mutableStateOf(12.dp) }
+        var boundsStep1 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep2 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep3 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep4 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep5 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep6 by remember { mutableStateOf<Rect?>(null) }
         var canvasPositionInRoot by remember { mutableStateOf(Offset.Zero) }
         var viewportBounds by remember { mutableStateOf<Rect?>(null) }
+
+        val scannerTargetBounds = remember(
+            appState.scannerShowcaseStep,
+            boundsStep1,
+            boundsStep2,
+            boundsStep3,
+            boundsStep4,
+            boundsStep5,
+            boundsStep6
+        ) {
+            when (appState.scannerShowcaseStep) {
+                1 -> boundsStep1
+                2 -> boundsStep2
+                3 -> boundsStep3
+                4 -> boundsStep4
+                5 -> boundsStep5
+                6 -> boundsStep6
+                else -> null
+            }
+        }
+
+        val scannerTargetCornerRadius = when (appState.scannerShowcaseStep) {
+            1 -> 16.dp
+            2 -> 12.dp
+            3 -> 16.dp
+            4 -> 12.dp
+            5 -> 16.dp
+            6 -> 12.dp
+            else -> 12.dp
+        }
 
         LaunchedEffect(show) {
             if (show && !appState.isScannerShowcaseCompleted && appState.scannerShowcaseStep == 0) {
                 appState.updateScannerShowcaseStep(1)
             }
-        }
-
-        LaunchedEffect(appState.scannerShowcaseStep) {
-            scannerTargetBounds = null
         }
 
         Box(
@@ -301,17 +331,14 @@ fun ScannerWizard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onGloballyPositioned { coords ->
-                                    if (appState.scannerShowcaseStep == 1 && !appState.isScannerShowcaseCompleted) {
-                                        val pos = coords.positionInRoot()
-                                        val size = coords.size
-                                        scannerTargetBounds = Rect(
-                                            pos.x,
-                                            pos.y,
-                                            pos.x + size.width,
-                                            pos.y + size.height
-                                        )
-                                        scannerTargetCornerRadius = 16.dp
-                                    }
+                                    val pos = coords.positionInRoot()
+                                    val size = coords.size
+                                    boundsStep1 = Rect(
+                                        pos.x,
+                                        pos.y,
+                                        pos.x + size.width,
+                                        pos.y + size.height
+                                    )
                                 }
                         ) {
                             FaceName.values().forEachIndexed { index, face ->
@@ -447,17 +474,14 @@ fun ScannerWizard(
                             modifier = Modifier
                                 .padding(horizontal = 4.dp)
                                 .onGloballyPositioned { coords ->
-                                    if (appState.scannerShowcaseStep == 2 && !appState.isScannerShowcaseCompleted) {
-                                        val pos = coords.positionInRoot()
-                                        val size = coords.size
-                                        scannerTargetBounds = Rect(
-                                            pos.x,
-                                            pos.y,
-                                            pos.x + size.width,
-                                            pos.y + size.height
-                                        )
-                                        scannerTargetCornerRadius = 12.dp
-                                    }
+                                    val pos = coords.positionInRoot()
+                                    val size = coords.size
+                                    boundsStep2 = Rect(
+                                        pos.x,
+                                        pos.y,
+                                        pos.x + size.width,
+                                        pos.y + size.height
+                                    )
                                 }
                         )
                         AuraBalloon(
@@ -557,17 +581,14 @@ fun ScannerWizard(
                                         modifier = Modifier
                                             .fillMaxWidth(0.75f)
                                             .onGloballyPositioned { coords ->
-                                                if (appState.scannerShowcaseStep == 3 && !appState.isScannerShowcaseCompleted) {
-                                                    val pos = coords.positionInRoot()
-                                                    val size = coords.size
-                                                    scannerTargetBounds = Rect(
-                                                        pos.x,
-                                                        pos.y,
-                                                        pos.x + size.width,
-                                                        pos.y + size.height
-                                                    )
-                                                    scannerTargetCornerRadius = 16.dp
-                                                }
+                                                val pos = coords.positionInRoot()
+                                                val size = coords.size
+                                                boundsStep3 = Rect(
+                                                    pos.x,
+                                                    pos.y,
+                                                    pos.x + size.width,
+                                                    pos.y + size.height
+                                                )
                                             }
                                     )
                                     AuraBalloon(
@@ -780,17 +801,14 @@ fun ScannerWizard(
                                         )
                                         .background(RubikTheme.colors.backgroundPrimary)
                                         .onGloballyPositioned { coords ->
-                                            if (appState.scannerShowcaseStep == 5 && !appState.isScannerShowcaseCompleted) {
-                                                val pos = coords.positionInRoot()
-                                                val size = coords.size
-                                                scannerTargetBounds = Rect(
-                                                    pos.x,
-                                                    pos.y,
-                                                    pos.x + size.width,
-                                                    pos.y + size.height
-                                                )
-                                                scannerTargetCornerRadius = 16.dp
-                                            }
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            boundsStep5 = Rect(
+                                                pos.x,
+                                                pos.y,
+                                                pos.x + size.width,
+                                                pos.y + size.height
+                                            )
                                         },
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -936,18 +954,19 @@ fun ScannerWizard(
                                             }
                                         }
                                     } else {
-                                        CircularProgressIndicator(
+                                            CircularProgressIndicator(
                                             color = RubikTheme.colors.accentBlue,
                                             modifier = Modifier.size(24.dp),
                                             strokeWidth = 2.dp
                                         )
                                     }
+                                    val viewport = viewportBounds
                                     val isPreviewVisible = appState.scannerShowcaseStep == 5 &&
                                             !appState.isScannerShowcaseCompleted &&
-                                            viewportBounds != null &&
+                                            viewport != null &&
                                             scannerTargetBounds != null &&
-                                            scannerTargetBounds!!.top >= viewportBounds!!.top - 10f &&
-                                            scannerTargetBounds!!.bottom <= viewportBounds!!.bottom + 10f &&
+                                            scannerTargetBounds.top >= viewport.top - 10f &&
+                                            scannerTargetBounds.bottom <= viewport.bottom + 10f &&
                                             !scannerScrollState.isScrollInProgress
 
                                     AuraBalloon(
@@ -968,17 +987,14 @@ fun ScannerWizard(
                                         .fillMaxWidth()
                                         .padding(horizontal = 4.dp)
                                         .onGloballyPositioned { coords ->
-                                            if (appState.scannerShowcaseStep == 4 && !appState.isScannerShowcaseCompleted) {
-                                                val pos = coords.positionInRoot()
-                                                val size = coords.size
-                                                scannerTargetBounds = Rect(
-                                                    pos.x,
-                                                    pos.y,
-                                                    pos.x + size.width,
-                                                    pos.y + size.height
-                                                )
-                                                scannerTargetCornerRadius = 12.dp
-                                            }
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            boundsStep4 = Rect(
+                                                pos.x,
+                                                pos.y,
+                                                pos.x + size.width,
+                                                pos.y + size.height
+                                            )
                                         },
                                     verticalArrangement = Arrangement.spacedBy(2.dp)
                                 ) {
@@ -1097,12 +1113,13 @@ fun ScannerWizard(
                                         )
                                     }
                                 }
+                                val viewport = viewportBounds
                                 val isSlidersVisible = appState.scannerShowcaseStep == 4 &&
                                         !appState.isScannerShowcaseCompleted &&
-                                        viewportBounds != null &&
+                                        viewport != null &&
                                         scannerTargetBounds != null &&
-                                        scannerTargetBounds!!.top >= viewportBounds!!.top - 10f &&
-                                        scannerTargetBounds!!.bottom <= viewportBounds!!.bottom + 10f &&
+                                        scannerTargetBounds.top >= viewport.top - 10f &&
+                                        scannerTargetBounds.bottom <= viewport.bottom + 10f &&
                                         !scannerScrollState.isScrollInProgress
 
                                 AuraBalloon(
@@ -1146,13 +1163,10 @@ fun ScannerWizard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .onGloballyPositioned { coords ->
-                                if (appState.scannerShowcaseStep == 6 && !appState.isScannerShowcaseCompleted) {
-                                    val pos = coords.positionInRoot()
-                                    val size = coords.size
-                                    scannerTargetBounds =
-                                        Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                    scannerTargetCornerRadius = 12.dp
-                                }
+                                val pos = coords.positionInRoot()
+                                val size = coords.size
+                                boundsStep6 =
+                                    Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                             },
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {

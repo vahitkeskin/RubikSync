@@ -176,19 +176,43 @@ fun EditorDialog(
         },
         modifier = Modifier.fillMaxHeight(0.95f)
     ) {
-        var editorTargetBounds by remember { mutableStateOf<Rect?>(null) }
-        var editorTargetCornerRadius by remember { mutableStateOf(12.dp) }
+        var boundsStep1 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep2 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep3 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep4 by remember { mutableStateOf<Rect?>(null) }
+        var boundsStep5 by remember { mutableStateOf<Rect?>(null) }
         var canvasPositionInRoot by remember { mutableStateOf(Offset.Zero) }
+
+        val editorTargetBounds = remember(
+            appState.editorShowcaseStep,
+            boundsStep1,
+            boundsStep2,
+            boundsStep3,
+            boundsStep4,
+            boundsStep5
+        ) {
+            when (appState.editorShowcaseStep) {
+                1 -> boundsStep1
+                2 -> boundsStep2
+                3 -> boundsStep3
+                4 -> boundsStep4
+                5 -> boundsStep5
+                else -> null
+            }
+        }
+
+        val editorTargetCornerRadius = when (appState.editorShowcaseStep) {
+            1 -> 10.dp
+            2 -> 8.dp
+            3 -> 12.dp
+            4 -> 12.dp
+            5 -> 14.dp
+            else -> 12.dp
+        }
 
         LaunchedEffect(show) {
             if (show && !appState.isEditorShowcaseCompleted && appState.editorShowcaseStep == 0) {
                 appState.updateEditorShowcaseStep(1)
-            }
-        }
-
-        LaunchedEffect(appState.editorShowcaseStep) {
-            if (appState.editorShowcaseStep < 0) {
-                editorTargetBounds = null
             }
         }
 
@@ -279,12 +303,9 @@ fun EditorDialog(
                         )
                         .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
                         .onGloballyPositioned { coords ->
-                            if (appState.editorShowcaseStep == 5 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot()
-                                val size = coords.size
-                                editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                editorTargetCornerRadius = 14.dp
-                            }
+                            val pos = coords.positionInRoot()
+                            val size = coords.size
+                            boundsStep5 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                         }
                         .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -339,12 +360,9 @@ fun EditorDialog(
                         .fillMaxWidth()
                         .horizontalScroll(rememberScrollState())
                         .onGloballyPositioned { coords ->
-                            if (appState.editorShowcaseStep == 1 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot()
-                                val size = coords.size
-                                editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                editorTargetCornerRadius = 10.dp
-                            }
+                            val pos = coords.positionInRoot()
+                            val size = coords.size
+                            boundsStep1 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                         },
                     horizontalArrangement = Arrangement.spacedBy(5.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -434,12 +452,9 @@ fun EditorDialog(
                         spacing = 3.dp,
                         isClickable = true,
                         modifier = Modifier.onGloballyPositioned { coords ->
-                            if (appState.editorShowcaseStep == 2 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot()
-                                val size = coords.size
-                                editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                editorTargetCornerRadius = 8.dp
-                            }
+                            val pos = coords.positionInRoot()
+                            val size = coords.size
+                            boundsStep2 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                         },
                         onCellClick = { face, row, col ->
                             val updated = appState.editorFaces.toMutableMap()
@@ -474,12 +489,9 @@ fun EditorDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .onGloballyPositioned { coords ->
-                            if (appState.editorShowcaseStep == 3 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot()
-                                val size = coords.size
-                                editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                editorTargetCornerRadius = 12.dp
-                            }
+                            val pos = coords.positionInRoot()
+                            val size = coords.size
+                            boundsStep3 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                         }
                 ) {
                     val colorName = when (appState.selectedColor) {
@@ -602,12 +614,9 @@ fun EditorDialog(
                         .weight(1.1f)
                         .height(42.dp)
                         .onGloballyPositioned { coords ->
-                            if (appState.editorShowcaseStep == 4 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot()
-                                val size = coords.size
-                                editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                editorTargetCornerRadius = 12.dp
-                            }
+                            val pos = coords.positionInRoot()
+                            val size = coords.size
+                            boundsStep4 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                         }
                 ) {
                     Button(

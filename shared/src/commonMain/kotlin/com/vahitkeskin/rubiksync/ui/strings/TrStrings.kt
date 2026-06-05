@@ -115,6 +115,7 @@ val TrStrings = AppStrings(
     selectImageLabel =  "Görsel Seç",
     showcaseWelcomeText = "RubikSync'e hoş geldiniz! Uygulamanın özelliklerini keşfedelim.",
     showcaseEditableText = "Kilit simgesine tıklayarak küp düzenlemeyi açıp kapatabilirsiniz.",
+    showcaseShakeToScrambleText = "Telefonu sallayarak karıştırma özelliğini etkinleştirmek veya devre dışı bırakmak için bu simgeye dokunun.",
     showcaseSoundText = "Ses simgesine tıklayarak döndürme sesini açıp kapatabilirsiniz.",
     showcaseSettingsText = "Ayarlar butonundan tema ve dil tercihlerinizi değiştirebilirsiniz.",
     showcaseInteractiveCubeText = "Küpü serbestçe döndürmek için iki parmağınızı, sadece belirli satır veya sütunları çevirmek için tek parmağınızı kullanabilirsiniz.",

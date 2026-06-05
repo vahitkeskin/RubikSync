@@ -115,6 +115,7 @@ val ZhStrings = AppStrings(
     selectImageLabel =  "选择图片",
     showcaseWelcomeText = "欢迎使用RubikSync！让我们探索应用功能。",
     showcaseEditableText = "点击锁定图标启用或禁用魔方编辑。",
+    showcaseShakeToScrambleText = "点击此图标以启用或禁用摇晃打乱功能。",
     showcaseSoundText = "点击声音图标开启或关闭旋转声音。",
     showcaseSettingsText = "打开设置更改主题和语言。",
     showcaseInteractiveCubeText = "用双指旋转整个魔方，用单指转动特定的行或列。",

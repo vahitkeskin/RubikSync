@@ -712,6 +712,69 @@ actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
     BackHandler(enabled = enabled, onBack = onBack)
 }
 
+@Composable
+actual fun rememberShakeDetector(enabled: Boolean, onShake: () -> Unit) {
+    if (!enabled) return
+
+    val context = LocalContext.current
+    val currentOnShake = rememberUpdatedState(onShake)
+
+    DisposableEffect(context) {
+        val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as android.hardware.SensorManager
+        val accelerometer = sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER)
+
+        var lastX = 0f
+        var lastY = 0f
+        var lastZ = 0f
+        var lastUpdate = 0L
+
+        val shakeThreshold = 12.0f
+        val shakeIntervalMs = 500L
+        var lastShakeTime = 0L
+
+        val listener = object : android.hardware.SensorEventListener {
+            override fun onSensorChanged(event: android.hardware.SensorEvent?) {
+                if (event == null) return
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+
+                val currentTime = System.currentTimeMillis()
+                val diffTime = currentTime - lastUpdate
+                if (diffTime > 100) {
+                    if (lastUpdate != 0L) {
+                        val deltaX = x - lastX
+                        val deltaY = y - lastY
+                        val deltaZ = z - lastZ
+
+                        val acceleration = kotlin.math.sqrt((deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ).toDouble()).toFloat()
+                        if (acceleration > shakeThreshold) {
+                            if (currentTime - lastShakeTime > shakeIntervalMs) {
+                                lastShakeTime = currentTime
+                                currentOnShake.value()
+                            }
+                        }
+                    }
+                    lastX = x
+                    lastY = y
+                    lastZ = z
+                    lastUpdate = currentTime
+                }
+            }
+
+            override fun onAccuracyChanged(sensor: android.hardware.Sensor?, accuracy: Int) {}
+        }
+
+        if (accelerometer != null) {
+            sensorManager.registerListener(listener, accelerometer, android.hardware.SensorManager.SENSOR_DELAY_NORMAL)
+        }
+
+        onDispose {
+            sensorManager.unregisterListener(listener)
+        }
+    }
+}
+
 // --- Cube Sound Implementation ---
 
 private var appContext: android.content.Context? = null

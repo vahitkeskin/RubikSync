@@ -115,6 +115,7 @@ val EnStrings = AppStrings(
     selectImageLabel =  "Select Image",
     showcaseWelcomeText = "Welcome to RubikSync! Let's explore the app features.",
     showcaseEditableText = "Tap the lock icon to enable or disable cube editing.",
+    showcaseShakeToScrambleText = "Tap this icon to enable or disable shake to scramble feature.",
     showcaseSoundText = "Tap the sound icon to toggle rotation sound on or off.",
     showcaseSettingsText = "Open settings to change theme and language preferences.",
     showcaseInteractiveCubeText = "Rotate the entire cube with two fingers, or turn specific rows and columns with one finger.",

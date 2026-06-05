@@ -17,6 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -27,10 +30,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.LocalIndication
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DashboardHeader(
     cubeState: RubikCubeState,
@@ -38,6 +48,11 @@ fun DashboardHeader(
     onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showLockTooltip by remember { mutableStateOf(false) }
+    var showShakeTooltip by remember { mutableStateOf(false) }
+    var showSoundTooltip by remember { mutableStateOf(false) }
+    var showSettingsTooltip by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -126,7 +141,9 @@ fun DashboardHeader(
                     animationSpec = tween(durationMillis = 300),
                     label = "editableBorder"
                 )
-                 Box(
+                
+                val isLockEnabled = !cubeState.isAnimating
+                Box(
                     modifier = Modifier
                         .size(34.dp)
                         .clip(RoundedCornerShape(10.dp))
@@ -142,11 +159,18 @@ fun DashboardHeader(
                                 )
                             }
                         }
-                        .clickable(
-                            enabled = !cubeState.isAnimating
-                        ) {
-                            appState.updateCubeEditable(!appState.isCubeEditable)
-                        },
+                        .combinedClickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = if (isLockEnabled) LocalIndication.current else null,
+                            onClick = {
+                                if (isLockEnabled) {
+                                    appState.updateCubeEditable(!appState.isCubeEditable)
+                                }
+                            },
+                            onLongClick = {
+                                showLockTooltip = true
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -156,10 +180,89 @@ fun DashboardHeader(
                     )
                     AuraBalloon(
                         text = appState.strings.showcaseEditableText,
-                        isVisible = appState.showcaseStep == 1 && !appState.isShowcaseCompleted,
+                        isVisible = (appState.showcaseStep == 1 && !appState.isShowcaseCompleted) || showLockTooltip,
                         isBelow = true,
                         onDismiss = {
-                            appState.advanceShowcase()
+                            if (showLockTooltip) {
+                                showLockTooltip = false
+                            } else {
+                                appState.advanceShowcase()
+                            }
+                        }
+                    )
+                }
+
+                // Shake to scramble toggle
+                val shakeBgColor by animateColorAsState(
+                    targetValue = if (!appState.isCubeEditable) {
+                        RubikTheme.colors.cardBackground.copy(alpha = 0.4f)
+                    } else if (appState.isShakeToScrambleEnabled) {
+                        RubikTheme.colors.accentOrange.copy(alpha = 0.12f)
+                    } else {
+                        RubikTheme.colors.accentRed.copy(alpha = 0.12f)
+                    },
+                    animationSpec = tween(durationMillis = 300),
+                    label = "shakeBg"
+                )
+                val shakeBorderColor by animateColorAsState(
+                    targetValue = if (!appState.isCubeEditable) {
+                        RubikTheme.colors.cardBorder.copy(alpha = 0.2f)
+                    } else if (appState.isShakeToScrambleEnabled) {
+                        RubikTheme.colors.accentOrange.copy(alpha = 0.3f)
+                    } else {
+                        RubikTheme.colors.accentRed.copy(alpha = 0.3f)
+                    },
+                    animationSpec = tween(durationMillis = 300),
+                    label = "shakeBorder"
+                )
+                
+                val isShakeEnabled = appState.isCubeEditable && !cubeState.isAnimating
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(shakeBgColor)
+                        .border(0.8.dp, shakeBorderColor, RoundedCornerShape(10.dp))
+                        .onGloballyPositioned { coords ->
+                            if (appState.showcaseStep == 2 && !appState.isShowcaseCompleted) {
+                                val pos = coords.positionInRoot()
+                                val size = coords.size
+                                appState.updateTargetVisuals(
+                                    Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                    10.dp
+                                )
+                            }
+                        }
+                        .combinedClickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = if (isShakeEnabled) LocalIndication.current else null,
+                            onClick = {
+                                if (isShakeEnabled) {
+                                    appState.updateShakeToScramble(!appState.isShakeToScrambleEnabled)
+                                }
+                            },
+                            onLongClick = {
+                                showShakeTooltip = true
+                            }
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (appState.isShakeToScrambleEnabled) "📳" else "📱",
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        modifier = Modifier.alpha(if (appState.isCubeEditable) 1f else 0.35f)
+                    )
+                    AuraBalloon(
+                        text = appState.strings.showcaseShakeToScrambleText,
+                        isVisible = (appState.showcaseStep == 2 && !appState.isShowcaseCompleted) || showShakeTooltip,
+                        isBelow = true,
+                        onDismiss = {
+                            if (showShakeTooltip) {
+                                showShakeTooltip = false
+                            } else {
+                                appState.advanceShowcase()
+                            }
                         }
                     )
                 }
@@ -187,6 +290,8 @@ fun DashboardHeader(
                     animationSpec = tween(durationMillis = 300),
                     label = "soundBorder"
                 )
+                
+                val isSoundBtnEnabled = appState.isCubeEditable && !cubeState.isAnimating
                 Box(
                     modifier = Modifier
                         .size(34.dp)
@@ -194,7 +299,7 @@ fun DashboardHeader(
                         .background(soundBgColor)
                         .border(0.8.dp, soundBorderColor, RoundedCornerShape(10.dp))
                         .onGloballyPositioned { coords ->
-                            if (appState.showcaseStep == 2 && !appState.isShowcaseCompleted) {
+                            if (appState.showcaseStep == 3 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
                                 appState.updateTargetVisuals(
@@ -203,11 +308,18 @@ fun DashboardHeader(
                                 )
                             }
                         }
-                        .clickable(
-                            enabled = appState.isCubeEditable && !cubeState.isAnimating
-                        ) {
-                            appState.updateSoundEnabled(!appState.isSoundEnabled)
-                        },
+                        .combinedClickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = if (isSoundBtnEnabled) LocalIndication.current else null,
+                            onClick = {
+                                if (isSoundBtnEnabled) {
+                                    appState.updateSoundEnabled(!appState.isSoundEnabled)
+                                }
+                            },
+                            onLongClick = {
+                                showSoundTooltip = true
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -218,10 +330,14 @@ fun DashboardHeader(
                     )
                     AuraBalloon(
                         text = appState.strings.showcaseSoundText,
-                        isVisible = appState.showcaseStep == 2 && !appState.isShowcaseCompleted,
+                        isVisible = (appState.showcaseStep == 3 && !appState.isShowcaseCompleted) || showSoundTooltip,
                         isBelow = true,
                         onDismiss = {
-                            appState.advanceShowcase()
+                            if (showSoundTooltip) {
+                                showSoundTooltip = false
+                            } else {
+                                appState.advanceShowcase()
+                            }
                         }
                     )
                 }
@@ -234,7 +350,7 @@ fun DashboardHeader(
                         .background(RubikTheme.colors.cardBackground)
                         .border(0.8.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(10.dp))
                         .onGloballyPositioned { coords ->
-                            if (appState.showcaseStep == 3 && !appState.isShowcaseCompleted) {
+                            if (appState.showcaseStep == 4 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
                                 appState.updateTargetVisuals(
@@ -243,7 +359,14 @@ fun DashboardHeader(
                                 )
                             }
                         }
-                        .clickable { onNavigateToSettings() },
+                        .combinedClickable(
+                            onClick = {
+                                onNavigateToSettings()
+                            },
+                            onLongClick = {
+                                showSettingsTooltip = true
+                            }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -253,16 +376,20 @@ fun DashboardHeader(
                     )
                     AuraBalloon(
                         text = appState.strings.showcaseSettingsText,
-                        isVisible = appState.showcaseStep == 3 && !appState.isShowcaseCompleted,
+                        isVisible = (appState.showcaseStep == 4 && !appState.isShowcaseCompleted) || showSettingsTooltip,
                         isBelow = true,
                         onDismiss = {
-                            appState.advanceShowcase()
+                            if (showSettingsTooltip) {
+                                showSettingsTooltip = false
+                            } else {
+                                appState.advanceShowcase()
+                            }
                         }
                     )
                 }
             }
         }
-
+        
         Spacer(modifier = Modifier.height(10.dp))
 
         // Status & Stats — Professional Dashboard Cards Row

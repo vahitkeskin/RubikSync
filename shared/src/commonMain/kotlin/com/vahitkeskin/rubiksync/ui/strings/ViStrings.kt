@@ -115,6 +115,7 @@ val ViStrings = AppStrings(
     selectImageLabel =  "Chọn ảnh",
     showcaseWelcomeText = "Chào mừng đến với RubikSync! Hãy khám phá các tính năng.",
     showcaseEditableText = "Nhấn biểu tượng khóa để bật/tắt chỉnh sửa khối Rubik.",
+    showcaseShakeToScrambleText = "Chạm vào biểu tượng này để bật hoặc tắt tính năng lắc để xáo trộn.",
     showcaseSoundText = "Nhấn biểu tượng âm thanh để bật/tắt âm thanh xoay.",
     showcaseSettingsText = "Mở cài đặt để thay đổi giao diện và ngôn ngữ.",
     showcaseInteractiveCubeText = "Xoay toàn bộ khối lập phương bằng hai ngón tay hoặc xoay các hàng và cột cụ thể bằng một ngón tay.",

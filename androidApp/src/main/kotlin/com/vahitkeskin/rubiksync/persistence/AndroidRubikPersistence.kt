@@ -35,6 +35,8 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     private val KEY_CUBE_EDITABLE = booleanPreferencesKey("cube_editable")
     private val KEY_SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
     private val KEY_SHOWCASE_COMPLETED = booleanPreferencesKey("showcase_completed")
+    private val KEY_SHAKE_TO_SCRAMBLE = booleanPreferencesKey("shake_to_scramble")
+
 
     override suspend fun saveCubeState(
         cubies: List<CubiePersistable>,
@@ -177,6 +179,22 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
             null
         }
     }
+
+    override suspend fun saveShakeToScramble(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_SHAKE_TO_SCRAMBLE] = enabled
+        }
+    }
+
+    override suspend fun loadShakeToScramble(): Boolean? {
+        return try {
+            context.dataStore.data.first()[KEY_SHAKE_TO_SCRAMBLE]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
 
     // --- Custom Serializers / Deserializers ---
 

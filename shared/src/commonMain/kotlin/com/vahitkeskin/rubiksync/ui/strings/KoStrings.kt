@@ -115,6 +115,7 @@ val KoStrings = AppStrings(
     selectImageLabel =  "이미지 선택",
     showcaseWelcomeText = "RubikSync에 오신 것을 환영합니다! 앱 기능을 살펴봅시다.",
     showcaseEditableText = "잠금 아이콘을 탭하여 큐브 편집을 활성화/비활성화하세요.",
+    showcaseShakeToScrambleText = "흔들어서 섞기 기능을 활성화하거나 비활성화하려면 이 아이콘을 누르세요.",
     showcaseSoundText = "소리 아이콘을 탭하여 회전 소리를 켜거나 끄세요.",
     showcaseSettingsText = "설정을 열어 테마와 언어를 변경하세요.",
     showcaseInteractiveCubeText = "두 손가락으로 큐브 전체를 회전시키거나, 한 손가락으로 특정 행과 열을 돌릴 수 있습니다.",

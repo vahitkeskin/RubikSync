@@ -115,6 +115,7 @@ data class AppStrings(
     val selectImageLabel: String,
     val showcaseWelcomeText: String,
     val showcaseEditableText: String,
+    val showcaseShakeToScrambleText: String,
     val showcaseSoundText: String,
     val showcaseSettingsText: String,
     val showcaseInteractiveCubeText: String,

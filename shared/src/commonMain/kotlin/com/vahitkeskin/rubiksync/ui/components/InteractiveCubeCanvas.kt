@@ -59,7 +59,7 @@ fun InteractiveCubeCanvas(
     Box(
         modifier = modifier
             .onGloballyPositioned { coords ->
-                if (appState.showcaseStep == 4 && !appState.isShowcaseCompleted) {
+                if (appState.showcaseStep == 5 && !appState.isShowcaseCompleted) {
                     val pos = coords.positionInRoot()
                     val size = coords.size
                     appState.updateTargetVisuals(
@@ -71,7 +71,7 @@ fun InteractiveCubeCanvas(
     ) {
         AuraBalloon(
             text = appState.strings.showcaseInteractiveCubeText,
-            isVisible = appState.showcaseStep == 4 && !appState.isShowcaseCompleted,
+            isVisible = appState.showcaseStep == 5 && !appState.isShowcaseCompleted,
             isBelow = true,
             onDismiss = {
                 appState.advanceShowcase()

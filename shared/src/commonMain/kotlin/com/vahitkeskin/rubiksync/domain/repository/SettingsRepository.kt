@@ -18,6 +18,9 @@ interface SettingsRepository {
     suspend fun saveShowcaseCompleted(completed: Boolean)
     suspend fun loadShowcaseCompleted(): Boolean?
 
+    suspend fun saveShakeToScramble(enabled: Boolean)
+    suspend fun loadShakeToScramble(): Boolean?
+
     suspend fun saveCameraSettings(
         yaw: Float,
         pitch: Float,

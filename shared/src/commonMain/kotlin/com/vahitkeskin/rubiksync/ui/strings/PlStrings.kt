@@ -115,6 +115,7 @@ val PlStrings = AppStrings(
     selectImageLabel =  "Wybierz obraz",
     showcaseWelcomeText = "Witamy w RubikSync! Odkryjmy funkcje aplikacji.",
     showcaseEditableText = "Dotknij ikony zamka, aby włączyć/wyłączyć edycję kostki.",
+    showcaseShakeToScrambleText = "Stuknij tę ikonę, aby włączyć lub wyłączyć funkcję potrząsania w celu pomieszania.",
     showcaseSoundText = "Dotknij ikony dźwięku, aby włączyć/wyłączyć dźwięk obrotu.",
     showcaseSettingsText = "Otwórz ustawienia, aby zmienić motyw i język.",
     showcaseInteractiveCubeText = "Obracaj cały sześcian dwoma palcami lub obracaj określone wiersze i kolumny jednym palcem.",

@@ -197,6 +197,16 @@ fun App() {
                             animationSpec = tween(durationMillis = 1000)
                         )
 
+                        // Shake to scramble feature detection
+                        rememberShakeDetector(
+                            enabled = appState.isShakeToScrambleEnabled && appState.isCubeEditable && !cubeState.isAnimating
+                        ) {
+                            appState.clearManualMoves()
+                            appState.coroutineScope.launch {
+                                cubeState.scramble()
+                            }
+                        }
+
                         LaunchedEffect(appState.isShowcaseCompleted) {
                             if (!appState.isShowcaseCompleted && appState.showcaseStep == 0) {
                                 kotlinx.coroutines.delay(1500)

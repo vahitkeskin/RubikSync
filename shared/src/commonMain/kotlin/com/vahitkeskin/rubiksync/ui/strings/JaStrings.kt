@@ -115,6 +115,7 @@ val JaStrings = AppStrings(
     selectImageLabel =  "画像を選択",
     showcaseWelcomeText = "RubikSyncへようこそ！アプリの機能を探索しましょう。",
     showcaseEditableText = "ロックアイコンをタップして、キューブ編集を有効/無効にします。",
+    showcaseShakeToScrambleText = "このアイコンをタップして、振ってスクランブルする機能を有効または無効にします。",
     showcaseSoundText = "サウンドアイコンをタップして、回転音のオン/オフを切り替えます。",
     showcaseSettingsText = "設定ボタンからテーマと言語を変更できます。",
     showcaseInteractiveCubeText = "2本の指でキューブ全体を回転させ、1本の指で特定の行や列を回すことができます。",

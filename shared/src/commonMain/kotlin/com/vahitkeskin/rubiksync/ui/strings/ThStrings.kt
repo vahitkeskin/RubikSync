@@ -115,6 +115,7 @@ val ThStrings = AppStrings(
     selectImageLabel =  "เลือกรูปภาพ",
     showcaseWelcomeText = "ยินดีต้อนรับสู่ RubikSync! มาสำรวจฟีเจอร์ของแอปกัน",
     showcaseEditableText = "แตะไอคอนล็อคเพื่อเปิด/ปิดการแก้ไขลูกบาศก์",
+    showcaseShakeToScrambleText = "แตะไอคอนนี้เพื่อเปิดหรือปิดใช้งานฟีเจอร์เขย่าเพื่อหมุนสลับลูกบาศก์",
     showcaseSoundText = "แตะไอคอนเสียงเพื่อเปิด/ปิดเสียงหมุน",
     showcaseSettingsText = "เปิดการตั้งค่าเพื่อเปลี่ยนธีมและภาษา",
     showcaseInteractiveCubeText = "หมุนลูกบาศก์ทั้งหมดด้วยสองนิ้ว หรือหมุนแถวและคอลัมน์เฉพาะด้วยนิ้วเดียว",

@@ -115,6 +115,7 @@ val HiStrings = AppStrings(
     selectImageLabel =  "छवि चुनें",
     showcaseWelcomeText = "RubikSync में आपका स्वागत है! ऐप की सुविधाओं को जानें।",
     showcaseEditableText = "क्यूब संपादन को चालू/बंद करने के लिए लॉक आइकन पर टैप करें।",
+    showcaseShakeToScrambleText = "शेक टू स्क्रैम्बल सुविधा को सक्षम या अक्षम करने के लिए इस आइकन पर टैप करें।",
     showcaseSoundText = "रोटेशन ध्वनि को चालू/बंद करने के लिए ध्वनि आइकन पर टैप करें।",
     showcaseSettingsText = "थीम और भाषा बदलने के लिए सेटिंग्स खोलें.",
     showcaseInteractiveCubeText = "पूरे क्यूब को दो उंगलियों से घुमाएं, या एक उंगली से विशिष्ट पंक्तियों और स्तंभों को घुमाएं।",

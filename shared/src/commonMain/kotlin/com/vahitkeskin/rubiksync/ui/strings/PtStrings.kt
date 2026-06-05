@@ -115,6 +115,7 @@ val PtStrings = AppStrings(
     selectImageLabel =  "Selecionar imagem",
     showcaseWelcomeText = "Bem-vindo ao RubikSync! Vamos explorar os recursos do aplicativo.",
     showcaseEditableText = "Toque no ícone de cadeado para ativar ou desativar a edição do cubo.",
+    showcaseShakeToScrambleText = "Toque neste ícone para ativar ou desativar o recurso de agitar para embaralhar.",
     showcaseSoundText = "Toque no ícone de som para ativar ou desativar o som de rotação.",
     showcaseSettingsText = "Abra as configurações para alterar tema e idioma.",
     showcaseInteractiveCubeText = "Gire todo o cubo com dois dedos ou gire linhas e colunas específicas com um dedo.",

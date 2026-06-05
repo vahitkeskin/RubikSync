@@ -48,6 +48,14 @@ class SettingsRepositoryImpl(
         return persistence.loadShowcaseCompleted()
     }
 
+    override suspend fun saveShakeToScramble(enabled: Boolean) {
+        persistence.saveShakeToScramble(enabled)
+    }
+
+    override suspend fun loadShakeToScramble(): Boolean? {
+        return persistence.loadShakeToScramble()
+    }
+
     override suspend fun saveCameraSettings(
         yaw: Float,
         pitch: Float,

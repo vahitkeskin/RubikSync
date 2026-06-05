@@ -115,6 +115,7 @@ val NlStrings = AppStrings(
     selectImageLabel =  "Afbeelding selecteren",
     showcaseWelcomeText = "Welkom bij RubikSync! Laten we de app-functies verkennen.",
     showcaseEditableText = "Tik op het slotpictogram om kubus bewerken in/uit te schakelen.",
+    showcaseShakeToScrambleText = "Tik op dit pictogram om de schud-om-te-husselen functie in- of uit te schakelen.",
     showcaseSoundText = "Tik op het geluidspictogram om het rotatiegeluid in/uit te schakelen.",
     showcaseSettingsText = "Open instellingen om thema en taal te wijzigen.",
     showcaseInteractiveCubeText = "Draai de hele kubus met twee vingers, of draai specifieke rijen en kolommen met één vinger.",

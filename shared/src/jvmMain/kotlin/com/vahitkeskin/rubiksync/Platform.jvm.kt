@@ -191,6 +191,11 @@ actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
     // No-op on JVM/Desktop
 }
 
+@Composable
+actual fun rememberShakeDetector(enabled: Boolean, onShake: () -> Unit) {
+    // No-op on JVM/Desktop
+}
+
 // --- Cube Sound Implementation ---
 
 actual fun initCubeSound() {

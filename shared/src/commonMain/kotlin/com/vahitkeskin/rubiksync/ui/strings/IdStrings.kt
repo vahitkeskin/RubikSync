@@ -115,6 +115,7 @@ val IdStrings = AppStrings(
     selectImageLabel =  "Pilih Gambar",
     showcaseWelcomeText = "Selamat datang di RubikSync! Mari jelajahi fitur aplikasi.",
     showcaseEditableText = "Ketuk ikon kunci untuk mengaktifkan atau menonaktifkan pengeditan kubus.",
+    showcaseShakeToScrambleText = "Ketuk ikon ini untuk mengaktifkan atau menonaktifkan fitur kocok untuk mengacak.",
     showcaseSoundText = "Ketuk ikon suara untuk mengaktifkan atau menonaktifkan suara rotasi.",
     showcaseSettingsText = "Buka pengaturan untuk mengubah tema dan bahasa.",
     showcaseInteractiveCubeText = "Putar seluruh kubus dengan dua jari, atau putar baris dan kolom tertentu dengan satu jari.",

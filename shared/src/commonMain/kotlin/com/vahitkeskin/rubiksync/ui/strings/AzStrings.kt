@@ -115,6 +115,7 @@ val AzStrings = AppStrings(
     selectImageLabel =  "Şəkil seç",
     showcaseWelcomeText = "RubikSync-ə xoş gəlmisiniz! Tətbiq xüsusiyyətlərini kəşf edək.",
     showcaseEditableText = "Kub redaktəsini aktiv/deaktiv etmək üçün kilid ikonuna toxunun.",
+    showcaseShakeToScrambleText = "Telefonu silkələyərək qarışdırma funksiyasını aktivləşdirmək və ya söndürmək üçün bu ikonaya toxunun.",
     showcaseSoundText = "Dönmə səsini açmaq/söndürmək üçün səs ikonuna toxunun.",
     showcaseSettingsText = "Tema və dil dəyişdirmək üçün parametrləri açın.",
     showcaseInteractiveCubeText = "Küpü sərbəst döndərmək üçün iki barmağınızı, müəyyən sətir və ya sütunları çevirmək üçün isə tək barmağınızı istifadə edə bilərsiniz.",

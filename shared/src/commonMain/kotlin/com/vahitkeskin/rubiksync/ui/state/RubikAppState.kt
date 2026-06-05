@@ -35,8 +35,13 @@ class RubikAppState(
     private val saveCubeEditableUseCase: SaveCubeEditableUseCase,
     private val saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase,
     private val getCameraSettingsUseCase: GetCameraSettingsUseCase,
-    private val saveCameraSettingsUseCase: SaveCameraSettingsUseCase
+    private val saveCameraSettingsUseCase: SaveCameraSettingsUseCase,
+    private val saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase
 ) {
+    // Shake to Scramble State
+    var isShakeToScrambleEnabled by mutableStateOf(true)
+        private set
+
     // Camera State
     var yaw by mutableStateOf(-0.55f)
         private set
@@ -394,6 +399,13 @@ class RubikAppState(
         }
     }
 
+    fun updateShakeToScramble(enabled: Boolean) {
+        isShakeToScrambleEnabled = enabled
+        coroutineScope.launch(Dispatchers.Default) {
+            saveShakeToScrambleUseCase(enabled)
+        }
+    }
+
     fun updateShowcaseCompleted(completed: Boolean) {
         isShowcaseCompleted = completed
         coroutineScope.launch(Dispatchers.Default) {
@@ -405,14 +417,14 @@ class RubikAppState(
         if (isShowcaseCompleted) return
         val currentStep = showcaseStep
         coroutineScope.launch {
-            if (currentStep in 1..10) {
+            if (currentStep in 1..11) {
                 showcaseStep = -currentStep
             }
             targetBounds = null
             kotlinx.coroutines.delay(1050)
-            if (currentStep in 1..9) {
+            if (currentStep in 1..10) {
                 showcaseStep = currentStep + 1
-            } else if (currentStep == 10) {
+            } else if (currentStep == 11) {
                 showcaseStep = 0
                 updateShowcaseCompleted(true)
             }
@@ -553,6 +565,12 @@ class RubikAppState(
                         isSoundEnabled = settings.isSoundEnabled
                     }
 
+                    if (settings.isShakeToScrambleEnabled != null) {
+                        isShakeToScrambleEnabled = settings.isShakeToScrambleEnabled
+                    } else {
+                        isShakeToScrambleEnabled = true
+                    }
+
                     if (settings.isShowcaseCompleted != null) {
                         isShowcaseCompleted = settings.isShowcaseCompleted
                     }
@@ -588,7 +606,8 @@ fun rememberRubikAppState(
     saveCubeEditableUseCase: SaveCubeEditableUseCase = koinInject(),
     saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase = koinInject(),
     getCameraSettingsUseCase: GetCameraSettingsUseCase = koinInject(),
-    saveCameraSettingsUseCase: SaveCameraSettingsUseCase = koinInject()
+    saveCameraSettingsUseCase: SaveCameraSettingsUseCase = koinInject(),
+    saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase = koinInject()
 ) = remember(
     cubeState,
     coroutineScope,
@@ -601,7 +620,8 @@ fun rememberRubikAppState(
     saveCubeEditableUseCase,
     saveShowcaseCompletedUseCase,
     getCameraSettingsUseCase,
-    saveCameraSettingsUseCase
+    saveCameraSettingsUseCase,
+    saveShakeToScrambleUseCase
 ) {
     RubikAppState(
         cubeState = cubeState,
@@ -615,6 +635,7 @@ fun rememberRubikAppState(
         saveCubeEditableUseCase = saveCubeEditableUseCase,
         saveShowcaseCompletedUseCase = saveShowcaseCompletedUseCase,
         getCameraSettingsUseCase = getCameraSettingsUseCase,
-        saveCameraSettingsUseCase = saveCameraSettingsUseCase
+        saveCameraSettingsUseCase = saveCameraSettingsUseCase,
+        saveShakeToScrambleUseCase = saveShakeToScrambleUseCase
     )
 }

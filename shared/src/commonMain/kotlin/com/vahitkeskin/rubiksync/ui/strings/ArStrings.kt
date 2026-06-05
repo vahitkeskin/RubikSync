@@ -115,6 +115,7 @@ val ArStrings = AppStrings(
     selectImageLabel =  "اختر صورة",
     showcaseWelcomeText = "مرحبًا بك في RubikSync! لنستكشف ميزات التطبيق.",
     showcaseEditableText = "انقر على أيقونة القفل لتفعيل أو تعطيل تعديل المكعب.",
+    showcaseShakeToScrambleText = "اضغط على هذه الأيقونة لتمكين أو تعطيل ميزة هز الهاتف لخلط المكعب.",
     showcaseSoundText = "انقر على أيقونة الصوت لتشغيل أو إيقاف صوت الدوران.",
     showcaseSettingsText = "افتح الإعدادات لتغيير السمة واللغة.",
     showcaseInteractiveCubeText = "اسحب بإصبعين لتدوير المكعب بالكامل، أو بإصبع واحد لتدوير صفوف وأعمدة محددة.",

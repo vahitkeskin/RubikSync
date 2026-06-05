@@ -69,6 +69,9 @@ interface RubikPersistence {
 
     suspend fun saveShowcaseCompleted(completed: Boolean)
     suspend fun loadShowcaseCompleted(): Boolean?
+
+    suspend fun saveShakeToScramble(enabled: Boolean)
+    suspend fun loadShakeToScramble(): Boolean?
 }
 
 object RubikPersistenceRegistry {

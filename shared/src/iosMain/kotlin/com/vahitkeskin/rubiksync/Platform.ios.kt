@@ -882,6 +882,11 @@ actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
     // No-op on iOS
 }
 
+@Composable
+actual fun rememberShakeDetector(enabled: Boolean, onShake: () -> Unit) {
+    // No-op on iOS
+}
+
 // --- Cube Sound Implementation ---
 
 actual fun initCubeSound() {

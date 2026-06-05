@@ -115,6 +115,7 @@ val DeStrings = AppStrings(
     selectImageLabel =  "Bild auswählen",
     showcaseWelcomeText = "Willkommen bei RubikSync! Entdecken Sie die App-Funktionen.",
     showcaseEditableText = "Tippen Sie auf das Schloss-Symbol, um die Würfelbearbeitung zu aktivieren/deaktivieren.",
+    showcaseShakeToScrambleText = "Tippen Sie auf dieses Symbol, um die Schüttel-Mischfunktion zu aktivieren oder zu deaktivieren.",
     showcaseSoundText = "Tippen Sie auf das Lautsprecher-Symbol, um den Drehsound ein-/auszuschalten.",
     showcaseSettingsText = "Öffnen Sie die Einstellungen, um Design und Sprache zu ändern.",
     showcaseInteractiveCubeText = "Drehen Sie den gesamten Würfel mit zwei Fingern oder drehen Sie bestimmte Zeilen und Spalten mit einem Finger.",

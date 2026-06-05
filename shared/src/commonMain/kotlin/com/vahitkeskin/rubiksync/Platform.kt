@@ -47,6 +47,9 @@ expect fun logMoveDetail(moveLabel: String, phase: String, mathDetails: String)
 @Composable
 expect fun BindBackHandler(enabled: Boolean = true, onBack: () -> Unit)
 
+@Composable
+expect fun rememberShakeDetector(enabled: Boolean, onShake: () -> Unit)
+
 // --- Cube Sound API ---
 
 expect fun initCubeSound()

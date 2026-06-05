@@ -178,7 +178,7 @@ fun EditorDialog(
     ) {
         var editorTargetBounds by remember { mutableStateOf<Rect?>(null) }
         var editorTargetCornerRadius by remember { mutableStateOf(12.dp) }
-        var parentPositionInRoot by remember { mutableStateOf(Offset.Zero) }
+        var canvasPositionInRoot by remember { mutableStateOf(Offset.Zero) }
 
         LaunchedEffect(show) {
             if (show && !appState.isEditorShowcaseCompleted && appState.editorShowcaseStep == 0) {
@@ -186,12 +186,14 @@ fun EditorDialog(
             }
         }
 
+        LaunchedEffect(appState.editorShowcaseStep) {
+            if (appState.editorShowcaseStep < 0) {
+                editorTargetBounds = null
+            }
+        }
+
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .onGloballyPositioned { coords ->
-                    parentPositionInRoot = coords.positionInRoot()
-                }
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -278,7 +280,7 @@ fun EditorDialog(
                         .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
                         .onGloballyPositioned { coords ->
                             if (appState.editorShowcaseStep == 5 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                val pos = coords.positionInRoot()
                                 val size = coords.size
                                 editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                 editorTargetCornerRadius = 14.dp
@@ -338,7 +340,7 @@ fun EditorDialog(
                         .horizontalScroll(rememberScrollState())
                         .onGloballyPositioned { coords ->
                             if (appState.editorShowcaseStep == 1 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                val pos = coords.positionInRoot()
                                 val size = coords.size
                                 editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                 editorTargetCornerRadius = 10.dp
@@ -433,7 +435,7 @@ fun EditorDialog(
                         isClickable = true,
                         modifier = Modifier.onGloballyPositioned { coords ->
                             if (appState.editorShowcaseStep == 2 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                val pos = coords.positionInRoot()
                                 val size = coords.size
                                 editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                 editorTargetCornerRadius = 8.dp
@@ -473,7 +475,7 @@ fun EditorDialog(
                         .fillMaxWidth()
                         .onGloballyPositioned { coords ->
                             if (appState.editorShowcaseStep == 3 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                val pos = coords.positionInRoot()
                                 val size = coords.size
                                 editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                 editorTargetCornerRadius = 12.dp
@@ -601,7 +603,7 @@ fun EditorDialog(
                         .height(42.dp)
                         .onGloballyPositioned { coords ->
                             if (appState.editorShowcaseStep == 4 && !appState.isEditorShowcaseCompleted) {
-                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                val pos = coords.positionInRoot()
                                 val size = coords.size
                                 editorTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                 editorTargetCornerRadius = 12.dp
@@ -727,13 +729,16 @@ fun EditorDialog(
 
         val overlayAlpha by animateFloatAsState(
             targetValue = if (appState.editorShowcaseStep != 0 && !appState.isEditorShowcaseCompleted) 0.85f else 0f,
-            animationSpec = tween(durationMillis = 300)
+            animationSpec = tween(durationMillis = 1000)
         )
 
         if (overlayAlpha > 0f) {
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
+                    .onGloballyPositioned { coords ->
+                        canvasPositionInRoot = coords.positionInRoot()
+                    }
                     .graphicsLayer(alpha = 0.99f)
                     .clickable(
                         onClick = { appState.advanceEditorShowcase() },
@@ -743,9 +748,11 @@ fun EditorDialog(
             ) {
                 drawRect(color = Color(0xFF0F172A).copy(alpha = overlayAlpha))
                 editorTargetBounds?.let { rect ->
+                    val localLeft = rect.left - canvasPositionInRoot.x
+                    val localTop = rect.top - canvasPositionInRoot.y
                     drawRoundRect(
                         color = Color.Transparent,
-                        topLeft = Offset(rect.left, rect.top),
+                        topLeft = Offset(localLeft, localTop),
                         size = Size(rect.width, rect.height),
                         cornerRadius = CornerRadius(editorTargetCornerRadius.toPx(), editorTargetCornerRadius.toPx()),
                         blendMode = BlendMode.Clear

@@ -465,7 +465,7 @@ class RubikAppState(
             if (currentStep in 1..totalSteps) {
                 editorShowcaseStep = -currentStep
             }
-            kotlinx.coroutines.delay(200)
+            kotlinx.coroutines.delay(1050)
             if (currentStep in 1 until totalSteps) {
                 editorShowcaseStep = currentStep + 1
             } else if (currentStep == totalSteps) {
@@ -490,7 +490,7 @@ class RubikAppState(
             if (currentStep in 1..totalSteps) {
                 scannerShowcaseStep = -currentStep
             }
-            kotlinx.coroutines.delay(200)
+            kotlinx.coroutines.delay(1050)
             if (currentStep in 1 until totalSteps) {
                 scannerShowcaseStep = currentStep + 1
             } else if (currentStep == totalSteps) {

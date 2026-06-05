@@ -214,7 +214,7 @@ fun ScannerWizard(
     ) {
         var scannerTargetBounds by remember { mutableStateOf<Rect?>(null) }
         var scannerTargetCornerRadius by remember { mutableStateOf(12.dp) }
-        var parentPositionInRoot by remember { mutableStateOf(Offset.Zero) }
+        var canvasPositionInRoot by remember { mutableStateOf(Offset.Zero) }
 
         LaunchedEffect(show) {
             if (show && !appState.isScannerShowcaseCompleted && appState.scannerShowcaseStep == 0) {
@@ -222,12 +222,14 @@ fun ScannerWizard(
             }
         }
 
+        LaunchedEffect(appState.scannerShowcaseStep) {
+            if (appState.scannerShowcaseStep < 0) {
+                scannerTargetBounds = null
+            }
+        }
+
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .onGloballyPositioned { coords ->
-                    parentPositionInRoot = coords.positionInRoot()
-                }
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -292,7 +294,7 @@ fun ScannerWizard(
                             .fillMaxWidth()
                             .onGloballyPositioned { coords ->
                                 if (appState.scannerShowcaseStep == 1 && !appState.isScannerShowcaseCompleted) {
-                                    val pos = coords.positionInRoot() - parentPositionInRoot
+                                    val pos = coords.positionInRoot()
                                     val size = coords.size
                                     scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                     scannerTargetCornerRadius = 16.dp
@@ -428,7 +430,7 @@ fun ScannerWizard(
                             .padding(horizontal = 4.dp)
                             .onGloballyPositioned { coords ->
                                 if (appState.scannerShowcaseStep == 2 && !appState.isScannerShowcaseCompleted) {
-                                    val pos = coords.positionInRoot() - parentPositionInRoot
+                                    val pos = coords.positionInRoot()
                                     val size = coords.size
                                     scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                     scannerTargetCornerRadius = 12.dp
@@ -518,7 +520,7 @@ fun ScannerWizard(
                                         .fillMaxWidth(0.75f)
                                         .onGloballyPositioned { coords ->
                                             if (appState.scannerShowcaseStep == 3 && !appState.isScannerShowcaseCompleted) {
-                                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                                val pos = coords.positionInRoot()
                                                 val size = coords.size
                                                 scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                                 scannerTargetCornerRadius = 16.dp
@@ -672,7 +674,7 @@ fun ScannerWizard(
                                     .background(RubikTheme.colors.backgroundPrimary)
                                     .onGloballyPositioned { coords ->
                                         if (appState.scannerShowcaseStep == 5 && !appState.isScannerShowcaseCompleted) {
-                                            val pos = coords.positionInRoot() - parentPositionInRoot
+                                            val pos = coords.positionInRoot()
                                             val size = coords.size
                                             scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                             scannerTargetCornerRadius = 16.dp
@@ -790,7 +792,7 @@ fun ScannerWizard(
                                     .padding(horizontal = 4.dp)
                                     .onGloballyPositioned { coords ->
                                         if (appState.scannerShowcaseStep == 4 && !appState.isScannerShowcaseCompleted) {
-                                            val pos = coords.positionInRoot() - parentPositionInRoot
+                                            val pos = coords.positionInRoot()
                                             val size = coords.size
                                             scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                             scannerTargetCornerRadius = 12.dp
@@ -955,7 +957,7 @@ fun ScannerWizard(
                         .fillMaxWidth()
                         .onGloballyPositioned { coords ->
                             if (appState.scannerShowcaseStep == 6 && !appState.isScannerShowcaseCompleted) {
-                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                val pos = coords.positionInRoot()
                                 val size = coords.size
                                 scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
                                 scannerTargetCornerRadius = 12.dp
@@ -1148,13 +1150,16 @@ fun ScannerWizard(
 
         val overlayAlpha by animateFloatAsState(
             targetValue = if (appState.scannerShowcaseStep != 0 && !appState.isScannerShowcaseCompleted) 0.85f else 0f,
-            animationSpec = tween(durationMillis = 300)
+            animationSpec = tween(durationMillis = 1000)
         )
 
         if (overlayAlpha > 0f) {
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
+                    .onGloballyPositioned { coords ->
+                        canvasPositionInRoot = coords.positionInRoot()
+                    }
                     .graphicsLayer(alpha = 0.99f)
                     .clickable(
                         onClick = { appState.advanceScannerShowcase() },
@@ -1164,9 +1169,11 @@ fun ScannerWizard(
             ) {
                 drawRect(color = Color(0xFF0F172A).copy(alpha = overlayAlpha))
                 scannerTargetBounds?.let { rect ->
+                    val localLeft = rect.left - canvasPositionInRoot.x
+                    val localTop = rect.top - canvasPositionInRoot.y
                     drawRoundRect(
                         color = Color.Transparent,
-                        topLeft = Offset(rect.left, rect.top),
+                        topLeft = Offset(localLeft, localTop),
                         size = Size(rect.width, rect.height),
                         cornerRadius = CornerRadius(scannerTargetCornerRadius.toPx(), scannerTargetCornerRadius.toPx()),
                         blendMode = BlendMode.Clear

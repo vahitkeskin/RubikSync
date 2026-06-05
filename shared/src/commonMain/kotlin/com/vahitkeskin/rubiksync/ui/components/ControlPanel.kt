@@ -507,7 +507,7 @@ fun ControlPanel(
                                     }
                                 }
                             },
-                            enabled = canEditCube && !cubeState.isAnimating && !appState.isRecalculating,
+                            enabled = canEditCube && !cubeState.isAnimating && !appState.isRecalculating && !appState.isSolved,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (RubikTheme.colors.isDark) AccentGreenShadow else AccentGreenFaintBg,
                                 contentColor = RubikTheme.colors.accentGreen,

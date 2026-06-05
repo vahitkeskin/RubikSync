@@ -220,6 +220,7 @@ fun ScannerWizard(
         var scannerTargetBounds by remember { mutableStateOf<Rect?>(null) }
         var scannerTargetCornerRadius by remember { mutableStateOf(12.dp) }
         var canvasPositionInRoot by remember { mutableStateOf(Offset.Zero) }
+        var viewportBounds by remember { mutableStateOf<Rect?>(null) }
 
         LaunchedEffect(show) {
             if (show && !appState.isScannerShowcaseCompleted && appState.scannerShowcaseStep == 0) {
@@ -228,9 +229,7 @@ fun ScannerWizard(
         }
 
         LaunchedEffect(appState.scannerShowcaseStep) {
-            if (appState.scannerShowcaseStep < 0) {
-                scannerTargetBounds = null
-            }
+            scannerTargetBounds = null
         }
 
         Box(
@@ -588,6 +587,16 @@ fun ScannerWizard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f)
+                                .onGloballyPositioned { coords ->
+                                    val pos = coords.positionInRoot()
+                                    val size = coords.size
+                                    viewportBounds = Rect(
+                                        pos.x,
+                                        pos.y,
+                                        pos.x + size.width,
+                                        pos.y + size.height
+                                    )
+                                }
                                 .verticalScroll(scannerScrollState)
                         ) {
                             // 1. Side-by-Side Photo Preview and Color Grid
@@ -933,9 +942,17 @@ fun ScannerWizard(
                                             strokeWidth = 2.dp
                                         )
                                     }
+                                    val isPreviewVisible = appState.scannerShowcaseStep == 5 &&
+                                            !appState.isScannerShowcaseCompleted &&
+                                            viewportBounds != null &&
+                                            scannerTargetBounds != null &&
+                                            scannerTargetBounds!!.top >= viewportBounds!!.top - 10f &&
+                                            scannerTargetBounds!!.bottom <= viewportBounds!!.bottom + 10f &&
+                                            !scannerScrollState.isScrollInProgress
+
                                     AuraBalloon(
                                         text = appState.strings.showcaseScannerPreview,
-                                        isVisible = appState.scannerShowcaseStep == 5 && !appState.isScannerShowcaseCompleted,
+                                        isVisible = isPreviewVisible,
                                         isBelow = false,
                                         onDismiss = { appState.advanceScannerShowcase() }
                                     )
@@ -1080,9 +1097,17 @@ fun ScannerWizard(
                                         )
                                     }
                                 }
+                                val isSlidersVisible = appState.scannerShowcaseStep == 4 &&
+                                        !appState.isScannerShowcaseCompleted &&
+                                        viewportBounds != null &&
+                                        scannerTargetBounds != null &&
+                                        scannerTargetBounds!!.top >= viewportBounds!!.top - 10f &&
+                                        scannerTargetBounds!!.bottom <= viewportBounds!!.bottom + 10f &&
+                                        !scannerScrollState.isScrollInProgress
+
                                 AuraBalloon(
                                     text = appState.strings.showcaseScannerSliders,
-                                    isVisible = appState.scannerShowcaseStep == 4 && !appState.isScannerShowcaseCompleted,
+                                    isVisible = isSlidersVisible,
                                     isBelow = false,
                                     onDismiss = { appState.advanceScannerShowcase() }
                                 )

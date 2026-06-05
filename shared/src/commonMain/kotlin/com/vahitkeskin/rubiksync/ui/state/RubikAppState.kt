@@ -29,23 +29,34 @@ class RubikAppState(
     val coroutineScope: CoroutineScope
 ) {
     // Camera State
-    var yaw by mutableStateOf(-0.55f)       // Initial yaw - viewing top-left-front
-    var pitch by mutableStateOf(0.40f)      // Initial pitch
+    var yaw by mutableStateOf(-0.55f)
+        private set
+    var pitch by mutableStateOf(0.40f)
+        private set
     var cameraDistance by mutableStateOf(10.0f)
+        private set
     var panX by mutableStateOf(0f)
+        private set
     var panY by mutableStateOf(0f)
+        private set
 
     // Dialog visibility states
     var showEditorDialog by mutableStateOf(false)
+        private set
     var showScannerWizard by mutableStateOf(false)
+        private set
     var showSplashScreen by mutableStateOf(true)
+        private set
     var showSettingsScreen by mutableStateOf(false)
+        private set
 
     // Theme mode state
     var themeMode by mutableStateOf(ThemeMode.SYSTEM)
+        private set
 
     // Theme loading state
     var isThemeLoaded by mutableStateOf(false)
+        private set
 
     // App language state
     var appLanguage by mutableStateOf(
@@ -54,6 +65,7 @@ class RubikAppState(
             AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
         }
     )
+        private set
 
     // Localized strings
     val strings: AppStrings
@@ -69,43 +81,55 @@ class RubikAppState(
         FaceName.B to Array(3) { Array(3) { CubeColor.BLUE } }
     )
 
-    private var _editorFaces by mutableStateOf(defaultFaces)
-    var editorFaces: Map<FaceName, Array<Array<CubeColor>>>
-        get() = _editorFaces
-        set(value) {
-            _editorFaces = value
-            saveCurrentState()
-        }
+    var editorFaces by mutableStateOf(defaultFaces)
+        private set
     var selectedColor by mutableStateOf(CubeColor.ORANGE)
+        private set
 
     // Solution / Playback State
     var activeSolution by mutableStateOf<List<MoveType>?>(null)
+        private set
 
     // List of annotated steps computed by the solver with phase descriptions
     var activeSolutionDetails by mutableStateOf<List<AnnotatedMove>?>(null)
+        private set
     var currentSolutionStep by mutableStateOf(0)
+        private set
     var isPlaybackRunning by mutableStateOf(false)
+        private set
 
     // Feedback states
     var errorMessage by mutableStateOf<String?>(null)
+        private set
     var infoMessage by mutableStateOf<String?>(null)
+        private set
     var successMessage by mutableStateOf<String?>(null)
+        private set
     var isDetecting by mutableStateOf(false)
+        private set
     var isRecalculating by mutableStateOf(false)
+        private set
 
     // Statistics
     var totalMoveCount by mutableStateOf(0)
+        private set
 
     /** When false, the 3D cube can only be orbited/zoomed — no layer turns or panel edits. */
     var isCubeEditable by mutableStateOf(true)
+        private set
 
     var isSoundEnabled by mutableStateOf(true)
+        private set
 
     // Showcase / Onboarding state
     var isShowcaseCompleted by mutableStateOf(false)
+        private set
     var showcaseStep by mutableStateOf(0)
+        private set
     var targetBounds by mutableStateOf<androidx.compose.ui.geometry.Rect?>(null)
+        private set
     var targetCornerRadius by mutableStateOf(16.dp)
+        private set
 
     // Computed: is the cube solved?
     val isSolved: Boolean
@@ -130,17 +154,195 @@ class RubikAppState(
 
     // Scanner Wizard State
     var scannerStep by mutableStateOf(0)
+        private set
     var scannedGrids by mutableStateOf(mutableMapOf<FaceName, Array<Array<CubeColor>>>())
+        private set
 
     // 3D vector representation of the scanned raw RGB values for cube stickers
     var scannedRawRGBs by mutableStateOf(mutableMapOf<FaceName, Array<Array<IntVector3>>>())
+        private set
     var scannedFilePaths by mutableStateOf(mutableMapOf<FaceName, String>())
+        private set
 
     var gridScales by mutableStateOf(FaceName.values().associateWith { 0.55f }.toMutableMap())
+        private set
     var gridOffsetsX by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
+        private set
     var gridOffsetsY by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
+        private set
 
-    val manualMoves = mutableStateListOf<MoveType>()
+    private val _manualMoves = mutableStateListOf<MoveType>()
+    val manualMoves: List<MoveType> get() = _manualMoves
+
+    // --- Public State Mutators ---
+
+    fun updateYaw(value: Float) {
+        yaw = value
+    }
+
+    fun updatePitch(value: Float) {
+        pitch = value
+    }
+
+    fun updateCameraDistance(value: Float) {
+        cameraDistance = value
+    }
+
+    fun updatePanX(value: Float) {
+        panX = value
+    }
+
+    fun updatePanY(value: Float) {
+        panY = value
+    }
+
+    fun updateCameraOrbit(dy: Float, dp: Float) {
+        yaw = (yaw + dy) % (2f * kotlin.math.PI.toFloat())
+        pitch = (pitch + dp).coerceIn(-1.4f, 1.4f)
+    }
+
+    fun updateCameraZoom(dz: Float) {
+        cameraDistance = (cameraDistance + dz).coerceIn(4f, 12f)
+    }
+
+    fun updateCameraPan(dx: Float, dy: Float) {
+        panX += dx
+        panY += dy
+    }
+
+    fun updateShowEditorDialog(show: Boolean) {
+        showEditorDialog = show
+    }
+
+    fun updateShowScannerWizard(show: Boolean) {
+        showScannerWizard = show
+    }
+
+    fun updateShowSplashScreen(show: Boolean) {
+        showSplashScreen = show
+    }
+
+    fun updateShowSettingsScreen(show: Boolean) {
+        showSettingsScreen = show
+    }
+
+    fun updateEditorFaces(faces: Map<FaceName, Array<Array<CubeColor>>>) {
+        editorFaces = faces
+        saveCurrentState()
+    }
+
+    fun updateSelectedColor(color: CubeColor) {
+        selectedColor = color
+    }
+
+    fun updateActiveSolution(solution: List<MoveType>?) {
+        activeSolution = solution
+    }
+
+    fun updateActiveSolutionDetails(details: List<AnnotatedMove>?) {
+        activeSolutionDetails = details
+    }
+
+    fun updateCurrentSolutionStep(step: Int) {
+        currentSolutionStep = step
+    }
+
+    fun incrementSolutionStep() {
+        currentSolutionStep++
+    }
+
+    fun updatePlaybackRunning(running: Boolean) {
+        isPlaybackRunning = running
+    }
+
+    fun updateErrorMessage(message: String?) {
+        errorMessage = message
+    }
+
+    fun updateInfoMessage(message: String?) {
+        infoMessage = message
+    }
+
+    fun updateSuccessMessage(message: String?) {
+        successMessage = message
+    }
+
+    fun updateDetecting(detecting: Boolean) {
+        isDetecting = detecting
+    }
+
+    fun updateRecalculating(recalculating: Boolean) {
+        isRecalculating = recalculating
+    }
+
+    fun updateTotalMoveCount(count: Int) {
+        totalMoveCount = count
+    }
+
+    fun incrementTotalMoveCount() {
+        totalMoveCount++
+    }
+
+    fun updateShowcaseStep(step: Int) {
+        showcaseStep = step
+    }
+
+    fun updateTargetBounds(bounds: androidx.compose.ui.geometry.Rect?) {
+        targetBounds = bounds
+    }
+
+    fun updateTargetCornerRadius(radius: Dp) {
+        targetCornerRadius = radius
+    }
+
+    fun updateTargetVisuals(bounds: androidx.compose.ui.geometry.Rect?, radius: Dp) {
+        targetBounds = bounds
+        targetCornerRadius = radius
+    }
+
+    fun updateScannerStep(step: Int) {
+        scannerStep = step
+    }
+
+    fun updateScannedGrids(grids: Map<FaceName, Array<Array<CubeColor>>>) {
+        scannedGrids = grids.toMutableMap()
+    }
+
+    fun updateScannedRawRGBs(rgbs: Map<FaceName, Array<Array<IntVector3>>>) {
+        scannedRawRGBs = rgbs.toMutableMap()
+    }
+
+    fun updateScannedFilePaths(paths: Map<FaceName, String>) {
+        scannedFilePaths = paths.toMutableMap()
+    }
+
+    fun updateGridScales(scales: Map<FaceName, Float>) {
+        gridScales = scales.toMutableMap()
+    }
+
+    fun updateGridOffsetsX(offsets: Map<FaceName, Float>) {
+        gridOffsetsX = offsets.toMutableMap()
+    }
+
+    fun updateGridOffsetsY(offsets: Map<FaceName, Float>) {
+        gridOffsetsY = offsets.toMutableMap()
+    }
+
+    fun addManualMove(move: MoveType) {
+        _manualMoves.add(move)
+    }
+
+    fun removeLastManualMove(): Boolean {
+        if (_manualMoves.isNotEmpty()) {
+            _manualMoves.removeAt(_manualMoves.size - 1)
+            return true
+        }
+        return false
+    }
+
+    fun clearManualMoves() {
+        _manualMoves.clear()
+    }
 
     fun updateThemeMode(mode: ThemeMode) {
         themeMode = mode
@@ -202,7 +404,7 @@ class RubikAppState(
         val p = RubikPersistenceRegistry.persistence ?: return
         if (isSolved && (cubeState.moveHistory.isNotEmpty() || manualMoves.isNotEmpty())) {
             cubeState.moveHistory.clear()
-            manualMoves.clear()
+            _manualMoves.clear()
             totalMoveCount = 0
         }
         coroutineScope.launch(Dispatchers.Default) {
@@ -275,7 +477,7 @@ class RubikAppState(
                     val saved = persistence.loadCubeState()
                     if (saved != null) {
                         withContext(Dispatchers.Main) {
-                            _editorFaces = saved.editorFaces
+                            editorFaces = saved.editorFaces
                         }
                     }
 

@@ -32,7 +32,7 @@ fun BoxScope.FeedbackOverlay(
         emoji = "❌",
         gradientColors = listOf(AccentRedCrimson, AccentRedDark),
         borderColor = AccentRedVibrant,
-        onDismiss = { appState.errorMessage = null },
+        onDismiss = { appState.updateErrorMessage(null) },
         autoDismissMs = 4000
     )
 
@@ -42,7 +42,7 @@ fun BoxScope.FeedbackOverlay(
         emoji = "✅",
         gradientColors = listOf(AccentGreenMedium, AccentGreenPine),
         borderColor = AccentGreen,
-        onDismiss = { appState.successMessage = null },
+        onDismiss = { appState.updateSuccessMessage(null) },
         autoDismissMs = 3000
     )
 
@@ -53,7 +53,7 @@ fun BoxScope.FeedbackOverlay(
             emoji = "ℹ️",
             gradientColors = listOf(DarkBorderSubtle, DarkGradientBg3),
             borderColor = AccentBlue,
-            onDismiss = { appState.infoMessage = null },
+            onDismiss = { appState.updateInfoMessage(null) },
             autoDismissMs = 3000
         )
     }

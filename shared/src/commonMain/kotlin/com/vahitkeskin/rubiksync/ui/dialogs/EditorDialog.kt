@@ -372,7 +372,7 @@ fun EditorDialog(
                         val grid = updated[face]!!.map { it.copyOf() }.toTypedArray()
                         grid[row][col] = appState.selectedColor
                         updated[face] = grid
-                        appState.editorFaces = updated
+                        appState.updateEditorFaces(updated)
                     }
                 )
 
@@ -431,7 +431,7 @@ fun EditorDialog(
                                     color = if (isSelected) RubikTheme.colors.textPrimary else RubikTheme.colors.borderSubtle,
                                     shape = RoundedCornerShape(10.dp)
                                 )
-                                .clickable { appState.selectedColor = color },
+                                .clickable { appState.updateSelectedColor(color) },
                             contentAlignment = Alignment.Center
                         ) {
                             if (isSelected) {
@@ -473,14 +473,14 @@ fun EditorDialog(
 
                 Button(
                     onClick = {
-                        appState.editorFaces = mapOf(
+                        appState.updateEditorFaces(mapOf(
                             FaceName.U to Array(3) { Array(3) { CubeColor.ORANGE } },
                             FaceName.D to Array(3) { Array(3) { CubeColor.RED } },
                             FaceName.L to Array(3) { Array(3) { CubeColor.YELLOW } },
                             FaceName.R to Array(3) { Array(3) { CubeColor.WHITE } },
                             FaceName.F to Array(3) { Array(3) { CubeColor.GREEN } },
                             FaceName.B to Array(3) { Array(3) { CubeColor.BLUE } }
-                        )
+                        ))
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (RubikTheme.colors.isDark) SelectionDarkMagenta else AccentRedFaintBg,
@@ -505,13 +505,13 @@ fun EditorDialog(
                         appState.coroutineScope.launch {
                             val success = cubeState.setCustomStateAnimated(appState.editorFaces)
                             if (success) {
-                                appState.manualMoves.clear()
+                                appState.clearManualMoves()
                                 appState.saveCurrentState()
-                                appState.activeSolution = null
-                                appState.errorMessage = null
-                                appState.successMessage = appState.strings.cubeStateApplied
+                                appState.updateActiveSolution(null)
+                                appState.updateErrorMessage(null)
+                                appState.updateSuccessMessage(appState.strings.cubeStateApplied)
                             } else {
-                                appState.errorMessage = appState.strings.invalidCubeDesign
+                                appState.updateErrorMessage(appState.strings.invalidCubeDesign)
                             }
                         }
                     },
@@ -575,12 +575,12 @@ fun EditorDialog(
                         onClick = {
                             val parsed = parseDetectedState(jsonInputText)
                             if (parsed != null) {
-                                appState.editorFaces = parsed
+                                appState.updateEditorFaces(parsed)
                                 showJsonImportDialog = false
                                 jsonInputText = ""
-                                appState.successMessage = appState.strings.jsonImportSuccess
+                                appState.updateSuccessMessage(appState.strings.jsonImportSuccess)
                             } else {
-                                appState.errorMessage = appState.strings.jsonImportError
+                                appState.updateErrorMessage(appState.strings.jsonImportError)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = RubikTheme.colors.accentOrange),

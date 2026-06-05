@@ -122,10 +122,10 @@ fun App() {
             logMoveDetail(nextMove.label, phase, mathDetails)
 
             cubeState.executeMove(nextMove)
-            appState.currentSolutionStep++
-            appState.totalMoveCount++
+            appState.incrementSolutionStep()
+            appState.incrementTotalMoveCount()
             if (appState.currentSolutionStep >= appState.activeSolution!!.size) {
-                appState.isPlaybackRunning = false
+                appState.updatePlaybackRunning(false)
             }
         }
     }
@@ -196,7 +196,7 @@ fun App() {
                         LaunchedEffect(appState.isShowcaseCompleted) {
                             if (!appState.isShowcaseCompleted && appState.showcaseStep == 0) {
                                 kotlinx.coroutines.delay(1500)
-                                appState.showcaseStep = 1
+                                appState.updateShowcaseStep(1)
                             }
                         }
 
@@ -269,21 +269,18 @@ fun App() {
                                 EditorDialog(
                                     show = appState.showEditorDialog,
                                     appState = appState,
-                                    onDismiss = { appState.showEditorDialog = false },
+                                    onDismiss = { appState.updateShowEditorDialog(false) },
                                     onStartScanWizard = {
-                                        appState.scannerStep = 0
-                                        appState.scannedGrids = mutableMapOf()
-                                        appState.scannedRawRGBs = mutableMapOf()
-                                        appState.scannedFilePaths = mutableMapOf()
-                                        appState.gridScales =
-                                            FaceName.values().associateWith { 0.55f }.toMutableMap()
-                                        appState.gridOffsetsX =
-                                            FaceName.values().associateWith { 0f }.toMutableMap()
-                                        appState.gridOffsetsY =
-                                            FaceName.values().associateWith { 0f }.toMutableMap()
-                                        appState.errorMessage = null
-                                        appState.infoMessage = null
-                                        appState.showScannerWizard = true
+                                        appState.updateScannerStep(0)
+                                        appState.updateScannedGrids(mutableMapOf())
+                                        appState.updateScannedRawRGBs(mutableMapOf())
+                                        appState.updateScannedFilePaths(mutableMapOf())
+                                        appState.updateGridScales(FaceName.values().associateWith { 0.55f })
+                                        appState.updateGridOffsetsX(FaceName.values().associateWith { 0f })
+                                        appState.updateGridOffsetsY(FaceName.values().associateWith { 0f })
+                                        appState.updateErrorMessage(null)
+                                        appState.updateInfoMessage(null)
+                                        appState.updateShowScannerWizard(true)
                                     }
                                 )
 
@@ -292,26 +289,26 @@ fun App() {
                                     show = appState.showScannerWizard,
                                     appState = appState,
                                     onDismiss = {
-                                        appState.showScannerWizard = false
-                                        appState.scannerStep = 0
-                                        appState.scannedGrids = mutableMapOf()
-                                        appState.scannedRawRGBs = mutableMapOf()
-                                        appState.scannedFilePaths = mutableMapOf()
+                                        appState.updateShowScannerWizard(false)
+                                        appState.updateScannerStep(0)
+                                        appState.updateScannedGrids(mutableMapOf())
+                                        appState.updateScannedRawRGBs(mutableMapOf())
+                                        appState.updateScannedFilePaths(mutableMapOf())
                                     },
                                     onComplete = { completeGrids ->
-                                        appState.editorFaces = completeGrids
-                                        appState.showScannerWizard = false
+                                        appState.updateEditorFaces(completeGrids)
+                                        appState.updateShowScannerWizard(false)
                                         appState.coroutineScope.launch {
                                             val success = cubeState.setCustomStateAnimated(completeGrids)
                                             if (success) {
-                                                appState.showEditorDialog = false
-                                                appState.manualMoves.clear()
+                                                appState.updateShowEditorDialog(false)
+                                                appState.clearManualMoves()
                                                 appState.saveCurrentState()
-                                                appState.activeSolution = null
-                                                appState.errorMessage = null
-                                                appState.successMessage = appState.strings.successScanComplete
+                                                appState.updateActiveSolution(null)
+                                                appState.updateErrorMessage(null)
+                                                appState.updateSuccessMessage(appState.strings.successScanComplete)
                                             } else {
-                                                appState.errorMessage = appState.strings.invalidCubeDesign
+                                                appState.updateErrorMessage(appState.strings.invalidCubeDesign)
                                             }
                                         }
                                     }

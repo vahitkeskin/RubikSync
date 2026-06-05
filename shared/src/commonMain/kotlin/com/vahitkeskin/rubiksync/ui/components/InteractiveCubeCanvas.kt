@@ -37,21 +37,19 @@ fun InteractiveCubeCanvas(
         GestureHandler(
             cubeState = cubeState,
             onCameraOrbit = { dy, dp ->
-                appState.yaw = (appState.yaw + dy) % (2f * PI.toFloat())
-                appState.pitch = (appState.pitch + dp).coerceIn(-1.4f, 1.4f)
+                appState.updateCameraOrbit(dy, dp)
             },
             onCameraZoom = { dz ->
-                appState.cameraDistance = (appState.cameraDistance + dz).coerceIn(4f, 12f)
+                appState.updateCameraZoom(dz)
             },
             onCameraPan = { dx, dy ->
-                appState.panX += dx
-                appState.panY += dy
+                appState.updateCameraPan(dx, dy)
             },
             onLayerRotate = { move ->
                 coroutineScope.launch {
                     cubeState.executeMove(move)
-                    appState.manualMoves.add(move)
-                    appState.totalMoveCount++
+                    appState.addManualMove(move)
+                    appState.incrementTotalMoveCount()
                     appState.saveCurrentState()
                 }
             }
@@ -64,8 +62,10 @@ fun InteractiveCubeCanvas(
                 if (appState.showcaseStep == 4 && !appState.isShowcaseCompleted) {
                     val pos = coords.positionInRoot()
                     val size = coords.size
-                    appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                    appState.targetCornerRadius = 16.dp
+                    appState.updateTargetVisuals(
+                        Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                        16.dp
+                    )
                 }
             }
     ) {
@@ -110,7 +110,7 @@ fun InteractiveCubeCanvas(
                             if (event.type == PointerEventType.Scroll) {
                                 val scrollDelta = event.changes.firstOrNull()?.scrollDelta
                                 if (scrollDelta != null) {
-                                    appState.cameraDistance = (appState.cameraDistance + scrollDelta.y * 0.15f).coerceIn(4f, 12f)
+                                    appState.updateCameraZoom(scrollDelta.y * 0.15f)
                                     event.changes.forEach { it.consume() }
                                 }
                                 continue
@@ -169,14 +169,13 @@ fun InteractiveCubeCanvas(
 
                                     // Zoom
                                     val zoomDelta = (prevDist - currentDist) * 0.015f
-                                    appState.cameraDistance = (appState.cameraDistance + zoomDelta).coerceIn(4f, 12f)
+                                    appState.updateCameraZoom(zoomDelta)
 
                                     // Orbit/Rotate the entire cube (average movement of two fingers)
                                     val rotateDelta = ((pos1 - prev1) + (pos2 - prev2)) * 0.5f
                                     val dy = -rotateDelta.x * 0.007f
                                     val dp = -rotateDelta.y * 0.007f
-                                    appState.yaw = (appState.yaw + dy) % (2f * PI.toFloat())
-                                    appState.pitch = (appState.pitch + dp).coerceIn(-1.4f, 1.4f)
+                                    appState.updateCameraOrbit(dy, dp)
 
                                     p1.consume()
                                     p2.consume()

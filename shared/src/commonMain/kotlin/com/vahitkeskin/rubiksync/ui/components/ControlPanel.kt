@@ -147,8 +147,10 @@ fun ControlPanel(
                             if (appState.showcaseStep == 5 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
-                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                appState.targetCornerRadius = 12.dp
+                                appState.updateTargetVisuals(
+                                    Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                    12.dp
+                                )
                             }
                         }
                 ) {
@@ -171,8 +173,10 @@ fun ControlPanel(
                             if (appState.showcaseStep == 6 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
-                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                appState.targetCornerRadius = 16.dp
+                                appState.updateTargetVisuals(
+                                    Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                    16.dp
+                                )
                             }
                         }
                 ) {
@@ -184,7 +188,7 @@ fun ControlPanel(
                         Button(
                             onClick = {
                                 coroutineScope.launch {
-                                    appState.manualMoves.clear()
+                                    appState.clearManualMoves()
                                     cubeState.scramble()
                                 }
                             },
@@ -216,9 +220,7 @@ fun ControlPanel(
                         Button(
                             onClick = {
                                 coroutineScope.launch {
-                                    if (appState.manualMoves.isNotEmpty()) {
-                                        appState.manualMoves.removeAt(appState.manualMoves.size - 1)
-                                    }
+                                    appState.removeLastManualMove()
                                     cubeState.undo()
                                 }
                             },
@@ -255,14 +257,14 @@ fun ControlPanel(
                                     val startPanY = appState.panY
 
                                     cubeState.resetAnimated(durationMs = 500f) { progress ->
-                                        appState.yaw = startYaw + (-0.55f - startYaw) * progress
-                                        appState.pitch = startPitch + (0.40f - startPitch) * progress
-                                        appState.cameraDistance = startDist + (10.0f - startDist) * progress
-                                        appState.panX = startPanX + (0f - startPanX) * progress
-                                        appState.panY = startPanY + (0f - startPanY) * progress
+                                        appState.updateYaw(startYaw + (-0.55f - startYaw) * progress)
+                                        appState.updatePitch(startPitch + (0.40f - startPitch) * progress)
+                                        appState.updateCameraDistance(startDist + (10.0f - startDist) * progress)
+                                        appState.updatePanX(startPanX + (0f - startPanX) * progress)
+                                        appState.updatePanY(startPanY + (0f - startPanY) * progress)
                                     }
-                                    appState.manualMoves.clear()
-                                    appState.totalMoveCount = 0
+                                    appState.clearManualMoves()
+                                    appState.updateTotalMoveCount(0)
                                 }
                             },
                             enabled = !cubeState.isAnimating && !appState.isInitialState,
@@ -308,7 +310,7 @@ fun ControlPanel(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Button(
-                        onClick = { appState.showEditorDialog = true },
+                        onClick = { appState.updateShowEditorDialog(true) },
                         enabled = canEditCube && !cubeState.isAnimating,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (RubikTheme.colors.isDark) DarkGradientBg2 else AccentBlueFaintBg,
@@ -340,100 +342,102 @@ fun ControlPanel(
                                 if (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) {
                                     val pos = coords.positionInRoot()
                                     val size = coords.size
-                                    appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                    appState.targetCornerRadius = 12.dp
+                                    appState.updateTargetVisuals(
+                                        Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                        12.dp
+                                    )
                                 }
                             }
                     ) {
                         Button(
-                             onClick = {
-                            appState.isRecalculating = true
-                            appState.errorMessage = null
-                            coroutineScope.launch(Dispatchers.Default) {
-                                try {
-                                    val currentSnapshot = cubeState.toSnapshot()
-                                    
-                                    // Check if already solved
-                                    val isSolvedNow = cubeState.cubies.all { cubie ->
-                                        cubie.gridPos == cubie.originalPos &&
-                                        cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
-                                    }
-                                    
-                                    if (isSolvedNow) {
-                                        withContext(Dispatchers.Main) {
-                                            appState.activeSolution = null
-                                            appState.activeSolutionDetails = null
-                                            appState.successMessage = appState.strings.cubeAlreadySolved
-                                            appState.isRecalculating = false
+                            onClick = {
+                                appState.updateRecalculating(true)
+                                appState.updateErrorMessage(null)
+                                coroutineScope.launch(Dispatchers.Default) {
+                                    try {
+                                        val currentSnapshot = cubeState.toSnapshot()
+                                        
+                                        // Check if already solved
+                                        val isSolvedNow = cubeState.cubies.all { cubie ->
+                                            cubie.gridPos == cubie.originalPos &&
+                                            cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
                                         }
-                                        return@launch
-                                    }
-                                    
-                                    // 1. Try reverse engineering (backtrack moves from move history)
-                                    val backtrackMoves = cubeState.moveHistory.map { move ->
-                                        MoveType.values().first {
-                                            it.axis == move.axis &&
-                                            it.layerValue == move.layerValue &&
-                                            it.angleSign == -move.angleSign
+                                        
+                                        if (isSolvedNow) {
+                                            withContext(Dispatchers.Main) {
+                                                appState.updateActiveSolution(null)
+                                                appState.updateActiveSolutionDetails(null)
+                                                appState.updateSuccessMessage(appState.strings.cubeAlreadySolved)
+                                                appState.updateRecalculating(false)
+                                            }
+                                            return@launch
                                         }
-                                    }.reversed()
-                                    
-                                    val solver = RubikSolver()
-                                    val optimizedBacktrack = compressMoves(backtrackMoves)
-                                    
-                                    // 2. Run the layer-by-layer solver
-                                    val lblDetails = solver.solveAnnotated(currentSnapshot)
-                                    
-                                    // 3. Pick the shortest solution
-                                    val finalSolution: List<MoveType>
-                                    val finalDetails: List<AnnotatedMove>
-                                    
-                                    if (optimizedBacktrack.isNotEmpty() && (lblDetails == null || optimizedBacktrack.size <= lblDetails.size)) {
-                                        finalSolution = optimizedBacktrack
-                                        finalDetails = optimizedBacktrack.map { move ->
-                                            AnnotatedMove(
-                                                move = move,
-                                                phaseName = "Tersine Mühendislik (Geri Alma)",
-                                                phaseDescription = "Küpün karıştırma/manuel hamle geçmişi tersten oynatılarak en kısa yoldan çözülüyor."
-                                            )
-                                        }
-                                    } else if (lblDetails != null) {
-                                        finalSolution = lblDetails.map { it.move }
-                                        finalDetails = lblDetails
-                                    } else {
-                                        // Both failed (invalid/unsolvable state)
-                                        withContext(Dispatchers.Main) {
-                                            appState.activeSolution = null
-                                            appState.activeSolutionDetails = null
-                                            appState.errorMessage = appState.strings.solutionNotFound
-                                            appState.isRecalculating = false
-                                        }
-                                        return@launch
-                                    }
-                                    
-                                    withContext(Dispatchers.Main) {
-                                        if (finalSolution.isNotEmpty()) {
-                                            appState.activeSolution = finalSolution
-                                            appState.activeSolutionDetails = finalDetails
-                                            appState.currentSolutionStep = 0
-                                            appState.isPlaybackRunning = false
-                                            appState.errorMessage = null
-                                            appState.successMessage = appState.strings.solutionFound.replace("%s", finalSolution.size.toString())
+                                        
+                                        // 1. Try reverse engineering (backtrack moves from move history)
+                                        val backtrackMoves = cubeState.moveHistory.map { move ->
+                                            MoveType.values().first {
+                                                it.axis == move.axis &&
+                                                it.layerValue == move.layerValue &&
+                                                it.angleSign == -move.angleSign
+                                            }
+                                        }.reversed()
+                                        
+                                        val solver = RubikSolver()
+                                        val optimizedBacktrack = compressMoves(backtrackMoves)
+                                        
+                                        // 2. Run the layer-by-layer solver
+                                        val lblDetails = solver.solveAnnotated(currentSnapshot)
+                                        
+                                        // 3. Pick the shortest solution
+                                        val finalSolution: List<MoveType>
+                                        val finalDetails: List<AnnotatedMove>
+                                        
+                                        if (optimizedBacktrack.isNotEmpty() && (lblDetails == null || optimizedBacktrack.size <= lblDetails.size)) {
+                                            finalSolution = optimizedBacktrack
+                                            finalDetails = optimizedBacktrack.map { move ->
+                                                AnnotatedMove(
+                                                    move = move,
+                                                    phaseName = "Tersine Mühendislik (Geri Alma)",
+                                                    phaseDescription = "Küpün karıştırma/manuel hamle geçmişi tersten oynatılarak en kısa yoldan çözülüyor."
+                                                )
+                                            }
+                                        } else if (lblDetails != null) {
+                                            finalSolution = lblDetails.map { it.move }
+                                            finalDetails = lblDetails
                                         } else {
-                                            appState.activeSolution = null
-                                            appState.activeSolutionDetails = null
-                                            appState.successMessage = appState.strings.cubeAlreadySolved
+                                            // Both failed (invalid/unsolvable state)
+                                            withContext(Dispatchers.Main) {
+                                                appState.updateActiveSolution(null)
+                                                appState.updateActiveSolutionDetails(null)
+                                                appState.updateErrorMessage(appState.strings.solutionNotFound)
+                                                appState.updateRecalculating(false)
+                                            }
+                                            return@launch
                                         }
-                                        appState.isRecalculating = false
-                                    }
-                                } catch (e: Throwable) {
-                                    withContext(Dispatchers.Main) {
-                                        appState.errorMessage = "Hata: ${e.message ?: e.toString()}"
-                                        appState.isRecalculating = false
+                                        
+                                        withContext(Dispatchers.Main) {
+                                            if (finalSolution.isNotEmpty()) {
+                                                appState.updateActiveSolution(finalSolution)
+                                                appState.updateActiveSolutionDetails(finalDetails)
+                                                appState.updateCurrentSolutionStep(0)
+                                                appState.updatePlaybackRunning(false)
+                                                appState.updateErrorMessage(null)
+                                                appState.updateSuccessMessage(appState.strings.solutionFound.replace("%s", finalSolution.size.toString()))
+                                            } else {
+                                                appState.updateActiveSolution(null)
+                                                appState.updateActiveSolutionDetails(null)
+                                                appState.updateSuccessMessage(appState.strings.cubeAlreadySolved)
+                                            }
+                                            appState.updateRecalculating(false)
+                                        }
+                                    } catch (e: Throwable) {
+                                        withContext(Dispatchers.Main) {
+                                            appState.updateErrorMessage("Hata: ${e.message ?: e.toString()}")
+                                            appState.updateRecalculating(false)
+                                        }
                                     }
                                 }
-                            }
-                        },
+                            },
                             enabled = canEditCube && !cubeState.isAnimating && !appState.isRecalculating,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (RubikTheme.colors.isDark) AccentGreenShadow else AccentGreenFaintBg,
@@ -504,8 +508,8 @@ private fun MovesGrid(
                 .clickable(enabled = canEditCube && !cubeState.isAnimating) {
                     coroutineScope.launch {
                         cubeState.executeMove(move)
-                        appState.manualMoves.add(move)
-                        appState.totalMoveCount++
+                        appState.addManualMove(move)
+                        appState.incrementTotalMoveCount()
                         appState.saveCurrentState()
                     }
                 },
@@ -668,9 +672,9 @@ fun PlaybackController(
                     .background(if (RubikTheme.colors.isDark) WhiteAlpha13 else BlackAlpha05)
                     .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
                     .clickable {
-                        appState.activeSolution = null
-                        appState.activeSolutionDetails = null
-                        appState.isPlaybackRunning = false
+                        appState.updateActiveSolution(null)
+                        appState.updateActiveSolutionDetails(null)
+                        appState.updatePlaybackRunning(false)
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -773,10 +777,10 @@ fun PlaybackController(
             Button(
                 onClick = {
                     coroutineScope.launch {
-                        appState.manualMoves.clear()
+                        appState.clearManualMoves()
                         cubeState.setCustomStateAnimated(appState.editorFaces)
-                        appState.currentSolutionStep = 0
-                        appState.isPlaybackRunning = false
+                        appState.updateCurrentSolutionStep(0)
+                        appState.updatePlaybackRunning(false)
                     }
                 },
                 enabled = canEditCube && !cubeState.isAnimating,
@@ -800,7 +804,7 @@ fun PlaybackController(
 
             // Play / Pause — wider, accent color
             Button(
-                onClick = { appState.isPlaybackRunning = !appState.isPlaybackRunning },
+                onClick = { appState.updatePlaybackRunning(!appState.isPlaybackRunning) },
                 enabled = canEditCube,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (appState.isPlaybackRunning) {
@@ -843,8 +847,8 @@ fun PlaybackController(
                             logMoveDetail(nextMove.label, phase, mathDetails)
 
                             cubeState.executeMove(nextMove)
-                            appState.currentSolutionStep++
-                            appState.totalMoveCount++
+                            appState.incrementSolutionStep()
+                            appState.incrementTotalMoveCount()
                         }
                     }
                 },

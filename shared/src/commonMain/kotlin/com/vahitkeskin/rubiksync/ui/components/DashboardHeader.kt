@@ -136,8 +136,10 @@ fun DashboardHeader(
                             if (appState.showcaseStep == 1 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
-                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                appState.targetCornerRadius = 10.dp
+                                appState.updateTargetVisuals(
+                                    Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                    10.dp
+                                )
                             }
                         }
                         .clickable(
@@ -195,8 +197,10 @@ fun DashboardHeader(
                             if (appState.showcaseStep == 2 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
-                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                appState.targetCornerRadius = 10.dp
+                                appState.updateTargetVisuals(
+                                    Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                    10.dp
+                                )
                             }
                         }
                         .clickable(
@@ -233,8 +237,10 @@ fun DashboardHeader(
                             if (appState.showcaseStep == 3 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
-                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                                appState.targetCornerRadius = 10.dp
+                                appState.updateTargetVisuals(
+                                    Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                    10.dp
+                                )
                             }
                         }
                         .clickable { onNavigateToSettings() },

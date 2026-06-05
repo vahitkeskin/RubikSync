@@ -144,7 +144,7 @@ fun ScannerWizard(
 
     LaunchedEffect(currentFaceForEffect, currentFilePathForEffect, currentScaleForEffect, currentOffsetXForEffect, currentOffsetYForEffect) {
         if (currentFilePathForEffect != null) {
-            appState.isRecalculating = true
+            appState.updateRecalculating(true)
             val parsedRaw = withContext(Dispatchers.Default) {
                 RubikImageProcessor().processFaceImageRaw(
                     filePath = currentFilePathForEffect,
@@ -154,15 +154,15 @@ fun ScannerWizard(
                     offsetY = currentOffsetYForEffect
                 )
             }
-            appState.isRecalculating = false
+            appState.updateRecalculating(false)
             if (parsedRaw != null) {
                 val updatedRaw = appState.scannedRawRGBs.toMutableMap()
                 updatedRaw[currentFaceForEffect] = parsedRaw
-                appState.scannedRawRGBs = updatedRaw
+                appState.updateScannedRawRGBs(updatedRaw)
 
-                appState.scannedGrids = RubikImageProcessor().classifyAll(appState.scannedRawRGBs).toMutableMap()
+                appState.updateScannedGrids(RubikImageProcessor().classifyAll(appState.scannedRawRGBs))
             } else {
-                appState.errorMessage = appState.strings.errorPhotoResolution
+                appState.updateErrorMessage(appState.strings.errorPhotoResolution)
             }
         }
     }
@@ -286,9 +286,9 @@ fun ScannerWizard(
                                     shape = RoundedCornerShape(15.dp)
                                 )
                                 .clickable {
-                                    appState.scannerStep = index
-                                    appState.errorMessage = null
-                                    appState.infoMessage = null
+                                    appState.updateScannerStep(index)
+                                    appState.updateErrorMessage(null)
+                                    appState.updateInfoMessage(null)
                                 },
                             contentAlignment = Alignment.Center
                         ) {
@@ -338,7 +338,7 @@ fun ScannerWizard(
                             },
                             shape = RoundedCornerShape(10.dp)
                         )
-                        .clickable(enabled = isSuccess) { appState.infoMessage = null }
+                        .clickable(enabled = isSuccess) { appState.updateInfoMessage(null) }
                         .padding(horizontal = 10.dp, vertical = 6.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -393,31 +393,31 @@ fun ScannerWizard(
                                 selectImageLabel = appState.strings.selectImageLabel,
                                 onImageSelected = { filePath ->
                                     coroutineScope.launch {
-                                        appState.isRecalculating = true
-                                        appState.errorMessage = null
-                                        appState.infoMessage = null
+                                        appState.updateRecalculating(true)
+                                        appState.updateErrorMessage(null)
+                                        appState.updateInfoMessage(null)
                                         val detectedFace = withContext(Dispatchers.Default) {
                                             RubikImageProcessor().detectFaceFromImage(filePath)
                                         }
-                                        appState.isRecalculating = false
+                                        appState.updateRecalculating(false)
                                         if (detectedFace != null) {
                                             val updatedPaths = appState.scannedFilePaths.toMutableMap()
                                             updatedPaths[detectedFace] = filePath
-                                            appState.scannedFilePaths = updatedPaths
+                                            appState.updateScannedFilePaths(updatedPaths)
 
                                             val updatedScales = appState.gridScales.toMutableMap()
                                             updatedScales[detectedFace] = 0.55f
-                                            appState.gridScales = updatedScales
+                                            appState.updateGridScales(updatedScales)
 
                                             val updatedOffsetsX = appState.gridOffsetsX.toMutableMap()
                                             updatedOffsetsX[detectedFace] = 0f
-                                            appState.gridOffsetsX = updatedOffsetsX
+                                            appState.updateGridOffsetsX(updatedOffsetsX)
 
                                             val updatedOffsetsY = appState.gridOffsetsY.toMutableMap()
                                             updatedOffsetsY[detectedFace] = 0f
-                                            appState.gridOffsetsY = updatedOffsetsY
+                                            appState.updateGridOffsetsY(updatedOffsetsY)
 
-                                            appState.scannerStep = detectedFace.ordinal
+                                            appState.updateScannerStep(detectedFace.ordinal)
 
                                             val faceDisplayName = faceNameLocalized[detectedFace] ?: detectedFace.name
                                             val centerColorLocalized = when (detectedFace) {
@@ -428,11 +428,11 @@ fun ScannerWizard(
                                                 FaceName.F -> appState.strings.colorGreen
                                                 FaceName.B -> appState.strings.colorBlue
                                             }
-                                            appState.infoMessage = appState.strings.faceDetectedMessage
+                                            appState.updateInfoMessage(appState.strings.faceDetectedMessage
                                                 .replaceFirst("%s", centerColorLocalized)
-                                                .replaceFirst("%s", faceDisplayName)
+                                                .replaceFirst("%s", faceDisplayName))
                                         } else {
-                                            appState.errorMessage = appState.strings.faceNotDetected
+                                            appState.updateErrorMessage(appState.strings.faceNotDetected)
                                         }
                                     }
                                 },
@@ -601,14 +601,14 @@ fun ScannerWizard(
 
                                                                          val updatedRaw = appState.scannedRawRGBs.toMutableMap()
                                                                          updatedRaw[currentFace] = updatedRawGrid
-                                                                         appState.scannedRawRGBs = updatedRaw
+                                                                         appState.updateScannedRawRGBs(updatedRaw)
                                                                      }
 
                                                                      val updatedGrid = grid.map { it.copyOf() }.toTypedArray()
                                                                      updatedGrid[row][col] = targetColor
                                                                      val updatedGrids = appState.scannedGrids.toMutableMap()
                                                                      updatedGrids[currentFace] = updatedGrid
-                                                                     appState.scannedGrids = updatedGrids
+                                                                     appState.updateScannedGrids(updatedGrids)
                                                                  },
                                                              contentAlignment = Alignment.Center
                                                          ) {
@@ -663,7 +663,7 @@ fun ScannerWizard(
                                     onValueChange = { s ->
                                         val updated = appState.gridScales.toMutableMap()
                                         updated[currentFace] = s
-                                        appState.gridScales = updated
+                                        appState.updateGridScales(updated)
                                     },
                                     valueRange = 0.3f..0.9f,
                                     modifier = Modifier.weight(1f),
@@ -698,7 +698,7 @@ fun ScannerWizard(
                                     onValueChange = { x ->
                                         val updated = appState.gridOffsetsX.toMutableMap()
                                         updated[currentFace] = x
-                                        appState.gridOffsetsX = updated
+                                        appState.updateGridOffsetsX(updated)
                                     },
                                     valueRange = -0.3f..0.3f,
                                     modifier = Modifier.weight(1f),
@@ -733,7 +733,7 @@ fun ScannerWizard(
                                     onValueChange = { y ->
                                         val updated = appState.gridOffsetsY.toMutableMap()
                                         updated[currentFace] = y
-                                        appState.gridOffsetsY = updated
+                                        appState.updateGridOffsetsY(updated)
                                     },
                                     valueRange = -0.3f..0.3f,
                                     modifier = Modifier.weight(1f),
@@ -759,7 +759,7 @@ fun ScannerWizard(
                             onClick = {
                                 val updatedPaths = appState.scannedFilePaths.toMutableMap()
                                 updatedPaths.remove(currentFace)
-                                appState.scannedFilePaths = updatedPaths
+                                appState.updateScannedFilePaths(updatedPaths)
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = RubikTheme.colors.backgroundSecondary,
@@ -819,9 +819,9 @@ fun ScannerWizard(
 
                 Button(
                     onClick = {
-                        appState.errorMessage = null
-                        appState.infoMessage = null
-                        if (appState.scannerStep > 0) appState.scannerStep--
+                        appState.updateErrorMessage(null)
+                        appState.updateInfoMessage(null)
+                        if (appState.scannerStep > 0) appState.updateScannerStep(appState.scannerStep - 1)
                     },
                     enabled = appState.scannerStep > 0,
                     colors = ButtonDefaults.buttonColors(
@@ -859,20 +859,20 @@ fun ScannerWizard(
                 if (appState.scannerStep < 5) {
                     Button(
                         onClick = {
-                            appState.errorMessage = null
-                            appState.infoMessage = null
+                            appState.updateErrorMessage(null)
+                            appState.updateInfoMessage(null)
                             var foundNext = false
                             for (i in 1..5) {
                                 val nextIdx = (appState.scannerStep + i) % 6
                                 val nextFace = FaceName.values()[nextIdx]
                                 if (!appState.scannedFilePaths.containsKey(nextFace)) {
-                                    appState.scannerStep = nextIdx
+                                    appState.updateScannerStep(nextIdx)
                                     foundNext = true
                                     break
                                 }
                             }
                             if (!foundNext) {
-                                appState.scannerStep = (appState.scannerStep + 1).coerceAtMost(5)
+                                appState.updateScannerStep((appState.scannerStep + 1).coerceAtMost(5))
                             }
                         },
                         enabled = hasCurrentScan,
@@ -922,9 +922,9 @@ fun ScannerWizard(
                             }
                             if (isValid) {
                                 onComplete(completeGrids)
-                                appState.successMessage = appState.strings.successScanComplete
+                                appState.updateSuccessMessage(appState.strings.successScanComplete)
                             } else {
-                                appState.errorMessage = appState.strings.errorScanAllFaces
+                                appState.updateErrorMessage(appState.strings.errorScanAllFaces)
                             }
                         },
                         enabled = appState.scannedFilePaths.size == 6,

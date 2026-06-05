@@ -37,6 +37,78 @@
 
 ---
 
+## 📂 Proje Paket Yapısı (Package Structure)
+
+🌲 Projenin modüler KMP (Kotlin Multiplatform) yapısı ve paket dizilimi aşağıda özetlenmiştir:
+
+```
+📂 RubikSync (Root)
+├── 🤖 androidApp (Android Native Runner)
+├── 🍏 iosApp (iOS Native Runner)
+├── 💻 desktopApp (Desktop JVM Native Runner)
+└── 📦 shared (KMP Shared Core Module)
+    └── 📂 src/commonMain/kotlin/com/vahitkeskin/rubiksync
+        ├── 🌌 App.kt (Global UI Root & Screen NavHost)
+        ├── 🎨 cube (3D Renderer, Projections & Image Processing Engine)
+        │   ├── 📐 CubeRenderer.kt (3D Canvas Draw Loop)
+        │   ├── 🎥 CubeScreenProjector.kt (3D to 2D Math)
+        │   ├── 🧭 CubeRotationGuide.kt (Scanner Guide Assistant)
+        │   ├── 🌈 RubikImageProcessor.kt (sRGB->LAB & CIEDE2000 delta E)
+        │   └── 🧮 Math3D.kt (Rodrigues Formula & Vectors)
+        ├── 💾 data (Room Database & DataStore Preferences Persistence)
+        ├── 🔌 di (Koin Dependency Injection Configuration)
+        ├── 👑 domain (Core Cube Constants & Color Enumerations)
+        ├── 🚀 solver (Kociemba Two-Phase Optimal Search Solver)
+        │   └── 🔑 RubikSolver.kt (IDA* Coset search engine)
+        ├── 🎭 ui (Compose Screens, Custom Balloons, Theme & L10n Strings)
+        │   ├── 💬 components (AuraBalloon, DashboardHeader, ControlPanel)
+        │   ├── 📁 dialogs (ScannerWizard, EditorDialog, SettingsDialog)
+        │   ├── 📱 screens (SplashScreen, DashboardScreen, SettingsScreen)
+        │   └── 🌐 strings (Localizations: EN, TR, DE, FR, RU, JA etc.)
+        └── 🛠️ utils (Platform-specific SoundPool and File helpers)
+```
+
+---
+
+## 🏛️ 3D Stack Mimari Modeli (Layered Architecture Stack)
+
+🧱 Sistem mimarisi, donanım katmanından arayüze doğru dikey olarak katmanlanmış bir 3D yığın (stack) modelidir:
+
+```mermaid
+graph TD
+    subgraph UI_LAYER ["🛸 TOP LEVEL: UI LAYER (Compose Multiplatform)"]
+        Dashboard["Dashboard Screen"]
+        ScannerWizard["Scanner Wizard Dialog"]
+        EditorDialog["Editor Dialog"]
+    end
+
+    subgraph CORE_LAYER ["🧠 MIDDLE LEVEL: DOMAIN & PROCESSING LAYER"]
+        RubikSolver["RubikSolver (Kociemba Search)"]
+        RubikImageProcessor["RubikImageProcessor (CIEDE2000)"]
+        RubikCubeState["RubikCubeState (3D State Tracker)"]
+    end
+
+    subgraph INFRA_LAYER ["💾 BASE LEVEL: DATA & PLATFORM API LAYER"]
+        RoomDB["Room DB / DataStore"]
+        PlatformCamera["CameraX / AVFoundation"]
+        PlatformSound["SoundPool API"]
+    end
+
+    %% Flow connections (3D Vertical Top-Down dependencies)
+    Dashboard ===>|Reads State| RubikCubeState
+    ScannerWizard ===>|Pushes Photos| RubikImageProcessor
+    EditorDialog ===>|Validates Color Match| RubikCubeState
+    
+    RubikSolver ===>|Pushes Solution Steps| Dashboard
+    RubikImageProcessor ===>|Matches Colors| RubikCubeState
+    
+    RubikCubeState ===>|Persists State| RoomDB
+    RubikCubeState ===>|Triggers Rotation Sounds| PlatformSound
+    ScannerWizard ===>|Uses Camera Stream| PlatformCamera
+```
+
+---
+
 ## 📊 Matematiksel Temeller ve Algoritmalar
 
 ### 📐 1. 3D Uzay Dönüşleri, Kuaterniyonlar ve Rodrigues Formülü

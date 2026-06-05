@@ -124,5 +124,16 @@ val TrStrings = AppStrings(
     showcaseScrambleText = "Bu butona basarak küpü rastgele karıştırabilirsiniz.",
     showcaseUndoText = "Bu butona basarak son yaptığınız hamleyi geri alabilirsiniz.",
     showcaseResetText = "Küpün durumunu sıfırlayarak başlangıç konumuna getirebilirsiniz.",
-    showcaseDesignText = "Küpünüzün renklerini elinizle boyayarak veya kamerayla taratarak tasarlayabilirsiniz."
+    showcaseDesignText = "Küpünüzün renklerini elinizle boyayarak veya kamerayla taratarak tasarlayabilirsiniz.",
+    showcaseEditorFaces = "Sekmelerden küpün hangi yüzünü düzenlemek istediğinizi seçin.",
+    showcaseEditorGrid = "Seçtiğiniz renkle küp etiketlerini boyamak için buradaki karelere tıklayın.",
+    showcaseEditorPalette = "Boyamak istediğiniz rengi bu paletten seçebilirsiniz.",
+    showcaseEditorApply = "Düzenlediğiniz renk şemasını küpe uygulamak için bu butona tıklayın.",
+    showcaseEditorScan = "Fotoğraf çekerek otomatik algılatmak için tarayıcı sihirbazını başlatabilirsiniz.",
+    showcaseScannerIndicator = "Taranması gereken tüm küp yüzlerini ve taranma durumlarını buradan takip edebilirsiniz.",
+    showcaseScannerGuide = "Fotoğraf çekerken küpü bu kılavuzda gösterilen yönde tuttuğunuzdan emin olun.",
+    showcaseScannerCapture = "Küpün bu yüzünün fotoğrafını çekmek veya galeriden yüklemek için buraya tıklayın.",
+    showcaseScannerSliders = "Yeşil kılavuz çizgilerini küpün kareleriyle hizalamak için bu sürgüleri kullanın.",
+    showcaseScannerPreview = "Algılanan renkleri buradan kontrol edin. Gerekirse kareye tıklayarak düzeltebilirsiniz.",
+    showcaseScannerAction = "Sonraki yüze geçmek veya taramayı tamamlamak için bu butonları kullanın.",
 )

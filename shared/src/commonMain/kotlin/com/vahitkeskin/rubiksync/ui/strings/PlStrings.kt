@@ -124,5 +124,16 @@ val PlStrings = AppStrings(
     showcaseScrambleText = "Możesz losowo pomieszać kostkę za pomocą tego przycisku.",
     showcaseUndoText = "Możesz cofnąć swój ostatni ruch za pomocą tego przycisku.",
     showcaseResetText = "Możesz zresetować kostkę do jej ułożonego stanu początkowego.",
-    showcaseDesignText = "Możesz zaprojektować kostkę, malując ścianki ręcznie lub skanując je aparatem."
+    showcaseDesignText = "Możesz zaprojektować kostkę, malując ścianki ręcznie lub skanując je aparatem.",
+    showcaseEditorFaces = "Użyj tych zakładek, aby wybrać, którą ścianę kostki chcesz edytować.",
+    showcaseEditorGrid = "Klikaj te kwadraty, aby pomalować naklejki kostki wybranym kolorem.",
+    showcaseEditorPalette = "Wybierz kolor z tej palety, którym chcesz malować.",
+    showcaseEditorApply = "Kliknij ten przycisk, aby zastosować pomalowany schemat kolorów do kostki.",
+    showcaseEditorScan = "Możesz uruchomić kreatora skanera, aby automatycznie wykryć kolory na podstawie zdjęć.",
+    showcaseScannerIndicator = "Śledź stąd wszystkie ściany kostki do zeskanowania oraz status ich skanowania.",
+    showcaseScannerGuide = "Upewnij się, że trzymasz kostkę w orientacji pokazanej w tym przewodniku podczas robienia zdjęć.",
+    showcaseScannerCapture = "Kliknij tutaj, aby zrobić zdjęcie odpowiedniej ściany kostki lub wczytać je z galerii.",
+    showcaseScannerSliders = "Użyje tych suwaków, aby wyrównać zielone linie pomocnicze z kwadratami kostki.",
+    showcaseScannerPreview = "Sprawdź tutaj rozpoznane kolory. Jeśli kwadrat został błędnie zidentyfikowany, kliknij go, aby to poprawić.",
+    showcaseScannerAction = "Użyj tych przycisków nawigacyjnych, aby przejść do następnej ściany lub zakończyć skanowanie.",
 )

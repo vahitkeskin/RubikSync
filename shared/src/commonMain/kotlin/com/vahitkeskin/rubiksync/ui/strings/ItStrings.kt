@@ -124,5 +124,16 @@ val ItStrings = AppStrings(
     showcaseScrambleText = "Puoi mescolare il cubo casualmente usando questo pulsante.",
     showcaseUndoText = "Puoi annullare la tua ultima mossa usando questo pulsante.",
     showcaseResetText = "Puoi ripristinare il cubo al suo stato iniziale risolto.",
-    showcaseDesignText = "Puoi progettare il cubo colorando le facce manualmente o scansionandole con la fotocamera."
+    showcaseDesignText = "Puoi progettare il cubo colorando le facce manualmente o scansionandole con la fotocamera.",
+    showcaseEditorFaces = "Usa queste schede per selezionare la faccia del cubo che desideri modificare.",
+    showcaseEditorGrid = "Fai clic su questi quadrati per dipingere gli adesivi del cubo con il colore selezionato.",
+    showcaseEditorPalette = "Scegli il colore con cui vuoi dipingere da questa tavolozza.",
+    showcaseEditorApply = "Fai clic su questo pulsante per applicare lo schema di colori dipinto al cubo.",
+    showcaseEditorScan = "Puoi avviare la procedura guidata dello scanner per rilevare automaticamente i colori scattando foto.",
+    showcaseScannerIndicator = "Segui tutte le facce del cubo da scansionare e il loro stato di scansione da qui.",
+    showcaseScannerGuide = "Assicurati di tenere il cubo nell'orientamento mostrato in questa guida quando scatti le foto.",
+    showcaseScannerCapture = "Fai clic qui per scattare una foto della faccia corrispondente del cubo o caricarla dalla galleria.",
+    showcaseScannerSliders = "Usa questi cursori per allineare le linee guida verdi con i quadrati del cubo.",
+    showcaseScannerPreview = "Rivedi i colori classificati qui. Se c'è un quadrato errato, fai clic su di esso per correggerlo.",
+    showcaseScannerAction = "Usa questi pulsanti di navigazione per procedere alla faccia successiva o completare la scansione.",
 )

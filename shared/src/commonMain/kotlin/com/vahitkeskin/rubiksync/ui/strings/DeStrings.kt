@@ -124,5 +124,16 @@ val DeStrings = AppStrings(
     showcaseScrambleText = "Mit dieser Schaltfläche können Sie den Würfel zufällig mischen.",
     showcaseUndoText = "Mit dieser Schaltfläche können Sie Ihren letzten Zug rückgängig machen.",
     showcaseResetText = "Sie können den Würfel in seinen gelösten Ausgangszustand zurücksetzen.",
-    showcaseDesignText = "Sie können den Würfel entwerfen, indem Sie die Seiten manuell bemalen oder mit der Kamera scannen."
+    showcaseDesignText = "Sie können den Würfel entwerfen, indem Sie die Seiten manuell bemalen oder mit der Kamera scannen.",
+    showcaseEditorFaces = "Verwenden Sie diese Registerkarten, um auszuwählen, welche Würfelseite Sie bearbeiten möchten.",
+    showcaseEditorGrid = "Klicken Sie auf diese Quadrate, um die Würfelaufkleber mit Ihrer ausgewählten Farbe zu bemalen.",
+    showcaseEditorPalette = "Wählen Sie die gewünschte Farbe aus dieser Palette aus.",
+    showcaseEditorApply = "Klicken Sie auf diese Schaltfläche, um das gemalte Farbschema auf den Würfel anzuwenden.",
+    showcaseEditorScan = "Sie können den Scanner-Assistenten starten, um Farbzustände durch Fotografieren automatisch zu erkennen.",
+    showcaseScannerIndicator = "Verfolgen Sie hier alle zu scannenden Würfelseiten und deren Scan-Status.",
+    showcaseScannerGuide = "Stellen Sie sicher, dass Sie den Würfel beim Fotografieren in der in dieser Anleitung gezeigten Ausrichtung halten.",
+    showcaseScannerCapture = "Klicken Sie hier, um ein Foto der entsprechenden Würfelseite aufzunehmen oder aus der Galerie zu laden.",
+    showcaseScannerSliders = "Verwenden Sie diese Schieberegler, um die grünen Führungslinien an den Quadraten des Würfels auszurichten.",
+    showcaseScannerPreview = "Überprüfen Sie hier die klassifizierten Farben. Wenn ein Quadrat falsch identifiziert wurde, klicken Sie darauf, um es zu korrigieren.",
+    showcaseScannerAction = "Verwenden Sie diese Navigationstasten, um zur nächsten Seite zu gelangen oder den Scan abzuschließen.",
 )

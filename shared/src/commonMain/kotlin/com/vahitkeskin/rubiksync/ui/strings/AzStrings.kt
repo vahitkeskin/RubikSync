@@ -124,5 +124,16 @@ val AzStrings = AppStrings(
     showcaseScrambleText = "Bu düyməni istifadə edərək kubu təsadüfi qarışdıra bilərsiniz.",
     showcaseUndoText = "Bu düyməni istifadə edərək son hərəkətinizi geri ala bilərsiniz.",
     showcaseResetText = "Kubu həll olunmuş başlanğıc vəziyyətinə sıfırlaya bilərsiniz.",
-    showcaseDesignText = "Üzləri əllə rəngləyərək və ya kamera vasitəsilə skan edərək kubu dizayn edə bilərsiniz."
+    showcaseDesignText = "Üzləri əllə rəngləyərək və ya kamera vasitəsilə skan edərək kubu dizayn edə bilərsiniz.",
+    showcaseEditorFaces = "Kubun hansı üzünü redaktə etmək istədiyinizi seçmək üçün bu tablardan istifadə edin.",
+    showcaseEditorGrid = "Seçdiyiniz rənglə kubun stikerlərini rəngləmək üçün bu kvadratlara klikləyin.",
+    showcaseEditorPalette = "Rəngləmək istədiyiniz rəngi bu palitradan seçə bilərsiniz.",
+    showcaseEditorApply = "Rənglənmiş rəng sxemini kuba tətbiq etmək üçün bu düyməyə klikləyin.",
+    showcaseEditorScan = "Şəkil çəkərək rəng vəziyyətlərini avtomatik təyin etmək üçün skaner sehrbazını başlada bilərsiniz.",
+    showcaseScannerIndicator = "Skan ediləcək bütün kub üzlərini və skan statusunu buradan izləyə bilərsiniz.",
+    showcaseScannerGuide = "Şəkil çəkərkən kubu bu təlimatda göstərilən istiqamətdə saxladığınızdan əmin olun.",
+    showcaseScannerCapture = "Kubun müvafiq üzünün şəklini çəkmək və ya qalereyadan yükləmək üçün bura klikləyin.",
+    showcaseScannerSliders = "Yaşıl bələdçi xətlərini kubun kvadratları ilə hizalamaq üçün bu sürgülərdən istifadə edin.",
+    showcaseScannerPreview = "Təsnif edilmiş rəngləri buradan yoxlayın. Səhv müəyyən edilmiş kvadrat varsa, düzəltmək üçün üzərinə klikləyin.",
+    showcaseScannerAction = "Növbəti üzə keçmək və ya skan etməyi tamamlamaq üçün bu naviqasiya düymələrindən istifadə edin.",
 )

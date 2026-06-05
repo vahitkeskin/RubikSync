@@ -125,6 +125,17 @@ data class AppStrings(
     val showcaseUndoText: String,
     val showcaseResetText: String,
     val showcaseDesignText: String,
+    val showcaseEditorFaces: String,
+    val showcaseEditorGrid: String,
+    val showcaseEditorPalette: String,
+    val showcaseEditorApply: String,
+    val showcaseEditorScan: String,
+    val showcaseScannerIndicator: String,
+    val showcaseScannerGuide: String,
+    val showcaseScannerCapture: String,
+    val showcaseScannerSliders: String,
+    val showcaseScannerPreview: String,
+    val showcaseScannerAction: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

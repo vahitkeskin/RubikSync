@@ -124,5 +124,16 @@ val PtStrings = AppStrings(
     showcaseScrambleText = "Você pode embaralhar o cubo aleatoriamente usando este botão.",
     showcaseUndoText = "Você pode desfazer seu último movimento usando este botão.",
     showcaseResetText = "Você pode redefinir o cubo de volta ao seu estado inicial resolvido.",
-    showcaseDesignText = "Você pode desenhar o cubo pintando as faces manualmente ou escaneando com a câmera."
+    showcaseDesignText = "Você pode desenhar o cubo pintando as faces manualmente ou escaneando com a câmera.",
+    showcaseEditorFaces = "Use estas abas para selecionar qual face do cubo deseja editar.",
+    showcaseEditorGrid = "Clique nestes quadrados para pintar os adesivos do cubo com a cor selecionada.",
+    showcaseEditorPalette = "Escolha a cor que deseja pintar a partir desta paleta.",
+    showcaseEditorApply = "Clique neste botão para aplicar o esquema de cores pintado ao cubo.",
+    showcaseEditorScan = "Você pode iniciar o assistente de digitalização para detectar automaticamente as cores tirando fotos.",
+    showcaseScannerIndicator = "Acompanhe todas as faces do cubo a serem digitalizadas e seu status de digitalização por aqui.",
+    showcaseScannerGuide = "Certifique-se de segurar o cubo na orientação mostrada neste guia ao tirar fotos.",
+    showcaseScannerCapture = "Clique aqui para tirar uma foto da face correspondante do cubo ou carregá-la da galeria.",
+    showcaseScannerSliders = "Use estes controles deslizantes para alinhar as linhas guia verdes com os quadrados do cubo.",
+    showcaseScannerPreview = "Revise as cores classificadas aqui. Se houver um quadrado incorreto, clique nele para corrigi-lo.",
+    showcaseScannerAction = "Use estes botões de navegação para prosseguir para a próxima face ou concluir a digitalização.",
 )

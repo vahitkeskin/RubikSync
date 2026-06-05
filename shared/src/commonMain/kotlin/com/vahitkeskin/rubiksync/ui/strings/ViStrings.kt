@@ -124,5 +124,16 @@ val ViStrings = AppStrings(
     showcaseScrambleText = "Bạn có thể xáo trộn ngẫu nhiên khối rubik bằng nút này.",
     showcaseUndoText = "Bạn có thể hoàn tác bước đi cuối cùng của mình bằng nút này.",
     showcaseResetText = "Bạn có thể đặt lại khối rubik về trạng thái ban đầu đã giải.",
-    showcaseDesignText = "Bạn có thể tự thiết kế khối rubik bằng cách vẽ các mặt thủ công hoặc quét qua camera."
+    showcaseDesignText = "Bạn có thể tự thiết kế khối rubik bằng cách vẽ các mặt thủ công hoặc quét qua camera.",
+    showcaseEditorFaces = "Sử dụng các tab này để chọn mặt khối lập phương bạn muốn chỉnh sửa.",
+    showcaseEditorGrid = "Nhấp vào các ô vuông này để tô màu cho nhãn dán khối lập phương bằng màu đã chọn.",
+    showcaseEditorPalette = "Chọn màu bạn muốn tô từ bảng màu này.",
+    showcaseEditorApply = "Nhấp vào nút này để áp dụng bảng màu đã tô vào khối lập phương.",
+    showcaseEditorScan = "Bạn có thể khởi động trình hướng dẫn quét để tự động phát hiện màu bằng cách chụp ảnh.",
+    showcaseScannerIndicator = "Theo dõi tất cả các mặt khối lập phương cần quét và trạng thái quét của chúng tại đây.",
+    showcaseScannerGuide = "Hãy chắc chắn rằng bạn giữ khối lập phương theo hướng được hiển thị trong hướng dẫn này khi chụp ảnh.",
+    showcaseScannerCapture = "Nhấp vào đây để chụp ảnh mặt tương ứng của khối lập phương hoặc tải lên từ thư viện.",
+    showcaseScannerSliders = "Sử dụng các thanh trượt này để căn chỉnh các đường dẫn màu xanh lá cây với các ô vuông của khối lập phương.",
+    showcaseScannerPreview = "Kiểm tra màu sắc được phân loại tại đây. Nếu có ô vuông bị nhận diện sai, hãy nhấp vào đó để sửa lại.",
+    showcaseScannerAction = "Sử dụng các nút điều hướng này để chuyển sang mặt tiếp theo hoặc hoàn thành quét.",
 )

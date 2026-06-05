@@ -124,5 +124,16 @@ val ZhStrings = AppStrings(
     showcaseScrambleText = "您可以使用此按钮随机打乱魔方。",
     showcaseUndoText = "您可以使用此按钮撤消上一步操作。",
     showcaseResetText = "您可以将魔方重置回已复原的初始状态。",
-    showcaseDesignText = "您可以通过手动绘制魔方表面或使用相机扫描来设计魔方。"
+    showcaseDesignText = "您可以通过手动绘制魔方表面或使用相机扫描来设计魔方。",
+    showcaseEditorFaces = "使用这些标签选择您要编辑的魔方表面。",
+    showcaseEditorGrid = "点击这些方块，用您选择的颜色为魔方贴纸涂色。",
+    showcaseEditorPalette = "从此调色板中选择您要涂色的颜色。",
+    showcaseEditorApply = "点击此按钮将涂好的配色方案应用到魔方上。",
+    showcaseEditorScan = "您可以启动扫描仪向导，通过拍照自动识别颜色状态。",
+    showcaseScannerIndicator = "在此处跟踪所有待扫描的魔方表面及其扫描状态。",
+    showcaseScannerGuide = "拍照时，请确保按照本指南中显示的朝向握住魔方。",
+    showcaseScannerCapture = "点击此处拍摄魔方对应表面的照片，或从图库中加载。",
+    showcaseScannerSliders = "使用这些滑块将绿色引导线与魔方的方块对齐。",
+    showcaseScannerPreview = "在此处检查识别出的颜色。如果有识别错误的方块，点击它可以进行修正。",
+    showcaseScannerAction = "使用这些导航按钮进入下一个表面或完成扫描。",
 )

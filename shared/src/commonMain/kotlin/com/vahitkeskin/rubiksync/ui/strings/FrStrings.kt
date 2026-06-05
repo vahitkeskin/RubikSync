@@ -124,5 +124,16 @@ val FrStrings = AppStrings(
     showcaseScrambleText = "Vous pouvez mélanger le cube de manière aléatoire en utilisant ce bouton.",
     showcaseUndoText = "Vous pouvez annuler votre dernier mouvement en utilisant ce bouton.",
     showcaseResetText = "Vous pouvez réinitialiser le cube à son état initial résolu.",
-    showcaseDesignText = "Vous pouvez concevoir le cube en peignant les faces manuellement ou en les scannant avec l'appareil photo."
+    showcaseDesignText = "Vous pouvez concevoir le cube en peignant les faces manuellement ou en les scannant avec l'appareil photo.",
+    showcaseEditorFaces = "Utilisez ces onglets pour sélectionner la face du cube que vous souhaitez modifier.",
+    showcaseEditorGrid = "Cliquez sur ces carrés pour peindre les autocollants du cube avec la couleur sélectionnée.",
+    showcaseEditorPalette = "Choisissez la couleur avec laquelle vous souhaitez peindre dans cette palette.",
+    showcaseEditorApply = "Cliquez sur ce bouton pour appliquer le schéma de couleurs peint au cube.",
+    showcaseEditorScan = "Vous pouvez lancer l'assistant de numérisation pour détecter automatiquement les couleurs en prenant des photos.",
+    showcaseScannerIndicator = "Suivez ici toutes les faces du cube à scanner et leur état de numérisation.",
+    showcaseScannerGuide = "Assurez-vous de tenir le cube dans l'orientation indiquée dans ce guide lors de la prise de photos.",
+    showcaseScannerCapture = "Cliquez ici pour prendre une photo de la face correspondante du cube ou la charger depuis la galerie.",
+    showcaseScannerSliders = "Utilisez ces curseurs pour aligner les lignes de guidage vertes avec les carrés du cube.",
+    showcaseScannerPreview = "Vérifiez les couleurs classées ici. Si un carré est mal identifié, cliquez dessus pour le corriger.",
+    showcaseScannerAction = "Utilisez ces boutons de navigation pour passer à la face suivante ou terminer la numérisation.",
 )

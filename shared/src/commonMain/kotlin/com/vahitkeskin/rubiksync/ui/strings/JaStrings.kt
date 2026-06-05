@@ -124,5 +124,16 @@ val JaStrings = AppStrings(
     showcaseScrambleText = "このボタンを使ってキューブをランダムにシャッフルできます。",
     showcaseUndoText = "このボタンを使って最後の移動を元に戻すことができます。",
     showcaseResetText = "キューブを解かれた初期状態にリセットできます。",
-    showcaseDesignText = "面を手動でペイントするか、カメラでスキャンしてキューブをデザインできます。"
+    showcaseDesignText = "面を手動でペイントするか、カメラでスキャンしてキューブをデザインできます。",
+    showcaseEditorFaces = "編集したいキューブの面を選択するには、これらのタブを使用します。",
+    showcaseEditorGrid = "選択した色でキューブのステッカーを塗るには、これらの正方形をクリックします。",
+    showcaseEditorPalette = "このパレットから塗りたい色を選択します。",
+    showcaseEditorApply = "このボタンをクリックして、塗られた配色をキューブに適用します。",
+    showcaseEditorScan = "写真を撮影して色の状態を自動検出するために、スキャナーウィザードを開始できます。",
+    showcaseScannerIndicator = "スキャンするすべてのキューブの面とスキャンの状態をここから追跡します。",
+    showcaseScannerGuide = "写真を撮るときは、このガイドに示されている方向にキューブを保持してください。",
+    showcaseScannerCapture = "キューブの対応する面の写真を撮るか、ギャラリーからロードするには、ここをクリックします。",
+    showcaseScannerSliders = "これらのスライダーを使用して、緑色のガイドラインをキューブの正方形に合わせます。",
+    showcaseScannerPreview = "ここで分類された色を確認します。誤って識別された正方形がある場合は、それをクリックして修正します。",
+    showcaseScannerAction = "次の面に進むか、スキャンを完了するには、これらのナビゲーションボタンを使用します。",
 )

@@ -124,5 +124,16 @@ val IdStrings = AppStrings(
     showcaseScrambleText = "Anda dapat mengacak kubus secara acak menggunakan tombol ini.",
     showcaseUndoText = "Anda dapat membatalkan langkah terakhir Anda menggunakan tombol ini.",
     showcaseResetText = "Anda dapat mereset kubus kembali ke keadaan awal yang terpecahkan.",
-    showcaseDesignText = "Anda dapat mendesain kubus dengan mewarnai sisi secara manual atau memindainya melalui kamera."
+    showcaseDesignText = "Anda dapat mendesain kubus dengan mewarnai sisi secara manual atau memindainya melalui kamera.",
+    showcaseEditorFaces = "Gunakan tab ini untuk memilih permukaan kubus yang ingin Anda edit.",
+    showcaseEditorGrid = "Klik pada kotak-kotak ini untuk mewarnai stiker kubus dengan warna pilihan Anda.",
+    showcaseEditorPalette = "Pilih warna yang ingin Anda gunakan untuk melukis dari palet ini.",
+    showcaseEditorApply = "Klik tombol ini untuk menerapkan skema warna yang diwarnai ke kubus.",
+    showcaseEditorScan = "Anda dapat mendeteksi warna secara otomatis dengan mengambil foto menggunakan pemindai.",
+    showcaseScannerIndicator = "Lacak semua permukaan kubus yang akan dipindai dan status pemindaiannya dari sini.",
+    showcaseScannerGuide = "Pastikan Anda memegang kubus dengan orientasi yang ditunjukkan dalam panduan ini saat mengambil foto.",
+    showcaseScannerCapture = "Klik di sini untuk mengambil foto permukaan kubus yang sesuai atau memuatnya dari galeri.",
+    showcaseScannerSliders = "Gunakan penggeser ini untuk menyelaraskan garis pandu hijau dengan kotak-kotak kubus.",
+    showcaseScannerPreview = "Tinjau warna yang diklasifikasikan di sini. Jika ada kotak yang salah teridentifikasi, klik untuk memperbaikinya.",
+    showcaseScannerAction = "Gunakan tombol navigasi ini untuk melanjutkan ke permukaan berikutnya atau menyelesaikan pemindaian.",
 )

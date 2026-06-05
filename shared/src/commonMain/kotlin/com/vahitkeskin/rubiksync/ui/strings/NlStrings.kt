@@ -124,5 +124,16 @@ val NlStrings = AppStrings(
     showcaseScrambleText = "Je kunt de kubus willekeurig husselen met deze knop.",
     showcaseUndoText = "Je kunt je laatste zet ongedaan maken met deze knop.",
     showcaseResetText = "Je kunt de kubus terugzetten naar de opgeloste beginstand.",
-    showcaseDesignText = "Je kunt de kubus ontwerpen door de vlakken handmatig te kleuren of te scannen met de camera."
+    showcaseDesignText = "Je kunt de kubus ontwerpen door de vlakken handmatig te kleuren of te scannen met de camera.",
+    showcaseEditorFaces = "Gebruik deze tabbladen om te selecteren welk kubusvlak u wilt bewerken.",
+    showcaseEditorGrid = "Klik op deze vierkantjes om de kubusstickers met de geselecteerde kleur te beschilderen.",
+    showcaseEditorPalette = "Kies de kleur waarmee u wilt schilderen uit dit palet.",
+    showcaseEditorApply = "Klik op deze knop om het geschilderde kleurenschema op de kubus toe te passen.",
+    showcaseEditorScan = "U kunt de scannerwizard starten om kleurstatussen automatisch te detecteren door foto's te maken.",
+    showcaseScannerIndicator = "Volg hier alle te scannen kubusvlakken en hun scanstatus.",
+    showcaseScannerGuide = "Zorg ervoor dat u de kubus in de richting houdt die in deze handleiding wordt getoond bij het maken van foto's.",
+    showcaseScannerCapture = "Klik hier om een foto van het overeenkomstige vlak van de kubus te maken of laad deze uit de galerij.",
+    showcaseScannerSliders = "Gebruik deze schuifregelaars om de groene hulplijnen uit te lijnen met de vierkantjes van de kubus.",
+    showcaseScannerPreview = "Controleer de geclassificeerde kleuren hier. Klik op een verkeerd geïdentificeerd vierkantje om het te corrigeren.",
+    showcaseScannerAction = "Gebruik deze navigatieknoppen om door te gaan naar het volgende vlak of de scan te voltooien.",
 )

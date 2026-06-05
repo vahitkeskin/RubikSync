@@ -140,6 +140,16 @@ class RubikAppState(
     var targetCornerRadius by mutableStateOf(16.dp)
         private set
 
+    var isEditorShowcaseCompleted by mutableStateOf(false)
+        private set
+    var editorShowcaseStep by mutableStateOf(0)
+        private set
+
+    var isScannerShowcaseCompleted by mutableStateOf(false)
+        private set
+    var scannerShowcaseStep by mutableStateOf(0)
+        private set
+
     // Computed: is the cube solved?
     val isSolved: Boolean
         get() {
@@ -405,6 +415,56 @@ class RubikAppState(
             } else if (currentStep == 10) {
                 showcaseStep = 0
                 updateShowcaseCompleted(true)
+            }
+        }
+    }
+
+    fun updateEditorShowcaseStep(step: Int) {
+        editorShowcaseStep = step
+    }
+
+    fun updateEditorShowcaseCompleted(completed: Boolean) {
+        isEditorShowcaseCompleted = completed
+    }
+
+    fun advanceEditorShowcase(totalSteps: Int = 5) {
+        if (isEditorShowcaseCompleted) return
+        val currentStep = editorShowcaseStep
+        coroutineScope.launch {
+            if (currentStep in 1..totalSteps) {
+                editorShowcaseStep = -currentStep
+            }
+            kotlinx.coroutines.delay(200)
+            if (currentStep in 1 until totalSteps) {
+                editorShowcaseStep = currentStep + 1
+            } else if (currentStep == totalSteps) {
+                editorShowcaseStep = 0
+                isEditorShowcaseCompleted = true
+            }
+        }
+    }
+
+    fun updateScannerShowcaseStep(step: Int) {
+        scannerShowcaseStep = step
+    }
+
+    fun updateScannerShowcaseCompleted(completed: Boolean) {
+        isScannerShowcaseCompleted = completed
+    }
+
+    fun advanceScannerShowcase(totalSteps: Int = 6) {
+        if (isScannerShowcaseCompleted) return
+        val currentStep = scannerShowcaseStep
+        coroutineScope.launch {
+            if (currentStep in 1..totalSteps) {
+                scannerShowcaseStep = -currentStep
+            }
+            kotlinx.coroutines.delay(200)
+            if (currentStep in 1 until totalSteps) {
+                scannerShowcaseStep = currentStep + 1
+            } else if (currentStep == totalSteps) {
+                scannerShowcaseStep = 0
+                isScannerShowcaseCompleted = true
             }
         }
     }

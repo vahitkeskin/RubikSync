@@ -124,5 +124,16 @@ val EsStrings = AppStrings(
     showcaseScrambleText = "Puedes mezclar el cubo aleatoriamente usando este botón.",
     showcaseUndoText = "Puedes deshacer tu último movimiento usando este botón.",
     showcaseResetText = "Puedes restablecer el cubo a su estado inicial resuelto.",
-    showcaseDesignText = "Puedes diseñar el cubo pintando las caras manualmente o escaneándolo con la cámara."
+    showcaseDesignText = "Puedes diseñar el cubo pintando las caras manualmente o escaneándolo con la cámara.",
+    showcaseEditorFaces = "Use estas pestañas para seleccionar qué cara del cubo desea editar.",
+    showcaseEditorGrid = "Haga clic en estos cuadrados para pintar las pegatinas del cubo con el color seleccionado.",
+    showcaseEditorPalette = "Elija el color con el que desea pintar de esta paleta.",
+    showcaseEditorApply = "Haga clic en este botón para aplicar el esquema de color pintado al cubo.",
+    showcaseEditorScan = "Puede iniciar el asistente de escaneo para detectar automáticamente los colores tomando fotos.",
+    showcaseScannerIndicator = "Siga todas las caras del cubo a escanear y su estado de escaneo desde aquí.",
+    showcaseScannerGuide = "Asegúrese de sostener el cubo en la orientación que se muestra en esta guía al tomar fotos.",
+    showcaseScannerCapture = "Haga clic aquí para tomar una foto de la cara correspondiente del cubo o cargarla desde la galería.",
+    showcaseScannerSliders = "Use estos deslizadores para alinear las líneas de guía verdes con los cuadrados del cubo.",
+    showcaseScannerPreview = "Revise los colores clasificados aquí. Si hay un cuadrado mal identificado, haga clic en él para corregirlo.",
+    showcaseScannerAction = "Use estos botones de navegación para pasar a la siguiente cara o completar el escaneo.",
 )

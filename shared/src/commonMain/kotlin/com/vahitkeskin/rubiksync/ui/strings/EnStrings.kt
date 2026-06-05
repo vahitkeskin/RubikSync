@@ -124,5 +124,16 @@ val EnStrings = AppStrings(
     showcaseScrambleText = "You can randomly scramble the cube using this button.",
     showcaseUndoText = "You can undo your last move using this button.",
     showcaseResetText = "You can reset the cube back to its solved starting state.",
-    showcaseDesignText = "You can design the cube by painting faces manually or scanning via camera."
+    showcaseDesignText = "You can design the cube by painting faces manually or scanning via camera.",
+    showcaseEditorFaces = "Use these tabs to select which cube face you want to edit.",
+    showcaseEditorGrid = "Click on these squares to paint the cube stickers with your selected color.",
+    showcaseEditorPalette = "Choose the color you want to paint with from this palette.",
+    showcaseEditorApply = "Click this button to apply the painted color scheme to the cube.",
+    showcaseEditorScan = "You can start the scanner wizard to automatically detect color states by taking photos.",
+    showcaseScannerIndicator = "Track all the cube faces to be scanned and their scanning status from here.",
+    showcaseScannerGuide = "Make sure you hold the cube in the orientation shown in this guide when taking photos.",
+    showcaseScannerCapture = "Click here to take a photo of the corresponding face of the cube or load it from the gallery.",
+    showcaseScannerSliders = "Use these sliders to align the green guide lines with the cube's squares.",
+    showcaseScannerPreview = "Review the classified colors here. If there is a misidentified square, click on it to correct it.",
+    showcaseScannerAction = "Use these navigation buttons to proceed to the next face or complete the scan.",
 )

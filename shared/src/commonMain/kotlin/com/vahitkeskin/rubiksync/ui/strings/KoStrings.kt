@@ -124,5 +124,16 @@ val KoStrings = AppStrings(
     showcaseScrambleText = "이 버튼을 사용하여 큐브를 무작위로 섞을 수 있습니다.",
     showcaseUndoText = "이 버튼을 사용하여 마지막 이동을 취소할 수 있습니다.",
     showcaseResetText = "큐브를 맞춰진 초기 상태로 재설정할 수 있습니다.",
-    showcaseDesignText = "면을 수동으로 칠하거나 카메라로 스캔하여 큐브를 디자인할 수 있습니다."
+    showcaseDesignText = "면을 수동으로 칠하거나 카메라로 스캔하여 큐브를 디자인할 수 있습니다.",
+    showcaseEditorFaces = "편집할 큐브 면을 선택하려면 이 탭들을 사용하세요.",
+    showcaseEditorGrid = "선택한 색상으로 큐브 스티커를 칠하려면 이 사각형들을 클릭하세요.",
+    showcaseEditorPalette = "칠하고 싶은 색상을 이 팔레트에서 선택하세요.",
+    showcaseEditorApply = "이 버튼을 클릭하여 칠해진 색상 배합을 큐브에 적용합니다.",
+    showcaseEditorScan = "사진을 촬영하여 색상 상태를 자동으로 감지하려면 스캐너 마법사를 시작할 수 있습니다.",
+    showcaseScannerIndicator = "스캔할 모든 큐브 면과 스캔 상태를 여기서 확인하세요.",
+    showcaseScannerGuide = "사진을 찍을 때 큐브를 이 가이드에 표시된 방향으로 잡고 있는지 확인하세요.",
+    showcaseScannerCapture = "큐브의 해당 면 사진을 찍거나 갤러리에서 불러오려면 여기를 클릭하세요.",
+    showcaseScannerSliders = "이 슬라이더를 사용하여 녹색 가이드라인을 큐브의 사각형에 맞추세요.",
+    showcaseScannerPreview = "분류된 색상을 여기서 확인하세요. 잘못 인식된 사각형이 있으면 클릭하여 수정하세요.",
+    showcaseScannerAction = "다음 면으로 이동하거나 스캔을 완료하려면 이 탐색 버튼들을 사용하세요.",
 )

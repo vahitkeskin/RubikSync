@@ -40,6 +40,19 @@ import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
 import com.vahitkeskin.rubiksync.ui.icons.ArrowForwardIcon
 import com.vahitkeskin.rubiksync.ui.icons.CheckIcon
 
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScannerWizard(
@@ -52,6 +65,14 @@ fun ScannerWizard(
 
     val coroutineScope = appState.coroutineScope
     val currentFace = FaceName.values()[appState.scannerStep]
+
+    val scannerScrollState = rememberScrollState()
+
+    LaunchedEffect(appState.scannerShowcaseStep) {
+        if (appState.scannerShowcaseStep == 4 || appState.scannerShowcaseStep == 5) {
+            scannerScrollState.animateScrollTo(scannerScrollState.maxValue)
+        }
+    }
 
     val faceColorMap = mapOf(
         FaceName.U to AccentOrangeDark,
@@ -191,13 +212,30 @@ fun ScannerWizard(
         },
         modifier = Modifier.fillMaxHeight(0.95f)
     ) {
-        Column(
+        var scannerTargetBounds by remember { mutableStateOf<Rect?>(null) }
+        var scannerTargetCornerRadius by remember { mutableStateOf(12.dp) }
+        var parentPositionInRoot by remember { mutableStateOf(Offset.Zero) }
+
+        LaunchedEffect(show) {
+            if (show && !appState.isScannerShowcaseCompleted && appState.scannerShowcaseStep == 0) {
+                appState.updateScannerShowcaseStep(1)
+            }
+        }
+
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .onGloballyPositioned { coords ->
+                    parentPositionInRoot = coords.positionInRoot()
+                }
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(14.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
             // 1. Header & Connected Step Indicators
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Row(
@@ -246,61 +284,78 @@ fun ScannerWizard(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // Connected step indicator with lines
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    FaceName.values().forEachIndexed { index, face ->
-                        val isCurrent = (appState.scannerStep == index)
-                        val isScanned = appState.scannedFilePaths.containsKey(face)
+                Box {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onGloballyPositioned { coords ->
+                                if (appState.scannerShowcaseStep == 1 && !appState.isScannerShowcaseCompleted) {
+                                    val pos = coords.positionInRoot() - parentPositionInRoot
+                                    val size = coords.size
+                                    scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                    scannerTargetCornerRadius = 16.dp
+                                }
+                            }
+                    ) {
+                        FaceName.values().forEachIndexed { index, face ->
+                            val isCurrent = (appState.scannerStep == index)
+                            val isScanned = appState.scannedFilePaths.containsKey(face)
 
-                        val baseColor = faceColorMap[face] ?: Color.Gray
-                        val circleBg = if (isScanned || isCurrent) baseColor.copy(alpha = 0.9f) else RubikTheme.colors.backgroundTertiary
-                        val textColor = if (face == FaceName.R && (isScanned || isCurrent)) Color.Black else (if (isScanned || isCurrent) Color.White else RubikTheme.colors.textSecondary)
+                            val baseColor = faceColorMap[face] ?: Color.Gray
+                            val circleBg = if (isScanned || isCurrent) baseColor.copy(alpha = 0.9f) else RubikTheme.colors.backgroundTertiary
+                            val textColor = if (face == FaceName.R && (isScanned || isCurrent)) Color.Black else (if (isScanned || isCurrent) Color.White else RubikTheme.colors.textSecondary)
 
-                        if (index > 0) {
-                            // Connecting line
-                            val prevScanned = appState.scannedFilePaths.containsKey(FaceName.values()[index - 1])
+                            if (index > 0) {
+                                // Connecting line
+                                val prevScanned = appState.scannedFilePaths.containsKey(FaceName.values()[index - 1])
+
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(2.dp)
+                                        .clip(RoundedCornerShape(1.dp))
+                                        .background(
+                                            if (prevScanned) RubikTheme.colors.accentGreen.copy(alpha = 0.5f)
+                                            else RubikTheme.colors.borderSubtle
+                                        )
+                                )
+                            }
 
                             Box(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .height(2.dp)
-                                    .clip(RoundedCornerShape(1.dp))
-                                    .background(
-                                        if (prevScanned) RubikTheme.colors.accentGreen.copy(alpha = 0.5f)
-                                        else RubikTheme.colors.borderSubtle
+                                    .size(30.dp)
+                                    .clip(RoundedCornerShape(15.dp))
+                                    .background(circleBg)
+                                    .border(
+                                        width = if (isCurrent) 2.dp else 0.dp,
+                                        color = if (isCurrent) RubikTheme.colors.textPrimary else Color.Transparent,
+                                        shape = RoundedCornerShape(15.dp)
                                     )
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .size(30.dp)
-                                .clip(RoundedCornerShape(15.dp))
-                                .background(circleBg)
-                                .border(
-                                    width = if (isCurrent) 2.dp else 0.dp,
-                                    color = if (isCurrent) RubikTheme.colors.textPrimary else Color.Transparent,
-                                    shape = RoundedCornerShape(15.dp)
+                                    .clickable {
+                                        appState.updateScannerStep(index)
+                                        appState.updateErrorMessage(null)
+                                        appState.updateInfoMessage(null)
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = face.name,
+                                    color = textColor,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    maxLines = 1
                                 )
-                                .clickable {
-                                    appState.updateScannerStep(index)
-                                    appState.updateErrorMessage(null)
-                                    appState.updateInfoMessage(null)
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = face.name,
-                                color = textColor,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                maxLines = 1
-                            )
+                            }
                         }
                     }
+                    AuraBalloon(
+                        text = appState.strings.showcaseScannerIndicator,
+                        isVisible = appState.scannerShowcaseStep == 1 && !appState.isScannerShowcaseCompleted,
+                        isBelow = true,
+                        onDismiss = { appState.advanceScannerShowcase() }
+                    )
                 }
 
                 // Info / Guidance message
@@ -365,14 +420,33 @@ fun ScannerWizard(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.weight(1f).padding(vertical = 8.dp)
             ) {
-                CubeRotationGuide(
-                    appState = appState,
-                    currentFace = currentFace,
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
+                Box {
+                    CubeRotationGuide(
+                        appState = appState,
+                        currentFace = currentFace,
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .onGloballyPositioned { coords ->
+                                if (appState.scannerShowcaseStep == 2 && !appState.isScannerShowcaseCompleted) {
+                                    val pos = coords.positionInRoot() - parentPositionInRoot
+                                    val size = coords.size
+                                    scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                    scannerTargetCornerRadius = 12.dp
+                                }
+                            }
+                    )
+                    AuraBalloon(
+                        text = appState.strings.showcaseScannerGuide,
+                        isVisible = appState.scannerShowcaseStep == 2 && !appState.isScannerShowcaseCompleted,
+                        isBelow = true,
+                        onDismiss = { appState.advanceScannerShowcase() }
+                    )
+                }
 
                 val currentPath = appState.scannedFilePaths[currentFace]
-                if (currentPath == null) {
+                val isShowcaseSlidersOrPreview = appState.scannerShowcaseStep == 4 || appState.scannerShowcaseStep == 5
+
+                if (currentPath == null && !isShowcaseSlidersOrPreview) {
                     // Not scanned yet
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -386,58 +460,78 @@ fun ScannerWizard(
                                 strokeWidth = 3.dp
                             )
                         } else {
-                            CameraCaptureOrPicker(
-                                faceName = currentFace.name,
-                                takePhotoLabel = appState.strings.takePhotoLabel,
-                                chooseGalleryLabel = appState.strings.chooseGalleryLabel,
-                                selectImageLabel = appState.strings.selectImageLabel,
-                                onImageSelected = { filePath ->
-                                    coroutineScope.launch {
-                                        appState.updateRecalculating(true)
-                                        appState.updateErrorMessage(null)
-                                        appState.updateInfoMessage(null)
-                                        val detectedFace = withContext(Dispatchers.Default) {
-                                            RubikImageProcessor().detectFaceFromImage(filePath)
-                                        }
-                                        appState.updateRecalculating(false)
-                                        if (detectedFace != null) {
-                                            val updatedPaths = appState.scannedFilePaths.toMutableMap()
-                                            updatedPaths[detectedFace] = filePath
-                                            appState.updateScannedFilePaths(updatedPaths)
-
-                                            val updatedScales = appState.gridScales.toMutableMap()
-                                            updatedScales[detectedFace] = 0.55f
-                                            appState.updateGridScales(updatedScales)
-
-                                            val updatedOffsetsX = appState.gridOffsetsX.toMutableMap()
-                                            updatedOffsetsX[detectedFace] = 0f
-                                            appState.updateGridOffsetsX(updatedOffsetsX)
-
-                                            val updatedOffsetsY = appState.gridOffsetsY.toMutableMap()
-                                            updatedOffsetsY[detectedFace] = 0f
-                                            appState.updateGridOffsetsY(updatedOffsetsY)
-
-                                            appState.updateScannerStep(detectedFace.ordinal)
-
-                                            val faceDisplayName = faceNameLocalized[detectedFace] ?: detectedFace.name
-                                            val centerColorLocalized = when (detectedFace) {
-                                                FaceName.U -> appState.strings.colorOrange
-                                                FaceName.D -> appState.strings.colorRed
-                                                FaceName.L -> appState.strings.colorYellow
-                                                FaceName.R -> appState.strings.colorWhite
-                                                FaceName.F -> appState.strings.colorGreen
-                                                FaceName.B -> appState.strings.colorBlue
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CameraCaptureOrPicker(
+                                    faceName = currentFace.name,
+                                    takePhotoLabel = appState.strings.takePhotoLabel,
+                                    chooseGalleryLabel = appState.strings.chooseGalleryLabel,
+                                    selectImageLabel = appState.strings.selectImageLabel,
+                                    onImageSelected = { filePath ->
+                                        coroutineScope.launch {
+                                            appState.updateRecalculating(true)
+                                            appState.updateErrorMessage(null)
+                                            appState.updateInfoMessage(null)
+                                            val detectedFace = withContext(Dispatchers.Default) {
+                                                RubikImageProcessor().detectFaceFromImage(filePath)
                                             }
-                                            appState.updateInfoMessage(appState.strings.faceDetectedMessage
-                                                .replaceFirst("%s", centerColorLocalized)
-                                                .replaceFirst("%s", faceDisplayName))
-                                        } else {
-                                            appState.updateErrorMessage(appState.strings.faceNotDetected)
+                                            appState.updateRecalculating(false)
+                                            if (detectedFace != null) {
+                                                val updatedPaths = appState.scannedFilePaths.toMutableMap()
+                                                updatedPaths[detectedFace] = filePath
+                                                appState.updateScannedFilePaths(updatedPaths)
+
+                                                val updatedScales = appState.gridScales.toMutableMap()
+                                                updatedScales[detectedFace] = 0.55f
+                                                appState.updateGridScales(updatedScales)
+
+                                                val updatedOffsetsX = appState.gridOffsetsX.toMutableMap()
+                                                updatedOffsetsX[detectedFace] = 0f
+                                                appState.updateGridOffsetsX(updatedOffsetsX)
+
+                                                val updatedOffsetsY = appState.gridOffsetsY.toMutableMap()
+                                                updatedOffsetsY[detectedFace] = 0f
+                                                appState.updateGridOffsetsY(updatedOffsetsY)
+
+                                                appState.updateScannerStep(detectedFace.ordinal)
+
+                                                val faceDisplayName = faceNameLocalized[detectedFace] ?: detectedFace.name
+                                                val centerColorLocalized = when (detectedFace) {
+                                                    FaceName.U -> appState.strings.colorOrange
+                                                    FaceName.D -> appState.strings.colorRed
+                                                    FaceName.L -> appState.strings.colorYellow
+                                                    FaceName.R -> appState.strings.colorWhite
+                                                    FaceName.F -> appState.strings.colorGreen
+                                                    FaceName.B -> appState.strings.colorBlue
+                                                }
+                                                appState.updateInfoMessage(appState.strings.faceDetectedMessage
+                                                    .replaceFirst("%s", centerColorLocalized)
+                                                    .replaceFirst("%s", faceDisplayName))
+                                            } else {
+                                                appState.updateErrorMessage(appState.strings.faceNotDetected)
+                                            }
                                         }
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth(0.75f)
-                            )
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.75f)
+                                        .onGloballyPositioned { coords ->
+                                            if (appState.scannerShowcaseStep == 3 && !appState.isScannerShowcaseCompleted) {
+                                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                                val size = coords.size
+                                                scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                                scannerTargetCornerRadius = 16.dp
+                                            }
+                                        }
+                                )
+                                AuraBalloon(
+                                    text = appState.strings.showcaseScannerCapture,
+                                    isVisible = appState.scannerShowcaseStep == 3 && !appState.isScannerShowcaseCompleted,
+                                    isBelow = true,
+                                    onDismiss = { appState.advanceScannerShowcase() }
+                                )
+                            }
                         }
                     }
                 } else {
@@ -448,7 +542,7 @@ fun ScannerWizard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .verticalScroll(rememberScrollState())
+                            .verticalScroll(scannerScrollState)
                     ) {
                         // 1. Side-by-Side Photo Preview and Color Grid
                         Row(
@@ -528,8 +622,46 @@ fun ScannerWizard(
                             }
 
                             // Right Box: Color Preview Grid
-                            val grid = appState.scannedGrids[currentFace]
-                            val rawGrid = appState.scannedRawRGBs[currentFace]
+                            val displayGrid = appState.scannedGrids[currentFace] ?: if (appState.scannerShowcaseStep != 0) {
+                                val currentFaceColor = when (currentFace) {
+                                    FaceName.U -> CubeColor.ORANGE
+                                    FaceName.D -> CubeColor.RED
+                                    FaceName.L -> CubeColor.YELLOW
+                                    FaceName.R -> CubeColor.WHITE
+                                    FaceName.F -> CubeColor.GREEN
+                                    FaceName.B -> CubeColor.BLUE
+                                }
+                                arrayOf(
+                                    arrayOf(CubeColor.ORANGE, CubeColor.GREEN, CubeColor.YELLOW),
+                                    arrayOf(CubeColor.RED, currentFaceColor, CubeColor.WHITE),
+                                    arrayOf(CubeColor.BLUE, CubeColor.ORANGE, CubeColor.GREEN)
+                                )
+                            } else null
+
+                            val displayRawGrid = appState.scannedRawRGBs[currentFace] ?: if (appState.scannerShowcaseStep != 0) {
+                                val currentFaceColor = when (currentFace) {
+                                    FaceName.U -> CubeColor.ORANGE
+                                    FaceName.D -> CubeColor.RED
+                                    FaceName.L -> CubeColor.YELLOW
+                                    FaceName.R -> CubeColor.WHITE
+                                    FaceName.F -> CubeColor.GREEN
+                                    FaceName.B -> CubeColor.BLUE
+                                }
+                                val currentFaceRGB = when (currentFaceColor) {
+                                    CubeColor.ORANGE -> IntVector3(255, 130, 0)
+                                    CubeColor.RED -> IntVector3(220, 20, 20)
+                                    CubeColor.YELLOW -> IntVector3(240, 240, 0)
+                                    CubeColor.WHITE -> IntVector3(230, 230, 230)
+                                    CubeColor.GREEN -> IntVector3(0, 160, 0)
+                                    CubeColor.BLUE -> IntVector3(0, 0, 200)
+                                    CubeColor.INTERNAL -> IntVector3(21, 27, 38)
+                                }
+                                arrayOf(
+                                    arrayOf(IntVector3(255, 130, 0), IntVector3(0, 160, 0), IntVector3(240, 240, 0)),
+                                    arrayOf(IntVector3(220, 20, 20), currentFaceRGB, IntVector3(230, 230, 230)),
+                                    arrayOf(IntVector3(0, 0, 200), IntVector3(255, 130, 0), IntVector3(0, 160, 0))
+                                )
+                            } else null
 
                             Box(
                                 modifier = Modifier
@@ -537,10 +669,18 @@ fun ScannerWizard(
                                     .aspectRatio(1f)
                                     .clip(RoundedCornerShape(16.dp))
                                     .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(16.dp))
-                                    .background(RubikTheme.colors.backgroundPrimary),
+                                    .background(RubikTheme.colors.backgroundPrimary)
+                                    .onGloballyPositioned { coords ->
+                                        if (appState.scannerShowcaseStep == 5 && !appState.isScannerShowcaseCompleted) {
+                                            val pos = coords.positionInRoot() - parentPositionInRoot
+                                            val size = coords.size
+                                            scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                            scannerTargetCornerRadius = 16.dp
+                                        }
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
-                                if (grid != null && rawGrid != null) {
+                                if (displayGrid != null && displayRawGrid != null) {
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.Center,
@@ -563,7 +703,7 @@ fun ScannerWizard(
                                              for (row in 0..2) {
                                                  Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                                      for (col in 0..2) {
-                                                         val cellColor = grid[row][col]
+                                                         val cellColor = displayGrid[row][col]
                                                          val isCenter = row == 1 && col == 1
 
                                                          Box(
@@ -577,6 +717,9 @@ fun ScannerWizard(
                                                                      shape = RoundedCornerShape(5.dp)
                                                                  )
                                                                  .clickable {
+                                                                     val actualGrid = appState.scannedGrids[currentFace]
+                                                                     val actualRawGrid = appState.scannedRawRGBs[currentFace]
+
                                                                      val colorsList = listOf(
                                                                          CubeColor.ORANGE, CubeColor.RED, CubeColor.YELLOW,
                                                                          CubeColor.WHITE, CubeColor.GREEN, CubeColor.BLUE
@@ -596,7 +739,7 @@ fun ScannerWizard(
                                                                      val refRGB = defaultReferences[targetColor]!!
 
                                                                      if (!isCenter) {
-                                                                         val updatedRawGrid = rawGrid.map { it.copyOf() }.toTypedArray()
+                                                                         val updatedRawGrid = (actualRawGrid ?: displayRawGrid).map { it.copyOf() }.toTypedArray()
                                                                          updatedRawGrid[row][col] = refRGB
 
                                                                          val updatedRaw = appState.scannedRawRGBs.toMutableMap()
@@ -604,7 +747,7 @@ fun ScannerWizard(
                                                                          appState.updateScannedRawRGBs(updatedRaw)
                                                                      }
 
-                                                                     val updatedGrid = grid.map { it.copyOf() }.toTypedArray()
+                                                                     val updatedGrid = (actualGrid ?: displayGrid).map { it.copyOf() }.toTypedArray()
                                                                      updatedGrid[row][col] = targetColor
                                                                      val updatedGrids = appState.scannedGrids.toMutableMap()
                                                                      updatedGrids[currentFace] = updatedGrid
@@ -628,130 +771,154 @@ fun ScannerWizard(
                                         strokeWidth = 2.dp
                                     )
                                 }
+                                AuraBalloon(
+                                    text = appState.strings.showcaseScannerPreview,
+                                    isVisible = appState.scannerShowcaseStep == 5 && !appState.isScannerShowcaseCompleted,
+                                    isBelow = false,
+                                    onDismiss = { appState.advanceScannerShowcase() }
+                                )
                             }
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))
 
                         // Alignment sliders with values
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            Text(
-                                text = appState.strings.alignGridDesc,
-                                color = RubikTheme.colors.textSecondary,
-                                fontSize = 9.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth(),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                        Box {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 4.dp)
+                                    .onGloballyPositioned { coords ->
+                                        if (appState.scannerShowcaseStep == 4 && !appState.isScannerShowcaseCompleted) {
+                                            val pos = coords.positionInRoot() - parentPositionInRoot
+                                            val size = coords.size
+                                            scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                            scannerTargetCornerRadius = 12.dp
+                                        }
+                                    },
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Text(
+                                    text = appState.strings.alignGridDesc,
+                                    color = RubikTheme.colors.textSecondary,
+                                    fontSize = 9.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+
+                                // Scale
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = appState.strings.sizeLabel,
+                                        color = RubikTheme.colors.textSecondary,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.width(40.dp),
+                                        maxLines = 1
+                                    )
+                                    Slider(
+                                        value = currentScale,
+                                        onValueChange = { s ->
+                                            val updated = appState.gridScales.toMutableMap()
+                                            updated[currentFace] = s
+                                            appState.updateGridScales(updated)
+                                        },
+                                        valueRange = 0.3f..0.9f,
+                                        modifier = Modifier.weight(1f),
+                                        colors = SliderDefaults.colors(
+                                            activeTrackColor = RubikTheme.colors.accentBlue,
+                                            inactiveTrackColor = RubikTheme.colors.speedTrack,
+                                            thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
+                                        )
+                                    )
+                                    Text(
+                                        text = "${(currentScale * 100).toInt()}%",
+                                        color = RubikTheme.colors.textSecondary,
+                                        fontSize = 9.sp,
+                                        modifier = Modifier.width(32.dp),
+                                        textAlign = TextAlign.End,
+                                        maxLines = 1
+                                    )
+                                }
+
+                                // Offset X
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = appState.strings.horizontalLabel,
+                                        color = RubikTheme.colors.textSecondary,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.width(40.dp),
+                                        maxLines = 1
+                                    )
+                                    Slider(
+                                        value = currentOffsetX,
+                                        onValueChange = { x ->
+                                            val updated = appState.gridOffsetsX.toMutableMap()
+                                            updated[currentFace] = x
+                                            appState.updateGridOffsetsX(updated)
+                                        },
+                                        valueRange = -0.3f..0.3f,
+                                        modifier = Modifier.weight(1f),
+                                        colors = SliderDefaults.colors(
+                                            activeTrackColor = RubikTheme.colors.accentBlue,
+                                            inactiveTrackColor = RubikTheme.colors.speedTrack,
+                                            thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
+                                        )
+                                    )
+                                    Text(
+                                        text = "${(currentOffsetX * 100).toInt()}",
+                                        color = RubikTheme.colors.textSecondary,
+                                        fontSize = 9.sp,
+                                        modifier = Modifier.width(32.dp),
+                                        textAlign = TextAlign.End,
+                                        maxLines = 1
+                                    )
+                                }
+
+                                // Offset Y
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = appState.strings.verticalLabel,
+                                        color = RubikTheme.colors.textSecondary,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.width(40.dp),
+                                        maxLines = 1
+                                    )
+                                    Slider(
+                                        value = currentOffsetY,
+                                        onValueChange = { y ->
+                                            val updated = appState.gridOffsetsY.toMutableMap()
+                                            updated[currentFace] = y
+                                            appState.updateGridOffsetsY(updated)
+                                        },
+                                        valueRange = -0.3f..0.3f,
+                                        modifier = Modifier.weight(1f),
+                                        colors = SliderDefaults.colors(
+                                            activeTrackColor = RubikTheme.colors.accentBlue,
+                                            inactiveTrackColor = RubikTheme.colors.speedTrack,
+                                            thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
+                                        )
+                                    )
+                                    Text(
+                                        text = "${(currentOffsetY * 100).toInt()}",
+                                        color = RubikTheme.colors.textSecondary,
+                                        fontSize = 9.sp,
+                                        modifier = Modifier.width(32.dp),
+                                        textAlign = TextAlign.End,
+                                        maxLines = 1
+                                    )
+                                }
+                            }
+                            AuraBalloon(
+                                text = appState.strings.showcaseScannerSliders,
+                                isVisible = appState.scannerShowcaseStep == 4 && !appState.isScannerShowcaseCompleted,
+                                isBelow = false,
+                                onDismiss = { appState.advanceScannerShowcase() }
                             )
-
-                            // Scale
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = appState.strings.sizeLabel,
-                                    color = RubikTheme.colors.textSecondary,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.width(40.dp),
-                                    maxLines = 1
-                                )
-                                Slider(
-                                    value = currentScale,
-                                    onValueChange = { s ->
-                                        val updated = appState.gridScales.toMutableMap()
-                                        updated[currentFace] = s
-                                        appState.updateGridScales(updated)
-                                    },
-                                    valueRange = 0.3f..0.9f,
-                                    modifier = Modifier.weight(1f),
-                                    colors = SliderDefaults.colors(
-                                        activeTrackColor = RubikTheme.colors.accentBlue,
-                                        inactiveTrackColor = RubikTheme.colors.speedTrack,
-                                        thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
-                                    )
-                                )
-                                Text(
-                                    text = "${(currentScale * 100).toInt()}%",
-                                    color = RubikTheme.colors.textSecondary,
-                                    fontSize = 9.sp,
-                                    modifier = Modifier.width(32.dp),
-                                    textAlign = TextAlign.End,
-                                    maxLines = 1
-                                )
-                            }
-
-                            // Offset X
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = appState.strings.horizontalLabel,
-                                    color = RubikTheme.colors.textSecondary,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.width(40.dp),
-                                    maxLines = 1
-                                )
-                                Slider(
-                                    value = currentOffsetX,
-                                    onValueChange = { x ->
-                                        val updated = appState.gridOffsetsX.toMutableMap()
-                                        updated[currentFace] = x
-                                        appState.updateGridOffsetsX(updated)
-                                    },
-                                    valueRange = -0.3f..0.3f,
-                                    modifier = Modifier.weight(1f),
-                                    colors = SliderDefaults.colors(
-                                        activeTrackColor = RubikTheme.colors.accentBlue,
-                                        inactiveTrackColor = RubikTheme.colors.speedTrack,
-                                        thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
-                                    )
-                                )
-                                Text(
-                                    text = "${(currentOffsetX * 100).toInt()}",
-                                    color = RubikTheme.colors.textSecondary,
-                                    fontSize = 9.sp,
-                                    modifier = Modifier.width(32.dp),
-                                    textAlign = TextAlign.End,
-                                    maxLines = 1
-                                )
-                            }
-
-                            // Offset Y
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = appState.strings.verticalLabel,
-                                    color = RubikTheme.colors.textSecondary,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.width(40.dp),
-                                    maxLines = 1
-                                )
-                                Slider(
-                                    value = currentOffsetY,
-                                    onValueChange = { y ->
-                                        val updated = appState.gridOffsetsY.toMutableMap()
-                                        updated[currentFace] = y
-                                        appState.updateGridOffsetsY(updated)
-                                    },
-                                    valueRange = -0.3f..0.3f,
-                                    modifier = Modifier.weight(1f),
-                                    colors = SliderDefaults.colors(
-                                        activeTrackColor = RubikTheme.colors.accentBlue,
-                                        inactiveTrackColor = RubikTheme.colors.speedTrack,
-                                        thumbColor = if (RubikTheme.colors.isDark) Color.White else RubikTheme.colors.accentBlue
-                                    )
-                                )
-                                Text(
-                                    text = "${(currentOffsetY * 100).toInt()}",
-                                    color = RubikTheme.colors.textSecondary,
-                                    fontSize = 9.sp,
-                                    modifier = Modifier.width(32.dp),
-                                    textAlign = TextAlign.End,
-                                    maxLines = 1
-                                )
-                            }
                         }
 
                         // Re-capture button
@@ -782,185 +949,231 @@ fun ScannerWizard(
             }
 
             // 3. Bottom Navigation — compact buttons with icons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Button(
-                    onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = RubikTheme.colors.backgroundSecondary,
-                        contentColor = RubikTheme.colors.textPrimary
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
-                    modifier = Modifier.weight(1f).height(42.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = CloseIcon,
-                            contentDescription = "Cancel",
-                            modifier = Modifier.size(14.dp),
-                            tint = RubikTheme.colors.textPrimary
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = appState.strings.cancelButton,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1
-                        )
-                    }
-                }
-
-                Button(
-                    onClick = {
-                        appState.updateErrorMessage(null)
-                        appState.updateInfoMessage(null)
-                        if (appState.scannerStep > 0) appState.updateScannerStep(appState.scannerStep - 1)
-                    },
-                    enabled = appState.scannerStep > 0,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = RubikTheme.colors.backgroundSecondary,
-                        contentColor = RubikTheme.colors.textPrimary,
-                        disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
-                        disabledContentColor = RubikTheme.colors.buttonDisabledText
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
-                    modifier = Modifier.weight(1f).height(42.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = ArrowBackIcon,
-                            contentDescription = "Back",
-                            modifier = Modifier.size(14.dp),
-                            tint = if (appState.scannerStep > 0) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = appState.strings.backButton,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1
-                        )
-                    }
-                }
-
-                val hasCurrentScan = appState.scannedFilePaths.containsKey(currentFace)
-                if (appState.scannerStep < 5) {
-                    Button(
-                        onClick = {
-                            appState.updateErrorMessage(null)
-                            appState.updateInfoMessage(null)
-                            var foundNext = false
-                            for (i in 1..5) {
-                                val nextIdx = (appState.scannerStep + i) % 6
-                                val nextFace = FaceName.values()[nextIdx]
-                                if (!appState.scannedFilePaths.containsKey(nextFace)) {
-                                    appState.updateScannerStep(nextIdx)
-                                    foundNext = true
-                                    break
-                                }
-                            }
-                            if (!foundNext) {
-                                appState.updateScannerStep((appState.scannerStep + 1).coerceAtMost(5))
+            Box {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onGloballyPositioned { coords ->
+                            if (appState.scannerShowcaseStep == 6 && !appState.isScannerShowcaseCompleted) {
+                                val pos = coords.positionInRoot() - parentPositionInRoot
+                                val size = coords.size
+                                scannerTargetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                scannerTargetCornerRadius = 12.dp
                             }
                         },
-                        enabled = hasCurrentScan,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Button(
+                        onClick = onDismiss,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (hasCurrentScan) RubikTheme.colors.accentBlue else RubikTheme.colors.backgroundSecondary,
-                            contentColor = if (hasCurrentScan) Color.White else RubikTheme.colors.textSecondary,
-                            disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
-                            disabledContentColor = RubikTheme.colors.buttonDisabledText
+                            containerColor = RubikTheme.colors.backgroundSecondary,
+                            contentColor = RubikTheme.colors.textPrimary
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                        border = if (hasCurrentScan) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
-                        modifier = Modifier.weight(1.1f).height(42.dp)
+                        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
+                        modifier = Modifier.weight(1f).height(42.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
+                            Icon(
+                                imageVector = CloseIcon,
+                                contentDescription = "Cancel",
+                                modifier = Modifier.size(14.dp),
+                                tint = RubikTheme.colors.textPrimary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = appState.strings.nextButton,
+                                text = appState.strings.cancelButton,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Icon(
-                                imageVector = ArrowForwardIcon,
-                                contentDescription = "Next",
-                                modifier = Modifier.size(14.dp),
-                                tint = if (hasCurrentScan) Color.White else RubikTheme.colors.textSecondary
-                            )
                         }
                     }
-                } else {
+
                     Button(
                         onClick = {
-                            val completeGrids = mutableMapOf<FaceName, Array<Array<CubeColor>>>()
-                            var isValid = true
-                            for (face in FaceName.values()) {
-                                val gridVal = appState.scannedGrids[face]
-                                val hasPath = appState.scannedFilePaths.containsKey(face)
-                                if (gridVal != null && hasPath) {
-                                    completeGrids[face] = gridVal
-                                } else {
-                                    isValid = false
-                                }
-                            }
-                            if (isValid) {
-                                onComplete(completeGrids)
-                                appState.updateSuccessMessage(appState.strings.successScanComplete)
-                            } else {
-                                appState.updateErrorMessage(appState.strings.errorScanAllFaces)
-                            }
+                            appState.updateErrorMessage(null)
+                            appState.updateInfoMessage(null)
+                            if (appState.scannerStep > 0) appState.updateScannerStep(appState.scannerStep - 1)
                         },
-                        enabled = appState.scannedFilePaths.size == 6,
+                        enabled = appState.scannerStep > 0,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (appState.scannedFilePaths.size == 6) RubikTheme.colors.accentOrange else RubikTheme.colors.backgroundSecondary,
-                            contentColor = if (appState.scannedFilePaths.size == 6) Color.White else RubikTheme.colors.textSecondary,
+                            containerColor = RubikTheme.colors.backgroundSecondary,
+                            contentColor = RubikTheme.colors.textPrimary,
                             disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
                             disabledContentColor = RubikTheme.colors.buttonDisabledText
                         ),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                        border = if (appState.scannedFilePaths.size == 6) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
-                        modifier = Modifier.weight(1.1f).height(42.dp)
+                        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
+                        modifier = Modifier.weight(1f).height(42.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                imageVector = CheckIcon,
-                                contentDescription = "Set",
+                                imageVector = ArrowBackIcon,
+                                contentDescription = "Back",
                                 modifier = Modifier.size(14.dp),
-                                tint = if (appState.scannedFilePaths.size == 6) Color.White else RubikTheme.colors.textSecondary
+                                tint = if (appState.scannerStep > 0) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = appState.strings.setButton,
+                                text = appState.strings.backButton,
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.ExtraBold,
+                                fontWeight = FontWeight.Bold,
                                 maxLines = 1
                             )
                         }
                     }
-                }
 
+                    val hasCurrentScan = appState.scannedFilePaths.containsKey(currentFace)
+                    if (appState.scannerStep < 5) {
+                        Button(
+                            onClick = {
+                                appState.updateErrorMessage(null)
+                                appState.updateInfoMessage(null)
+                                var foundNext = false
+                                for (i in 1..5) {
+                                    val nextIdx = (appState.scannerStep + i) % 6
+                                    val nextFace = FaceName.values()[nextIdx]
+                                    if (!appState.scannedFilePaths.containsKey(nextFace)) {
+                                        appState.updateScannerStep(nextIdx)
+                                        foundNext = true
+                                        break
+                                    }
+                                }
+                                if (!foundNext) {
+                                    appState.updateScannerStep((appState.scannerStep + 1).coerceAtMost(5))
+                                }
+                            },
+                            enabled = hasCurrentScan,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (hasCurrentScan) RubikTheme.colors.accentBlue else RubikTheme.colors.backgroundSecondary,
+                                contentColor = if (hasCurrentScan) Color.White else RubikTheme.colors.textSecondary,
+                                disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                                disabledContentColor = RubikTheme.colors.buttonDisabledText
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                            border = if (hasCurrentScan) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
+                            modifier = Modifier.weight(1.1f).height(42.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = appState.strings.nextButton,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = ArrowForwardIcon,
+                                    contentDescription = "Next",
+                                    modifier = Modifier.size(14.dp),
+                                    tint = if (hasCurrentScan) Color.White else RubikTheme.colors.textSecondary
+                                )
+                            }
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                val completeGrids = mutableMapOf<FaceName, Array<Array<CubeColor>>>()
+                                var isValid = true
+                                for (face in FaceName.values()) {
+                                    val gridVal = appState.scannedGrids[face]
+                                    val hasPath = appState.scannedFilePaths.containsKey(face)
+                                    if (gridVal != null && hasPath) {
+                                        completeGrids[face] = gridVal
+                                    } else {
+                                        isValid = false
+                                    }
+                                }
+                                if (isValid) {
+                                    onComplete(completeGrids)
+                                    appState.updateSuccessMessage(appState.strings.successScanComplete)
+                                } else {
+                                    appState.updateErrorMessage(appState.strings.errorScanAllFaces)
+                                }
+                            },
+                            enabled = appState.scannedFilePaths.size == 6,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (appState.scannedFilePaths.size == 6) RubikTheme.colors.accentOrange else RubikTheme.colors.backgroundSecondary,
+                                contentColor = if (appState.scannedFilePaths.size == 6) Color.White else RubikTheme.colors.textSecondary,
+                                disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
+                                disabledContentColor = RubikTheme.colors.buttonDisabledText
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                            border = if (appState.scannedFilePaths.size == 6) null else BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
+                            modifier = Modifier.weight(1.1f).height(42.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = CheckIcon,
+                                    contentDescription = "Set",
+                                    modifier = Modifier.size(14.dp),
+                                    tint = if (appState.scannedFilePaths.size == 6) Color.White else RubikTheme.colors.textSecondary
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = appState.strings.setButton,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    maxLines = 1
+                                )
+                            }
+                        }
+                    }
+                }
+                AuraBalloon(
+                    text = appState.strings.showcaseScannerAction,
+                    isVisible = appState.scannerShowcaseStep == 6 && !appState.isScannerShowcaseCompleted,
+                    isBelow = false,
+                    onDismiss = { appState.advanceScannerShowcase() }
+                )
+            }
+        }
+
+        val overlayAlpha by animateFloatAsState(
+            targetValue = if (appState.scannerShowcaseStep != 0 && !appState.isScannerShowcaseCompleted) 0.85f else 0f,
+            animationSpec = tween(durationMillis = 300)
+        )
+
+        if (overlayAlpha > 0f) {
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer(alpha = 0.99f)
+                    .clickable(
+                        onClick = { appState.advanceScannerShowcase() },
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
+            ) {
+                drawRect(color = Color(0xFF0F172A).copy(alpha = overlayAlpha))
+                scannerTargetBounds?.let { rect ->
+                    drawRoundRect(
+                        color = Color.Transparent,
+                        topLeft = Offset(rect.left, rect.top),
+                        size = Size(rect.width, rect.height),
+                        cornerRadius = CornerRadius(scannerTargetCornerRadius.toPx(), scannerTargetCornerRadius.toPx()),
+                        blendMode = BlendMode.Clear
+                    )
+                }
             }
         }
     }
+}
 }

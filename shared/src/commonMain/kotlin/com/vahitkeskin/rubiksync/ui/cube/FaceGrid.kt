@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.components
+package com.vahitkeskin.rubiksync.ui.cube
 
 import com.vahitkeskin.rubiksync.ui.state.*
 

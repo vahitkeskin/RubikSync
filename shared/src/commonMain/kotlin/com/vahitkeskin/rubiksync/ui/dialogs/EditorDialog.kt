@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
 import androidx.compose.foundation.BorderStroke
-import com.vahitkeskin.rubiksync.ui.components.FaceGrid
+import com.vahitkeskin.rubiksync.ui.cube.FaceGrid
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon

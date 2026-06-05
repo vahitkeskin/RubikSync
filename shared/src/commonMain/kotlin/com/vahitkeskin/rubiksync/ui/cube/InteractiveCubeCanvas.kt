@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.components
+package com.vahitkeskin.rubiksync.ui.cube
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -16,6 +16,7 @@ import com.vahitkeskin.rubiksync.cube.GestureHandler
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.state.PreviewRubikTheme
+import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.state.rememberPreviewRubikAppState
 import kotlinx.coroutines.launch
 import androidx.compose.ui.tooling.preview.Preview

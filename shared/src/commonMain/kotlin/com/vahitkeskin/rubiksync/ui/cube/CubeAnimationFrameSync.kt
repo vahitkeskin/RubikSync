@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.components
+package com.vahitkeskin.rubiksync.ui.cube
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.components
+package com.vahitkeskin.rubiksync.ui.controlpanel
 
 import com.vahitkeskin.rubiksync.ui.state.*
 
@@ -57,6 +57,7 @@ import com.vahitkeskin.rubiksync.solver.toSnapshot
 import com.vahitkeskin.rubiksync.solver.AnnotatedMove
 import com.vahitkeskin.rubiksync.solver.compressMoves
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
+import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

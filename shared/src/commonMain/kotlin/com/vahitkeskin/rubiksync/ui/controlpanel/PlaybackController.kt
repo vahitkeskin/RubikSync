@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.components
+package com.vahitkeskin.rubiksync.ui.controlpanel
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*

@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.components
+package com.vahitkeskin.rubiksync.ui.dashboard
 
 import com.vahitkeskin.rubiksync.ui.state.*
 
@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
@@ -64,6 +65,44 @@ fun FaceGrid(
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FaceGridDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val dummyFaces = FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
+        Box(
+            modifier = Modifier
+                .background(RubikTheme.colors.backgroundPrimary)
+                .padding(16.dp)
+        ) {
+            FaceGrid(
+                face = FaceName.F,
+                faces = dummyFaces,
+                cellSize = 40.dp
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FaceGridLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        val dummyFaces = FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.ORANGE } } }
+        Box(
+            modifier = Modifier
+                .background(RubikTheme.colors.backgroundPrimary)
+                .padding(16.dp)
+        ) {
+            FaceGrid(
+                face = FaceName.U,
+                faces = dummyFaces,
+                cellSize = 40.dp
+            )
         }
     }
 }

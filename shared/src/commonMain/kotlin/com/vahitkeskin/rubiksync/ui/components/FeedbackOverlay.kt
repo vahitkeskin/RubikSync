@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.delay
 
@@ -130,6 +131,40 @@ private fun BoxScope.FeedbackBanner(
                     fontWeight = FontWeight.Bold
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FeedbackOverlaySuccessDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val appState = rememberPreviewRubikAppState()
+        appState.updateSuccessMessage("Tebrikler! Küp başarıyla çözüldü.")
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(Color(0xFF0F172A))
+        ) {
+            FeedbackOverlay(appState = appState)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FeedbackOverlayErrorLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        val appState = rememberPreviewRubikAppState()
+        appState.updateErrorMessage("Hata: Geçersiz küp tasarımı!")
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(Color.White)
+        ) {
+            FeedbackOverlay(appState = appState)
         }
     }
 }

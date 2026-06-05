@@ -209,3 +209,18 @@ actual fun playCubeRotateSound() {
 actual fun releaseCubeSound() {
     // No-op on JVM/Desktop
 }
+
+@androidx.compose.ui.tooling.preview.Preview
+@Composable
+fun CameraCaptureOrPickerJvmPreview() {
+    ThemeDualPreview(label = "Camera Capture or Picker (JVM)") {
+        CameraCaptureOrPicker(
+            faceName = "F",
+            takePhotoLabel = "Fotoğraf Çek",
+            chooseGalleryLabel = "Galeriden Seç",
+            selectImageLabel = "Resim Seçin",
+            onImageSelected = {},
+            modifier = Modifier.width(200.dp)
+        )
+    }
+}

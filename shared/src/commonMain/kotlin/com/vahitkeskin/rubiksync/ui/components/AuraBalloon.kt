@@ -46,7 +46,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
+import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.state.AccentOrange
+import com.vahitkeskin.rubiksync.ui.state.PreviewRubikTheme
 
 /**
  * Dinamik konumlandırmalı ve ekran kenarı duyarlı "Sivri uçlu" bilgi balonu.
@@ -228,6 +230,48 @@ private fun BalloonContent(
                     color = Color.White
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun BalloonContentAbovePreview() {
+    PreviewRubikTheme(isDark = true) {
+        Box(
+            modifier = Modifier
+                .background(Color(0xFF0F172A))
+                .padding(24.dp)
+        ) {
+            BalloonContent(
+                text = "Küpü döndürmek ve incelemek için parmağınızı sürükleyin.",
+                onDismiss = {},
+                arrowX = 140f,
+                isBelow = false,
+                animationProgress = 1f,
+                transformOrigin = TransformOrigin(0.5f, 1f)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun BalloonContentBelowPreview() {
+    PreviewRubikTheme(isDark = false) {
+        Box(
+            modifier = Modifier
+                .background(Color.White)
+                .padding(24.dp)
+        ) {
+            BalloonContent(
+                text = "Tebrikler! Küp çözüldü.",
+                onDismiss = {},
+                arrowX = 80f,
+                isBelow = true,
+                animationProgress = 1f,
+                transformOrigin = TransformOrigin(0.3f, 0f)
+            )
         }
     }
 }

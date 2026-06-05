@@ -6,6 +6,7 @@ import com.vahitkeskin.rubiksync.ui.icons.GalleryIcon
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.*
@@ -899,4 +900,31 @@ actual fun playCubeRotateSound() {
 
 actual fun releaseCubeSound() {
     // No-op on iOS
+}
+
+@Preview
+@Composable
+fun CameraPreviewDialogIosPreview() {
+    PreviewRubikTheme(isDark = true) {
+        CameraPreviewDialog(
+            faceName = "F",
+            onDismiss = {},
+            onImageCaptured = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CameraCaptureOrPickerIosPreview() {
+    ThemeDualPreview(label = "Camera Capture or Picker (iOS)") {
+        CameraCaptureOrPicker(
+            faceName = "F",
+            takePhotoLabel = "Fotoğraf Çek",
+            chooseGalleryLabel = "Galeriden Seç",
+            selectImageLabel = "Resim Seçin",
+            onImageSelected = {},
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }

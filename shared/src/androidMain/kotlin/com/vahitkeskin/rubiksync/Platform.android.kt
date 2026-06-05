@@ -825,3 +825,18 @@ actual fun releaseCubeSound() {
     soundPool = null
     isSoundLoaded = false
 }
+
+@androidx.compose.ui.tooling.preview.Preview
+@Composable
+fun CameraCaptureOrPickerPreview() {
+    ThemeDualPreview(label = "Camera Capture or Picker (Android)") {
+        CameraCaptureOrPicker(
+            faceName = "F",
+            takePhotoLabel = "Fotoğraf Çek",
+            chooseGalleryLabel = "Galeriden Seç",
+            selectImageLabel = "Resim Seçin",
+            onImageSelected = {},
+            modifier = androidx.compose.ui.Modifier.fillMaxWidth()
+        )
+    }
+}

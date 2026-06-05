@@ -33,7 +33,7 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
-
+import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.icons.CloseIcon
 import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
@@ -1176,4 +1176,32 @@ fun ScannerWizard(
         }
     }
 }
+}
+
+@Preview
+@Composable
+fun ScannerWizardDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val appState = rememberPreviewRubikAppState()
+        ScannerWizard(
+            show = true,
+            appState = appState,
+            onDismiss = {},
+            onComplete = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ScannerWizardLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        val appState = rememberPreviewRubikAppState()
+        ScannerWizard(
+            show = true,
+            appState = appState,
+            onDismiss = {},
+            onComplete = {}
+        )
+    }
 }

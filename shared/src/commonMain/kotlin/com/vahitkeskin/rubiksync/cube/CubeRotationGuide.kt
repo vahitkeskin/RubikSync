@@ -33,7 +33,7 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.roundToInt
-
+import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 
@@ -557,3 +557,58 @@ private fun mapToGuideLocalFace(p: Vector3, localNormal: Vector3): Vector3 {
     }
     return localNormal * 0.5f + u * p.x + v * p.y
 }
+
+@Preview
+@Composable
+fun CubeRotationGuideDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val appState = rememberPreviewRubikAppState()
+        CubeRotationGuide(
+            appState = appState,
+            currentFace = FaceName.F,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CubeRotationGuideLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        val appState = rememberPreviewRubikAppState()
+        CubeRotationGuide(
+            appState = appState,
+            currentFace = FaceName.U,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun Mini2DNetDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        Box(
+            modifier = Modifier
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            Mini2DNet(targetFace = FaceName.F)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun Mini2DNetLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        Box(
+            modifier = Modifier
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            Mini2DNet(targetFace = FaceName.U)
+        }
+    }
+}
+

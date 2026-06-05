@@ -15,7 +15,10 @@ import com.vahitkeskin.rubiksync.cube.CubeRenderer
 import com.vahitkeskin.rubiksync.cube.GestureHandler
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import com.vahitkeskin.rubiksync.ui.state.PreviewRubikTheme
+import com.vahitkeskin.rubiksync.ui.state.rememberPreviewRubikAppState
 import kotlinx.coroutines.launch
+import androidx.compose.ui.tooling.preview.Preview
 import kotlin.math.PI
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -196,5 +199,27 @@ fun InteractiveCubeCanvas(
             )
             renderer.draw(this, size.width, size.height)
         }
+    }
+}
+
+@Preview
+@Composable
+fun InteractiveCubeCanvasDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        InteractiveCubeCanvas(
+            appState = rememberPreviewRubikAppState(),
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Preview
+@Composable
+fun InteractiveCubeCanvasLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        InteractiveCubeCanvas(
+            appState = rememberPreviewRubikAppState(),
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }

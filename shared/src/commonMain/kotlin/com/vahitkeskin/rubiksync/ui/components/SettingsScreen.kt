@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -528,6 +529,70 @@ private fun ThemeOptionCard(
                             listOf(AccentOrange, AccentRedCoral)
                         )
                     )
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SettingsScreenDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        SettingsScreen(
+            appState = rememberPreviewRubikAppState(),
+            isDarkTheme = true,
+            onBack = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SettingsScreenLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        SettingsScreen(
+            appState = rememberPreviewRubikAppState(),
+            isDarkTheme = false,
+            onBack = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ThemeOptionCardDarkSelectedPreview() {
+    PreviewRubikTheme(isDark = true) {
+        Box(
+            modifier = Modifier
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            ThemeOptionCard(
+                emoji = "☀️",
+                label = "Açık",
+                description = "Temiz görünüm",
+                isSelected = true,
+                onClick = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ThemeOptionCardLightUnselectedPreview() {
+    PreviewRubikTheme(isDark = false) {
+        Box(
+            modifier = Modifier
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            ThemeOptionCard(
+                emoji = "🌙",
+                label = "Karanlık",
+                description = "Karanlık mod",
+                isSelected = false,
+                onClick = {}
             )
         }
     }

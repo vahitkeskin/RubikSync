@@ -36,6 +36,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.LocalIndication
+import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
@@ -529,9 +530,61 @@ private fun StatChip(
                 fontSize = 7.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                lineHeight = 9.sp,
-                letterSpacing = 0.5.sp
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun DashboardHeaderDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val appState = rememberPreviewRubikAppState()
+        DashboardHeader(
+            cubeState = appState.cubeState,
+            appState = appState,
+            onNavigateToSettings = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DashboardHeaderLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        val appState = rememberPreviewRubikAppState()
+        DashboardHeader(
+            cubeState = appState.cubeState,
+            appState = appState,
+            onNavigateToSettings = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun StatChipDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        StatChip(
+            emoji = "🎯",
+            value = "12",
+            label = "Moves",
+            accentColor = RubikTheme.colors.accentBlue,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun StatChipLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        StatChip(
+            emoji = "✅",
+            value = "ÇÖZÜLDÜ",
+            label = "Durum",
+            accentColor = RubikTheme.colors.accentGreen,
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }

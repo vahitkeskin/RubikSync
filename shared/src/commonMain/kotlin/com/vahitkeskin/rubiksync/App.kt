@@ -42,6 +42,8 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import org.koin.compose.KoinApplication
 import com.vahitkeskin.rubiksync.di.appModule
+import androidx.compose.ui.tooling.preview.Preview
+import com.vahitkeskin.rubiksync.ui.state.initializePreviewPersistence
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -436,4 +438,11 @@ fun App() {
         }
     }
 }
+}
+
+@Preview
+@Composable
+fun AppCommonPreview() {
+    initializePreviewPersistence()
+    App()
 }

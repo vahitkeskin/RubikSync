@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.cube.CubeRenderer
 import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
@@ -211,5 +212,27 @@ fun SplashScreen(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun SplashScreenDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        SplashScreen(
+            appState = rememberPreviewRubikAppState(),
+            onSplashComplete = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SplashScreenLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        SplashScreen(
+            appState = rememberPreviewRubikAppState(),
+            onSplashComplete = {}
+        )
     }
 }

@@ -43,6 +43,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
 
 @Composable
@@ -754,4 +755,66 @@ fun EditorDialog(
         }
     }
 }
+}
+
+@Preview
+@Composable
+fun MiniFaceGridDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val dummyFaces = FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
+        Box(
+            modifier = Modifier
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            MiniFaceGrid(
+                face = FaceName.F,
+                faces = dummyFaces,
+                isActive = true,
+                onFaceSelect = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MiniNetMapDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val appState = rememberPreviewRubikAppState()
+        MiniNetMap(
+            appState = appState,
+            faces = appState.editorFaces,
+            activeFace = FaceName.F,
+            onFaceSelect = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun MiniNetMapLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        val appState = rememberPreviewRubikAppState()
+        MiniNetMap(
+            appState = appState,
+            faces = appState.editorFaces,
+            activeFace = FaceName.U,
+            onFaceSelect = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EditorDialogDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val appState = rememberPreviewRubikAppState()
+        EditorDialog(
+            show = true,
+            appState = appState,
+            onDismiss = {},
+            onStartScanWizard = {}
+        )
+    }
 }

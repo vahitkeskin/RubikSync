@@ -41,6 +41,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -110,7 +111,11 @@ fun ControlPanel(
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
             .background(RubikTheme.colors.backgroundPanel)
-            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .border(
+                1.dp,
+                RubikTheme.colors.cardBorder,
+                RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+            )
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -150,7 +155,11 @@ fun ControlPanel(
 
                 // Tab Text buttons
                 Row(modifier = Modifier.fillMaxSize()) {
-                    listOf(appState.strings.tabMoves, appState.strings.tabActions, appState.strings.tabAI).forEachIndexed { index, title ->
+                    listOf(
+                        appState.strings.tabMoves,
+                        appState.strings.tabActions,
+                        appState.strings.tabAI
+                    ).forEachIndexed { index, title ->
                         val isSelected = pagerState.currentPage == index
                         Box(
                             modifier = Modifier
@@ -183,52 +192,315 @@ fun ControlPanel(
             modifier = Modifier.fillMaxWidth()
         ) { page ->
             when (page) {
-            0 -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onGloballyPositioned { coords ->
-                            if (appState.showcaseStep == 6 && !appState.isShowcaseCompleted) {
-                                val pos = coords.positionInRoot()
-                                val size = coords.size
-                                appState.updateTargetVisuals(
-                                    Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
-                                    12.dp
+                0 -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onGloballyPositioned { coords ->
+                                if (appState.showcaseStep == 6 && !appState.isShowcaseCompleted) {
+                                    val pos = coords.positionInRoot()
+                                    val size = coords.size
+                                    appState.updateTargetVisuals(
+                                        Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                        12.dp
+                                    )
+                                }
+                            }
+                    ) {
+                        MovesGrid(appState = appState, canEditCube = canEditCube)
+                        AuraBalloon(
+                            text = appState.strings.showcaseMovesText,
+                            isVisible = appState.showcaseStep == 6 && !appState.isShowcaseCompleted,
+                            isBelow = false,
+                            onDismiss = {
+                                appState.advanceShowcase()
+                            }
+                        )
+                    }
+                }
+
+                1 -> {
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // ACTIONS TAB — 3 equal-width buttons with icons
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            val isScrambleEnabled = canEditCube && !cubeState.isAnimating
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(44.dp)
+                                    .onGloballyPositioned { coords ->
+                                        if (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) {
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            appState.updateTargetVisuals(
+                                                Rect(
+                                                    pos.x,
+                                                    pos.y,
+                                                    pos.x + size.width,
+                                                    pos.y + size.height
+                                                ),
+                                                12.dp
+                                            )
+                                        }
+                                    }
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            if (isScrambleEnabled) Color.Transparent
+                                            else RubikTheme.colors.buttonDisabledBg
+                                        )
+                                        .then(
+                                            if (isScrambleEnabled) Modifier.border(
+                                                1.dp,
+                                                RubikTheme.colors.buttonBorder,
+                                                RoundedCornerShape(12.dp)
+                                            )
+                                            else Modifier
+                                        )
+                                        .combinedClickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = if (isScrambleEnabled) LocalIndication.current else null,
+                                            onClick = {
+                                                if (isScrambleEnabled) {
+                                                    coroutineScope.launch {
+                                                        appState.clearManualMoves()
+                                                        cubeState.scramble()
+                                                    }
+                                                }
+                                            },
+                                            onLongClick = {
+                                                showScrambleTooltip = true
+                                            }
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = appState.strings.scrambleButton,
+                                        color = if (isScrambleEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                                AuraBalloon(
+                                    text = appState.strings.showcaseScrambleText,
+                                    isVisible = (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) || showScrambleTooltip,
+                                    isBelow = false,
+                                    onDismiss = {
+                                        if (showScrambleTooltip) {
+                                            showScrambleTooltip = false
+                                        } else {
+                                            appState.advanceShowcase()
+                                        }
+                                    }
+                                )
+                            }
+
+                            val isUndoEnabled =
+                                canEditCube && !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty()
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(44.dp)
+                                    .onGloballyPositioned { coords ->
+                                        if (appState.showcaseStep == 8 && !appState.isShowcaseCompleted) {
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            appState.updateTargetVisuals(
+                                                Rect(
+                                                    pos.x,
+                                                    pos.y,
+                                                    pos.x + size.width,
+                                                    pos.y + size.height
+                                                ),
+                                                12.dp
+                                            )
+                                        }
+                                    }
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            if (isUndoEnabled) Color.Transparent
+                                            else RubikTheme.colors.buttonDisabledBg
+                                        )
+                                        .then(
+                                            if (isUndoEnabled) Modifier.border(
+                                                1.dp,
+                                                RubikTheme.colors.buttonBorder,
+                                                RoundedCornerShape(12.dp)
+                                            )
+                                            else Modifier
+                                        )
+                                        .combinedClickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = if (isUndoEnabled) LocalIndication.current else null,
+                                            onClick = {
+                                                if (isUndoEnabled) {
+                                                    coroutineScope.launch {
+                                                        appState.removeLastManualMove()
+                                                        cubeState.undo()
+                                                    }
+                                                }
+                                            },
+                                            onLongClick = {
+                                                showUndoTooltip = true
+                                            }
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = appState.strings.undoButton,
+                                        color = if (isUndoEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                                AuraBalloon(
+                                    text = appState.strings.showcaseUndoText,
+                                    isVisible = (appState.showcaseStep == 8 && !appState.isShowcaseCompleted) || showUndoTooltip,
+                                    isBelow = false,
+                                    onDismiss = {
+                                        if (showUndoTooltip) {
+                                            showUndoTooltip = false
+                                        } else {
+                                            appState.advanceShowcase()
+                                        }
+                                    }
+                                )
+                            }
+
+                            val isResetEnabled = !cubeState.isAnimating && !appState.isInitialState
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(44.dp)
+                                    .onGloballyPositioned { coords ->
+                                        if (appState.showcaseStep == 9 && !appState.isShowcaseCompleted) {
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            appState.updateTargetVisuals(
+                                                Rect(
+                                                    pos.x,
+                                                    pos.y,
+                                                    pos.x + size.width,
+                                                    pos.y + size.height
+                                                ),
+                                                12.dp
+                                            )
+                                        }
+                                    }
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            if (isResetEnabled) Color.Transparent
+                                            else RubikTheme.colors.buttonDisabledBg
+                                        )
+                                        .then(
+                                            if (isResetEnabled) Modifier.border(
+                                                1.dp,
+                                                RubikTheme.colors.accentRed.copy(alpha = 0.35f),
+                                                RoundedCornerShape(12.dp)
+                                            ) else Modifier.border(
+                                                1.dp,
+                                                RubikTheme.colors.buttonBorder,
+                                                RoundedCornerShape(12.dp)
+                                            )
+                                        )
+                                        .combinedClickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = if (isResetEnabled) LocalIndication.current else null,
+                                            onClick = {
+                                                if (isResetEnabled) {
+                                                    coroutineScope.launch {
+                                                        val startYaw = appState.yaw
+                                                        val startPitch = appState.pitch
+                                                        val startDist = appState.cameraDistance
+                                                        val startPanX = appState.panX
+                                                        val startPanY = appState.panY
+
+                                                        cubeState.resetAnimated(durationMs = 500f) { progress ->
+                                                            appState.updateYaw(startYaw + (-0.55f - startYaw) * progress)
+                                                            appState.updatePitch(startPitch + (0.40f - startPitch) * progress)
+                                                            appState.updateCameraDistance(startDist + (10.0f - startDist) * progress)
+                                                            appState.updatePanX(startPanX + (0f - startPanX) * progress)
+                                                            appState.updatePanY(startPanY + (0f - startPanY) * progress)
+                                                        }
+                                                        appState.clearManualMoves()
+                                                        appState.updateTotalMoveCount(0)
+                                                    }
+                                                }
+                                            },
+                                            onLongClick = {
+                                                showResetTooltip = true
+                                            }
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = appState.strings.resetButton,
+                                        color = if (isResetEnabled) RubikTheme.colors.accentRed else RubikTheme.colors.buttonDisabledText,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                                AuraBalloon(
+                                    text = appState.strings.showcaseResetText,
+                                    isVisible = (appState.showcaseStep == 9 && !appState.isShowcaseCompleted) || showResetTooltip,
+                                    isBelow = false,
+                                    onDismiss = {
+                                        if (showResetTooltip) {
+                                            showResetTooltip = false
+                                        } else {
+                                            appState.advanceShowcase()
+                                        }
+                                    }
                                 )
                             }
                         }
-                ) {
-                    MovesGrid(appState = appState, canEditCube = canEditCube)
-                    AuraBalloon(
-                        text = appState.strings.showcaseMovesText,
-                        isVisible = appState.showcaseStep == 6 && !appState.isShowcaseCompleted,
-                        isBelow = false,
-                        onDismiss = {
-                            appState.advanceShowcase()
-                        }
-                    )
+                    }
                 }
-            }
-            1 -> {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    // ACTIONS TAB — 3 equal-width buttons with icons
+
+                2 -> {
+                    // AI & TOOLS TAB — 2 equal-width buttons with icons
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        val isScrambleEnabled = canEditCube && !cubeState.isAnimating
+                        val isDesignEnabled = canEditCube && !cubeState.isAnimating
                         Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .height(44.dp)
                                 .onGloballyPositioned { coords ->
-                                    if (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) {
+                                    if (appState.showcaseStep == 10 && !appState.isShowcaseCompleted) {
                                         val pos = coords.positionInRoot()
                                         val size = coords.size
                                         appState.updateTargetVisuals(
-                                            Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
+                                            Rect(
+                                                pos.x,
+                                                pos.y,
+                                                pos.x + size.width,
+                                                pos.y + size.height
+                                            ),
                                             12.dp
                                         )
                                     }
@@ -239,451 +511,262 @@ fun ControlPanel(
                                     .fillMaxSize()
                                     .clip(RoundedCornerShape(12.dp))
                                     .background(
-                                        if (isScrambleEnabled) Color.Transparent
-                                        else RubikTheme.colors.buttonDisabledBg
-                                    )
-                                    .then(
-                                        if (isScrambleEnabled) Modifier.border(1.dp, RubikTheme.colors.buttonBorder, RoundedCornerShape(12.dp))
-                                        else Modifier
-                                    )
-                                    .combinedClickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = if (isScrambleEnabled) LocalIndication.current else null,
-                                        onClick = {
-                                            if (isScrambleEnabled) {
-                                                coroutineScope.launch {
-                                                    appState.clearManualMoves()
-                                                    cubeState.scramble()
-                                                }
-                                            }
-                                        },
-                                        onLongClick = {
-                                            showScrambleTooltip = true
-                                        }
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = appState.strings.scrambleButton,
-                                    color = if (isScrambleEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            AuraBalloon(
-                                text = appState.strings.showcaseScrambleText,
-                                isVisible = (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) || showScrambleTooltip,
-                                isBelow = false,
-                                onDismiss = {
-                                    if (showScrambleTooltip) {
-                                        showScrambleTooltip = false
-                                    } else {
-                                        appState.advanceShowcase()
-                                    }
-                                }
-                            )
-                        }
-
-                        val isUndoEnabled = canEditCube && !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty()
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(44.dp)
-                                .onGloballyPositioned { coords ->
-                                    if (appState.showcaseStep == 8 && !appState.isShowcaseCompleted) {
-                                        val pos = coords.positionInRoot()
-                                        val size = coords.size
-                                        appState.updateTargetVisuals(
-                                            Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
-                                            12.dp
-                                        )
-                                    }
-                                }
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(
-                                        if (isUndoEnabled) Color.Transparent
-                                        else RubikTheme.colors.buttonDisabledBg
-                                    )
-                                    .then(
-                                        if (isUndoEnabled) Modifier.border(1.dp, RubikTheme.colors.buttonBorder, RoundedCornerShape(12.dp))
-                                        else Modifier
-                                    )
-                                    .combinedClickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = if (isUndoEnabled) LocalIndication.current else null,
-                                        onClick = {
-                                            if (isUndoEnabled) {
-                                                coroutineScope.launch {
-                                                    appState.removeLastManualMove()
-                                                    cubeState.undo()
-                                                }
-                                            }
-                                        },
-                                        onLongClick = {
-                                            showUndoTooltip = true
-                                        }
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = appState.strings.undoButton,
-                                    color = if (isUndoEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            AuraBalloon(
-                                text = appState.strings.showcaseUndoText,
-                                isVisible = (appState.showcaseStep == 8 && !appState.isShowcaseCompleted) || showUndoTooltip,
-                                isBelow = false,
-                                onDismiss = {
-                                    if (showUndoTooltip) {
-                                        showUndoTooltip = false
-                                    } else {
-                                        appState.advanceShowcase()
-                                    }
-                                }
-                            )
-                        }
-
-                        val isResetEnabled = !cubeState.isAnimating && !appState.isInitialState
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(44.dp)
-                                .onGloballyPositioned { coords ->
-                                    if (appState.showcaseStep == 9 && !appState.isShowcaseCompleted) {
-                                        val pos = coords.positionInRoot()
-                                        val size = coords.size
-                                        appState.updateTargetVisuals(
-                                            Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
-                                            12.dp
-                                        )
-                                    }
-                                }
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(
-                                        if (isResetEnabled) Color.Transparent
-                                        else RubikTheme.colors.buttonDisabledBg
-                                    )
-                                    .then(
-                                        if (isResetEnabled) Modifier.border(
-                                            1.dp,
-                                            RubikTheme.colors.accentRed.copy(alpha = 0.35f),
-                                            RoundedCornerShape(12.dp)
-                                        ) else Modifier.border(1.dp, RubikTheme.colors.buttonBorder, RoundedCornerShape(12.dp))
-                                    )
-                                    .combinedClickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = if (isResetEnabled) LocalIndication.current else null,
-                                        onClick = {
-                                            if (isResetEnabled) {
-                                                coroutineScope.launch {
-                                                    val startYaw = appState.yaw
-                                                    val startPitch = appState.pitch
-                                                    val startDist = appState.cameraDistance
-                                                    val startPanX = appState.panX
-                                                    val startPanY = appState.panY
-
-                                                    cubeState.resetAnimated(durationMs = 500f) { progress ->
-                                                        appState.updateYaw(startYaw + (-0.55f - startYaw) * progress)
-                                                        appState.updatePitch(startPitch + (0.40f - startPitch) * progress)
-                                                        appState.updateCameraDistance(startDist + (10.0f - startDist) * progress)
-                                                        appState.updatePanX(startPanX + (0f - startPanX) * progress)
-                                                        appState.updatePanY(startPanY + (0f - startPanY) * progress)
-                                                    }
-                                                    appState.clearManualMoves()
-                                                    appState.updateTotalMoveCount(0)
-                                                }
-                                            }
-                                        },
-                                        onLongClick = {
-                                            showResetTooltip = true
-                                        }
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = appState.strings.resetButton,
-                                    color = if (isResetEnabled) RubikTheme.colors.accentRed else RubikTheme.colors.buttonDisabledText,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            AuraBalloon(
-                                text = appState.strings.showcaseResetText,
-                                isVisible = (appState.showcaseStep == 9 && !appState.isShowcaseCompleted) || showResetTooltip,
-                                isBelow = false,
-                                onDismiss = {
-                                    if (showResetTooltip) {
-                                        showResetTooltip = false
-                                    } else {
-                                        appState.advanceShowcase()
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-            2 -> {
-                // AI & TOOLS TAB — 2 equal-width buttons with icons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    val isDesignEnabled = canEditCube && !cubeState.isAnimating
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp)
-                            .onGloballyPositioned { coords ->
-                                if (appState.showcaseStep == 10 && !appState.isShowcaseCompleted) {
-                                    val pos = coords.positionInRoot()
-                                    val size = coords.size
-                                    appState.updateTargetVisuals(
-                                        Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
-                                        12.dp
-                                    )
-                                }
-                            }
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    if (isDesignEnabled) {
-                                        if (RubikTheme.colors.isDark) DarkGradientBg2 else AccentBlueFaintBg
-                                    } else {
-                                        RubikTheme.colors.buttonDisabledBg
-                                    }
-                                )
-                                .then(
-                                    if (isDesignEnabled) {
-                                        Modifier.border(1.dp, if (RubikTheme.colors.isDark) DarkBorderPrimary else AccentBlueSoftBg, RoundedCornerShape(12.dp))
-                                    } else {
-                                        Modifier
-                                    }
-                                )
-                                .combinedClickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = if (isDesignEnabled) LocalIndication.current else null,
-                                    onClick = {
                                         if (isDesignEnabled) {
-                                            appState.updateShowEditorDialog(true)
+                                            if (RubikTheme.colors.isDark) DarkGradientBg2 else AccentBlueFaintBg
+                                        } else {
+                                            RubikTheme.colors.buttonDisabledBg
                                         }
-                                    },
-                                    onLongClick = {
-                                        showDesignTooltip = true
-                                    }
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = appState.strings.designButton,
-                                color = if (isDesignEnabled) RubikTheme.colors.accentBlue else RubikTheme.colors.buttonDisabledText,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                        AuraBalloon(
-                            text = appState.strings.showcaseDesignText,
-                            isVisible = (appState.showcaseStep == 10 && !appState.isShowcaseCompleted) || showDesignTooltip,
-                            isBelow = false,
-                            onDismiss = {
-                                if (showDesignTooltip) {
-                                    showDesignTooltip = false
-                                } else {
-                                    appState.advanceShowcase()
-                                }
-                            }
-                        )
-                    }
-
-                    val isSolveEnabled = canEditCube && !cubeState.isAnimating && !appState.isRecalculating && !appState.isSolved
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp)
-                            .onGloballyPositioned { coords ->
-                                if (appState.showcaseStep == 11 && !appState.isShowcaseCompleted) {
-                                    val pos = coords.positionInRoot()
-                                    val size = coords.size
-                                    appState.updateTargetVisuals(
-                                        Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
-                                        12.dp
                                     )
-                                }
-                            }
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    if (isSolveEnabled) {
-                                        if (RubikTheme.colors.isDark) AccentGreenShadow else AccentGreenFaintBg
-                                    } else {
-                                        RubikTheme.colors.buttonDisabledBg
-                                    }
-                                )
-                                .then(
-                                    if (isSolveEnabled) {
-                                        Modifier.border(1.dp, if (RubikTheme.colors.isDark) AccentGreenDeep else AccentGreenSoftBg, RoundedCornerShape(12.dp))
-                                    } else {
-                                        Modifier
-                                    }
-                                )
-                                .combinedClickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = if (isSolveEnabled) LocalIndication.current else null,
-                                    onClick = {
-                                        if (isSolveEnabled) {
-                                            appState.updateRecalculating(true)
-                                            appState.updateErrorMessage(null)
-                                            coroutineScope.launch(Dispatchers.Default) {
-                                                try {
-                                                    val currentSnapshot = cubeState.toSnapshot()
-                                                    
-                                                    // Check if already solved
-                                                    val isSolvedNow = cubeState.cubies.all { cubie ->
-                                                        cubie.gridPos == cubie.originalPos &&
-                                                        cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
-                                                    }
-                                                    
-                                                    if (isSolvedNow) {
-                                                        withContext(Dispatchers.Main) {
-                                                            appState.updateActiveSolution(null)
-                                                            appState.updateActiveSolutionDetails(null)
-                                                            appState.updateSuccessMessage(appState.strings.cubeAlreadySolved)
-                                                            appState.updateRecalculating(false)
-                                                        }
-                                                        return@launch
-                                                    }
-                                                    
-                                                    // 1. Try reverse engineering (backtrack moves from move history)
-                                                    val backtrackMoves = cubeState.moveHistory.map { move ->
-                                                        MoveType.values().first {
-                                                            it.axis == move.axis &&
-                                                            it.layerValue == move.layerValue &&
-                                                            it.angleSign == -move.angleSign
-                                                        }
-                                                    }.reversed()
-                                                    
-                                                    val solver = RubikSolver()
-                                                    val optimizedBacktrack = compressMoves(backtrackMoves)
-                                                    
-                                                    // 2. Run the layer-by-layer solver
-                                                    val lblDetails = solver.solveAnnotated(currentSnapshot)
-                                                    
-                                                    // 3. Pick the shortest solution
-                                                    val finalSolution: List<MoveType>
-                                                    val finalDetails: List<AnnotatedMove>
-                                                    
-                                                    if (optimizedBacktrack.isNotEmpty() && (lblDetails == null || optimizedBacktrack.size <= lblDetails.size)) {
-                                                        finalSolution = optimizedBacktrack
-                                                        finalDetails = optimizedBacktrack.map { move ->
-                                                            AnnotatedMove(
-                                                                move = move,
-                                                                phaseName = "Tersine Mühendislik (Geri Alma)",
-                                                                phaseDescription = "Küpün karıştırma/manuel hamle geçmişi tersten oynatılarak en kısa yoldan çözülüyor."
-                                                            )
-                                                        }
-                                                    } else if (lblDetails != null) {
-                                                        finalSolution = lblDetails.map { it.move }
-                                                        finalDetails = lblDetails
-                                                    } else {
-                                                        // Both failed (invalid/unsolvable state)
-                                                        withContext(Dispatchers.Main) {
-                                                            appState.updateActiveSolution(null)
-                                                            appState.updateActiveSolutionDetails(null)
-                                                            appState.updateErrorMessage(appState.strings.solutionNotFound)
-                                                            appState.updateRecalculating(false)
-                                                        }
-                                                        return@launch
-                                                    }
-                                                    
-                                                    withContext(Dispatchers.Main) {
-                                                        if (finalSolution.isNotEmpty()) {
-                                                            appState.updateActiveSolution(finalSolution)
-                                                            appState.updateActiveSolutionDetails(finalDetails)
-                                                            appState.updateCurrentSolutionStep(0)
-                                                            appState.updatePlaybackRunning(false)
-                                                            appState.updateErrorMessage(null)
-                                                            appState.updateSuccessMessage(appState.strings.solutionFound.replace("%s", finalSolution.size.toString()))
-                                                        } else {
-                                                            appState.updateActiveSolution(null)
-                                                            appState.updateActiveSolutionDetails(null)
-                                                            appState.updateSuccessMessage(appState.strings.cubeAlreadySolved)
-                                                        }
-                                                        appState.updateRecalculating(false)
-                                                    }
-                                                } catch (e: Throwable) {
-                                                    withContext(Dispatchers.Main) {
-                                                        appState.updateErrorMessage("Hata: ${e.message ?: e.toString()}")
-                                                        appState.updateRecalculating(false)
-                                                    }
-                                                }
-                                            }
+                                    .then(
+                                        if (isDesignEnabled) {
+                                            Modifier.border(
+                                                1.dp,
+                                                if (RubikTheme.colors.isDark) DarkBorderPrimary else AccentBlueSoftBg,
+                                                RoundedCornerShape(12.dp)
+                                            )
+                                        } else {
+                                            Modifier
                                         }
-                                    },
-                                    onLongClick = {
-                                        showSolveTooltip = true
-                                    }
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (appState.isRecalculating) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    color = RubikTheme.colors.accentGreen,
-                                    strokeWidth = 2.dp
-                                )
-                            } else {
+                                    )
+                                    .combinedClickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = if (isDesignEnabled) LocalIndication.current else null,
+                                        onClick = {
+                                            if (isDesignEnabled) {
+                                                appState.updateShowEditorDialog(true)
+                                            }
+                                        },
+                                        onLongClick = {
+                                            showDesignTooltip = true
+                                        }
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Text(
-                                    text = appState.strings.solveButton,
-                                    color = if (isSolveEnabled) RubikTheme.colors.accentGreen else RubikTheme.colors.buttonDisabledText,
+                                    text = appState.strings.designButton,
+                                    color = if (isDesignEnabled) RubikTheme.colors.accentBlue else RubikTheme.colors.buttonDisabledText,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
+                            AuraBalloon(
+                                text = appState.strings.showcaseDesignText,
+                                isVisible = (appState.showcaseStep == 10 && !appState.isShowcaseCompleted) || showDesignTooltip,
+                                isBelow = false,
+                                onDismiss = {
+                                    if (showDesignTooltip) {
+                                        showDesignTooltip = false
+                                    } else {
+                                        appState.advanceShowcase()
+                                    }
+                                }
+                            )
                         }
-                        AuraBalloon(
-                            text = appState.strings.showcaseSolveText,
-                            isVisible = (appState.showcaseStep == 11 && !appState.isShowcaseCompleted) || showSolveTooltip,
-                            isBelow = false,
-                            onDismiss = {
-                                if (showSolveTooltip) {
-                                    showSolveTooltip = false
+
+                        val isSolveEnabled =
+                            canEditCube && !cubeState.isAnimating && !appState.isRecalculating && !appState.isSolved
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
+                                .onGloballyPositioned { coords ->
+                                    if (appState.showcaseStep == 11 && !appState.isShowcaseCompleted) {
+                                        val pos = coords.positionInRoot()
+                                        val size = coords.size
+                                        appState.updateTargetVisuals(
+                                            Rect(
+                                                pos.x,
+                                                pos.y,
+                                                pos.x + size.width,
+                                                pos.y + size.height
+                                            ),
+                                            12.dp
+                                        )
+                                    }
+                                }
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        if (isSolveEnabled) {
+                                            if (RubikTheme.colors.isDark) AccentGreenShadow else AccentGreenFaintBg
+                                        } else {
+                                            RubikTheme.colors.buttonDisabledBg
+                                        }
+                                    )
+                                    .then(
+                                        if (isSolveEnabled) {
+                                            Modifier.border(
+                                                1.dp,
+                                                if (RubikTheme.colors.isDark) AccentGreenDeep else AccentGreenSoftBg,
+                                                RoundedCornerShape(12.dp)
+                                            )
+                                        } else {
+                                            Modifier
+                                        }
+                                    )
+                                    .combinedClickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = if (isSolveEnabled) LocalIndication.current else null,
+                                        onClick = {
+                                            if (isSolveEnabled) {
+                                                appState.updateRecalculating(true)
+                                                appState.updateErrorMessage(null)
+                                                coroutineScope.launch(Dispatchers.Default) {
+                                                    try {
+                                                        val currentSnapshot = cubeState.toSnapshot()
+
+                                                        // Check if already solved
+                                                        val isSolvedNow =
+                                                            cubeState.cubies.all { cubie ->
+                                                                cubie.gridPos == cubie.originalPos &&
+                                                                        cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
+                                                            }
+
+                                                        if (isSolvedNow) {
+                                                            withContext(Dispatchers.Main) {
+                                                                appState.updateActiveSolution(null)
+                                                                appState.updateActiveSolutionDetails(
+                                                                    null
+                                                                )
+                                                                appState.updateSuccessMessage(
+                                                                    appState.strings.cubeAlreadySolved
+                                                                )
+                                                                appState.updateRecalculating(false)
+                                                            }
+                                                            return@launch
+                                                        }
+
+                                                        // 1. Try reverse engineering (backtrack moves from move history)
+                                                        val backtrackMoves =
+                                                            cubeState.moveHistory.map { move ->
+                                                                MoveType.values().first {
+                                                                    it.axis == move.axis &&
+                                                                            it.layerValue == move.layerValue &&
+                                                                            it.angleSign == -move.angleSign
+                                                                }
+                                                            }.reversed()
+
+                                                        val solver = RubikSolver()
+                                                        val optimizedBacktrack =
+                                                            compressMoves(backtrackMoves)
+
+                                                        // 2. Run the layer-by-layer solver
+                                                        val lblDetails =
+                                                            solver.solveAnnotated(currentSnapshot)
+
+                                                        // 3. Pick the shortest solution
+                                                        val finalSolution: List<MoveType>
+                                                        val finalDetails: List<AnnotatedMove>
+
+                                                        if (optimizedBacktrack.isNotEmpty() && (lblDetails == null || optimizedBacktrack.size <= lblDetails.size)) {
+                                                            finalSolution = optimizedBacktrack
+                                                            finalDetails =
+                                                                optimizedBacktrack.map { move ->
+                                                                    AnnotatedMove(
+                                                                        move = move,
+                                                                        phaseName = "Tersine Mühendislik (Geri Alma)",
+                                                                        phaseDescription = "Küpün karıştırma/manuel hamle geçmişi tersten oynatılarak en kısa yoldan çözülüyor."
+                                                                    )
+                                                                }
+                                                        } else if (lblDetails != null) {
+                                                            finalSolution =
+                                                                lblDetails.map { it.move }
+                                                            finalDetails = lblDetails
+                                                        } else {
+                                                            // Both failed (invalid/unsolvable state)
+                                                            withContext(Dispatchers.Main) {
+                                                                appState.updateActiveSolution(null)
+                                                                appState.updateActiveSolutionDetails(
+                                                                    null
+                                                                )
+                                                                appState.updateErrorMessage(appState.strings.solutionNotFound)
+                                                                appState.updateRecalculating(false)
+                                                            }
+                                                            return@launch
+                                                        }
+
+                                                        withContext(Dispatchers.Main) {
+                                                            if (finalSolution.isNotEmpty()) {
+                                                                appState.updateActiveSolution(
+                                                                    finalSolution
+                                                                )
+                                                                appState.updateActiveSolutionDetails(
+                                                                    finalDetails
+                                                                )
+                                                                appState.updateCurrentSolutionStep(0)
+                                                                appState.updatePlaybackRunning(false)
+                                                                appState.updateErrorMessage(null)
+                                                                appState.updateSuccessMessage(
+                                                                    appState.strings.solutionFound.replace(
+                                                                        "%s",
+                                                                        finalSolution.size.toString()
+                                                                    )
+                                                                )
+                                                            } else {
+                                                                appState.updateActiveSolution(null)
+                                                                appState.updateActiveSolutionDetails(
+                                                                    null
+                                                                )
+                                                                appState.updateSuccessMessage(
+                                                                    appState.strings.cubeAlreadySolved
+                                                                )
+                                                            }
+                                                            appState.updateRecalculating(false)
+                                                        }
+                                                    } catch (e: Throwable) {
+                                                        withContext(Dispatchers.Main) {
+                                                            appState.updateErrorMessage("Hata: ${e.message ?: e.toString()}")
+                                                            appState.updateRecalculating(false)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        onLongClick = {
+                                            showSolveTooltip = true
+                                        }
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (appState.isRecalculating) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(16.dp),
+                                        color = RubikTheme.colors.accentGreen,
+                                        strokeWidth = 2.dp
+                                    )
                                 } else {
-                                    appState.advanceShowcase()
+                                    Text(
+                                        text = appState.strings.solveButton,
+                                        color = if (isSolveEnabled) RubikTheme.colors.accentGreen else RubikTheme.colors.buttonDisabledText,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
                                 }
                             }
-                        )
+                            AuraBalloon(
+                                text = appState.strings.showcaseSolveText,
+                                isVisible = (appState.showcaseStep == 11 && !appState.isShowcaseCompleted) || showSolveTooltip,
+                                isBelow = false,
+                                onDismiss = {
+                                    if (showSolveTooltip) {
+                                        showSolveTooltip = false
+                                    } else {
+                                        appState.advanceShowcase()
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
-    }
 
         // Speed Control — always visible at bottom
         SpeedControl(appState = appState, accentColor = RubikTheme.colors.accentOrange)
@@ -707,8 +790,18 @@ private fun MovesGrid(
                 .height(36.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(
-                    if (canEditCube && !cubeState.isAnimating) Brush.verticalGradient(listOf(c1, c2))
-                    else Brush.verticalGradient(listOf(RubikTheme.colors.buttonDisabledBg, RubikTheme.colors.buttonDisabledBg))
+                    if (canEditCube && !cubeState.isAnimating) Brush.verticalGradient(
+                        listOf(
+                            c1,
+                            c2
+                        )
+                    )
+                    else Brush.verticalGradient(
+                        listOf(
+                            RubikTheme.colors.buttonDisabledBg,
+                            RubikTheme.colors.buttonDisabledBg
+                        )
+                    )
                 )
                 .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(8.dp))
                 .clickable(enabled = canEditCube && !cubeState.isAnimating) {
@@ -824,7 +917,11 @@ fun PlaybackController(
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
             .background(RubikTheme.colors.backgroundPanel)
-            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .border(
+                1.dp,
+                RubikTheme.colors.cardBorder,
+                RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+            )
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -843,13 +940,18 @@ fun PlaybackController(
                         }
                     )
                 )
-                .border(1.dp, if (RubikTheme.colors.isDark) AccentGreenAlpha13 else AccentGreenAlpha20, RoundedCornerShape(12.dp))
+                .border(
+                    1.dp,
+                    if (RubikTheme.colors.isDark) AccentGreenAlpha13 else AccentGreenAlpha20,
+                    RoundedCornerShape(12.dp)
+                )
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                val currentStepDisplay = (appState.currentSolutionStep + 1).coerceAtMost(solution.size)
+                val currentStepDisplay =
+                    (appState.currentSolutionStep + 1).coerceAtMost(solution.size)
                 Text(
                     text = "${appState.strings.solutionTitle}$currentStepDisplay / ${solution.size}",
                     color = RubikTheme.colors.accentGreen,
@@ -940,7 +1042,14 @@ fun PlaybackController(
                 val isPast = index < appState.currentSolutionStep
 
                 val bgModifier = if (isCurrent) {
-                    Modifier.background(Brush.horizontalGradient(listOf(AccentGreen, AccentGreenVibrant)))
+                    Modifier.background(
+                        Brush.horizontalGradient(
+                            listOf(
+                                AccentGreen,
+                                AccentGreenVibrant
+                            )
+                        )
+                    )
                 } else if (isPast) {
                     Modifier.background(if (RubikTheme.colors.isDark) AccentGreenNavy else AccentGreenFaintBg)
                 } else {
@@ -1047,7 +1156,8 @@ fun PlaybackController(
                     if (appState.currentSolutionStep < solution.size) {
                         coroutineScope.launch {
                             val nextMove = solution[appState.currentSolutionStep]
-                            val activeDetail = appState.activeSolutionDetails?.getOrNull(appState.currentSolutionStep)
+                            val activeDetail =
+                                appState.activeSolutionDetails?.getOrNull(appState.currentSolutionStep)
                             val phase = activeDetail?.phaseName ?: "Çözüm"
                             val mathDetails = getMoveMathDetails(nextMove)
                             logMoveDetail(nextMove.label, phase, mathDetails)
@@ -1151,7 +1261,10 @@ fun PlaybackController(
                                 fontWeight = FontWeight.SemiBold
                             )
                             Text(
-                                text = appState.strings.remainingLabel.replace("%s", (detailsList.size - currentStep).toString()),
+                                text = appState.strings.remainingLabel.replace(
+                                    "%s",
+                                    (detailsList.size - currentStep).toString()
+                                ),
                                 color = RubikTheme.colors.textMuted,
                                 fontSize = 9.sp
                             )
@@ -1179,7 +1292,11 @@ fun PlaybackController(
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(6.dp))
                                 .background(RubikTheme.colors.backgroundTertiary)
-                                .border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(6.dp))
+                                .border(
+                                    0.5.dp,
+                                    RubikTheme.colors.borderSubtle,
+                                    RoundedCornerShape(6.dp)
+                                )
                                 .padding(8.dp)
                         )
                     } else {
@@ -1201,5 +1318,127 @@ fun PlaybackController(
 
         // Speed Control
         SpeedControl(appState = appState, accentColor = RubikTheme.colors.accentGreen)
+    }
+}
+
+@Preview
+@Composable
+fun ControlPanelDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        ControlPanel(
+            appState = rememberPreviewRubikAppState(),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ControlPanelLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        ControlPanel(
+            appState = rememberPreviewRubikAppState(),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun MovesGridDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val appState = rememberPreviewRubikAppState()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            MovesGrid(
+                appState = appState,
+                canEditCube = true
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MovesGridLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        val appState = rememberPreviewRubikAppState()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            MovesGrid(
+                appState = appState,
+                canEditCube = true
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SpeedControlDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            SpeedControl(
+                appState = rememberPreviewRubikAppState(),
+                accentColor = RubikTheme.colors.accentOrange
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SpeedControlLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(RubikTheme.colors.backgroundPanel)
+                .padding(16.dp)
+        ) {
+            SpeedControl(
+                appState = rememberPreviewRubikAppState(),
+                accentColor = RubikTheme.colors.accentOrange
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PlaybackControllerDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        val appState = rememberPreviewRubikAppState()
+        appState.updateActiveSolution(listOf(MoveType.U, MoveType.R_PRIME, MoveType.F))
+        PlaybackController(
+            appState = appState,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PlaybackControllerLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        val appState = rememberPreviewRubikAppState()
+        appState.updateActiveSolution(listOf(MoveType.U, MoveType.R_PRIME, MoveType.F))
+        PlaybackController(
+            appState = appState,
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }

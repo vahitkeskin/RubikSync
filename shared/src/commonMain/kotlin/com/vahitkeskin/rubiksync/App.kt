@@ -35,12 +35,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import org.koin.compose.KoinApplication
+import com.vahitkeskin.rubiksync.di.appModule
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-    val appState = rememberRubikAppState()
-    val cubeState = appState.cubeState
+    KoinApplication(application = {
+        modules(appModule)
+    }) {
+        val appState = rememberRubikAppState()
+        val cubeState = appState.cubeState
 
     // Initialize sound player and bind sound callback
     DisposableEffect(Unit) {
@@ -78,7 +83,7 @@ fun App() {
                 .fillMaxSize()
                 .background(Brush.verticalGradient(colors = backgroundGradient))
         )
-        return
+        return@KoinApplication
     }
 
     // LaunchedEffect to persist camera settings when they change (with a small delay to debounce)
@@ -375,4 +380,5 @@ fun App() {
             }
         }
     }
+}
 }

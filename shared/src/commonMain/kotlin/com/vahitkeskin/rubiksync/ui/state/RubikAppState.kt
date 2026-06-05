@@ -20,22 +20,22 @@ import com.vahitkeskin.rubiksync.ui.strings.AppStrings
 import com.vahitkeskin.rubiksync.ui.strings.AppStringsMap
 import com.vahitkeskin.rubiksync.ui.strings.EnStrings
 import com.vahitkeskin.rubiksync.getSystemLanguageCode
-import com.vahitkeskin.rubiksync.di.DIContainer
 import com.vahitkeskin.rubiksync.domain.usecase.*
+import org.koin.compose.koinInject
 
 class RubikAppState(
     val cubeState: RubikCubeState,
     val coroutineScope: CoroutineScope,
-    private val getCubeStateUseCase: GetCubeStateUseCase = DIContainer.getCubeStateUseCase,
-    private val saveCubeStateUseCase: SaveCubeStateUseCase = DIContainer.saveCubeStateUseCase,
-    private val getSettingsUseCase: GetSettingsUseCase = DIContainer.getSettingsUseCase,
-    private val saveThemeUseCase: SaveThemeUseCase = DIContainer.saveThemeUseCase,
-    private val saveLanguageUseCase: SaveLanguageUseCase = DIContainer.saveLanguageUseCase,
-    private val saveSoundEnabledUseCase: SaveSoundEnabledUseCase = DIContainer.saveSoundEnabledUseCase,
-    private val saveCubeEditableUseCase: SaveCubeEditableUseCase = DIContainer.saveCubeEditableUseCase,
-    private val saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase = DIContainer.saveShowcaseCompletedUseCase,
-    private val getCameraSettingsUseCase: GetCameraSettingsUseCase = DIContainer.getCameraSettingsUseCase,
-    private val saveCameraSettingsUseCase: SaveCameraSettingsUseCase = DIContainer.saveCameraSettingsUseCase
+    private val getCubeStateUseCase: GetCubeStateUseCase,
+    private val saveCubeStateUseCase: SaveCubeStateUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase,
+    private val saveThemeUseCase: SaveThemeUseCase,
+    private val saveLanguageUseCase: SaveLanguageUseCase,
+    private val saveSoundEnabledUseCase: SaveSoundEnabledUseCase,
+    private val saveCubeEditableUseCase: SaveCubeEditableUseCase,
+    private val saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase,
+    private val getCameraSettingsUseCase: GetCameraSettingsUseCase,
+    private val saveCameraSettingsUseCase: SaveCameraSettingsUseCase
 ) {
     // Camera State
     var yaw by mutableStateOf(-0.55f)
@@ -518,7 +518,43 @@ class RubikAppState(
 @Composable
 fun rememberRubikAppState(
     cubeState: RubikCubeState = remember { RubikCubeState() },
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
-) = remember(cubeState, coroutineScope) {
-    RubikAppState(cubeState = cubeState, coroutineScope = coroutineScope)
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    getCubeStateUseCase: GetCubeStateUseCase = koinInject(),
+    saveCubeStateUseCase: SaveCubeStateUseCase = koinInject(),
+    getSettingsUseCase: GetSettingsUseCase = koinInject(),
+    saveThemeUseCase: SaveThemeUseCase = koinInject(),
+    saveLanguageUseCase: SaveLanguageUseCase = koinInject(),
+    saveSoundEnabledUseCase: SaveSoundEnabledUseCase = koinInject(),
+    saveCubeEditableUseCase: SaveCubeEditableUseCase = koinInject(),
+    saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase = koinInject(),
+    getCameraSettingsUseCase: GetCameraSettingsUseCase = koinInject(),
+    saveCameraSettingsUseCase: SaveCameraSettingsUseCase = koinInject()
+) = remember(
+    cubeState,
+    coroutineScope,
+    getCubeStateUseCase,
+    saveCubeStateUseCase,
+    getSettingsUseCase,
+    saveThemeUseCase,
+    saveLanguageUseCase,
+    saveSoundEnabledUseCase,
+    saveCubeEditableUseCase,
+    saveShowcaseCompletedUseCase,
+    getCameraSettingsUseCase,
+    saveCameraSettingsUseCase
+) {
+    RubikAppState(
+        cubeState = cubeState,
+        coroutineScope = coroutineScope,
+        getCubeStateUseCase = getCubeStateUseCase,
+        saveCubeStateUseCase = saveCubeStateUseCase,
+        getSettingsUseCase = getSettingsUseCase,
+        saveThemeUseCase = saveThemeUseCase,
+        saveLanguageUseCase = saveLanguageUseCase,
+        saveSoundEnabledUseCase = saveSoundEnabledUseCase,
+        saveCubeEditableUseCase = saveCubeEditableUseCase,
+        saveShowcaseCompletedUseCase = saveShowcaseCompletedUseCase,
+        getCameraSettingsUseCase = getCameraSettingsUseCase,
+        saveCameraSettingsUseCase = saveCameraSettingsUseCase
+    )
 }

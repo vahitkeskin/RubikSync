@@ -69,8 +69,9 @@ fun ScannerWizard(
     val scannerScrollState = rememberScrollState()
 
     LaunchedEffect(appState.scannerShowcaseStep) {
-        if (appState.scannerShowcaseStep == 4 || appState.scannerShowcaseStep == 5) {
-            scannerScrollState.animateScrollTo(scannerScrollState.maxValue)
+        when (appState.scannerShowcaseStep) {
+            4 -> scannerScrollState.animateScrollTo(scannerScrollState.maxValue)
+            5 -> scannerScrollState.animateScrollTo(0)
         }
     }
 

@@ -137,4 +137,5 @@ val NlStrings = AppStrings(
     showcaseScannerSliders = "Gebruik deze schuifregelaars om de groene hulplijnen uit te lijnen met de vierkantjes van de kubus.",
     showcaseScannerPreview = "Controleer de geclassificeerde kleuren hier. Klik op een verkeerd geïdentificeerd vierkantje om het te corrigeren.",
     showcaseScannerAction = "Gebruik deze navigatieknoppen om door te gaan naar het volgende vlak of de scan te voltooien.",
+    skipShowcase = "Uitleg overslaan",
 )

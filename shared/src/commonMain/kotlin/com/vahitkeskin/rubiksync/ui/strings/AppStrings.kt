@@ -137,6 +137,7 @@ data class AppStrings(
     val showcaseScannerSliders: String,
     val showcaseScannerPreview: String,
     val showcaseScannerAction: String,
+    val skipShowcase: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

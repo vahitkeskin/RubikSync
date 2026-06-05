@@ -137,4 +137,5 @@ val JaStrings = AppStrings(
     showcaseScannerSliders = "これらのスライダーを使用して、緑色のガイドラインをキューブの正方形に合わせます。",
     showcaseScannerPreview = "ここで分類された色を確認します。誤って識別された正方形がある場合は、それをクリックして修正します。",
     showcaseScannerAction = "次の面に進むか、スキャンを完了するには、これらのナビゲーションボタンを使用します。",
+    skipShowcase = "チュートリアルをスキップ",
 )

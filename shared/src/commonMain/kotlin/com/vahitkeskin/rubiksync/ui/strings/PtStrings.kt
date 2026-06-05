@@ -137,4 +137,5 @@ val PtStrings = AppStrings(
     showcaseScannerSliders = "Use estes controles deslizantes para alinhar as linhas guia verdes com os quadrados do cubo.",
     showcaseScannerPreview = "Revise as cores classificadas aqui. Se houver um quadrado incorreto, clique nele para corrigi-lo.",
     showcaseScannerAction = "Use estes botões de navegação para prosseguir para a próxima face ou concluir a digitalização.",
+    skipShowcase = "Pular tutorial",
 )

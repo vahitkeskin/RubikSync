@@ -137,4 +137,5 @@ val TrStrings = AppStrings(
     showcaseScannerSliders = "Yeşil kılavuz çizgilerini küpün kareleriyle hizalamak için bu sürgüleri kullanın.",
     showcaseScannerPreview = "Algılanan renkleri buradan kontrol edin. Gerekirse kareye tıklayarak düzeltebilirsiniz.",
     showcaseScannerAction = "Sonraki yüze geçmek veya taramayı tamamlamak için bu butonları kullanın.",
+    skipShowcase = "Tanıtım Atla",
 )

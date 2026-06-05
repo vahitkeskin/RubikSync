@@ -137,4 +137,5 @@ val EsStrings = AppStrings(
     showcaseScannerSliders = "Use estos deslizadores para alinear las líneas de guía verdes con los cuadrados del cubo.",
     showcaseScannerPreview = "Revise los colores clasificados aquí. Si hay un cuadrado mal identificado, haga clic en él para corregirlo.",
     showcaseScannerAction = "Use estos botones de navegación para pasar a la siguiente cara o completar el escaneo.",
+    skipShowcase = "Omitir tutorial",
 )

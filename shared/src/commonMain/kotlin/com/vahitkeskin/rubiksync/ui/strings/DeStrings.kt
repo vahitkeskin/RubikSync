@@ -137,4 +137,5 @@ val DeStrings = AppStrings(
     showcaseScannerSliders = "Verwenden Sie diese Schieberegler, um die grünen Führungslinien an den Quadraten des Würfels auszurichten.",
     showcaseScannerPreview = "Überprüfen Sie hier die klassifizierten Farben. Wenn ein Quadrat falsch identifiziert wurde, klicken Sie darauf, um es zu korrigieren.",
     showcaseScannerAction = "Verwenden Sie diese Navigationstasten, um zur nächsten Seite zu gelangen oder den Scan abzuschließen.",
+    skipShowcase = "Anleitung überspringen",
 )

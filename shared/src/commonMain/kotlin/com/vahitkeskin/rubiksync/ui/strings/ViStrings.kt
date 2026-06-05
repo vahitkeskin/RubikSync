@@ -137,4 +137,5 @@ val ViStrings = AppStrings(
     showcaseScannerSliders = "Sử dụng các thanh trượt này để căn chỉnh các đường dẫn màu xanh lá cây với các ô vuông của khối lập phương.",
     showcaseScannerPreview = "Kiểm tra màu sắc được phân loại tại đây. Nếu có ô vuông bị nhận diện sai, hãy nhấp vào đó để sửa lại.",
     showcaseScannerAction = "Sử dụng các nút điều hướng này để chuyển sang mặt tiếp theo hoặc hoàn thành quét.",
+    skipShowcase = "Bỏ qua hướng dẫn",
 )

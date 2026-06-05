@@ -137,4 +137,5 @@ val PlStrings = AppStrings(
     showcaseScannerSliders = "Użyje tych suwaków, aby wyrównać zielone linie pomocnicze z kwadratami kostki.",
     showcaseScannerPreview = "Sprawdź tutaj rozpoznane kolory. Jeśli kwadrat został błędnie zidentyfikowany, kliknij go, aby to poprawić.",
     showcaseScannerAction = "Użyj tych przycisków nawigacyjnych, aby przejść do następnej ściany lub zakończyć skanowanie.",
+    skipShowcase = "Pomiń samouczek",
 )

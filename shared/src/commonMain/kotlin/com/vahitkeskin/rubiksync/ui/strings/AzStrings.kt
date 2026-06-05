@@ -137,4 +137,5 @@ val AzStrings = AppStrings(
     showcaseScannerSliders = "Yaşıl bələdçi xətlərini kubun kvadratları ilə hizalamaq üçün bu sürgülərdən istifadə edin.",
     showcaseScannerPreview = "Təsnif edilmiş rəngləri buradan yoxlayın. Səhv müəyyən edilmiş kvadrat varsa, düzəltmək üçün üzərinə klikləyin.",
     showcaseScannerAction = "Növbəti üzə keçmək və ya skan etməyi tamamlamaq üçün bu naviqasiya düymələrindən istifadə edin.",
+    skipShowcase = "Tanıtımı Keç",
 )

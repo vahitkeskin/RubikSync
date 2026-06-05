@@ -20,6 +20,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.border
 import com.vahitkeskin.rubiksync.cube.*
 import com.vahitkeskin.rubiksync.ui.components.*
 import com.vahitkeskin.rubiksync.ui.dialogs.*
@@ -334,29 +339,69 @@ fun App() {
 
                             // 8. Showcase Spotlight Overlay (drawn outside safearea, aligned with root)
                             if (overlayAlpha > 0f) {
-                                Canvas(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .graphicsLayer(alpha = 0.99f)
-                                        .clickable(
-                                            onClick = {
-                                                appState.advanceShowcase()
-                                            },
-                                            indication = null,
-                                            interactionSource = remember { MutableInteractionSource() }
-                                        )
+                                Box(
+                                    modifier = Modifier.fillMaxSize()
                                 ) {
-                                    drawRect(
-                                        color = Color(0xFF0F172A).copy(alpha = overlayAlpha)
-                                    )
-                                    appState.targetBounds?.let { rect ->
-                                        drawRoundRect(
-                                            color = Color.Transparent,
-                                            topLeft = Offset(rect.left, rect.top),
-                                            size = Size(rect.width, rect.height),
-                                            cornerRadius = CornerRadius(appState.targetCornerRadius.toPx(), appState.targetCornerRadius.toPx()),
-                                            blendMode = BlendMode.Clear
+                                    Canvas(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .graphicsLayer(alpha = 0.99f)
+                                            .clickable(
+                                                onClick = {
+                                                    appState.advanceShowcase()
+                                                },
+                                                indication = null,
+                                                interactionSource = remember { MutableInteractionSource() }
+                                            )
+                                    ) {
+                                        drawRect(
+                                            color = Color(0xFF0F172A).copy(alpha = overlayAlpha)
                                         )
+                                        appState.targetBounds?.let { rect ->
+                                            drawRoundRect(
+                                                color = Color.Transparent,
+                                                topLeft = Offset(rect.left, rect.top),
+                                                size = Size(rect.width, rect.height),
+                                                cornerRadius = CornerRadius(appState.targetCornerRadius.toPx(), appState.targetCornerRadius.toPx()),
+                                                blendMode = BlendMode.Clear
+                                            )
+                                        }
+                                    }
+
+                                    // Skip Showcase/Tutorial Button (styled as glassmorphism, top-left status bar aware)
+                                    Box(
+                                        modifier = Modifier
+                                            .align(Alignment.TopStart)
+                                            .statusBarsPadding()
+                                            .padding(start = 16.dp, top = 12.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(Color.White.copy(alpha = 0.12f))
+                                            .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+                                            .clickable {
+                                                appState.updateShowcaseStep(0)
+                                                appState.updateShowcaseCompleted(true)
+                                                appState.updateEditorShowcaseCompleted(true)
+                                                appState.updateScannerShowcaseCompleted(true)
+                                            }
+                                            .padding(horizontal = 14.dp, vertical = 8.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                        ) {
+                                            Text(
+                                                text = "⏭️",
+                                                fontSize = 12.sp
+                                            )
+                                            Text(
+                                                text = appState.strings.skipShowcase,
+                                                color = Color.White,
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                letterSpacing = 0.5.sp
+                                            )
+                                        }
                                     }
                                 }
                             }

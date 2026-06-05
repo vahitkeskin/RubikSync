@@ -137,4 +137,5 @@ val FrStrings = AppStrings(
     showcaseScannerSliders = "Utilisez ces curseurs pour aligner les lignes de guidage vertes avec les carrés du cube.",
     showcaseScannerPreview = "Vérifiez les couleurs classées ici. Si un carré est mal identifié, cliquez dessus pour le corriger.",
     showcaseScannerAction = "Utilisez ces boutons de navigation pour passer à la face suivante ou terminer la numérisation.",
+    skipShowcase = "Passer le didacticiel",
 )

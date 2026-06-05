@@ -120,5 +120,9 @@ val ZhStrings = AppStrings(
     showcaseInteractiveCubeText = "用双指旋转整个魔方，用单指转动特定的行或列。",
     showcaseMovesText = "使用此面板旋转魔方层。",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "使用AI标签自动解魔方。"
+    showcaseSolveText = "使用AI标签自动解魔方。",
+    showcaseScrambleText = "您可以使用此按钮随机打乱魔方。",
+    showcaseUndoText = "您可以使用此按钮撤消上一步操作。",
+    showcaseResetText = "您可以将魔方重置回已复原的初始状态。",
+    showcaseDesignText = "您可以通过手动绘制魔方表面或使用相机扫描来设计魔方。"
 )

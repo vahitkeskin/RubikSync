@@ -120,5 +120,9 @@ val ArStrings = AppStrings(
     showcaseInteractiveCubeText = "اسحب بإصبعين لتدوير المكعب بالكامل، أو بإصبع واحد لتدوير صفوف وأعمدة محددة.",
     showcaseMovesText = "استخدم هذه اللوحة لتدوير طبقات المكعب.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "استخدم علامة تبويب الذكاء الاصطناعي لحل المكعب تلقائيًا."
+    showcaseSolveText = "استخدم علامة تبويب الذكاء الاصطناعي لحل المكعب تلقائيًا.",
+    showcaseScrambleText = "يمكنك خلط المكعب عشوائيًا باستخدام هذا الزر.",
+    showcaseUndoText = "يمكنك التراجع عن حركتك الأخيرة باستخدام هذا الزر.",
+    showcaseResetText = "يمكنك إعادة تعيين المكعب إلى حالة البداية المحلولة.",
+    showcaseDesignText = "يمكنك تصميم المكعب عن طريق تلوين الأوجه يدويًا أو مسحه بالكاميرا."
 )

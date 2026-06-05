@@ -120,7 +120,11 @@ data class AppStrings(
     val showcaseInteractiveCubeText: String,
     val showcaseMovesText: String,
     val showcaseActionsText: String,
-    val showcaseSolveText: String
+    val showcaseSolveText: String,
+    val showcaseScrambleText: String,
+    val showcaseUndoText: String,
+    val showcaseResetText: String,
+    val showcaseDesignText: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

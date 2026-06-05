@@ -120,5 +120,9 @@ val IdStrings = AppStrings(
     showcaseInteractiveCubeText = "Putar seluruh kubus dengan dua jari, atau putar baris dan kolom tertentu dengan satu jari.",
     showcaseMovesText = "Gunakan panel ini untuk memutar lapisan kubus.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Gunakan tab AI untuk menyelesaikan kubus secara otomatis."
+    showcaseSolveText = "Gunakan tab AI untuk menyelesaikan kubus secara otomatis.",
+    showcaseScrambleText = "Anda dapat mengacak kubus secara acak menggunakan tombol ini.",
+    showcaseUndoText = "Anda dapat membatalkan langkah terakhir Anda menggunakan tombol ini.",
+    showcaseResetText = "Anda dapat mereset kubus kembali ke keadaan awal yang terpecahkan.",
+    showcaseDesignText = "Anda dapat mendesain kubus dengan mewarnai sisi secara manual atau memindainya melalui kamera."
 )

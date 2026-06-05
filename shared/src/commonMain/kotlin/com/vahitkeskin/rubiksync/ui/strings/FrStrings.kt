@@ -120,5 +120,9 @@ val FrStrings = AppStrings(
     showcaseInteractiveCubeText = "Faites pivoter tout le cube avec deux doigts, ou tournez des lignes et des couloirs spécifiques avec un doigt.",
     showcaseMovesText = "Utilisez ce panneau pour faire tourner les couches du cube.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Utilisez l'onglet IA para résoudre automatiquement votre cube."
+    showcaseSolveText = "Utilisez l'onglet IA para résoudre automatiquement votre cube.",
+    showcaseScrambleText = "Vous pouvez mélanger le cube de manière aléatoire en utilisant ce bouton.",
+    showcaseUndoText = "Vous pouvez annuler votre dernier mouvement en utilisant ce bouton.",
+    showcaseResetText = "Vous pouvez réinitialiser le cube à son état initial résolu.",
+    showcaseDesignText = "Vous pouvez concevoir le cube en peignant les faces manuellement ou en les scannant avec l'appareil photo."
 )

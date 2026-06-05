@@ -120,5 +120,9 @@ val EnStrings = AppStrings(
     showcaseInteractiveCubeText = "Rotate the entire cube with two fingers, or turn specific rows and columns with one finger.",
     showcaseMovesText = "Use this panel to rotate the cube layers.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Use the AI tab to automatically solve your cube."
+    showcaseSolveText = "Use the AI tab to automatically solve your cube.",
+    showcaseScrambleText = "You can randomly scramble the cube using this button.",
+    showcaseUndoText = "You can undo your last move using this button.",
+    showcaseResetText = "You can reset the cube back to its solved starting state.",
+    showcaseDesignText = "You can design the cube by painting faces manually or scanning via camera."
 )

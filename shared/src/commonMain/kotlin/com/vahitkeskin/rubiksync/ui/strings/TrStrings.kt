@@ -120,5 +120,9 @@ val TrStrings = AppStrings(
     showcaseInteractiveCubeText = "Küpü serbestçe döndürmek için iki parmağınızı, sadece belirli satır veya sütunları çevirmek için tek parmağınızı kullanabilirsiniz.",
     showcaseMovesText = "Bu panelden küpün katmanlarını döndürebilirsiniz.",
     showcaseActionsText = "Bu panelden küpü karıştırabilir, hamlelerinizi geri alabilir ve sıfırlayabilirsiniz.",
-    showcaseSolveText = "Yapay Zeka sekmesinden küpünüzü otomatik çözdürebilirsiniz."
+    showcaseSolveText = "Yapay Zeka sekmesinden küpünüzü otomatik çözdürebilirsiniz.",
+    showcaseScrambleText = "Bu butona basarak küpü rastgele karıştırabilirsiniz.",
+    showcaseUndoText = "Bu butona basarak son yaptığınız hamleyi geri alabilirsiniz.",
+    showcaseResetText = "Küpün durumunu sıfırlayarak başlangıç konumuna getirebilirsiniz.",
+    showcaseDesignText = "Küpünüzün renklerini elinizle boyayarak veya kamerayla taratarak tasarlayabilirsiniz."
 )

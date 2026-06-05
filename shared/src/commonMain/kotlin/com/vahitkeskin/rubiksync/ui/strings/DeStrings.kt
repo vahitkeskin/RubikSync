@@ -120,5 +120,9 @@ val DeStrings = AppStrings(
     showcaseInteractiveCubeText = "Drehen Sie den gesamten Würfel mit zwei Fingern oder drehen Sie bestimmte Zeilen und Spalten mit einem Finger.",
     showcaseMovesText = "Verwenden Sie dieses Panel, um die Würfelschichten zu drehen.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Verwenden den KI-Tab, um Ihren Würfel automatisch zu lösen."
+    showcaseSolveText = "Verwenden den KI-Tab, um Ihren Würfel automatisch zu lösen.",
+    showcaseScrambleText = "Mit dieser Schaltfläche können Sie den Würfel zufällig mischen.",
+    showcaseUndoText = "Mit dieser Schaltfläche können Sie Ihren letzten Zug rückgängig machen.",
+    showcaseResetText = "Sie können den Würfel in seinen gelösten Ausgangszustand zurücksetzen.",
+    showcaseDesignText = "Sie können den Würfel entwerfen, indem Sie die Seiten manuell bemalen oder mit der Kamera scannen."
 )

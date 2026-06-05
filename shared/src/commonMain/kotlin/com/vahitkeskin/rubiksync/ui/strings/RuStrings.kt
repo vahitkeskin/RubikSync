@@ -120,5 +120,9 @@ val RuStrings = AppStrings(
     showcaseInteractiveCubeText = "Вращайте весь кубик двумя пальцами или поворачивайте отдельные ряды и столбцы одним пальцем.",
     showcaseMovesText = "Используйте эту панель для вращения слоёв куба.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Используйте вкладку ИИ для автоматического решения куба."
+    showcaseSolveText = "Используйте вкладку ИИ для автоматического решения куба.",
+    showcaseScrambleText = "Вы можете случайно запутать кубик с помощью этой кнопки.",
+    showcaseUndoText = "Вы можете отменить свой последний ход с помощью этой кнопки.",
+    showcaseResetText = "Вы можете сбросить кубик в исходное собранное состояние.",
+    showcaseDesignText = "Вы можете спроектировать кубик, раскрасив грани вручную или отсканировав его с помощью камеры."
 )

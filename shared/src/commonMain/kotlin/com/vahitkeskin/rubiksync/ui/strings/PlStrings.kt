@@ -120,5 +120,9 @@ val PlStrings = AppStrings(
     showcaseInteractiveCubeText = "Obracaj cały sześcian dwoma palcami lub obracaj określone wiersze i kolumny jednym palcem.",
     showcaseMovesText = "Użyj tego panelu, aby obracać warstwy kostki.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Użyj zakładki AI, aby automatycznie rozwiązać kostkę."
+    showcaseSolveText = "Użyj zakładki AI, aby automatycznie rozwiązać kostkę.",
+    showcaseScrambleText = "Możesz losowo pomieszać kostkę za pomocą tego przycisku.",
+    showcaseUndoText = "Możesz cofnąć swój ostatni ruch za pomocą tego przycisku.",
+    showcaseResetText = "Możesz zresetować kostkę do jej ułożonego stanu początkowego.",
+    showcaseDesignText = "Możesz zaprojektować kostkę, malując ścianki ręcznie lub skanując je aparatem."
 )

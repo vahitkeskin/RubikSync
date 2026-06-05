@@ -120,5 +120,9 @@ val JaStrings = AppStrings(
     showcaseInteractiveCubeText = "2本の指でキューブ全体を回転させ、1本の指で特定の行や列を回すことができます。",
     showcaseMovesText = "このパネルからキューブのレイヤーを回転できます。",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "AIタブからキューブを自動的に解くことができます。"
+    showcaseSolveText = "AIタブからキューブを自動的に解くことができます。",
+    showcaseScrambleText = "このボタンを使ってキューブをランダムにシャッフルできます。",
+    showcaseUndoText = "このボタンを使って最後の移動を元に戻すことができます。",
+    showcaseResetText = "キューブを解かれた初期状態にリセットできます。",
+    showcaseDesignText = "面を手動でペイントするか、カメラでスキャンしてキューブをデザインできます。"
 )

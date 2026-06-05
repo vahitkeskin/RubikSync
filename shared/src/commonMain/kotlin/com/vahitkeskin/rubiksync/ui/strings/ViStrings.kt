@@ -120,5 +120,9 @@ val ViStrings = AppStrings(
     showcaseInteractiveCubeText = "Xoay toàn bộ khối lập phương bằng hai ngón tay hoặc xoay các hàng và cột cụ thể bằng một ngón tay.",
     showcaseMovesText = "Sử dụng bảng này để xoay các lớp của khối Rubik.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Sử dụng tab AI để giải khối Rubik tự động."
+    showcaseSolveText = "Sử dụng tab AI để giải khối Rubik tự động.",
+    showcaseScrambleText = "Bạn có thể xáo trộn ngẫu nhiên khối rubik bằng nút này.",
+    showcaseUndoText = "Bạn có thể hoàn tác bước đi cuối cùng của mình bằng nút này.",
+    showcaseResetText = "Bạn có thể đặt lại khối rubik về trạng thái ban đầu đã giải.",
+    showcaseDesignText = "Bạn có thể tự thiết kế khối rubik bằng cách vẽ các mặt thủ công hoặc quét qua camera."
 )

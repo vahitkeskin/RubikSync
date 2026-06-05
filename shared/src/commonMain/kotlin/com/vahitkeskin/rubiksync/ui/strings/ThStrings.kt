@@ -120,5 +120,9 @@ val ThStrings = AppStrings(
     showcaseInteractiveCubeText = "หมุนลูกบาศก์ทั้งหมดด้วยสองนิ้ว หรือหมุนแถวและคอลัมน์เฉพาะด้วยนิ้วเดียว",
     showcaseMovesText = "ใช้แผงนี้หมุนชั้นของลูกบาศก์",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "ใช้แท็บ AI เพื่อแก้ลูกบาศก์อัตโนมัติ"
+    showcaseSolveText = "ใช้แท็บ AI เพื่อแก้ลูกบาศก์อัตโนมัติ",
+    showcaseScrambleText = "คุณสามารถสลับลูกบาศก์แบบสุ่มได้โดยใช้ปุ่มนี้",
+    showcaseUndoText = "คุณสามารถเลิกทำการเคลื่อนไหวล่าสุดของคุณได้โดยใช้ปุ่มนี้",
+    showcaseResetText = "คุณสามารถรีเซ็ตลูกบาศก์กลับเป็นสถานะเริ่มต้นที่แก้แล้วได้",
+    showcaseDesignText = "คุณสามารถออกแบบลูกบาศก์ได้โดยระบายสีหน้าด้วยตนเองหรือสแกนผ่านกล้อง"
 )

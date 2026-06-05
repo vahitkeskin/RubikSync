@@ -120,5 +120,9 @@ val NlStrings = AppStrings(
     showcaseInteractiveCubeText = "Draai de hele kubus met twee vingers, of draai specifieke rijen en kolommen met één vinger.",
     showcaseMovesText = "Gebruik dit paneel om de kubuslagen te draaien.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Gebruik het AI-tabblad om je kubus automatisch op te lossen."
+    showcaseSolveText = "Gebruik het AI-tabblad om je kubus automatisch op te lossen.",
+    showcaseScrambleText = "Je kunt de kubus willekeurig husselen met deze knop.",
+    showcaseUndoText = "Je kunt je laatste zet ongedaan maken met deze knop.",
+    showcaseResetText = "Je kunt de kubus terugzetten naar de opgeloste beginstand.",
+    showcaseDesignText = "Je kunt de kubus ontwerpen door de vlakken handmatig te kleuren of te scannen met de camera."
 )

@@ -120,5 +120,9 @@ val KoStrings = AppStrings(
     showcaseInteractiveCubeText = "두 손가락으로 큐브 전체를 회전시키거나, 한 손가락으로 특정 행과 열을 돌릴 수 있습니다.",
     showcaseMovesText = "이 패널에서 큐브 레이어를 회전할 수 있습니다。",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "AI 탭에서 큐브를 자동으로 풀 수 있습니다。"
+    showcaseSolveText = "AI 탭에서 큐브를 자동으로 풀 수 있습니다。",
+    showcaseScrambleText = "이 버튼을 사용하여 큐브를 무작위로 섞을 수 있습니다.",
+    showcaseUndoText = "이 버튼을 사용하여 마지막 이동을 취소할 수 있습니다.",
+    showcaseResetText = "큐브를 맞춰진 초기 상태로 재설정할 수 있습니다.",
+    showcaseDesignText = "면을 수동으로 칠하거나 카메라로 스캔하여 큐브를 디자인할 수 있습니다."
 )

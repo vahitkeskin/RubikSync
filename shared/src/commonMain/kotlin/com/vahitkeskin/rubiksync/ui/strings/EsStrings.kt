@@ -120,5 +120,9 @@ val EsStrings = AppStrings(
     showcaseInteractiveCubeText = "Gira todo el cubo con dos dedos, o gira filas y columnas específicas con un solo dedo.",
     showcaseMovesText = "Usa este panel para girar las capas del cubo.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Usa la pestaña IA para resolver tu cubo automáticamente."
+    showcaseSolveText = "Usa la pestaña IA para resolver tu cubo automáticamente.",
+    showcaseScrambleText = "Puedes mezclar el cubo aleatoriamente usando este botón.",
+    showcaseUndoText = "Puedes deshacer tu último movimiento usando este botón.",
+    showcaseResetText = "Puedes restablecer el cubo a su estado inicial resuelto.",
+    showcaseDesignText = "Puedes diseñar el cubo pintando las caras manualmente o escaneándolo con la cámara."
 )

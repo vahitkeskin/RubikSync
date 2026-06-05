@@ -120,5 +120,9 @@ val HiStrings = AppStrings(
     showcaseInteractiveCubeText = "पूरे क्यूब को दो उंगलियों से घुमाएं, या एक उंगली से विशिष्ट पंक्तियों और स्तंभों को घुमाएं।",
     showcaseMovesText = "इस पैनल से क्यूब की परतें घुमाएं.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "एआई टैब से अपने क्यूब को स्वचालित रूप से हल करें。"
+    showcaseSolveText = "एआई टैब से अपने क्यूब को स्वचालित रूप से हल करें。",
+    showcaseScrambleText = "आप इस बटन का उपयोग करके क्यूब को बेतरतीब ढंग से स्क्रैम्बल कर सकते हैं।",
+    showcaseUndoText = "आप इस बटन का उपयोग करके अपने पिछले कदम को पूर्ववत कर सकते हैं।",
+    showcaseResetText = "आप क्यूब को उसकी हल की गई शुरुआती स्थिति में रीसेट कर सकते हैं।",
+    showcaseDesignText = "आप मैन्युअल रूप से चेहरों को पेंट करके या कैमरे के माध्यम से स्कैन करके क्यूब को डिज़ाइन कर सकते हैं।"
 )

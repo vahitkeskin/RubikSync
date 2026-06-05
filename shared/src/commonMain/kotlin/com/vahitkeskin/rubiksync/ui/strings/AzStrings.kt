@@ -120,5 +120,9 @@ val AzStrings = AppStrings(
     showcaseInteractiveCubeText = "Küpü sərbəst döndərmək üçün iki barmağınızı, müəyyən sətir və ya sütunları çevirmək üçün isə tək barmağınızı istifadə edə bilərsiniz.",
     showcaseMovesText = "Bu paneldən kubun qatlarını döndürə bilərsiniz.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
-    showcaseSolveText = "Süni intellekt tabından kubunuzu avtomatik həll edə bilərsiniz."
+    showcaseSolveText = "Süni intellekt tabından kubunuzu avtomatik həll edə bilərsiniz.",
+    showcaseScrambleText = "Bu düyməni istifadə edərək kubu təsadüfi qarışdıra bilərsiniz.",
+    showcaseUndoText = "Bu düyməni istifadə edərək son hərəkətinizi geri ala bilərsiniz.",
+    showcaseResetText = "Kubu həll olunmuş başlanğıc vəziyyətinə sıfırlaya bilərsiniz.",
+    showcaseDesignText = "Üzləri əllə rəngləyərək və ya kamera vasitəsilə skan edərək kubu dizayn edə bilərsiniz."
 )

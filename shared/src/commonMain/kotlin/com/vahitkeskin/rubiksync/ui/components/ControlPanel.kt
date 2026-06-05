@@ -781,3 +781,26 @@ fun ControlPanel(
         SpeedControl(appState = appState, accentColor = RubikTheme.colors.accentOrange)
     }
 }
+
+@Preview
+@Composable
+fun ControlPanelDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        ControlPanel(
+            appState = rememberPreviewRubikAppState(),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ControlPanelLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        ControlPanel(
+            appState = rememberPreviewRubikAppState(),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+

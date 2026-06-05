@@ -40,20 +40,48 @@
 ## 📊 Matematiksel Temeller ve Algoritmalar
 
 ### 📐 1. 3D Uzay Dönüşleri, Kuaterniyonlar ve Rodrigues Formülü
-🔄 3D simülasyondaki her bir küp parçacığının (cubie) konumu ve yönelimi dönüşler sırasında güncellenir. Bir parçacığın konum vektörünü ($\mathbf{v}$), dönme ekseni ($\mathbf{u}$) etrafında $\theta = \pi/2$ radyan (90 derece) kadar döndürmek için **Rodrigues Rotasyon Formülü** kullanılır:
+🔄 3D simülasyondaki her bir küp parçacığının (cubie) konumu ve yönelimi dönüşler sırasında güncellenir. Bir parçacığın konum vektörünü ($\mathbf{v}$), dönme ekseni ($\mathbf{u}$) etrafında $$\theta = \pi/2$$ radyan (90 derece) kadar döndürmek için **Rodrigues Rotasyon Formülü** kullanılır:
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$\mathbf{v}' = \mathbf{v} \cos\theta + (\mathbf{u} \times \mathbf{v}) \sin\theta + \mathbf{u} (\mathbf{u} \cdot \mathbf{v}) (1 - \cos\theta)$$
+
+</div>
 📍 Burada $\mathbf{v}'$ dönme sonrası yeni konum vektörünü, $\mathbf{u}$ normalize edilmiş dönme eksenini, $\times$ çapraz çarpımı ve $\cdot$ ise nokta çarpımı temsil eder.
 
 #### 🎥 Kamera Projeksiyon Modeli
 📹 Kameranın 3D uzaydaki koordinatları ekran alanına yansıtılırken [CubeScreenProjector.kt](file:///shared/src/commonMain/kotlin/com/vahitkeskin/rubiksync/cube/CubeScreenProjector.kt) sınıfı tarafından aşağıdaki matematiksel dönüşüm matrisleri uygulanır:
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$\mathbf{v}_{\text{camera}} = R_x(\phi) R_y(\theta) \mathbf{v}_{\text{world}}$$
+
+</div>
+
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$R_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix}, \quad R_x(\phi) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\phi & -\sin\phi \\ 0 & \sin\phi & \cos\phi \end{bmatrix}$$
+
+</div>
+
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$\text{depth} = d + z_c, \quad \text{scale} = \frac{f}{\text{depth}}$$
+
+</div>
+
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$x_{\text{screen}} = \frac{W}{2} + \text{pan}_x + x_c \cdot \text{scale}, \quad y_{\text{screen}} = \frac{H}{2} - \text{pan}_y - y_c \cdot \text{scale}$$
+
+</div>
+
 
 #### 🔄 Kamera Açıları En Kısa Yol Normalizasyonu (Shortest-Path Interpolation)
 🧭 Kamera açısı geçişleri sırasında oluşan sarsıntıları engellemek için, hedef açı ile mevcut açı arasındaki fark en kısa rotasyon yönüne normalize edilir:
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$\Delta\theta = \operatorname{atan2}(\sin(\theta_{\text{target}} - \theta_{\text{current}}), \cos(\theta_{\text{target}} - \theta_{\text{current}}))$$
+
+</div>
 🌍 Bu sayede yaw geçişleri hiçbir zaman $\pi$ radyandan (180 derece) daha fazla dönmez, ters yönden en kısa yolu tercih eder.
 
 ---
@@ -69,7 +97,12 @@ $$\Delta\theta = \operatorname{atan2}(\sin(\theta_{\text{target}} - \theta_{\tex
 3. **Permütasyon Parite Kısıtı:** $\operatorname{sgn}(\sigma) = \operatorname{sgn}(\tau)$ (Köşe permütasyonunun işareti, kenar permütasyonunun işaretine eşit olmalı).
 
 📉 Bu kısıtlar toplam grubu $12$ kat daraltır. Böylece grubun mertebesi (eleman sayısı):
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$|\mathcal{G}| = \frac{8! \cdot 3^8 \cdot 12! \cdot 2^{12}}{12} = 8! \cdot 3^7 \cdot 12! \cdot 2^{10} = 43,252,003,274,489,856,000 \approx 4.33 \times 10^{19}$$
+
+</div>
+
 
 👑 Tomas Rokicki vd. (2010) tarafından yapılan bilgisayar destekli ispatlar, Rubik Küpü grubundaki herhangi bir durumun **Half-Turn Metric (HTM)** standardında en fazla **20 hamlede** çözülebileceğini matematiksel olarak kanıtlamıştır (Tanrı Sayısı).
 
@@ -78,7 +111,11 @@ $$|\mathcal{G}| = \frac{8! \cdot 3^8 \cdot 12! \cdot 2^{12}}{12} = 8! \cdot 3^7 
 ### 🚀 3. Kociemba İki Fazlı (Two-Phase) Arama Algoritması
 ⚡ [RubikSolver.kt](file:///shared/src/commonMain/kotlin/com/vahitkeskin/rubiksync/solver/RubikSolver.kt) dosyasında implement edilen Kociemba algoritması, devasa arama uzayını çözmek için aramayı iki bağımsız faza böler:
 * 1️⃣ **Phase 1 (G -> G1):** Küpün köşelerinin yönelimlerini ($3^7 = 2187$ durum), kenarlarının yönelimlerini ($2^{11} = 2048$ durum) ve orta katmandaki (UD-slice) 4 kenarın yerleşimini ($\binom{12}{4} = 495$ durum) düzeltir. Durum uzayı $N_1 \approx 2.21 \times 10^9$'dur. Bu faz tamamlandığında küp, yalnızca şu üreteçlerin alt kümesiyle çözülebilecek $G_1$ alt grubuna ulaşmış olur:
-  $$G_1 = \langle U, D, R^2, L^2, F^2, B^2 \rangle$$
+<div style="overflow-x: auto; overflow-y: hidden;">
+
+$$G_1 = \langle U, D, R^2, L^2, F^2, B^2 \rangle$$
+
+</div>
 * 2️⃣ **Phase 2 (G1 -> Çözüm):** Yalnızca $G_1$ üreteçlerini (yan yüzlerin 180° yarım dönüşleri ve üst/alt yüzlerin dönüşleri) kullanarak köşelerin permütasyonunu ($8! = 40,320$), UD-slice kenarlarının permütasyonunu ($4! = 24$) ve geri kalan 8 kenarın permütasyonunu ($8! = 40,320$) çözer. Durum uzayı $N_2 \approx 3.90 \times 10^{10}$'dur.
 
 🎯 Arama performansını optimize etmek amacıyla her iki faz için bellek üzerinde mesafe/budama tabloları (pruning tables) tutulur ve Iterative Deepening $A^*$ (IDA*) derinlik aramasıyla birleştirilerek milisaniyeler içinde optimal çözümü üretir.
@@ -90,20 +127,47 @@ $$|\mathcal{G}| = \frac{8! \cdot 3^8 \cdot 12! \cdot 2^{12}}{12} = 8! \cdot 3^7 
 
 1. **RGB -> XYZ Dönüşümü:**
    🎨 Piksel verileri önce gama düzeltmesiyle doğrusallaştırılır:
-   $$V_{\text{linear}} = \begin{cases} \frac{V_{\text{srgb}}}{12.92} & \text{if } V_{\text{srgb}} \le 0.04045 \\ \left(\frac{V_{\text{srgb}} + 0.055}{1.055}\right)^{2.4} & \text{otherwise} \end{cases} \quad (V \in \{R, G, B\})$$
-   🌌 Standard D65 aydınlatıcısı ($X_n=95.047, Y_n=100.000, Z_n=108.883$) altında doğrusal matris dönüşümüyle XYZ uzayına geçilir:
-   $$\begin{bmatrix} X \\ Y \\ Z \end{bmatrix} = \begin{bmatrix} 0.4124 & 0.3576 & 0.1805 \\ 0.2126 & 0.7152 & 0.0722 \\ 0.0193 & 0.1192 & 0.9505 \end{bmatrix} \begin{bmatrix} R_{\text{linear}} \times 100 \\ G_{\text{linear}} \times 100 \\ B_{\text{linear}} \times 100 \end{bmatrix}$$
+<div style="overflow-x: auto; overflow-y: hidden;">
+
+$$V_{\text{linear}} = \begin{cases} \frac{V_{\text{srgb}}}{12.92} & \text{if } V_{\text{srgb}} \le 0.04045 \\ \left(\frac{V_{\text{srgb}} + 0.055}{1.055}\right)^{2.4} & \text{otherwise} \end{cases} \quad (V \in \{R, G, B\})$$
+
+</div>
+🌌 Standard D65 aydınlatıcısı ($X_n=95.047, Y_n=100.000, Z_n=108.883$) altında doğrusal matris dönüşümüyle XYZ uzayına geçilir:
+<div style="overflow-x: auto; overflow-y: hidden;">
+
+$$\begin{bmatrix} X \\ Y \\ Z \end{bmatrix} = \begin{bmatrix} 0.4124 & 0.3576 & 0.1805 \\ 0.2126 & 0.7152 & 0.0722 \\ 0.0193 & 0.1192 & 0.9505 \end{bmatrix} \begin{bmatrix} R_{\text{linear}} \times 100 \\ G_{\text{linear}} \times 100 \\ B_{\text{linear}} \times 100 \end{bmatrix}$$
+
+</div>
+
 
 2. **XYZ -> CIE L*a*b* Dönüşümü:**
    🧪 İnsan gözünün doğrusal olmayan algısını modellemek için standart dönüşüm uygulanır:
-   $$f(t) = \begin{cases} t^{1/3} & \text{if } t > 0.008856 \\ 7.787 t + \frac{16}{116} & \text{otherwise} \end{cases}$$
-   $$L^* = 116 f(Y/Y_n) - 16, \quad a^* = 500 [f(X/X_n) - f(Y/Y_n)], \quad b^* = 200 [f(Y/Y_n) - f(Z/Z_n)]$$
+<div style="overflow-x: auto; overflow-y: hidden;">
+
+$$f(t) = \begin{cases} t^{1/3} & \text{if } t > 0.008856 \\ 7.787 t + \frac{16}{116} & \text{otherwise} \end{cases}$$
+
+</div>
+
+<div style="overflow-x: auto; overflow-y: hidden;">
+
+$$L^* = 116 f(Y/Y_n) - 16, \quad a^* = 500 [f(X/X_n) - f(Y/Y_n)], \quad b^* = 200 [f(Y/Y_n) - f(Z/Z_n)]$$
+
+</div>
+
 
 3. **CIEDE2000 Renk Farkı Formülü:**
    🔥 Renk benzerliğini karşılaştırmak için en hassas endüstriyel formül olan CIEDE2000 kullanılır:
-   $$\Delta E_{00} = \sqrt{\left(\frac{\Delta L'}{k_L S_L}\right)^2 + \left(\frac{\Delta C'}{k_C S_C}\right)^2 + \left(\frac{\Delta H'}{k_H S_H}\right)^2 + R_T \left(\frac{\Delta C'}{k_C S_C}\right) \left(\frac{\Delta H'}{k_H S_H}\right)}$$
-   💡 Gölgelenmelerden etkilenmemek amacıyla açıklık ağırlık parametresi **$k_L = 2.0$** (daha yüksek tolerans) olarak seçilir. Mavi-yeşil bölgedeki renk sapmalarını telafi eden rotasyon parametresi ($R_T$) ise şöyle hesaplanır:
-   $$R_T = -\sin(2\Delta\theta) R_C, \quad R_C = 2 \sqrt{\frac{\bar{C}'^7}{\bar{C}'^7 + 25^7}}$$
+<div style="overflow-x: auto; overflow-y: hidden;">
+
+$$\Delta E_{00} = \sqrt{\left(\frac{\Delta L'}{k_L S_L}\right)^2 + \left(\frac{\Delta C'}{k_C S_C}\right)^2 + \left(\frac{\Delta H'}{k_H S_H}\right)^2 + R_T \left(\frac{\Delta C'}{k_C S_C}\right) \left(\frac{\Delta H'}{k_H S_H}\right)}$$
+
+</div>
+💡 Gölgelenmelerden etkilenmemek amacıyla açıklık ağırlık parametresi **$k_L = 2.0$** (daha yüksek tolerans) olarak seçilir. Mavi-yeşil bölgedeki renk sapmalarını telafi eden rotasyon parametresi ($R_T$) ise şöyle hesaplanır:
+<div style="overflow-x: auto; overflow-y: hidden;">
+
+$$R_T = -\sin(2\Delta\theta) R_C, \quad R_C = 2 \sqrt{\frac{\bar{C}'^7}{\bar{C}'^7 + 25^7}}$$
+
+</div>
 
 ---
 
@@ -112,9 +176,17 @@ $$|\mathcal{G}| = \frac{8! \cdot 3^8 \cdot 12! \cdot 2^{12}}{12} = 8! \cdot 3^7 
 
 #### 🎛️ Doğrusal Programlama (Integer Linear Programming) Modeli
 💵 Çekilen fotoğraflardan çıkarılan 48 adet sticker'ın 48 adet teorik renk yuvasına (her renk grubundan 8'er adet) atanması için Kuhn-Munkres algoritmasıyla minimum maliyet aranır:
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$\min \sum_{i=1}^{48} \sum_{j=1}^{48} C_{ij} x_{ij}$$
+
+</div>
 ⛓️ Kısıtlar:
+<div style="overflow-x: auto; overflow-y: hidden;">
+
 $$\sum_{j=1}^{48} x_{ij} = 1 \quad (\forall i), \quad \sum_{i=1}^{48} x_{ij} = 1 \quad (\forall j), \quad x_{ij} \in \{0, 1\}$$
+
+</div>
 📈 Maliyet matrisindeki $C_{ij}$ değeri, taranan $i$. sticker'ın $j$. renk yuvası ile arasındaki CIEDE2000 ($\Delta E_{00}$) renk farkıdır. Algoritma $O(N^3)$ zamanda çalışarak, taranan hatalı veya gölgeli renkleri fiziksel olarak çözülebilir en yakın matematiksel Rubik Küpü durumuna otomatik olarak eşler.
 
 ---

@@ -112,5 +112,11 @@ val RuStrings = AppStrings(
     scanGuidanceRemaining = "Эта сторона отсканирована. Пожалуйста, отсканируйте оставшиеся стороны: %s",
     takePhotoLabel =  "Сделать фото",
     chooseGalleryLabel =  "Выбрать из галереи",
-    selectImageLabel =  "Выбрать изображение"
+    selectImageLabel =  "Выбрать изображение",
+    showcaseWelcomeText = "Добро пожаловать в RubikSync! Давайте изучим функции приложения.",
+    showcaseEditableText = "Нажмите на значок замка, чтобы включить или отключить редактирование куба.",
+    showcaseSoundText = "Нажмите на значок звука, чтобы включить или выключить звук вращения.",
+    showcaseSettingsText = "Откройте настройки для изменения темы и языка.",
+    showcaseMovesText = "Используйте эту панель для вращения слоёв куба.",
+    showcaseSolveText = "Используйте вкладку ИИ для автоматического решения куба."
 )

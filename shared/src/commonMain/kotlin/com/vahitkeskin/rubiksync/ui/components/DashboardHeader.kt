@@ -4,6 +4,9 @@ import com.vahitkeskin.rubiksync.ui.state.*
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -123,12 +126,20 @@ fun DashboardHeader(
                     animationSpec = tween(durationMillis = 300),
                     label = "editableBorder"
                 )
-                Box(
+                 Box(
                     modifier = Modifier
                         .size(34.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(editableBgColor)
                         .border(0.8.dp, editableBorderColor, RoundedCornerShape(10.dp))
+                        .onGloballyPositioned { coords ->
+                            if (appState.showcaseStep == 1 && !appState.isShowcaseCompleted) {
+                                val pos = coords.positionInRoot()
+                                val size = coords.size
+                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                appState.targetCornerRadius = 10.dp
+                            }
+                        }
                         .clickable(
                             enabled = !cubeState.isAnimating
                         ) {
@@ -140,6 +151,14 @@ fun DashboardHeader(
                         text = if (appState.isCubeEditable) "🔓" else "🔒",
                         fontSize = 14.sp,
                         maxLines = 1
+                    )
+                    AuraBalloon(
+                        text = appState.strings.showcaseEditableText,
+                        isVisible = appState.showcaseStep == 1 && !appState.isShowcaseCompleted,
+                        isBelow = true,
+                        onDismiss = {
+                            appState.showcaseStep = 2
+                        }
                     )
                 }
 
@@ -172,6 +191,14 @@ fun DashboardHeader(
                         .clip(RoundedCornerShape(10.dp))
                         .background(soundBgColor)
                         .border(0.8.dp, soundBorderColor, RoundedCornerShape(10.dp))
+                        .onGloballyPositioned { coords ->
+                            if (appState.showcaseStep == 2 && !appState.isShowcaseCompleted) {
+                                val pos = coords.positionInRoot()
+                                val size = coords.size
+                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                appState.targetCornerRadius = 10.dp
+                            }
+                        }
                         .clickable(
                             enabled = appState.isCubeEditable && !cubeState.isAnimating
                         ) {
@@ -185,6 +212,14 @@ fun DashboardHeader(
                         maxLines = 1,
                         modifier = Modifier.alpha(if (appState.isCubeEditable) 1f else 0.35f)
                     )
+                    AuraBalloon(
+                        text = appState.strings.showcaseSoundText,
+                        isVisible = appState.showcaseStep == 2 && !appState.isShowcaseCompleted,
+                        isBelow = true,
+                        onDismiss = {
+                            appState.showcaseStep = 3
+                        }
+                    )
                 }
 
                 // Ayarlar butonu
@@ -194,6 +229,14 @@ fun DashboardHeader(
                         .clip(RoundedCornerShape(10.dp))
                         .background(RubikTheme.colors.cardBackground)
                         .border(0.8.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(10.dp))
+                        .onGloballyPositioned { coords ->
+                            if (appState.showcaseStep == 3 && !appState.isShowcaseCompleted) {
+                                val pos = coords.positionInRoot()
+                                val size = coords.size
+                                appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                                appState.targetCornerRadius = 10.dp
+                            }
+                        }
                         .clickable { onNavigateToSettings() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -201,6 +244,14 @@ fun DashboardHeader(
                         text = "⚙️",
                         fontSize = 15.sp,
                         maxLines = 1
+                    )
+                    AuraBalloon(
+                        text = appState.strings.showcaseSettingsText,
+                        isVisible = appState.showcaseStep == 3 && !appState.isShowcaseCompleted,
+                        isBelow = true,
+                        onDismiss = {
+                            appState.showcaseStep = 4
+                        }
                     )
                 }
             }

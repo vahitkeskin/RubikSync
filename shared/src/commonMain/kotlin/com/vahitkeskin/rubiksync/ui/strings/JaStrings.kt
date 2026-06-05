@@ -112,5 +112,11 @@ val JaStrings = AppStrings(
     scanGuidanceRemaining = "この面はスキャン済みです。残りの面をスキャンしてください：%s",
     takePhotoLabel =  "写真を撮る",
     chooseGalleryLabel =  "ギャラリーから選択",
-    selectImageLabel =  "画像を選択"
+    selectImageLabel =  "画像を選択",
+    showcaseWelcomeText = "RubikSyncへようこそ！アプリの機能を探索しましょう。",
+    showcaseEditableText = "ロックアイコンをタップして、キューブ編集を有効/無効にします。",
+    showcaseSoundText = "サウンドアイコンをタップして、回転音のオン/オフを切り替えます。",
+    showcaseSettingsText = "設定ボタンからテーマと言語を変更できます。",
+    showcaseMovesText = "このパネルからキューブのレイヤーを回転できます。",
+    showcaseSolveText = "AIタブからキューブを自動的に解くことができます。"
 )

@@ -112,5 +112,11 @@ val ViStrings = AppStrings(
     scanGuidanceRemaining = "Mặt này đã được quét. Vui lòng quét các mặt còn lại: %s",
     takePhotoLabel =  "Chụp ảnh",
     chooseGalleryLabel =  "Chọn từ thư viện",
-    selectImageLabel =  "Chọn ảnh"
+    selectImageLabel =  "Chọn ảnh",
+    showcaseWelcomeText = "Chào mừng đến với RubikSync! Hãy khám phá các tính năng.",
+    showcaseEditableText = "Nhấn biểu tượng khóa để bật/tắt chỉnh sửa khối Rubik.",
+    showcaseSoundText = "Nhấn biểu tượng âm thanh để bật/tắt âm thanh xoay.",
+    showcaseSettingsText = "Mở cài đặt để thay đổi giao diện và ngôn ngữ.",
+    showcaseMovesText = "Sử dụng bảng này để xoay các lớp của khối Rubik.",
+    showcaseSolveText = "Sử dụng tab AI để giải khối Rubik tự động."
 )

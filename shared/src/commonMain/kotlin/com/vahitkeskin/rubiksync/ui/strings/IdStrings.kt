@@ -112,5 +112,11 @@ val IdStrings = AppStrings(
     scanGuidanceRemaining = "Sisi ini telah dipindai. Silakan pindai sisi yang tersisa: %s",
     takePhotoLabel =  "Ambil Foto",
     chooseGalleryLabel =  "Pilih dari Galeri",
-    selectImageLabel =  "Pilih Gambar"
+    selectImageLabel =  "Pilih Gambar",
+    showcaseWelcomeText = "Selamat datang di RubikSync! Mari jelajahi fitur aplikasi.",
+    showcaseEditableText = "Ketuk ikon kunci untuk mengaktifkan atau menonaktifkan pengeditan kubus.",
+    showcaseSoundText = "Ketuk ikon suara untuk mengaktifkan atau menonaktifkan suara rotasi.",
+    showcaseSettingsText = "Buka pengaturan untuk mengubah tema dan bahasa.",
+    showcaseMovesText = "Gunakan panel ini untuk memutar lapisan kubus.",
+    showcaseSolveText = "Gunakan tab AI untuk menyelesaikan kubus secara otomatis."
 )

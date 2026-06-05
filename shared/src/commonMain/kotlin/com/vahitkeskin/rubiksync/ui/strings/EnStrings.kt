@@ -112,5 +112,11 @@ val EnStrings = AppStrings(
     scanGuidanceRemaining = "This face is already scanned. Please scan the remaining faces: %s",
     takePhotoLabel =  "Take Photo",
     chooseGalleryLabel =  "Choose from Gallery",
-    selectImageLabel =  "Select Image"
+    selectImageLabel =  "Select Image",
+    showcaseWelcomeText = "Welcome to RubikSync! Let's explore the app features.",
+    showcaseEditableText = "Tap the lock icon to enable or disable cube editing.",
+    showcaseSoundText = "Tap the sound icon to toggle rotation sound on or off.",
+    showcaseSettingsText = "Open settings to change theme and language preferences.",
+    showcaseMovesText = "Use this panel to rotate the cube layers.",
+    showcaseSolveText = "Use the AI tab to automatically solve your cube."
 )

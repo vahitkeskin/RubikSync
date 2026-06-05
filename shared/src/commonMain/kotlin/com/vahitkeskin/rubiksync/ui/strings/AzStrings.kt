@@ -112,5 +112,11 @@ val AzStrings = AppStrings(
     scanGuidanceRemaining = "Bu üz skan edilib. Zəhmət olmasa qalan üzləri skan edin: %s",
     takePhotoLabel =  "Şəkil çək",
     chooseGalleryLabel =  "Qalereyadan seç",
-    selectImageLabel =  "Şəkil seç"
+    selectImageLabel =  "Şəkil seç",
+    showcaseWelcomeText = "RubikSync-ə xoş gəlmisiniz! Tətbiq xüsusiyyətlərini kəşf edək.",
+    showcaseEditableText = "Kub redaktəsini aktiv/deaktiv etmək üçün kilid ikonuna toxunun.",
+    showcaseSoundText = "Dönmə səsini açmaq/söndürmək üçün səs ikonuna toxunun.",
+    showcaseSettingsText = "Tema və dil dəyişdirmək üçün parametrləri açın.",
+    showcaseMovesText = "Bu paneldən kubun qatlarını döndürə bilərsiniz.",
+    showcaseSolveText = "Süni intellekt tabından kubunuzu avtomatik həll edə bilərsiniz."
 )

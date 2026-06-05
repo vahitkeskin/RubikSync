@@ -112,5 +112,11 @@ val PtStrings = AppStrings(
     scanGuidanceRemaining = "Esta face está escaneada. Por favor, escaneie as faces restantes: %s",
     takePhotoLabel =  "Tirar foto",
     chooseGalleryLabel =  "Escolher da galeria",
-    selectImageLabel =  "Selecionar imagem"
+    selectImageLabel =  "Selecionar imagem",
+    showcaseWelcomeText = "Bem-vindo ao RubikSync! Vamos explorar os recursos do aplicativo.",
+    showcaseEditableText = "Toque no ícone de cadeado para ativar ou desativar a edição do cubo.",
+    showcaseSoundText = "Toque no ícone de som para ativar ou desativar o som de rotação.",
+    showcaseSettingsText = "Abra as configurações para alterar tema e idioma.",
+    showcaseMovesText = "Use este painel para girar as camadas do cubo.",
+    showcaseSolveText = "Use a aba IA para resolver seu cubo automaticamente."
 )

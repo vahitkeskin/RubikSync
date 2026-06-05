@@ -112,5 +112,11 @@ val PlStrings = AppStrings(
     scanGuidanceRemaining = "Ta ściana jest zeskanowana. Zeskanuj pozostałe ściany: %s",
     takePhotoLabel =  "Zrób zdjęcie",
     chooseGalleryLabel =  "Wybierz z galerii",
-    selectImageLabel =  "Wybierz obraz"
+    selectImageLabel =  "Wybierz obraz",
+    showcaseWelcomeText = "Witamy w RubikSync! Odkryjmy funkcje aplikacji.",
+    showcaseEditableText = "Dotknij ikony zamka, aby włączyć/wyłączyć edycję kostki.",
+    showcaseSoundText = "Dotknij ikony dźwięku, aby włączyć/wyłączyć dźwięk obrotu.",
+    showcaseSettingsText = "Otwórz ustawienia, aby zmienić motyw i język.",
+    showcaseMovesText = "Użyj tego panelu, aby obracać warstwy kostki.",
+    showcaseSolveText = "Użyj zakładki AI, aby automatycznie rozwiązać kostkę."
 )

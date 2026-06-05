@@ -66,6 +66,9 @@ interface RubikPersistence {
 
     suspend fun saveSoundEnabled(enabled: Boolean)
     suspend fun loadSoundEnabled(): Boolean?
+
+    suspend fun saveShowcaseCompleted(completed: Boolean)
+    suspend fun loadShowcaseCompleted(): Boolean?
 }
 
 object RubikPersistenceRegistry {

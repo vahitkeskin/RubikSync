@@ -9,6 +9,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.unit.dp
 import com.vahitkeskin.rubiksync.cube.*
 import com.vahitkeskin.rubiksync.ui.components.*
@@ -179,6 +189,18 @@ fun App() {
                     }
 
                     composable("dashboard") {
+                        val overlayAlpha by animateFloatAsState(
+                            targetValue = if (appState.showcaseStep in 1..5 && !appState.isShowcaseCompleted) 0.6f else 0f,
+                            animationSpec = tween(durationMillis = 300)
+                        )
+
+                        LaunchedEffect(appState.isShowcaseCompleted) {
+                            if (!appState.isShowcaseCompleted && appState.showcaseStep == 0) {
+                                kotlinx.coroutines.delay(1500)
+                                appState.showcaseStep = 1
+                            }
+                        }
+
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -295,6 +317,41 @@ fun App() {
 
                             // 7. Global Feedback Overlays
                             FeedbackOverlay(appState = appState)
+
+                            // 8. Showcase Spotlight Overlay
+                            if (overlayAlpha > 0f) {
+                                Canvas(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .graphicsLayer(alpha = 0.99f)
+                                        .clickable(
+                                            onClick = {
+                                                if (appState.showcaseStep in 1..4) {
+                                                    appState.showcaseStep++
+                                                } else if (appState.showcaseStep == 5) {
+                                                    appState.showcaseStep = 0
+                                                    appState.updateShowcaseCompleted(true)
+                                                    appState.targetBounds = null
+                                                }
+                                            },
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() }
+                                        )
+                                ) {
+                                    drawRect(
+                                        color = Color.Black.copy(alpha = overlayAlpha)
+                                    )
+                                    appState.targetBounds?.let { rect ->
+                                        drawRoundRect(
+                                            color = Color.Transparent,
+                                            topLeft = Offset(rect.left, rect.top),
+                                            size = Size(rect.width, rect.height),
+                                            cornerRadius = CornerRadius(appState.targetCornerRadius.toPx(), appState.targetCornerRadius.toPx()),
+                                            blendMode = BlendMode.Clear
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
 

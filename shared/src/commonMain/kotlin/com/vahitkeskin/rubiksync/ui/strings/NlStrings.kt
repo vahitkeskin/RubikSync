@@ -112,5 +112,11 @@ val NlStrings = AppStrings(
     scanGuidanceRemaining = "Dit vlak is gescand. Scan de resterende vlakken: %s",
     takePhotoLabel =  "Foto maken",
     chooseGalleryLabel =  "Uit galerij kiezen",
-    selectImageLabel =  "Afbeelding selecteren"
+    selectImageLabel =  "Afbeelding selecteren",
+    showcaseWelcomeText = "Welkom bij RubikSync! Laten we de app-functies verkennen.",
+    showcaseEditableText = "Tik op het slotpictogram om kubus bewerken in/uit te schakelen.",
+    showcaseSoundText = "Tik op het geluidspictogram om het rotatiegeluid in/uit te schakelen.",
+    showcaseSettingsText = "Open instellingen om thema en taal te wijzigen.",
+    showcaseMovesText = "Gebruik dit paneel om de kubuslagen te draaien.",
+    showcaseSolveText = "Gebruik het AI-tabblad om je kubus automatisch op te lossen."
 )

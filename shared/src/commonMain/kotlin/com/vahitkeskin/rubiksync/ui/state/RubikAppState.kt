@@ -1,6 +1,8 @@
 package com.vahitkeskin.rubiksync.ui.state
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.cube.MoveType
@@ -99,6 +101,12 @@ class RubikAppState(
 
     var isSoundEnabled by mutableStateOf(true)
 
+    // Showcase / Onboarding state
+    var isShowcaseCompleted by mutableStateOf(false)
+    var showcaseStep by mutableStateOf(0)
+    var targetBounds by mutableStateOf<androidx.compose.ui.geometry.Rect?>(null)
+    var targetCornerRadius by mutableStateOf(16.dp)
+
     // Computed: is the cube solved?
     val isSolved: Boolean
         get() {
@@ -162,6 +170,13 @@ class RubikAppState(
         isSoundEnabled = enabled
         coroutineScope.launch(Dispatchers.Default) {
             RubikPersistenceRegistry.persistence?.saveSoundEnabled(enabled)
+        }
+    }
+
+    fun updateShowcaseCompleted(completed: Boolean) {
+        isShowcaseCompleted = completed
+        coroutineScope.launch(Dispatchers.Default) {
+            RubikPersistenceRegistry.persistence?.saveShowcaseCompleted(completed)
         }
     }
 
@@ -256,6 +271,11 @@ class RubikAppState(
                         withContext(Dispatchers.Main) {
                             isSoundEnabled = soundEnabled
                         }
+                    }
+
+                    val showcaseCompleted = persistence.loadShowcaseCompleted() ?: false
+                    withContext(Dispatchers.Main) {
+                        isShowcaseCompleted = showcaseCompleted
                     }
                 }
             } catch (e: Exception) {

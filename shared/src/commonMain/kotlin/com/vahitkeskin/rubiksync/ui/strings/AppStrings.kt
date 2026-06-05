@@ -112,7 +112,13 @@ data class AppStrings(
     val scanGuidanceRemaining: String,
     val takePhotoLabel: String,
     val chooseGalleryLabel: String,
-    val selectImageLabel: String
+    val selectImageLabel: String,
+    val showcaseWelcomeText: String,
+    val showcaseEditableText: String,
+    val showcaseSoundText: String,
+    val showcaseSettingsText: String,
+    val showcaseMovesText: String,
+    val showcaseSolveText: String
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

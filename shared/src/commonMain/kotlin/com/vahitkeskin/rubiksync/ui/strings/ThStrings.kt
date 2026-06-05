@@ -112,5 +112,11 @@ val ThStrings = AppStrings(
     scanGuidanceRemaining = "ด้านนี้สแกนแล้ว กรุณาสแกนด้านที่เหลือ: %s",
     takePhotoLabel =  "ถ่ายภาพ",
     chooseGalleryLabel =  "เลือกจากแกลเลอรี",
-    selectImageLabel =  "เลือกรูปภาพ"
+    selectImageLabel =  "เลือกรูปภาพ",
+    showcaseWelcomeText = "ยินดีต้อนรับสู่ RubikSync! มาสำรวจฟีเจอร์ของแอปกัน",
+    showcaseEditableText = "แตะไอคอนล็อคเพื่อเปิด/ปิดการแก้ไขลูกบาศก์",
+    showcaseSoundText = "แตะไอคอนเสียงเพื่อเปิด/ปิดเสียงหมุน",
+    showcaseSettingsText = "เปิดการตั้งค่าเพื่อเปลี่ยนธีมและภาษา",
+    showcaseMovesText = "ใช้แผงนี้หมุนชั้นของลูกบาศก์",
+    showcaseSolveText = "ใช้แท็บ AI เพื่อแก้ลูกบาศก์อัตโนมัติ"
 )

@@ -112,5 +112,11 @@ val HiStrings = AppStrings(
     scanGuidanceRemaining = "यह सतह स्कैन हो चुकी है। कृपया शेष सतहों को स्कैन करें: %s",
     takePhotoLabel =  "फोटो लें",
     chooseGalleryLabel =  "गैलरी से चुनें",
-    selectImageLabel =  "छवि चुनें"
+    selectImageLabel =  "छवि चुनें",
+    showcaseWelcomeText = "RubikSync में आपका स्वागत है! ऐप की सुविधाओं को जानें।",
+    showcaseEditableText = "क्यूब संपादन को चालू/बंद करने के लिए लॉक आइकन पर टैप करें।",
+    showcaseSoundText = "रोटेशन ध्वनि को चालू/बंद करने के लिए ध्वनि आइकन पर टैप करें।",
+    showcaseSettingsText = "थीम और भाषा बदलने के लिए सेटिंग्स खोलें।",
+    showcaseMovesText = "इस पैनल से क्यूब की परतें घुमाएं।",
+    showcaseSolveText = "एआई टैब से अपने क्यूब को स्वचालित रूप से हल करें।"
 )

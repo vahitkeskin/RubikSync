@@ -112,5 +112,11 @@ val ArStrings = AppStrings(
     scanGuidanceRemaining = "تم مسح هذا الوجه. يرجى مسح الأوجه المتبقية: %s",
     takePhotoLabel =  "التقاط صورة",
     chooseGalleryLabel =  "اختر من المعرض",
-    selectImageLabel =  "اختر صورة"
+    selectImageLabel =  "اختر صورة",
+    showcaseWelcomeText = "مرحبًا بك في RubikSync! لنستكشف ميزات التطبيق.",
+    showcaseEditableText = "انقر على أيقونة القفل لتفعيل أو تعطيل تعديل المكعب.",
+    showcaseSoundText = "انقر على أيقونة الصوت لتشغيل أو إيقاف صوت الدوران.",
+    showcaseSettingsText = "افتح الإعدادات لتغيير السمة واللغة.",
+    showcaseMovesText = "استخدم هذه اللوحة لتدوير طبقات المكعب.",
+    showcaseSolveText = "استخدم علامة تبويب الذكاء الاصطناعي لحل المكعب تلقائيًا."
 )

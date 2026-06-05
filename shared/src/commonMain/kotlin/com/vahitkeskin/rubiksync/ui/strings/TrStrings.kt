@@ -112,5 +112,11 @@ val TrStrings = AppStrings(
     scanGuidanceRemaining = "Bu yüzey zaten tarandı. Lütfen kalan yüzeyleri tarayın: %s",
     takePhotoLabel =  "Fotoğraf Çek",
     chooseGalleryLabel =  "Galeriden Seç",
-    selectImageLabel =  "Görsel Seç"
+    selectImageLabel =  "Görsel Seç",
+    showcaseWelcomeText = "RubikSync'e hoş geldiniz! Uygulamanın özelliklerini keşfedelim.",
+    showcaseEditableText = "Kilit simgesine tıklayarak küp düzenlemeyi açıp kapatabilirsiniz.",
+    showcaseSoundText = "Ses simgesine tıklayarak döndürme sesini açıp kapatabilirsiniz.",
+    showcaseSettingsText = "Ayarlar butonundan tema ve dil tercihlerinizi değiştirebilirsiniz.",
+    showcaseMovesText = "Bu panelden küpün katmanlarını döndürebilirsiniz.",
+    showcaseSolveText = "Yapay Zeka sekmesinden küpünüzü otomatik çözdürebilirsiniz."
 )

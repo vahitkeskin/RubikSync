@@ -34,6 +34,7 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     private val KEY_LANGUAGE = stringPreferencesKey("app_language")
     private val KEY_CUBE_EDITABLE = booleanPreferencesKey("cube_editable")
     private val KEY_SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
+    private val KEY_SHOWCASE_COMPLETED = booleanPreferencesKey("showcase_completed")
 
     override suspend fun saveCubeState(
         cubies: List<CubiePersistable>,
@@ -156,6 +157,21 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     override suspend fun loadSoundEnabled(): Boolean? {
         return try {
             context.dataStore.data.first()[KEY_SOUND_ENABLED]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun saveShowcaseCompleted(completed: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_SHOWCASE_COMPLETED] = completed
+        }
+    }
+
+    override suspend fun loadShowcaseCompleted(): Boolean? {
+        return try {
+            context.dataStore.data.first()[KEY_SHOWCASE_COMPLETED]
         } catch (e: Exception) {
             e.printStackTrace()
             null

@@ -112,5 +112,11 @@ val ZhStrings = AppStrings(
     scanGuidanceRemaining = "该面已扫描。请扫描剩余的面：%s",
     takePhotoLabel =  "拍照",
     chooseGalleryLabel =  "从相册选择",
-    selectImageLabel =  "选择图片"
+    selectImageLabel =  "选择图片",
+    showcaseWelcomeText = "欢迎使用RubikSync！让我们探索应用功能。",
+    showcaseEditableText = "点击锁定图标启用或禁用魔方编辑。",
+    showcaseSoundText = "点击声音图标开启或关闭旋转声音。",
+    showcaseSettingsText = "打开设置更改主题和语言。",
+    showcaseMovesText = "使用此面板旋转魔方层。",
+    showcaseSolveText = "使用AI标签自动解魔方。"
 )

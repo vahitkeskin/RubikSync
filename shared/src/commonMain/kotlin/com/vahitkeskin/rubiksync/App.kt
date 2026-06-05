@@ -190,7 +190,7 @@ fun App() {
                     composable("dashboard") {
                         val overlayAlpha by animateFloatAsState(
                             targetValue = if (appState.showcaseStep != 0 && !appState.isShowcaseCompleted) 0.85f else 0f,
-                            animationSpec = tween(durationMillis = 300)
+                            animationSpec = tween(durationMillis = 1000)
                         )
 
                         LaunchedEffect(appState.isShowcaseCompleted) {

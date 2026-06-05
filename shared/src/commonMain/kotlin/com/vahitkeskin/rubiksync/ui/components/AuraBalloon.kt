@@ -71,7 +71,7 @@ fun AuraBalloon(
     val animationProgress by animateFloatAsState(
         targetValue = if (isAnimatedVisible) 1f else 0f,
         animationSpec = tween(
-            durationMillis = 300,
+            durationMillis = 1000,
             easing = FastOutSlowInEasing
         )
     )

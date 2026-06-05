@@ -965,8 +965,8 @@ fun ScannerWizard(
                                             !appState.isScannerShowcaseCompleted &&
                                             viewport != null &&
                                             scannerTargetBounds != null &&
-                                            scannerTargetBounds.top >= viewport.top - 10f &&
-                                            scannerTargetBounds.bottom <= viewport.bottom + 10f &&
+                                            scannerTargetBounds.bottom >= viewport.top + 10f &&
+                                            scannerTargetBounds.top <= viewport.bottom - 10f &&
                                             !scannerScrollState.isScrollInProgress
 
                                     AuraBalloon(
@@ -1118,8 +1118,8 @@ fun ScannerWizard(
                                         !appState.isScannerShowcaseCompleted &&
                                         viewport != null &&
                                         scannerTargetBounds != null &&
-                                        scannerTargetBounds.top >= viewport.top - 10f &&
-                                        scannerTargetBounds.bottom <= viewport.bottom + 10f &&
+                                        scannerTargetBounds.bottom >= viewport.top + 10f &&
+                                        scannerTargetBounds.top <= viewport.bottom - 10f &&
                                         !scannerScrollState.isScrollInProgress
 
                                 AuraBalloon(

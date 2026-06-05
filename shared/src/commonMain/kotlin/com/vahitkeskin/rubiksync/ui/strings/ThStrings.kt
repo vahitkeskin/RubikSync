@@ -117,6 +117,7 @@ val ThStrings = AppStrings(
     showcaseEditableText = "แตะไอคอนล็อคเพื่อเปิด/ปิดการแก้ไขลูกบาศก์",
     showcaseSoundText = "แตะไอคอนเสียงเพื่อเปิด/ปิดเสียงหมุน",
     showcaseSettingsText = "เปิดการตั้งค่าเพื่อเปลี่ยนธีมและภาษา",
+    showcaseInteractiveCubeText = "หมุนลูกบาศก์ทั้งหมดด้วยสองนิ้ว หรือหมุนแถวและคอลัมน์เฉพาะด้วยนิ้วเดียว",
     showcaseMovesText = "ใช้แผงนี้หมุนชั้นของลูกบาศก์",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "ใช้แท็บ AI เพื่อแก้ลูกบาศก์อัตโนมัติ"

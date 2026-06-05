@@ -184,14 +184,14 @@ class RubikAppState(
         if (isShowcaseCompleted) return
         val currentStep = showcaseStep
         coroutineScope.launch {
-            if (currentStep in 1..6) {
+            if (currentStep in 1..7) {
                 showcaseStep = -currentStep
             }
             targetBounds = null
             kotlinx.coroutines.delay(350)
-            if (currentStep in 1..5) {
+            if (currentStep in 1..6) {
                 showcaseStep = currentStep + 1
-            } else if (currentStep == 6) {
+            } else if (currentStep == 7) {
                 showcaseStep = 0
                 updateShowcaseCompleted(true)
             }

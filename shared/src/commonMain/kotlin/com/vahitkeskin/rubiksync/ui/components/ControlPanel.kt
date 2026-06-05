@@ -75,11 +75,11 @@ fun ControlPanel(
     var selectedTab by remember { mutableStateOf(0) }
 
     LaunchedEffect(appState.showcaseStep) {
-        if (appState.showcaseStep == 4) {
+        if (appState.showcaseStep == 5) {
             selectedTab = 0
-        } else if (appState.showcaseStep == 5) {
-            selectedTab = 1
         } else if (appState.showcaseStep == 6) {
+            selectedTab = 1
+        } else if (appState.showcaseStep == 7) {
             selectedTab = 2
         }
     }
@@ -144,7 +144,7 @@ fun ControlPanel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .onGloballyPositioned { coords ->
-                            if (appState.showcaseStep == 4 && !appState.isShowcaseCompleted) {
+                            if (appState.showcaseStep == 5 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
                                 appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
@@ -155,7 +155,7 @@ fun ControlPanel(
                     MovesGrid(appState = appState, canEditCube = canEditCube)
                     AuraBalloon(
                         text = appState.strings.showcaseMovesText,
-                        isVisible = appState.showcaseStep == 4 && !appState.isShowcaseCompleted,
+                        isVisible = appState.showcaseStep == 5 && !appState.isShowcaseCompleted,
                         isBelow = false,
                         onDismiss = {
                             appState.advanceShowcase()
@@ -168,7 +168,7 @@ fun ControlPanel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .onGloballyPositioned { coords ->
-                            if (appState.showcaseStep == 5 && !appState.isShowcaseCompleted) {
+                            if (appState.showcaseStep == 6 && !appState.isShowcaseCompleted) {
                                 val pos = coords.positionInRoot()
                                 val size = coords.size
                                 appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
@@ -293,7 +293,7 @@ fun ControlPanel(
                     }
                     AuraBalloon(
                         text = appState.strings.showcaseActionsText,
-                        isVisible = appState.showcaseStep == 5 && !appState.isShowcaseCompleted,
+                        isVisible = appState.showcaseStep == 6 && !appState.isShowcaseCompleted,
                         isBelow = false,
                         onDismiss = {
                             appState.advanceShowcase()
@@ -337,7 +337,7 @@ fun ControlPanel(
                             .weight(1f)
                             .height(44.dp)
                             .onGloballyPositioned { coords ->
-                                if (appState.showcaseStep == 6 && !appState.isShowcaseCompleted) {
+                                if (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) {
                                     val pos = coords.positionInRoot()
                                     val size = coords.size
                                     appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
@@ -464,7 +464,7 @@ fun ControlPanel(
                         }
                         AuraBalloon(
                             text = appState.strings.showcaseSolveText,
-                            isVisible = appState.showcaseStep == 6 && !appState.isShowcaseCompleted,
+                            isVisible = appState.showcaseStep == 7 && !appState.isShowcaseCompleted,
                             isBelow = false,
                             onDismiss = {
                                 appState.advanceShowcase()

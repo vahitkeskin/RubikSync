@@ -117,6 +117,7 @@ val PtStrings = AppStrings(
     showcaseEditableText = "Toque no ícone de cadeado para ativar ou desativar a edição do cubo.",
     showcaseSoundText = "Toque no ícone de som para ativar ou desativar o som de rotação.",
     showcaseSettingsText = "Abra as configurações para alterar tema e idioma.",
+    showcaseInteractiveCubeText = "Gire todo o cubo com dois dedos ou gire linhas e colunas específicas com um dedo.",
     showcaseMovesText = "Use este painel para girar as camadas do cubo.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Use a aba IA para resolver seu cubo automaticamente."

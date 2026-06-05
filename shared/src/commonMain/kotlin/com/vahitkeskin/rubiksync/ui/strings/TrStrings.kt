@@ -117,6 +117,7 @@ val TrStrings = AppStrings(
     showcaseEditableText = "Kilit simgesine tıklayarak küp düzenlemeyi açıp kapatabilirsiniz.",
     showcaseSoundText = "Ses simgesine tıklayarak döndürme sesini açıp kapatabilirsiniz.",
     showcaseSettingsText = "Ayarlar butonundan tema ve dil tercihlerinizi değiştirebilirsiniz.",
+    showcaseInteractiveCubeText = "Küpü serbestçe döndürmek için iki parmağınızı, sadece belirli satır veya sütunları çevirmek için tek parmağınızı kullanabilirsiniz.",
     showcaseMovesText = "Bu panelden küpün katmanlarını döndürebilirsiniz.",
     showcaseActionsText = "Bu panelden küpü karıştırabilir, hamlelerinizi geri alabilir ve sıfırlayabilirsiniz.",
     showcaseSolveText = "Yapay Zeka sekmesinden küpünüzü otomatik çözdürebilirsiniz."

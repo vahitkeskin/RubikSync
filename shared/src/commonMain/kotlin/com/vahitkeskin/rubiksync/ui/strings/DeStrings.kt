@@ -117,6 +117,7 @@ val DeStrings = AppStrings(
     showcaseEditableText = "Tippen Sie auf das Schloss-Symbol, um die Würfelbearbeitung zu aktivieren/deaktivieren.",
     showcaseSoundText = "Tippen Sie auf das Lautsprecher-Symbol, um den Drehsound ein-/auszuschalten.",
     showcaseSettingsText = "Öffnen Sie die Einstellungen, um Design und Sprache zu ändern.",
+    showcaseInteractiveCubeText = "Drehen Sie den gesamten Würfel mit zwei Fingern oder drehen Sie bestimmte Zeilen und Spalten mit einem Finger.",
     showcaseMovesText = "Verwenden Sie dieses Panel, um die Würfelschichten zu drehen.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Verwenden den KI-Tab, um Ihren Würfel automatisch zu lösen."

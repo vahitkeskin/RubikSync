@@ -117,6 +117,7 @@ val PlStrings = AppStrings(
     showcaseEditableText = "Dotknij ikony zamka, aby włączyć/wyłączyć edycję kostki.",
     showcaseSoundText = "Dotknij ikony dźwięku, aby włączyć/wyłączyć dźwięk obrotu.",
     showcaseSettingsText = "Otwórz ustawienia, aby zmienić motyw i język.",
+    showcaseInteractiveCubeText = "Obracaj cały sześcian dwoma palcami lub obracaj określone wiersze i kolumny jednym palcem.",
     showcaseMovesText = "Użyj tego panelu, aby obracać warstwy kostki.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Użyj zakładki AI, aby automatycznie rozwiązać kostkę."

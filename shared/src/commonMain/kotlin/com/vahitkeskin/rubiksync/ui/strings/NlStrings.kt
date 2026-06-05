@@ -117,6 +117,7 @@ val NlStrings = AppStrings(
     showcaseEditableText = "Tik op het slotpictogram om kubus bewerken in/uit te schakelen.",
     showcaseSoundText = "Tik op het geluidspictogram om het rotatiegeluid in/uit te schakelen.",
     showcaseSettingsText = "Open instellingen om thema en taal te wijzigen.",
+    showcaseInteractiveCubeText = "Draai de hele kubus met twee vingers, of draai specifieke rijen en kolommen met één vinger.",
     showcaseMovesText = "Gebruik dit paneel om de kubuslagen te draaien.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Gebruik het AI-tabblad om je kubus automatisch op te lossen."

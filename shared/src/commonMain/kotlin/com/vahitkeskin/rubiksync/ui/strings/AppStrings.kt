@@ -117,6 +117,7 @@ data class AppStrings(
     val showcaseEditableText: String,
     val showcaseSoundText: String,
     val showcaseSettingsText: String,
+    val showcaseInteractiveCubeText: String,
     val showcaseMovesText: String,
     val showcaseActionsText: String,
     val showcaseSolveText: String

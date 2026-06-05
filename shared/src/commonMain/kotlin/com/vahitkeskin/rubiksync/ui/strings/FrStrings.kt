@@ -117,6 +117,7 @@ val FrStrings = AppStrings(
     showcaseEditableText = "Appuyez sur l'icône de verrouillage pour activer/désactiver la modification du cube.",
     showcaseSoundText = "Appuyez sur l'icône du son pour activer/désactiver le son de rotation.",
     showcaseSettingsText = "Ouvrez les paramètres pour changer le thème et la langue.",
+    showcaseInteractiveCubeText = "Faites pivoter tout le cube avec deux doigts, ou tournez des lignes et des couloirs spécifiques avec un doigt.",
     showcaseMovesText = "Utilisez ce panneau pour faire tourner les couches du cube.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Utilisez l'onglet IA para résoudre automatiquement votre cube."

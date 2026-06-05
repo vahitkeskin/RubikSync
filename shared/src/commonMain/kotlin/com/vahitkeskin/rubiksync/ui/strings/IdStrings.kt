@@ -117,6 +117,7 @@ val IdStrings = AppStrings(
     showcaseEditableText = "Ketuk ikon kunci untuk mengaktifkan atau menonaktifkan pengeditan kubus.",
     showcaseSoundText = "Ketuk ikon suara untuk mengaktifkan atau menonaktifkan suara rotasi.",
     showcaseSettingsText = "Buka pengaturan untuk mengubah tema dan bahasa.",
+    showcaseInteractiveCubeText = "Putar seluruh kubus dengan dua jari, atau putar baris dan kolom tertentu dengan satu jari.",
     showcaseMovesText = "Gunakan panel ini untuk memutar lapisan kubus.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Gunakan tab AI untuk menyelesaikan kubus secara otomatis."

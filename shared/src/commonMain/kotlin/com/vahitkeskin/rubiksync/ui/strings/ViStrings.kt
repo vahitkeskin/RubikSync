@@ -117,6 +117,7 @@ val ViStrings = AppStrings(
     showcaseEditableText = "Nhấn biểu tượng khóa để bật/tắt chỉnh sửa khối Rubik.",
     showcaseSoundText = "Nhấn biểu tượng âm thanh để bật/tắt âm thanh xoay.",
     showcaseSettingsText = "Mở cài đặt để thay đổi giao diện và ngôn ngữ.",
+    showcaseInteractiveCubeText = "Xoay toàn bộ khối lập phương bằng hai ngón tay hoặc xoay các hàng và cột cụ thể bằng một ngón tay.",
     showcaseMovesText = "Sử dụng bảng này để xoay các lớp của khối Rubik.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Sử dụng tab AI để giải khối Rubik tự động."

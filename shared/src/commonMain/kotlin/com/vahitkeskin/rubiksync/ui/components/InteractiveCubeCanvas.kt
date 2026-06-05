@@ -17,6 +17,10 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import kotlinx.coroutines.launch
 import kotlin.math.PI
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun InteractiveCubeCanvas(
@@ -54,7 +58,26 @@ fun InteractiveCubeCanvas(
         )
     }
 
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier
+            .onGloballyPositioned { coords ->
+                if (appState.showcaseStep == 4 && !appState.isShowcaseCompleted) {
+                    val pos = coords.positionInRoot()
+                    val size = coords.size
+                    appState.targetBounds = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                    appState.targetCornerRadius = 16.dp
+                }
+            }
+    ) {
+        AuraBalloon(
+            text = appState.strings.showcaseInteractiveCubeText,
+            isVisible = appState.showcaseStep == 4 && !appState.isShowcaseCompleted,
+            isBelow = true,
+            onDismiss = {
+                appState.advanceShowcase()
+            }
+        )
+
         // Ambient glow background
         Box(
             modifier = Modifier

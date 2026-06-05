@@ -117,6 +117,7 @@ val ArStrings = AppStrings(
     showcaseEditableText = "انقر على أيقونة القفل لتفعيل أو تعطيل تعديل المكعب.",
     showcaseSoundText = "انقر على أيقونة الصوت لتشغيل أو إيقاف صوت الدوران.",
     showcaseSettingsText = "افتح الإعدادات لتغيير السمة واللغة.",
+    showcaseInteractiveCubeText = "اسحب بإصبعين لتدوير المكعب بالكامل، أو بإصبع واحد لتدوير صفوف وأعمدة محددة.",
     showcaseMovesText = "استخدم هذه اللوحة لتدوير طبقات المكعب.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "استخدم علامة تبويب الذكاء الاصطناعي لحل المكعب تلقائيًا."

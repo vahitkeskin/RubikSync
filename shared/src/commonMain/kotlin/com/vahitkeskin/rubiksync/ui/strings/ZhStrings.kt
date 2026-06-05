@@ -117,6 +117,7 @@ val ZhStrings = AppStrings(
     showcaseEditableText = "点击锁定图标启用或禁用魔方编辑。",
     showcaseSoundText = "点击声音图标开启或关闭旋转声音。",
     showcaseSettingsText = "打开设置更改主题和语言。",
+    showcaseInteractiveCubeText = "用双指旋转整个魔方，用单指转动特定的行或列。",
     showcaseMovesText = "使用此面板旋转魔方层。",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "使用AI标签自动解魔方。"

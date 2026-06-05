@@ -117,6 +117,7 @@ val EnStrings = AppStrings(
     showcaseEditableText = "Tap the lock icon to enable or disable cube editing.",
     showcaseSoundText = "Tap the sound icon to toggle rotation sound on or off.",
     showcaseSettingsText = "Open settings to change theme and language preferences.",
+    showcaseInteractiveCubeText = "Rotate the entire cube with two fingers, or turn specific rows and columns with one finger.",
     showcaseMovesText = "Use this panel to rotate the cube layers.",
     showcaseActionsText = "Use this panel to scramble, undo moves, or reset the cube.",
     showcaseSolveText = "Use the AI tab to automatically solve your cube."

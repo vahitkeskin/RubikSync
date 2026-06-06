@@ -138,4 +138,6 @@ val PtStrings = AppStrings(
     showcaseScannerPreview = "Revise as cores classificadas aqui. Se houver um quadrado incorreto, clique nele para corrigi-lo.",
     showcaseScannerAction = "Use estes botões de navegação para prosseguir para a próxima face ou concluir a digitalização.",
     skipShowcase = "Pular tutorial",
+    bestTimesTitle = "Melhores tempos",
+    movesCountLabel = "%s movimentos",
 )

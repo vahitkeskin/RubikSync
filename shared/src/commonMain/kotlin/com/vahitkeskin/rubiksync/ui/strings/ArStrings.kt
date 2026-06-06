@@ -138,4 +138,6 @@ val ArStrings = AppStrings(
     showcaseScannerPreview = "راجع الألوان المصنفة هنا. إذا كان هناك مربع تم تحديده بشكل خاطئ، انقر عليه لتصحيحه.",
     showcaseScannerAction = "استخدم أزرار التنقل هذه للانتقال إلى الوجه التالي أو إكمال المسح.",
     skipShowcase = "تخطي التعليمات",
+    bestTimesTitle = "أفضل الأوقات",
+    movesCountLabel = "%s حركات",
 )

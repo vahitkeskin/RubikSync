@@ -138,4 +138,6 @@ val PlStrings = AppStrings(
     showcaseScannerPreview = "Sprawdź tutaj rozpoznane kolory. Jeśli kwadrat został błędnie zidentyfikowany, kliknij go, aby to poprawić.",
     showcaseScannerAction = "Użyj tych przycisków nawigacyjnych, aby przejść do następnej ściany lub zakończyć skanowanie.",
     skipShowcase = "Pomiń samouczek",
+    bestTimesTitle = "Najlepsze czasy",
+    movesCountLabel = "%s ruchów",
 )

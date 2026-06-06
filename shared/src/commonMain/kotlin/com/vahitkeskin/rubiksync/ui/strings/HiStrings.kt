@@ -138,4 +138,6 @@ val HiStrings = AppStrings(
     showcaseScannerPreview = "यहाँ वर्गीकृत रंगों की समीक्षा करें। यदि कोई गलत पहचान वाला वर्ग है, तो उसे सुधारने के लिए उस पर क्लिक करें।",
     showcaseScannerAction = "अगले चेहरे पर जाने या स्कैन पूरा करने के लिए इन नेविगेशन बटनों का उपयोग करें।",
     skipShowcase = "ट्यूटोरियल छोड़ें",
+    bestTimesTitle = "सबसे अच्छा समय",
+    movesCountLabel = "%s चालें",
 )

@@ -138,4 +138,6 @@ val ThStrings = AppStrings(
     showcaseScannerPreview = "ตรวจสอบสีที่จำแนกได้ที่นี่ หากมีช่องที่ระบุสีผิด ให้คลิกเพื่อแก้ไข",
     showcaseScannerAction = "ใช้ปุ่มนำทางเหล่านี้เพื่อไปยังหน้าถัดไปหรือสแกนให้เสร็จสิ้น",
     skipShowcase = "ข้ามคำแนะนำ",
+    bestTimesTitle = "เวลาที่ดีที่สุด",
+    movesCountLabel = "%s ครั้ง",
 )

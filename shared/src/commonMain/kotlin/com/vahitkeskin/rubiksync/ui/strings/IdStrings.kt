@@ -138,4 +138,6 @@ val IdStrings = AppStrings(
     showcaseScannerPreview = "Tinjau warna yang diklasifikasikan di sini. Jika ada kotak yang salah teridentifikasi, klik untuk memperbaikinya.",
     showcaseScannerAction = "Gunakan tombol navigasi ini untuk melanjutkan ke permukaan berikutnya atau menyelesaikan pemindaian.",
     skipShowcase = "Lewati Panduan",
+    bestTimesTitle = "Waktu Terbaik",
+    movesCountLabel = "%s langkah",
 )

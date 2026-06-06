@@ -138,4 +138,6 @@ val ZhStrings = AppStrings(
     showcaseScannerPreview = "在此处检查识别出的颜色。如果有识别错误的方块，点击它可以进行修正。",
     showcaseScannerAction = "使用这些导航按钮进入下一个表面或完成扫描。",
     skipShowcase = "跳过教程",
+    bestTimesTitle = "最佳成绩",
+    movesCountLabel = "%s 步",
 )

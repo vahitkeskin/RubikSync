@@ -138,4 +138,6 @@ val KoStrings = AppStrings(
     showcaseScannerPreview = "분류된 색상을 여기서 확인하세요. 잘못 인식된 사각형이 있으면 클릭하여 수정하세요.",
     showcaseScannerAction = "다음 면으로 이동하거나 스캔을 완료하려면 이 탐색 버튼들을 사용하세요.",
     skipShowcase = "튜토리얼 건너뛰기",
+    bestTimesTitle = "최고 기록",
+    movesCountLabel = "%s 수",
 )

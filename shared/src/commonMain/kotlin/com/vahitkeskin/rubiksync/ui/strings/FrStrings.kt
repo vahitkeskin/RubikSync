@@ -138,4 +138,6 @@ val FrStrings = AppStrings(
     showcaseScannerPreview = "Vérifiez les couleurs classées ici. Si un carré est mal identifié, cliquez dessus pour le corriger.",
     showcaseScannerAction = "Utilisez ces boutons de navigation pour passer à la face suivante ou terminer la numérisation.",
     skipShowcase = "Passer le didacticiel",
+    bestTimesTitle = "Meilleurs temps",
+    movesCountLabel = "%s mouvements",
 )

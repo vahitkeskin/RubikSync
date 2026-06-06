@@ -57,3 +57,5 @@ expect fun initCubeSound()
 expect fun playCubeRotateSound()
 
 expect fun releaseCubeSound()
+
+expect fun currentTimeMillis(): Long

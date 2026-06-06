@@ -66,6 +66,8 @@ private class FakeRubikPersistence : RubikPersistence {
 
     override suspend fun saveShakeToScramble(enabled: Boolean) {}
     override suspend fun loadShakeToScramble(): Boolean? = true
+    override suspend fun saveSolveSession(durationMillis: Long, moveCount: Int, timestamp: Long) {}
+    override suspend fun loadSolveSessions(): List<com.vahitkeskin.rubiksync.utils.SolveSession> = emptyList()
 }
 
 fun initializePreviewPersistence() {
@@ -137,7 +139,9 @@ fun rememberPreviewRubikAppState(
             saveShowcaseCompletedUseCase = SaveShowcaseCompletedUseCase(settingsRepo),
             getCameraSettingsUseCase = GetCameraSettingsUseCase(settingsRepo),
             saveCameraSettingsUseCase = SaveCameraSettingsUseCase(settingsRepo),
-            saveShakeToScrambleUseCase = SaveShakeToScrambleUseCase(settingsRepo)
+            saveShakeToScrambleUseCase = SaveShakeToScrambleUseCase(settingsRepo),
+            saveSolveSessionUseCase = SaveSolveSessionUseCase(),
+            getSolveSessionsUseCase = GetSolveSessionsUseCase()
         ).apply {
             // Mark theme as loaded to bypass loading screens
             updateShowSplashScreen(false)

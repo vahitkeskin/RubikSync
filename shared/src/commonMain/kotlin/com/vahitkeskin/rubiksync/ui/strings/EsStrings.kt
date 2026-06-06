@@ -138,4 +138,6 @@ val EsStrings = AppStrings(
     showcaseScannerPreview = "Revise los colores clasificados aquí. Si hay un cuadrado mal identificado, haga clic en él para corregirlo.",
     showcaseScannerAction = "Use estos botones de navegación para pasar a la siguiente cara o completar el escaneo.",
     skipShowcase = "Omitir tutorial",
+    bestTimesTitle = "Mejores tiempos",
+    movesCountLabel = "%s movimientos",
 )

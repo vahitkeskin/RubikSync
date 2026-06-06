@@ -72,7 +72,16 @@ interface RubikPersistence {
 
     suspend fun saveShakeToScramble(enabled: Boolean)
     suspend fun loadShakeToScramble(): Boolean?
+
+    suspend fun saveSolveSession(durationMillis: Long, moveCount: Int, timestamp: Long)
+    suspend fun loadSolveSessions(): List<SolveSession>
 }
+
+data class SolveSession(
+    val durationMillis: Long,
+    val moveCount: Int,
+    val timestamp: Long
+)
 
 object RubikPersistenceRegistry {
     var persistence: RubikPersistence? = null

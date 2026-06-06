@@ -138,4 +138,6 @@ val AzStrings = AppStrings(
     showcaseScannerPreview = "Təsnif edilmiş rəngləri buradan yoxlayın. Səhv müəyyən edilmiş kvadrat varsa, düzəltmək üçün üzərinə klikləyin.",
     showcaseScannerAction = "Növbəti üzə keçmək və ya skan etməyi tamamlamaq üçün bu naviqasiya düymələrindən istifadə edin.",
     skipShowcase = "Tanıtımı Keç",
+    bestTimesTitle = "Ən yaxşı vaxtlar",
+    movesCountLabel = "%s gediş",
 )

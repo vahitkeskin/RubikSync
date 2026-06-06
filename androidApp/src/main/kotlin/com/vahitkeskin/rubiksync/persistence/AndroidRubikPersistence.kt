@@ -23,6 +23,7 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
 
     private val database = RubikDatabase.getDatabase(context)
     private val cubeDao = database.cubeStateDao()
+    private val solveSessionDao = database.solveSessionDao()
 
     private val KEY_YAW = floatPreferencesKey("yaw")
     private val KEY_PITCH = floatPreferencesKey("pitch")
@@ -195,6 +196,26 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
         }
     }
 
+
+    override suspend fun saveSolveSession(durationMillis: Long, moveCount: Int, timestamp: Long) {
+        solveSessionDao.insertSession(
+            SolveSessionEntity(
+                durationMillis = durationMillis,
+                moveCount = moveCount,
+                timestamp = timestamp
+            )
+        )
+    }
+
+    override suspend fun loadSolveSessions(): List<com.vahitkeskin.rubiksync.utils.SolveSession> {
+        return solveSessionDao.getBestSessions().map {
+            com.vahitkeskin.rubiksync.utils.SolveSession(
+                durationMillis = it.durationMillis,
+                moveCount = it.moveCount,
+                timestamp = it.timestamp
+            )
+        }
+    }
 
     // --- Custom Serializers / Deserializers ---
 

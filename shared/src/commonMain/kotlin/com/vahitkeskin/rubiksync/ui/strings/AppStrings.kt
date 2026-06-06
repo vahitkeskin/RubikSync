@@ -138,6 +138,8 @@ data class AppStrings(
     val showcaseScannerPreview: String,
     val showcaseScannerAction: String,
     val skipShowcase: String,
+    val bestTimesTitle: String,
+    val movesCountLabel: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

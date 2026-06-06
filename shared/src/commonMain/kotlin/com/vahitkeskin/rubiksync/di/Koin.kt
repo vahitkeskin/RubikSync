@@ -31,4 +31,6 @@ val appModule = module {
     factory { SaveShakeToScrambleUseCase(get()) }
     factory { GetCameraSettingsUseCase(get()) }
     factory { SaveCameraSettingsUseCase(get()) }
+    factory { SaveSolveSessionUseCase() }
+    factory { GetSolveSessionsUseCase() }
 }

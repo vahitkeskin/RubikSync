@@ -902,6 +902,8 @@ actual fun releaseCubeSound() {
     // No-op on iOS
 }
 
+actual fun currentTimeMillis(): Long = (NSDate().timeIntervalSince1970 * 1000).toLong()
+
 @Preview
 @Composable
 fun CameraPreviewDialogIosPreview() {

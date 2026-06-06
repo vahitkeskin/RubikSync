@@ -210,6 +210,8 @@ actual fun releaseCubeSound() {
     // No-op on JVM/Desktop
 }
 
+actual fun currentTimeMillis(): Long = System.currentTimeMillis()
+
 @androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun CameraCaptureOrPickerJvmPreview() {

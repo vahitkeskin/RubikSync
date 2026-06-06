@@ -826,6 +826,8 @@ actual fun releaseCubeSound() {
     isSoundLoaded = false
 }
 
+actual fun currentTimeMillis(): Long = System.currentTimeMillis()
+
 @androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun CameraCaptureOrPickerPreview() {

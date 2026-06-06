@@ -36,8 +36,16 @@ class RubikAppState(
     private val saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase,
     private val getCameraSettingsUseCase: GetCameraSettingsUseCase,
     private val saveCameraSettingsUseCase: SaveCameraSettingsUseCase,
-    private val saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase
+    private val saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase,
+    private val saveSolveSessionUseCase: SaveSolveSessionUseCase,
+    private val getSolveSessionsUseCase: GetSolveSessionsUseCase
 ) {
+    var solveStartTime by mutableStateOf<Long?>(null)
+        private set
+    
+    var solveSessions by mutableStateOf<List<com.vahitkeskin.rubiksync.utils.SolveSession>>(emptyList())
+        private set
+    
     // Shake to Scramble State
     var isShakeToScrambleEnabled by mutableStateOf(true)
         private set
@@ -204,6 +212,15 @@ class RubikAppState(
     val manualMoves: List<MoveType> get() = _manualMoves
 
     // --- Public State Mutators ---
+
+    fun loadStats() {
+        coroutineScope.launch(Dispatchers.Default) {
+            val sessions = getSolveSessionsUseCase()
+            withContext(Dispatchers.Main) {
+                solveSessions = sessions
+            }
+        }
+    }
 
     fun updateYaw(value: Float) {
         yaw = value
@@ -547,7 +564,21 @@ class RubikAppState(
     }
 
     init {
-        cubeState.onStateChanged = { saveCurrentState() }
+        cubeState.onStateChanged = {
+            if (isSolved && solveStartTime != null) {
+                val duration = com.vahitkeskin.rubiksync.currentTimeMillis() - solveStartTime!!
+                solveStartTime = null
+                coroutineScope.launch(Dispatchers.Default) {
+                    saveSolveSessionUseCase(duration, totalMoveCount, com.vahitkeskin.rubiksync.currentTimeMillis())
+                    loadStats()
+                }
+            } else if (!isSolved && !isInitialState && solveStartTime == null) {
+                solveStartTime = com.vahitkeskin.rubiksync.currentTimeMillis()
+            }
+            saveCurrentState()
+        }
+
+        loadStats()
 
         coroutineScope.launch(Dispatchers.Default) {
             try {
@@ -626,7 +657,9 @@ fun rememberRubikAppState(
     saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase = koinInject(),
     getCameraSettingsUseCase: GetCameraSettingsUseCase = koinInject(),
     saveCameraSettingsUseCase: SaveCameraSettingsUseCase = koinInject(),
-    saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase = koinInject()
+    saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase = koinInject(),
+    saveSolveSessionUseCase: SaveSolveSessionUseCase = koinInject(),
+    getSolveSessionsUseCase: GetSolveSessionsUseCase = koinInject()
 ) = remember(
     cubeState,
     coroutineScope,
@@ -640,7 +673,9 @@ fun rememberRubikAppState(
     saveShowcaseCompletedUseCase,
     getCameraSettingsUseCase,
     saveCameraSettingsUseCase,
-    saveShakeToScrambleUseCase
+    saveShakeToScrambleUseCase,
+    saveSolveSessionUseCase,
+    getSolveSessionsUseCase
 ) {
     RubikAppState(
         cubeState = cubeState,
@@ -655,6 +690,8 @@ fun rememberRubikAppState(
         saveShowcaseCompletedUseCase = saveShowcaseCompletedUseCase,
         getCameraSettingsUseCase = getCameraSettingsUseCase,
         saveCameraSettingsUseCase = saveCameraSettingsUseCase,
-        saveShakeToScrambleUseCase = saveShakeToScrambleUseCase
+        saveShakeToScrambleUseCase = saveShakeToScrambleUseCase,
+        saveSolveSessionUseCase = saveSolveSessionUseCase,
+        getSolveSessionsUseCase = getSolveSessionsUseCase
     )
 }

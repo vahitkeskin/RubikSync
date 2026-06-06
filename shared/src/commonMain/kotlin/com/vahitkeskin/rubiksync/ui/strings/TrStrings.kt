@@ -138,4 +138,6 @@ val TrStrings = AppStrings(
     showcaseScannerPreview = "Algılanan renkleri buradan kontrol edin. Gerekirse kareye tıklayarak düzeltebilirsiniz.",
     showcaseScannerAction = "Sonraki yüze geçmek veya taramayı tamamlamak için bu butonları kullanın.",
     skipShowcase = "Tanıtım Atla",
+    bestTimesTitle = "En İyi Süreler",
+    movesCountLabel = "%s hamle",
 )

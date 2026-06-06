@@ -15,7 +15,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -50,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.solver.RubikSolver
@@ -125,6 +125,8 @@ fun ControlPanel(
                 
                 // Timer Controls
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Timer Controls
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Box(
                         modifier = Modifier
                             .height(44.dp)
@@ -135,6 +137,7 @@ fun ControlPanel(
                             .clickable { appState.toggleTimer() },
                         contentAlignment = Alignment.Center
                     ) {
+                        // Using text for now as icon library issue persisted
                         Text(
                             text = if (appState.solveStartTime != null) "⏸" else "▶",
                             color = RubikTheme.colors.textPrimary,
@@ -157,6 +160,7 @@ fun ControlPanel(
                             fontSize = 18.sp
                         )
                     }
+                }
                 }
             }
         }

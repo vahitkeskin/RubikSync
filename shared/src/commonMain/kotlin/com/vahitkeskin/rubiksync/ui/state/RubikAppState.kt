@@ -426,7 +426,6 @@ class RubikAppState(
                 }
             } else if (!isSolved && !isInitialState && solveStartTime == null) {
                 solveStartTime = com.vahitkeskin.rubiksync.currentTimeMillis()
-                startTimer()
             }
             saveCurrentState()
         }

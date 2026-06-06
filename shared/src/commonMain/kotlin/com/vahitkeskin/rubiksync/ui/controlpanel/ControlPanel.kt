@@ -1,13 +1,21 @@
 package com.vahitkeskin.rubiksync.ui.controlpanel
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -81,12 +89,7 @@ fun ControlPanel(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            .background(RubikTheme.colors.backgroundPanel)
-            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -97,9 +100,14 @@ fun ControlPanel(
             exit = shrinkVertically() + fadeOut()
         ) {
             Row(
-                modifier = Modifier.padding(vertical = 4.dp),
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(RubikTheme.colors.backgroundPanel)
+                    .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 val ms = appState.currentSolveDuration
                 val minutes = (ms / 60000) % 60
@@ -110,77 +118,55 @@ fun ControlPanel(
                 Text(
                     text = timeString,
                     color = RubikTheme.colors.accentOrange,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
                 )
                 
                 // Timer Controls
-                Text(
-                    text = if (appState.solveStartTime != null) "⏸" else "▶",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(RubikTheme.colors.backgroundPrimary)
-                        .padding(8.dp)
-                        .clickable { appState.toggleTimer() },
-                    color = RubikTheme.colors.textPrimary
-                )
-                Text(
-                    text = "⏹",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(RubikTheme.colors.backgroundPrimary)
-                        .padding(8.dp)
-                        .clickable { appState.resetTimer() },
-                    color = RubikTheme.colors.accentRed
-                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(RubikTheme.colors.backgroundPrimary)
+                            .clickable { appState.toggleTimer() }
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (appState.solveStartTime != null) "⏸" else "▶",
+                            color = RubikTheme.colors.textPrimary,
+                            fontSize = 16.sp
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(RubikTheme.colors.backgroundPrimary)
+                            .clickable { appState.resetTimer() }
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "⏹",
+                            color = RubikTheme.colors.accentRed,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
             }
         }
 
-        // Timer display - Animated Visibility
-        AnimatedVisibility(
-            visible = !appState.isSolved && !appState.isInitialState,
-            enter = expandVertically() + fadeIn(),
-            exit = shrinkVertically() + fadeOut()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                .background(RubikTheme.colors.backgroundPanel)
+                .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row(
-                modifier = Modifier.padding(vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val ms = appState.currentSolveDuration
-                val minutes = (ms / 60000) % 60
-                val seconds = (ms / 1000) % 60
-                val millis = ms % 1000
-                val timeString = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${millis.toString().padStart(3, '0')}"
-                
-                Text(
-                    text = timeString,
-                    color = RubikTheme.colors.accentOrange,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                
-                // Timer Controls
-                Text(
-                    text = if (appState.solveStartTime != null) "⏸" else "▶",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(RubikTheme.colors.backgroundPrimary)
-                        .padding(8.dp)
-                        .clickable { appState.toggleTimer() },
-                    color = RubikTheme.colors.textPrimary
-                )
-                Text(
-                    text = "⏹",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(RubikTheme.colors.backgroundPrimary)
-                        .padding(8.dp)
-                        .clickable { appState.resetTimer() },
-                    color = RubikTheme.colors.accentRed
-                )
-            }
-        }
 
         // Tab Selector
         Row(
@@ -228,66 +214,241 @@ fun ControlPanel(
                     // Actions
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         val isScrambleEnabled = canEditCube && !cubeState.isAnimating
-                        Box(modifier = Modifier.weight(1f).height(44.dp).background(if (isScrambleEnabled) Color.Transparent else RubikTheme.colors.buttonDisabledBg).clip(RoundedCornerShape(12.dp)).combinedClickable(
-                            onClick = { if (isScrambleEnabled) { coroutineScope.launch { appState.clearManualMoves(); cubeState.scramble() } } }
-                        ), contentAlignment = Alignment.Center) {
-                            Text(text = appState.strings.scrambleButton, color = if (isScrambleEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        if (isScrambleEnabled) Color.Transparent
+                                        else RubikTheme.colors.buttonDisabledBg
+                                    )
+                                    .then(
+                                        if (isScrambleEnabled) Modifier.border(
+                                            1.dp,
+                                            RubikTheme.colors.buttonBorder,
+                                            RoundedCornerShape(12.dp)
+                                        )
+                                        else Modifier
+                                    )
+                                    .combinedClickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = if (isScrambleEnabled) LocalIndication.current else null,
+                                        onClick = {
+                                            if (isScrambleEnabled) {
+                                                coroutineScope.launch {
+                                                    appState.clearManualMoves()
+                                                    cubeState.scramble()
+                                                }
+                                            }
+                                        }
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = appState.strings.scrambleButton,
+                                    color = if (isScrambleEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                         val isUndoEnabled = canEditCube && !cubeState.isAnimating && cubeState.moveHistory.isNotEmpty()
-                        Box(modifier = Modifier.weight(1f).height(44.dp).background(if (isUndoEnabled) Color.Transparent else RubikTheme.colors.buttonDisabledBg).clip(RoundedCornerShape(12.dp)).combinedClickable(
-                            onClick = { if (isUndoEnabled) { coroutineScope.launch { appState.removeLastManualMove(); cubeState.undo() } } }
-                        ), contentAlignment = Alignment.Center) {
-                            Text(text = appState.strings.undoButton, color = if (isUndoEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        if (isUndoEnabled) Color.Transparent
+                                        else RubikTheme.colors.buttonDisabledBg
+                                    )
+                                    .then(
+                                        if (isUndoEnabled) Modifier.border(
+                                            1.dp,
+                                            RubikTheme.colors.buttonBorder,
+                                            RoundedCornerShape(12.dp)
+                                        )
+                                        else Modifier
+                                    )
+                                    .combinedClickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = if (isUndoEnabled) LocalIndication.current else null,
+                                        onClick = {
+                                            if (isUndoEnabled) {
+                                                coroutineScope.launch {
+                                                    appState.removeLastManualMove()
+                                                    cubeState.undo()
+                                                }
+                                            }
+                                        }
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = appState.strings.undoButton,
+                                    color = if (isUndoEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                         val isResetEnabled = !cubeState.isAnimating && !appState.isInitialState
-                        Box(modifier = Modifier.weight(1f).height(44.dp).background(if (isResetEnabled) Color.Transparent else RubikTheme.colors.buttonDisabledBg).clip(RoundedCornerShape(12.dp)).combinedClickable(
-                            onClick = { if (isResetEnabled) { coroutineScope.launch { cubeState.resetAnimated(); appState.clearManualMoves(); appState.updateTotalMoveCount(0) } } }
-                        ), contentAlignment = Alignment.Center) {
-                            Text(text = appState.strings.resetButton, color = if (isResetEnabled) RubikTheme.colors.accentRed else RubikTheme.colors.buttonDisabledText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        if (isResetEnabled) Color.Transparent
+                                        else RubikTheme.colors.buttonDisabledBg
+                                    )
+                                    .then(
+                                        if (isResetEnabled) Modifier.border(
+                                            1.dp,
+                                            RubikTheme.colors.accentRed.copy(alpha = 0.35f),
+                                            RoundedCornerShape(12.dp)
+                                        ) else Modifier.border(
+                                            1.dp,
+                                            RubikTheme.colors.buttonBorder,
+                                            RoundedCornerShape(12.dp)
+                                        )
+                                    )
+                                    .combinedClickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = if (isResetEnabled) LocalIndication.current else null,
+                                        onClick = {
+                                            if (isResetEnabled) {
+                                                coroutineScope.launch {
+                                                    cubeState.resetAnimated()
+                                                    appState.clearManualMoves()
+                                                    appState.updateTotalMoveCount(0)
+                                                }
+                                            }
+                                        }
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = appState.strings.resetButton,
+                                    color = if (isResetEnabled) RubikTheme.colors.accentRed else RubikTheme.colors.buttonDisabledText,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
                     }
                 }
                 2 -> {
                     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                             // Complex buttons back
                             val isDesignEnabled = canEditCube && !cubeState.isAnimating
-                            Box(modifier = Modifier.weight(1f).height(44.dp).clip(RoundedCornerShape(12.dp)).background(if (isDesignEnabled) RubikTheme.colors.backgroundPrimary else RubikTheme.colors.buttonDisabledBg).combinedClickable(
-                                onClick = { if (isDesignEnabled) appState.updateShowEditorDialog(true) }
-                            ), contentAlignment = Alignment.Center) {
-                                Text(text = appState.strings.designButton, fontSize = 11.sp, color = if (isDesignEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText, fontWeight = FontWeight.Bold)
-                            }
-                            
-                            val isSolveEnabled = canEditCube && !cubeState.isAnimating && !appState.isRecalculating && !appState.isSolved
-                            Box(modifier = Modifier.weight(1f).height(44.dp).clip(RoundedCornerShape(12.dp)).background(if (isSolveEnabled) RubikTheme.colors.backgroundPrimary else RubikTheme.colors.buttonDisabledBg).combinedClickable(
-                                onClick = {
-                                    if (isSolveEnabled) {
-                                        appState.updateRecalculating(true)
-                                        coroutineScope.launch(Dispatchers.Default) {
-                                            try {
-                                                val currentSnapshot = cubeState.toSnapshot()
-                                                val solver = RubikSolver()
-                                                val lblDetails = solver.solveAnnotated(currentSnapshot)
-                                                withContext(Dispatchers.Main) {
-                                                    appState.updateActiveSolution(lblDetails?.map { it.move })
-                                                    appState.updateActiveSolutionDetails(lblDetails)
-                                                    appState.updateRecalculating(false)
-                                                }
-                                            } catch (e: Throwable) {
-                                                withContext(Dispatchers.Main) { appState.updateRecalculating(false) }
+                            Box(modifier = Modifier.weight(1f).height(44.dp)) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            if (isDesignEnabled) {
+                                                if (RubikTheme.colors.isDark) Color(0xFF1E3A8A) else Color(0xFFDBEAFE)
+                                            } else {
+                                                RubikTheme.colors.buttonDisabledBg
                                             }
-                                        }
+                                        )
+                                        .clickable {
+                                            if (isDesignEnabled) {
+                                                appState.updateShowEditorDialog(true)
+                                            }
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = appState.strings.designButton,
+                                        color = if (isDesignEnabled) RubikTheme.colors.accentBlue else RubikTheme.colors.buttonDisabledText,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+
+                            val isSolveEnabled =
+                                canEditCube && !cubeState.isAnimating && !appState.isRecalculating && !appState.isSolved
+                            Box(modifier = Modifier.weight(1f).height(44.dp)) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            if (isSolveEnabled) {
+                                                if (RubikTheme.colors.isDark) Color(0xFF065F46) else Color(0xFFD1FAE5)
+                                            } else {
+                                                RubikTheme.colors.buttonDisabledBg
+                                            }
+                                        )
+                                        .clickable {
+                                            if (isSolveEnabled) {
+                                                appState.updateRecalculating(true)
+                                                coroutineScope.launch(Dispatchers.Default) {
+                                                    try {
+                                                        val currentSnapshot = cubeState.toSnapshot()
+                                                        val solver = RubikSolver()
+                                                        val lblDetails = solver.solveAnnotated(currentSnapshot)
+                                                        withContext(Dispatchers.Main) {
+                                                            appState.updateActiveSolution(lblDetails?.map { it.move })
+                                                            appState.updateActiveSolutionDetails(lblDetails)
+                                                            appState.updateRecalculating(false)
+                                                        }
+                                                    } catch (e: Throwable) {
+                                                        withContext(Dispatchers.Main) {
+                                                            appState.updateRecalculating(false)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (appState.isRecalculating) {
+                                        CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                                    } else {
+                                        Text(
+                                            text = appState.strings.solveButton,
+                                            color = if (isSolveEnabled) RubikTheme.colors.accentGreen else RubikTheme.colors.buttonDisabledText,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
-                            ), contentAlignment = Alignment.Center) {
-                                if (appState.isRecalculating) CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                                else Text(text = appState.strings.solveButton, fontSize = 11.sp, color = if (isSolveEnabled) RubikTheme.colors.textPrimary else RubikTheme.colors.buttonDisabledText, fontWeight = FontWeight.Bold)
                             }
                         }
                         
-                        // STATS
                         if (appState.solveSessions.isNotEmpty()) {
-                            Text(text = appState.strings.bestTimesTitle, color = RubikTheme.colors.textPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = appState.strings.bestTimesTitle,
+                                color = RubikTheme.colors.textPrimary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                             appState.solveSessions.take(3).forEach { session ->
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                     Text("${session.durationMillis / 1000}s", color = RubikTheme.colors.textSecondary, fontSize = 11.sp)
@@ -302,4 +463,5 @@ fun ControlPanel(
 
         SpeedControl(appState = appState, accentColor = RubikTheme.colors.accentOrange)
     }
+}
 }

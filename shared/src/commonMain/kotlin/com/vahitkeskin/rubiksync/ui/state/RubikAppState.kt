@@ -465,7 +465,13 @@ class RubikAppState(
 
     private var timerJob: kotlinx.coroutines.Job? = null
 
+    private var lastToggleTime = 0L
+
     fun toggleTimer() {
+        val now = com.vahitkeskin.rubiksync.currentTimeMillis()
+        if (now - lastToggleTime < 300) return
+        lastToggleTime = now
+
         if (solveStartTime != null) {
             // Stop
             solveStartTime = null

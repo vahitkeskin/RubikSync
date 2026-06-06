@@ -199,7 +199,9 @@ fun ControlPanel(
         // Tab Content Pager
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize()
         ) { page ->
             when (page) {
                 0 -> {

@@ -127,30 +127,34 @@ fun ControlPanel(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
+                            .height(44.dp)
+                            .width(60.dp)
+                            .clip(RoundedCornerShape(12.dp))
                             .background(RubikTheme.colors.backgroundPrimary)
-                            .clickable { appState.toggleTimer() }
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                            .border(1.dp, RubikTheme.colors.buttonBorder, RoundedCornerShape(12.dp))
+                            .clickable { appState.toggleTimer() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = if (appState.solveStartTime != null) "⏸" else "▶",
                             color = RubikTheme.colors.textPrimary,
-                            fontSize = 16.sp
+                            fontSize = 18.sp
                         )
                     }
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
+                            .height(44.dp)
+                            .width(60.dp)
+                            .clip(RoundedCornerShape(12.dp))
                             .background(RubikTheme.colors.backgroundPrimary)
-                            .clickable { appState.resetTimer() }
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                            .border(1.dp, RubikTheme.colors.buttonBorder, RoundedCornerShape(12.dp))
+                            .clickable { appState.resetTimer() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "⏹",
                             color = RubikTheme.colors.accentRed,
-                            fontSize = 16.sp
+                            fontSize = 18.sp
                         )
                     }
                 }

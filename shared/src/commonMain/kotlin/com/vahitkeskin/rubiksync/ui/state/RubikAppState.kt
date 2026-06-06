@@ -43,6 +43,9 @@ class RubikAppState(
     var solveStartTime by mutableStateOf<Long?>(null)
         private set
     
+    var currentSolveDuration by mutableStateOf(0L)
+        private set
+    
     var solveSessions by mutableStateOf<List<com.vahitkeskin.rubiksync.utils.SolveSession>>(emptyList())
         private set
     
@@ -222,162 +225,65 @@ class RubikAppState(
         }
     }
 
-    fun updateYaw(value: Float) {
-        yaw = value
-    }
-
-    fun updatePitch(value: Float) {
-        pitch = value
-    }
-
-    fun updateCameraDistance(value: Float) {
-        cameraDistance = value
-    }
-
-    fun updatePanX(value: Float) {
-        panX = value
-    }
-
-    fun updatePanY(value: Float) {
-        panY = value
-    }
+    fun updateYaw(value: Float) { yaw = value }
+    fun updatePitch(value: Float) { pitch = value }
+    fun updateCameraDistance(value: Float) { cameraDistance = value }
+    fun updatePanX(value: Float) { panX = value }
+    fun updatePanY(value: Float) { panY = value }
 
     fun updateCameraOrbit(dy: Float, dp: Float) {
         yaw = (yaw + dy) % (2f * kotlin.math.PI.toFloat())
         pitch = (pitch + dp).coerceIn(-1.4f, 1.4f)
     }
 
-    fun updateCameraZoom(dz: Float) {
-        cameraDistance = (cameraDistance + dz).coerceIn(4f, 12f)
-    }
+    fun updateCameraZoom(dz: Float) { cameraDistance = (cameraDistance + dz).coerceIn(4f, 12f) }
 
     fun updateCameraPan(dx: Float, dy: Float) {
         panX += dx
         panY += dy
     }
 
-    fun updateShowEditorDialog(show: Boolean) {
-        showEditorDialog = show
-    }
-
-    fun updateShowScannerWizard(show: Boolean) {
-        showScannerWizard = show
-    }
-
-    fun updateShowSplashScreen(show: Boolean) {
-        showSplashScreen = show
-    }
-
-    fun updateShowSettingsScreen(show: Boolean) {
-        showSettingsScreen = show
-    }
+    fun updateShowEditorDialog(show: Boolean) { showEditorDialog = show }
+    fun updateShowScannerWizard(show: Boolean) { showScannerWizard = show }
+    fun updateShowSplashScreen(show: Boolean) { showSplashScreen = show }
+    fun updateShowSettingsScreen(show: Boolean) { showSettingsScreen = show }
 
     fun updateEditorFaces(faces: Map<FaceName, Array<Array<CubeColor>>>) {
         editorFaces = faces
         saveCurrentState()
     }
 
-    fun updateSelectedColor(color: CubeColor) {
-        selectedColor = color
-    }
+    fun updateSelectedColor(color: CubeColor) { selectedColor = color }
+    fun updateActiveSolution(solution: List<MoveType>?) { activeSolution = solution }
+    fun updateActiveSolutionDetails(details: List<AnnotatedMove>?) { activeSolutionDetails = details }
+    fun updateCurrentSolutionStep(step: Int) { currentSolutionStep = step }
+    fun incrementSolutionStep() { currentSolutionStep++ }
+    fun updatePlaybackRunning(running: Boolean) { isPlaybackRunning = running }
+    fun updateErrorMessage(message: String?) { errorMessage = message }
+    fun updateInfoMessage(message: String?) { infoMessage = message }
+    fun updateSuccessMessage(message: String?) { successMessage = message }
+    fun updateDetecting(detecting: Boolean) { isDetecting = detecting }
+    fun updateRecalculating(recalculating: Boolean) { isRecalculating = recalculating }
+    fun updateTotalMoveCount(count: Int) { totalMoveCount = count }
+    fun incrementTotalMoveCount() { totalMoveCount++ }
 
-    fun updateActiveSolution(solution: List<MoveType>?) {
-        activeSolution = solution
-    }
-
-    fun updateActiveSolutionDetails(details: List<AnnotatedMove>?) {
-        activeSolutionDetails = details
-    }
-
-    fun updateCurrentSolutionStep(step: Int) {
-        currentSolutionStep = step
-    }
-
-    fun incrementSolutionStep() {
-        currentSolutionStep++
-    }
-
-    fun updatePlaybackRunning(running: Boolean) {
-        isPlaybackRunning = running
-    }
-
-    fun updateErrorMessage(message: String?) {
-        errorMessage = message
-    }
-
-    fun updateInfoMessage(message: String?) {
-        infoMessage = message
-    }
-
-    fun updateSuccessMessage(message: String?) {
-        successMessage = message
-    }
-
-    fun updateDetecting(detecting: Boolean) {
-        isDetecting = detecting
-    }
-
-    fun updateRecalculating(recalculating: Boolean) {
-        isRecalculating = recalculating
-    }
-
-    fun updateTotalMoveCount(count: Int) {
-        totalMoveCount = count
-    }
-
-    fun incrementTotalMoveCount() {
-        totalMoveCount++
-    }
-
-    fun updateShowcaseStep(step: Int) {
-        showcaseStep = step
-    }
-
-    fun updateTargetBounds(bounds: androidx.compose.ui.geometry.Rect?) {
-        targetBounds = bounds
-    }
-
-    fun updateTargetCornerRadius(radius: Dp) {
-        targetCornerRadius = radius
-    }
-
+    fun updateShowcaseStep(step: Int) { showcaseStep = step }
+    fun updateTargetBounds(bounds: androidx.compose.ui.geometry.Rect?) { targetBounds = bounds }
+    fun updateTargetCornerRadius(radius: Dp) { targetCornerRadius = radius }
     fun updateTargetVisuals(bounds: androidx.compose.ui.geometry.Rect?, radius: Dp) {
         targetBounds = bounds
         targetCornerRadius = radius
     }
 
-    fun updateScannerStep(step: Int) {
-        scannerStep = step
-    }
+    fun updateScannerStep(step: Int) { scannerStep = step }
+    fun updateScannedGrids(grids: Map<FaceName, Array<Array<CubeColor>>>) { scannedGrids = grids.toMutableMap() }
+    fun updateScannedRawRGBs(rgbs: Map<FaceName, Array<Array<IntVector3>>>) { scannedRawRGBs = rgbs.toMutableMap() }
+    fun updateScannedFilePaths(paths: Map<FaceName, String>) { scannedFilePaths = paths.toMutableMap() }
+    fun updateGridScales(scales: Map<FaceName, Float>) { gridScales = scales.toMutableMap() }
+    fun updateGridOffsetsX(offsets: Map<FaceName, Float>) { gridOffsetsX = offsets.toMutableMap() }
+    fun updateGridOffsetsY(offsets: Map<FaceName, Float>) { gridOffsetsY = offsets.toMutableMap() }
 
-    fun updateScannedGrids(grids: Map<FaceName, Array<Array<CubeColor>>>) {
-        scannedGrids = grids.toMutableMap()
-    }
-
-    fun updateScannedRawRGBs(rgbs: Map<FaceName, Array<Array<IntVector3>>>) {
-        scannedRawRGBs = rgbs.toMutableMap()
-    }
-
-    fun updateScannedFilePaths(paths: Map<FaceName, String>) {
-        scannedFilePaths = paths.toMutableMap()
-    }
-
-    fun updateGridScales(scales: Map<FaceName, Float>) {
-        gridScales = scales.toMutableMap()
-    }
-
-    fun updateGridOffsetsX(offsets: Map<FaceName, Float>) {
-        gridOffsetsX = offsets.toMutableMap()
-    }
-
-    fun updateGridOffsetsY(offsets: Map<FaceName, Float>) {
-        gridOffsetsY = offsets.toMutableMap()
-    }
-
-    fun addManualMove(move: MoveType) {
-        _manualMoves.add(move)
-    }
-
+    fun addManualMove(move: MoveType) { _manualMoves.add(move) }
     fun removeLastManualMove(): Boolean {
         if (_manualMoves.isNotEmpty()) {
             _manualMoves.removeAt(_manualMoves.size - 1)
@@ -385,132 +291,84 @@ class RubikAppState(
         }
         return false
     }
-
-    fun clearManualMoves() {
-        _manualMoves.clear()
-    }
+    fun clearManualMoves() { _manualMoves.clear() }
 
     fun updateThemeMode(mode: ThemeMode) {
         themeMode = mode
-        coroutineScope.launch(Dispatchers.Default) {
-            saveThemeUseCase(mode.name)
-        }
+        coroutineScope.launch(Dispatchers.Default) { saveThemeUseCase(mode.name) }
     }
 
     fun updateLanguage(lang: AppLanguage) {
         appLanguage = lang
-        coroutineScope.launch(Dispatchers.Default) {
-            saveLanguageUseCase(lang.code)
-        }
+        coroutineScope.launch(Dispatchers.Default) { saveLanguageUseCase(lang.code) }
     }
 
     fun updateCubeEditable(enabled: Boolean) {
         isCubeEditable = enabled
-        if (!enabled) {
-            isPlaybackRunning = false
-        }
-        coroutineScope.launch(Dispatchers.Default) {
-            saveCubeEditableUseCase(enabled)
-        }
+        if (!enabled) isPlaybackRunning = false
+        coroutineScope.launch(Dispatchers.Default) { saveCubeEditableUseCase(enabled) }
     }
 
     fun updateSoundEnabled(enabled: Boolean) {
         isSoundEnabled = enabled
-        coroutineScope.launch(Dispatchers.Default) {
-            saveSoundEnabledUseCase(enabled)
-        }
+        coroutineScope.launch(Dispatchers.Default) { saveSoundEnabledUseCase(enabled) }
     }
 
     fun updateShakeToScramble(enabled: Boolean) {
         isShakeToScrambleEnabled = enabled
-        coroutineScope.launch(Dispatchers.Default) {
-            saveShakeToScrambleUseCase(enabled)
-        }
+        coroutineScope.launch(Dispatchers.Default) { saveShakeToScrambleUseCase(enabled) }
     }
 
     fun updateShowcaseCompleted(completed: Boolean) {
         isShowcaseCompleted = completed
-        coroutineScope.launch(Dispatchers.Default) {
-            saveShowcaseCompletedUseCase(completed)
-        }
+        coroutineScope.launch(Dispatchers.Default) { saveShowcaseCompletedUseCase(completed) }
     }
 
     fun advanceShowcase() {
         if (isShowcaseCompleted) return
         val currentStep = showcaseStep
         coroutineScope.launch {
-            if (currentStep in 1..11) {
-                showcaseStep = -currentStep
-            }
+            if (currentStep in 1..11) showcaseStep = -currentStep
             targetBounds = null
             kotlinx.coroutines.delay(1050)
-            if (currentStep in 1..10) {
-                showcaseStep = currentStep + 1
-            } else if (currentStep == 11) {
+            if (currentStep in 1..10) showcaseStep = currentStep + 1
+            else if (currentStep == 11) {
                 showcaseStep = 0
                 updateShowcaseCompleted(true)
             }
         }
     }
 
-    fun updateEditorShowcaseStep(step: Int) {
-        editorShowcaseStep = step
-    }
-
-    fun updateEditorShowcaseCompleted(completed: Boolean) {
-        isEditorShowcaseCompleted = completed
-    }
-
-    fun showTooltip(id: String) {
-        activeTooltipId = id
-    }
-
-    fun dismissTooltip(id: String) {
-        if (activeTooltipId == id) {
-            activeTooltipId = null
-        }
-    }
-
-    fun clearActiveTooltip() {
-        activeTooltipId = null
-    }
+    fun updateEditorShowcaseStep(step: Int) { editorShowcaseStep = step }
+    fun updateEditorShowcaseCompleted(completed: Boolean) { isEditorShowcaseCompleted = completed }
+    fun showTooltip(id: String) { activeTooltipId = id }
+    fun dismissTooltip(id: String) { if (activeTooltipId == id) activeTooltipId = null }
+    fun clearActiveTooltip() { activeTooltipId = null }
 
     fun advanceEditorShowcase(totalSteps: Int = 5) {
         if (isEditorShowcaseCompleted) return
         val currentStep = editorShowcaseStep
         coroutineScope.launch {
-            if (currentStep in 1..totalSteps) {
-                editorShowcaseStep = -currentStep
-            }
+            if (currentStep in 1..totalSteps) editorShowcaseStep = -currentStep
             kotlinx.coroutines.delay(1050)
-            if (currentStep in 1 until totalSteps) {
-                editorShowcaseStep = currentStep + 1
-            } else if (currentStep == totalSteps) {
+            if (currentStep in 1 until totalSteps) editorShowcaseStep = currentStep + 1
+            else if (currentStep == totalSteps) {
                 editorShowcaseStep = 0
                 isEditorShowcaseCompleted = true
             }
         }
     }
 
-    fun updateScannerShowcaseStep(step: Int) {
-        scannerShowcaseStep = step
-    }
-
-    fun updateScannerShowcaseCompleted(completed: Boolean) {
-        isScannerShowcaseCompleted = completed
-    }
-
+    fun updateScannerShowcaseStep(step: Int) { scannerShowcaseStep = step }
+    fun updateScannerShowcaseCompleted(completed: Boolean) { isScannerShowcaseCompleted = completed }
     fun advanceScannerShowcase(totalSteps: Int = 6) {
         if (isScannerShowcaseCompleted) return
         val currentStep = scannerShowcaseStep
         coroutineScope.launch {
-            if (currentStep in 1..totalSteps) {
-                scannerShowcaseStep = -currentStep
-            }
+            if (currentStep in 1..totalSteps) scannerShowcaseStep = -currentStep
             kotlinx.coroutines.delay(1050)
-            if (currentStep in 1 until totalSteps) {
-                scannerShowcaseStep = currentStep + 1
-            } else if (currentStep == totalSteps) {
+            if (currentStep in 1 until totalSteps) scannerShowcaseStep = currentStep + 1
+            else if (currentStep == totalSteps) {
                 scannerShowcaseStep = 0
                 isScannerShowcaseCompleted = true
             }
@@ -550,14 +408,7 @@ class RubikAppState(
         }
     }
 
-    fun saveCameraSettings(
-        yaw: Float,
-        pitch: Float,
-        cameraDistance: Float,
-        panX: Float,
-        panY: Float,
-        rotationSpeedMs: Float
-    ) {
+    fun saveCameraSettings(yaw: Float, pitch: Float, cameraDistance: Float, panX: Float, panY: Float, rotationSpeedMs: Float) {
         coroutineScope.launch(Dispatchers.Default) {
             saveCameraSettingsUseCase(yaw, pitch, cameraDistance, panX, panY, rotationSpeedMs)
         }
@@ -568,12 +419,14 @@ class RubikAppState(
             if (isSolved && solveStartTime != null) {
                 val duration = com.vahitkeskin.rubiksync.currentTimeMillis() - solveStartTime!!
                 solveStartTime = null
+                currentSolveDuration = duration
                 coroutineScope.launch(Dispatchers.Default) {
                     saveSolveSessionUseCase(duration, totalMoveCount, com.vahitkeskin.rubiksync.currentTimeMillis())
                     loadStats()
                 }
             } else if (!isSolved && !isInitialState && solveStartTime == null) {
                 solveStartTime = com.vahitkeskin.rubiksync.currentTimeMillis()
+                startTimer()
             }
             saveCurrentState()
         }
@@ -586,44 +439,17 @@ class RubikAppState(
                 val camera = getCameraSettingsUseCase()
 
                 withContext(Dispatchers.Main) {
-                    if (camera != null) {
-                        cubeState.rotationSpeedMs = camera.rotationSpeedMs
-                    }
-
-                    if (settings.themeMode != null) {
-                        val mode = try {
-                            ThemeMode.valueOf(settings.themeMode)
-                        } catch (_: Exception) {
-                            ThemeMode.SYSTEM
-                        }
-                        themeMode = mode
-                    }
-
+                    if (camera != null) cubeState.rotationSpeedMs = camera.rotationSpeedMs
+                    if (settings.themeMode != null) themeMode = try { ThemeMode.valueOf(settings.themeMode) } catch (_: Exception) { ThemeMode.SYSTEM }
                     if (settings.languageCode != null) {
                         val sysCode = getSystemLanguageCode().lowercase()
-                        val defaultLang =
-                            AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
-                        val lang = AppLanguage.values().find { it.code == settings.languageCode } ?: defaultLang
-                        appLanguage = lang
+                        val defaultLang = AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
+                        appLanguage = AppLanguage.values().find { it.code == settings.languageCode } ?: defaultLang
                     }
-
-                    if (settings.isCubeEditable != null) {
-                        isCubeEditable = settings.isCubeEditable
-                    }
-
-                    if (settings.isSoundEnabled != null) {
-                        isSoundEnabled = settings.isSoundEnabled
-                    }
-
-                    if (settings.isShakeToScrambleEnabled != null) {
-                        isShakeToScrambleEnabled = settings.isShakeToScrambleEnabled
-                    } else {
-                        isShakeToScrambleEnabled = true
-                    }
-
-                    if (settings.isShowcaseCompleted != null) {
-                        isShowcaseCompleted = settings.isShowcaseCompleted
-                    }
+                    if (settings.isCubeEditable != null) isCubeEditable = settings.isCubeEditable
+                    if (settings.isSoundEnabled != null) isSoundEnabled = settings.isSoundEnabled
+                    if (settings.isShakeToScrambleEnabled != null) isShakeToScrambleEnabled = settings.isShakeToScrambleEnabled
+                    if (settings.isShowcaseCompleted != null) isShowcaseCompleted = settings.isShowcaseCompleted
                 }
 
                 val saved = getCubeStateUseCase()
@@ -632,12 +458,40 @@ class RubikAppState(
                         editorFaces = saved.editorFaces
                     }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                withContext(Dispatchers.Main) {
-                    isThemeLoaded = true
-                }
+            } catch (e: Exception) { e.printStackTrace() } finally {
+                withContext(Dispatchers.Main) { isThemeLoaded = true }
+            }
+        }
+    }
+
+    private var timerJob: kotlinx.coroutines.Job? = null
+
+    fun toggleTimer() {
+        if (solveStartTime != null) {
+            // Stop
+            solveStartTime = null
+            timerJob?.cancel()
+            timerJob = null
+        } else {
+            // Start
+            solveStartTime = com.vahitkeskin.rubiksync.currentTimeMillis() - currentSolveDuration
+            startTimer()
+        }
+    }
+
+    fun resetTimer() {
+        solveStartTime = null
+        currentSolveDuration = 0L
+        timerJob?.cancel()
+        timerJob = null
+    }
+
+    private fun startTimer() {
+        timerJob?.cancel()
+        timerJob = coroutineScope.launch(Dispatchers.Main) {
+            while (solveStartTime != null) {
+                currentSolveDuration = com.vahitkeskin.rubiksync.currentTimeMillis() - solveStartTime!!
+                kotlinx.coroutines.delay(10)
             }
         }
     }
@@ -661,21 +515,10 @@ fun rememberRubikAppState(
     saveSolveSessionUseCase: SaveSolveSessionUseCase = koinInject(),
     getSolveSessionsUseCase: GetSolveSessionsUseCase = koinInject()
 ) = remember(
-    cubeState,
-    coroutineScope,
-    getCubeStateUseCase,
-    saveCubeStateUseCase,
-    getSettingsUseCase,
-    saveThemeUseCase,
-    saveLanguageUseCase,
-    saveSoundEnabledUseCase,
-    saveCubeEditableUseCase,
-    saveShowcaseCompletedUseCase,
-    getCameraSettingsUseCase,
-    saveCameraSettingsUseCase,
-    saveShakeToScrambleUseCase,
-    saveSolveSessionUseCase,
-    getSolveSessionsUseCase
+    cubeState, coroutineScope, getCubeStateUseCase, saveCubeStateUseCase, getSettingsUseCase,
+    saveThemeUseCase, saveLanguageUseCase, saveSoundEnabledUseCase, saveCubeEditableUseCase,
+    saveShowcaseCompletedUseCase, getCameraSettingsUseCase, saveCameraSettingsUseCase,
+    saveShakeToScrambleUseCase, saveSolveSessionUseCase, getSolveSessionsUseCase
 ) {
     RubikAppState(
         cubeState = cubeState,

@@ -83,7 +83,7 @@ fun AuraBalloon(
 
     if (isPopupVisible) {
         val density = LocalDensity.current
-        
+
         Popup(
             popupPositionProvider = object : PopupPositionProvider {
                 override fun calculatePosition(
@@ -94,25 +94,29 @@ fun AuraBalloon(
                 ): IntOffset {
                     // Ekran kenarından bırakılacak boşluk (item padding ile aynı)
                     val screenPadding = with(density) { 16.dp.toPx() }.toInt()
-                    
+
                     // Balonun yatay konumu: İkonun merkezine göre ortala ama ekran sınırlarında tut
                     val anchorCenter = anchorBounds.left + anchorBounds.width / 2
                     var x = anchorCenter - popupContentSize.width / 2
-                    x = x.coerceIn(screenPadding, windowSize.width - popupContentSize.width - screenPadding)
-                    
+                    x = x.coerceIn(
+                        screenPadding,
+                        windowSize.width - popupContentSize.width - screenPadding
+                    )
+
                     // Ok ucunun (pointer) balon üzerindeki yatay konumu - balon gövdesinden dışarı taşmayı önle
                     balloonWidth = popupContentSize.width.toFloat()
                     val minArrowX = with(density) { 16.dp.toPx() }
-                    val maxArrowX = if (balloonWidth > 0f) (balloonWidth - minArrowX).coerceAtLeast(minArrowX) else minArrowX
+                    val maxArrowX =
+                        if (balloonWidth > 0f) (balloonWidth - minArrowX).coerceAtLeast(minArrowX) else minArrowX
                     arrowX = (anchorCenter - x).toFloat().coerceIn(minArrowX, maxArrowX)
-                    
+
                     // Balonun dikey konumu: İkonun hemen üstünde veya altında
                     val y = if (isBelow) {
                         anchorBounds.bottom + with(density) { 4.dp.toPx() }.toInt()
                     } else {
                         anchorBounds.top - popupContentSize.height - with(density) { 4.dp.toPx() }.toInt()
                     }
-                    
+
                     return IntOffset(x, y)
                 }
             },
@@ -124,7 +128,7 @@ fun AuraBalloon(
             )
         ) {
             BalloonContent(
-                text = text, 
+                text = text,
                 onDismiss = onDismiss,
                 arrowX = arrowX,
                 isBelow = isBelow,
@@ -167,14 +171,14 @@ private fun BalloonContent(
             ) {
                 val arrowWidth = 18.dp.toPx()
                 val arrowHeight = 10.dp.toPx()
-                
+
                 val arrowPath = Path().apply {
                     moveTo(arrowX - arrowWidth / 2, arrowHeight)
                     lineTo(arrowX, 0f)
                     lineTo(arrowX + arrowWidth / 2, arrowHeight)
                     close()
                 }
-                
+
                 drawOutline(
                     outline = Outline.Generic(arrowPath),
                     color = Color.White
@@ -209,7 +213,7 @@ private fun BalloonContent(
                 textAlign = TextAlign.Center
             )
         }
-        
+
         if (!isBelow) {
             // Sivri uç (Arrow) - Altta, aşağıyı gösteriyor
             Canvas(
@@ -221,14 +225,14 @@ private fun BalloonContent(
             ) {
                 val arrowWidth = 18.dp.toPx()
                 val arrowHeight = 10.dp.toPx()
-                
+
                 val arrowPath = Path().apply {
                     moveTo(arrowX - arrowWidth / 2, 0f)
                     lineTo(arrowX, arrowHeight)
                     lineTo(arrowX + arrowWidth / 2, 0f)
                     close()
                 }
-                
+
                 drawOutline(
                     outline = Outline.Generic(arrowPath),
                     color = Color.White

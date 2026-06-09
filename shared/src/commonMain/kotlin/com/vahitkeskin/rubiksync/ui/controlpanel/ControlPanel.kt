@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.solver.RubikSolver
 import com.vahitkeskin.rubiksync.solver.toSnapshot
+import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import kotlinx.coroutines.Dispatchers
@@ -220,10 +221,10 @@ fun ControlPanel(
                                     )
                                 )
                             ).border(
-                            0.5.dp,
-                            RubikTheme.colors.tabActiveBorder,
-                            RoundedCornerShape(8.dp)
-                        )
+                                0.5.dp,
+                                RubikTheme.colors.tabActiveBorder,
+                                RoundedCornerShape(8.dp)
+                            )
                     )
                     Row(modifier = Modifier.fillMaxSize()) {
                         listOf(
@@ -235,10 +236,10 @@ fun ControlPanel(
                             Box(
                                 modifier = Modifier.weight(1f).fillMaxHeight()
                                     .clip(RoundedCornerShape(8.dp)).clickable {
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(index)
-                                    }
-                                }, contentAlignment = Alignment.Center
+                                        coroutineScope.launch {
+                                            pagerState.animateScrollToPage(index)
+                                        }
+                                    }, contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = title,
@@ -274,6 +275,12 @@ fun ControlPanel(
                                 )
                             }
                         }) {
+                            AuraBalloon(
+                                text = appState.strings.showcaseMovesText,
+                                isVisible = appState.showcaseStep == 6 && !appState.isShowcaseCompleted,
+                                isBelow = false,
+                                onDismiss = { appState.advanceShowcase() }
+                            )
                             MovesGrid(appState = appState, canEditCube = canEditCube)
                         }
                     }
@@ -289,7 +296,28 @@ fun ControlPanel(
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(44.dp)
+                                    .onGloballyPositioned { coords ->
+                                        if (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) {
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            appState.updateTargetVisuals(
+                                                Rect(
+                                                    pos.x,
+                                                    pos.y,
+                                                    pos.x + size.width,
+                                                    pos.y + size.height
+                                                ),
+                                                12.dp
+                                            )
+                                        }
+                                    }
                             ) {
+                                AuraBalloon(
+                                    text = appState.strings.showcaseScrambleText,
+                                    isVisible = appState.showcaseStep == 7 && !appState.isShowcaseCompleted,
+                                    isBelow = false,
+                                    onDismiss = { appState.advanceShowcase() }
+                                )
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -336,7 +364,28 @@ fun ControlPanel(
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(44.dp)
+                                    .onGloballyPositioned { coords ->
+                                        if (appState.showcaseStep == 8 && !appState.isShowcaseCompleted) {
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            appState.updateTargetVisuals(
+                                                Rect(
+                                                    pos.x,
+                                                    pos.y,
+                                                    pos.x + size.width,
+                                                    pos.y + size.height
+                                                ),
+                                                12.dp
+                                            )
+                                        }
+                                    }
                             ) {
+                                AuraBalloon(
+                                    text = appState.strings.showcaseUndoText,
+                                    isVisible = appState.showcaseStep == 8 && !appState.isShowcaseCompleted,
+                                    isBelow = false,
+                                    onDismiss = { appState.advanceShowcase() }
+                                )
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -382,7 +431,28 @@ fun ControlPanel(
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(44.dp)
+                                    .onGloballyPositioned { coords ->
+                                        if (appState.showcaseStep == 9 && !appState.isShowcaseCompleted) {
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            appState.updateTargetVisuals(
+                                                Rect(
+                                                    pos.x,
+                                                    pos.y,
+                                                    pos.x + size.width,
+                                                    pos.y + size.height
+                                                ),
+                                                12.dp
+                                            )
+                                        }
+                                    }
                             ) {
+                                AuraBalloon(
+                                    text = appState.strings.showcaseResetText,
+                                    isVisible = appState.showcaseStep == 9 && !appState.isShowcaseCompleted,
+                                    isBelow = false,
+                                    onDismiss = { appState.advanceShowcase() }
+                                )
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -440,7 +510,30 @@ fun ControlPanel(
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 val isDesignEnabled = canEditCube && !cubeState.isAnimating
-                                Box(modifier = Modifier.weight(1f).height(44.dp)) {
+                                Box(
+                                    modifier = Modifier.weight(1f).height(44.dp)
+                                        .onGloballyPositioned { coords ->
+                                            if (appState.showcaseStep == 10 && !appState.isShowcaseCompleted) {
+                                                val pos = coords.positionInRoot()
+                                                val size = coords.size
+                                                appState.updateTargetVisuals(
+                                                    Rect(
+                                                        pos.x,
+                                                        pos.y,
+                                                        pos.x + size.width,
+                                                        pos.y + size.height
+                                                    ),
+                                                    12.dp
+                                                )
+                                            }
+                                        }
+                                ) {
+                                    AuraBalloon(
+                                        text = appState.strings.showcaseDesignText,
+                                        isVisible = appState.showcaseStep == 10 && !appState.isShowcaseCompleted,
+                                        isBelow = false,
+                                        onDismiss = { appState.advanceShowcase() }
+                                    )
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
@@ -474,7 +567,30 @@ fun ControlPanel(
 
                                 val isSolveEnabled =
                                     canEditCube && !cubeState.isAnimating && !appState.isRecalculating && !appState.isSolved
-                                Box(modifier = Modifier.weight(1f).height(44.dp)) {
+                                Box(
+                                    modifier = Modifier.weight(1f).height(44.dp)
+                                        .onGloballyPositioned { coords ->
+                                            if (appState.showcaseStep == 11 && !appState.isShowcaseCompleted) {
+                                                val pos = coords.positionInRoot()
+                                                val size = coords.size
+                                                appState.updateTargetVisuals(
+                                                    Rect(
+                                                        pos.x,
+                                                        pos.y,
+                                                        pos.x + size.width,
+                                                        pos.y + size.height
+                                                    ),
+                                                    12.dp
+                                                )
+                                            }
+                                        }
+                                ) {
+                                    AuraBalloon(
+                                        text = appState.strings.showcaseSolveText,
+                                        isVisible = appState.showcaseStep == 11 && !appState.isShowcaseCompleted,
+                                        isBelow = false,
+                                        onDismiss = { appState.advanceShowcase() }
+                                    )
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()

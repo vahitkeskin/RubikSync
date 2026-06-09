@@ -84,15 +84,27 @@ fun DashboardHeader(
                         horizontalArrangement = Arrangement.spacedBy(1.5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp)).background(CubeOrange))
-                        Box(modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp)).background(CubeGreen))
+                        Box(
+                            modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp))
+                                .background(CubeOrange)
+                        )
+                        Box(
+                            modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp))
+                                .background(CubeGreen)
+                        )
                     }
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(1.5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp)).background(CubeBlue))
-                        Box(modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp)).background(CubeYellow))
+                        Box(
+                            modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp))
+                                .background(CubeBlue)
+                        )
+                        Box(
+                            modifier = Modifier.size(8.dp).clip(RoundedCornerShape(1.5.dp))
+                                .background(CubeYellow)
+                        )
                     }
                 }
 
@@ -140,7 +152,7 @@ fun DashboardHeader(
                     animationSpec = tween(durationMillis = 300),
                     label = "editableBorder"
                 )
-                
+
                 val isLockEnabled = !cubeState.isAnimating
                 Box(
                     modifier = Modifier
@@ -214,7 +226,7 @@ fun DashboardHeader(
                     animationSpec = tween(durationMillis = 300),
                     label = "shakeBorder"
                 )
-                
+
                 val isShakeEnabled = appState.isCubeEditable && !cubeState.isAnimating
                 Box(
                     modifier = Modifier
@@ -289,7 +301,7 @@ fun DashboardHeader(
                     animationSpec = tween(durationMillis = 300),
                     label = "soundBorder"
                 )
-                
+
                 val isSoundBtnEnabled = appState.isCubeEditable && !cubeState.isAnimating
                 Box(
                     modifier = Modifier
@@ -388,7 +400,7 @@ fun DashboardHeader(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(10.dp))
 
         // Status & Stats — Professional Dashboard Cards Row
@@ -448,11 +460,20 @@ fun DashboardHeader(
                                 if (isLast) {
                                     Brush.horizontalGradient(listOf(AccentOrange, AccentRedCoral))
                                 } else {
-                                    Brush.horizontalGradient(listOf(RubikTheme.colors.backgroundTertiary, RubikTheme.colors.backgroundTertiary))
+                                    Brush.horizontalGradient(
+                                        listOf(
+                                            RubikTheme.colors.backgroundTertiary,
+                                            RubikTheme.colors.backgroundTertiary
+                                        )
+                                    )
                                 }
                             )
                             .then(
-                                if (!isLast) Modifier.border(0.5.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(6.dp))
+                                if (!isLast) Modifier.border(
+                                    0.5.dp,
+                                    RubikTheme.colors.borderSubtle,
+                                    RoundedCornerShape(6.dp)
+                                )
                                 else Modifier
                             )
                             .padding(horizontal = 8.dp, vertical = 4.dp),
@@ -472,7 +493,6 @@ fun DashboardHeader(
         }
     }
 }
-
 
 
 @Composable

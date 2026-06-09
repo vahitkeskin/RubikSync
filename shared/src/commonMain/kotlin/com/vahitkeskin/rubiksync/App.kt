@@ -162,13 +162,14 @@ fun App() {
         appState.currentSolutionStep,
         appState.activeSolution
     ) {
+        val activeSolution = appState.activeSolution
         if (
             appState.isCubeEditable &&
             appState.isPlaybackRunning &&
-            appState.activeSolution != null &&
-            appState.currentSolutionStep < appState.activeSolution!!.size
+            activeSolution != null &&
+            appState.currentSolutionStep < activeSolution.size
         ) {
-            val nextMove = appState.activeSolution!![appState.currentSolutionStep]
+            val nextMove = activeSolution[appState.currentSolutionStep]
             val activeDetail =
                 appState.activeSolutionDetails?.getOrNull(appState.currentSolutionStep)
             val phase = activeDetail?.phaseName ?: "Çözüm"
@@ -178,7 +179,7 @@ fun App() {
             cubeState.executeMove(nextMove)
             appState.incrementSolutionStep()
             appState.incrementTotalMoveCount()
-            if (appState.currentSolutionStep >= appState.activeSolution!!.size) {
+            if (appState.currentSolutionStep >= activeSolution.size) {
                 appState.updatePlaybackRunning(false)
             }
         }

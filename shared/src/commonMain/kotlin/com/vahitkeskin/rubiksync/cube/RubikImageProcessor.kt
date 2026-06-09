@@ -4,6 +4,7 @@ import com.vahitkeskin.rubiksync.PixelGrid
 import com.vahitkeskin.rubiksync.loadImagePixels
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.solver.IntVector3
+import com.vahitkeskin.rubiksync.utils.getFaceRawRGB
 import kotlin.math.*
 
 // Kuhn-Munkres (Hungarian) algorithm implementation for O(N^3) assignment
@@ -400,11 +401,11 @@ class RubikImageProcessor {
             
             for (i in 0 until 6) {
                 val face = faceNames[i]
-                val centerRawRGB = rawGrids[face]!![1][1]
+                val centerRawRGB = rawGrids.getFaceRawRGB(face, 1, 1)
                 val centerLab = rgbToLab(centerRawRGB.x, centerRawRGB.y, centerRawRGB.z)
                 for (j in 0 until 6) {
                     val targetColor = standardColors[j]
-                    val refRGB = defaultReferences[targetColor]!!
+                    val refRGB = defaultReferences[targetColor] ?: IntVector3(0, 0, 0)
                     val refLab = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
                     centersCostMatrix[i][j] = advancedColorDistance(centerLab, refLab, targetColor == CubeColor.WHITE)
                 }
@@ -415,7 +416,7 @@ class RubikImageProcessor {
                 val assignedColor = standardColors[centerAssignment[i]]
                 val face = faceNames[i]
                 lockedCenters[face] = assignedColor
-                val refRGB = rawGrids[face]!![1][1]
+                val refRGB = rawGrids.getFaceRawRGB(face, 1, 1)
                 referencesRGB[assignedColor] = refRGB
                 referencesLab[assignedColor] = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
             }
@@ -431,7 +432,7 @@ class RubikImageProcessor {
                     var minDist = Double.MAX_VALUE
                     for (color in standardColors) {
                         if (color in assignedColors) continue
-                        val refRGB = defaultReferences[color]!!
+                        val refRGB = defaultReferences[color] ?: IntVector3(0, 0, 0)
                         val refLab = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
                         val dist = advancedColorDistance(centerLab, refLab, color == CubeColor.WHITE)
                         if (dist < minDist) {
@@ -449,7 +450,7 @@ class RubikImageProcessor {
             // Fill missing references with defaults
             for (color in standardColors) {
                 if (color !in referencesRGB) {
-                    val refRGB = defaultReferences[color]!!
+                    val refRGB = defaultReferences[color] ?: IntVector3(0, 0, 0)
                     referencesRGB[color] = refRGB
                     referencesLab[color] = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
                 }
@@ -466,7 +467,7 @@ class RubikImageProcessor {
             )
             for (face in FaceName.values()) {
                 if (face !in lockedCenters) {
-                    lockedCenters[face] = defaultCenterMapping[face]!!
+                    lockedCenters[face] = defaultCenterMapping[face] ?: CubeColor.INTERNAL
                 }
             }
         }
@@ -475,7 +476,7 @@ class RubikImageProcessor {
         val resultGrids = mutableMapOf<FaceName, Array<Array<CubeColor>>>()
         for (face in FaceName.values()) {
             val classifiedGrid = Array(3) { Array(3) { CubeColor.INTERNAL } }
-            classifiedGrid[1][1] = lockedCenters[face]!!
+            classifiedGrid[1][1] = lockedCenters[face] ?: CubeColor.INTERNAL
             resultGrids[face] = classifiedGrid
         }
 
@@ -483,7 +484,7 @@ class RubikImageProcessor {
         if (rawGrids.size < 6) {
             for (face in FaceName.values()) {
                 val rawFaceGrid = rawGrids[face] ?: continue
-                val classifiedGrid = resultGrids[face]!!
+                val classifiedGrid = resultGrids[face] ?: Array(3) { Array(3) { CubeColor.INTERNAL } }
                 for (r in 0..2) {
                     for (c in 0..2) {
                         if (r == 1 && c == 1) continue
@@ -511,7 +512,7 @@ class RubikImageProcessor {
         data class FaceletInfo(val face: FaceName, val row: Int, val col: Int, val rgb: IntVector3)
         val cellsList = mutableListOf<FaceletInfo>()
         for (face in FaceName.values()) {
-            val rawFaceGrid = rawGrids[face]!!
+            val rawFaceGrid = rawGrids[face] ?: Array(3) { Array(3) { IntVector3(0, 0, 0) } }
             for (r in 0..2) {
                 for (c in 0..2) {
                     if (r == 1 && c == 1) continue
@@ -544,7 +545,7 @@ class RubikImageProcessor {
                 if (exactColorMatch != null) {
                     costMatrix[i][j] = if (targetColor == exactColorMatch) 0.0 else 10000.0
                 } else {
-                    val refLab = referencesLab[targetColor]!!
+                    val refLab = referencesLab[targetColor] ?: Triple(0.0, 0.0, 0.0)
                     costMatrix[i][j] = advancedColorDistance(cellLab, refLab, targetColor == CubeColor.WHITE)
                 }
             }
@@ -557,7 +558,7 @@ class RubikImageProcessor {
         for (i in 0 until 48) {
             val cell = cellsList[i]
             val assignedColor = refColors[assignment[i] / 8]
-            resultGrids[cell.face]!![cell.row][cell.col] = assignedColor
+            resultGrids[cell.face]?.getOrNull(cell.row)?.let { it[cell.col] = assignedColor }
         }
 
         return resultGrids

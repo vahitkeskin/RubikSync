@@ -53,7 +53,7 @@ private fun MiniFaceGrid(
     isActive: Boolean,
     onFaceSelect: (FaceName) -> Unit
 ) {
-    val grid = faces[face]!!
+    val grid = faces[face] ?: Array(3) { Array(3) { CubeColor.INTERNAL } }
     Column(
         modifier = Modifier
             .border(
@@ -458,7 +458,7 @@ fun EditorDialog(
                         },
                         onCellClick = { face, row, col ->
                             val updated = appState.editorFaces.toMutableMap()
-                            val grid = updated[face]!!.map { it.copyOf() }.toTypedArray()
+                            val grid = (updated[face] ?: Array(3) { Array(3) { CubeColor.INTERNAL } }).map { it.copyOf() }.toTypedArray()
                             grid[row][col] = appState.selectedColor
                             updated[face] = grid
                             appState.updateEditorFaces(updated)

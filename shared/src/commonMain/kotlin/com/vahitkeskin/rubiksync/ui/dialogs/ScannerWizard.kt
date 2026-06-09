@@ -909,7 +909,7 @@ fun ScannerWizard(
                                                                                 )
                                                                             )
                                                                         val refRGB =
-                                                                            defaultReferences[targetColor]!!
+                                                                            defaultReferences[targetColor] ?: IntVector3(0, 0, 0)
 
                                                                         if (!isCenter) {
                                                                             val updatedRawGrid =

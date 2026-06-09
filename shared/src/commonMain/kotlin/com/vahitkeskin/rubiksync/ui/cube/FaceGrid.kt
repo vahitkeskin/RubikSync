@@ -29,7 +29,7 @@ fun FaceGrid(
     isClickable: Boolean = true,
     onCellClick: (FaceName, Int, Int) -> Unit = { _, _, _ -> }
 ) {
-    val grid = faces[face]!!
+    val grid = faces[face] ?: Array(3) { Array(3) { CubeColor.INTERNAL } }
     Column(
         modifier = modifier
             .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(8.dp))

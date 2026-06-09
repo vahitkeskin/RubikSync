@@ -1,5 +1,9 @@
 package com.vahitkeskin.rubiksync.utils
 
+import com.vahitkeskin.rubiksync.cube.FaceName
+import com.vahitkeskin.rubiksync.cube.CubeColor
+import com.vahitkeskin.rubiksync.solver.IntVector3
+
 /**
  * Extension to return a default value if the receiver is null.
  */
@@ -34,3 +38,17 @@ fun Double?.orZero(): Double = this ?: 0.0
  * Float? extension to return 0.0f if null.
  */
 fun Float?.orZero(): Float = this ?: 0.0f
+
+/**
+ * Safe 2D array color retrieval for FaceName mapping.
+ */
+fun Map<FaceName, Array<Array<CubeColor>>>.getFaceColor(face: FaceName, row: Int, col: Int): CubeColor {
+    return this[face]?.getOrNull(row)?.getOrNull(col) ?: CubeColor.INTERNAL
+}
+
+/**
+ * Safe 2D array IntVector3 retrieval for FaceName mapping.
+ */
+fun Map<FaceName, Array<Array<IntVector3>>>.getFaceRawRGB(face: FaceName, row: Int, col: Int): IntVector3 {
+    return this[face]?.getOrNull(row)?.getOrNull(col) ?: IntVector3(0, 0, 0)
+}

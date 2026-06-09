@@ -416,8 +416,9 @@ class RubikAppState(
 
     init {
         cubeState.onStateChanged = {
-            if (isSolved && solveStartTime != null) {
-                val duration = com.vahitkeskin.rubiksync.currentTimeMillis() - solveStartTime!!
+            val startTime = solveStartTime
+            if (isSolved && startTime != null) {
+                val duration = com.vahitkeskin.rubiksync.currentTimeMillis() - startTime
                 solveStartTime = null
                 currentSolveDuration = duration
                 coroutineScope.launch(Dispatchers.Default) {
@@ -492,8 +493,9 @@ class RubikAppState(
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = coroutineScope.launch(Dispatchers.Main) {
-            while (solveStartTime != null) {
-                currentSolveDuration = com.vahitkeskin.rubiksync.currentTimeMillis() - solveStartTime!!
+            while (true) {
+                val startTime = solveStartTime ?: break
+                currentSolveDuration = com.vahitkeskin.rubiksync.currentTimeMillis() - startTime
                 kotlinx.coroutines.delay(10)
             }
         }

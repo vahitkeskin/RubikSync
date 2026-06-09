@@ -7,6 +7,8 @@ import androidx.compose.runtime.withFrameMillis
 import kotlin.math.PI
 import kotlin.math.roundToInt
 
+import com.vahitkeskin.rubiksync.utils.getFaceColor
+
 enum class FaceName { U, D, L, R, F, B }
 
 enum class CubeColor(val rgb: Long) {
@@ -263,12 +265,12 @@ class RubikCubeState {
             val nz = normal.z.roundToInt()
             
             return when {
-                ny == 1 -> faces[FaceName.U]!![pz + 1][px + 1]
-                ny == -1 -> faces[FaceName.D]!![1 - pz][px + 1]
-                nx == -1 -> faces[FaceName.L]!![1 - py][pz + 1]
-                nx == 1 -> faces[FaceName.R]!![1 - py][1 - pz]
-                nz == 1 -> faces[FaceName.F]!![1 - py][px + 1]
-                nz == -1 -> faces[FaceName.B]!![1 - py][1 - px]
+                ny == 1 -> faces.getFaceColor(FaceName.U, pz + 1, px + 1)
+                ny == -1 -> faces.getFaceColor(FaceName.D, 1 - pz, px + 1)
+                nx == -1 -> faces.getFaceColor(FaceName.L, 1 - py, pz + 1)
+                nx == 1 -> faces.getFaceColor(FaceName.R, 1 - py, 1 - pz)
+                nz == 1 -> faces.getFaceColor(FaceName.F, 1 - py, px + 1)
+                nz == -1 -> faces.getFaceColor(FaceName.B, 1 - py, 1 - px)
                 else -> CubeColor.INTERNAL
             }
         }

@@ -59,8 +59,8 @@ import com.vahitkeskin.rubiksync.ui.cube.InteractiveCubeCanvas
 import com.vahitkeskin.rubiksync.ui.controlpanel.PlaybackController
 import com.vahitkeskin.rubiksync.ui.screens.SettingsScreen
 import com.vahitkeskin.rubiksync.ui.screens.SplashScreen
-import com.vahitkeskin.rubiksync.ui.dialogs.EditorDialog
-import com.vahitkeskin.rubiksync.ui.dialogs.ScannerWizard
+import com.vahitkeskin.rubiksync.ui.screens.EditorScreen
+import com.vahitkeskin.rubiksync.ui.screens.ScannerScreen
 import com.vahitkeskin.rubiksync.ui.state.AccentBlue
 import com.vahitkeskin.rubiksync.ui.state.AccentBlueBright
 import com.vahitkeskin.rubiksync.ui.state.AccentGreen
@@ -227,6 +227,20 @@ fun App() {
             ) {
                 val navController = rememberNavController()
 
+                LaunchedEffect(appState.showEditorDialog) {
+                    if (appState.showEditorDialog) {
+                        navController.navigate("editor")
+                        appState.updateShowEditorDialog(false)
+                    }
+                }
+
+                LaunchedEffect(appState.showScannerWizard) {
+                    if (appState.showScannerWizard) {
+                        navController.navigate("scanner")
+                        appState.updateShowScannerWizard(false)
+                    }
+                }
+
                 NavHost(
                     navController = navController,
                     startDestination = "splash",
@@ -339,57 +353,8 @@ fun App() {
                                     }
                                 }
 
-                                // 5. Manual Color net Editor Dialog Overlay
-                                EditorDialog(
-                                    show = appState.showEditorDialog,
-                                    appState = appState,
-                                    onDismiss = { appState.updateShowEditorDialog(false) },
-                                    onStartScanWizard = {
-                                        appState.updateScannerStep(0)
-                                        appState.updateScannedGrids(mutableMapOf())
-                                        appState.updateScannedRawRGBs(mutableMapOf())
-                                        appState.updateScannedFilePaths(mutableMapOf())
-                                        appState.updateGridScales(FaceName.values().associateWith { 0.55f })
-                                        appState.updateGridOffsetsX(FaceName.values().associateWith { 0f })
-                                        appState.updateGridOffsetsY(FaceName.values().associateWith { 0f })
-                                        appState.updateErrorMessage(null)
-                                        appState.updateInfoMessage(null)
-                                        appState.updateShowScannerWizard(true)
-                                    }
-                                )
-
-                                // 6. Camera Scan Wizard Overlay
-                                ScannerWizard(
-                                    show = appState.showScannerWizard,
-                                    appState = appState,
-                                    onDismiss = {
-                                        appState.updateShowScannerWizard(false)
-                                        appState.updateScannerStep(0)
-                                        appState.updateScannedGrids(mutableMapOf())
-                                        appState.updateScannedRawRGBs(mutableMapOf())
-                                        appState.updateScannedFilePaths(mutableMapOf())
-                                    },
-                                    onComplete = { completeGrids ->
-                                        appState.updateEditorFaces(completeGrids)
-                                        appState.updateShowScannerWizard(false)
-                                        appState.coroutineScope.launch {
-                                            val success = cubeState.setCustomStateAnimated(completeGrids)
-                                            if (success) {
-                                                appState.updateShowEditorDialog(false)
-                                                appState.clearManualMoves()
-                                                appState.saveCurrentState()
-                                                appState.updateActiveSolution(null)
-                                                appState.updateErrorMessage(null)
-                                                appState.updateSuccessMessage(appState.strings.successScanComplete)
-                                            } else {
-                                                appState.updateErrorMessage(appState.strings.invalidCubeDesign)
-                                            }
-                                        }
-                                    }
-                                )
-
-                                // 7. Global Feedback Overlays
-                                FeedbackOverlay(appState = appState)
+                                 // 7. Global Feedback Overlays
+                                 FeedbackOverlay(appState = appState)
                             }
 
                             // 8. Showcase Spotlight Overlay (drawn outside safearea, aligned with root)
@@ -464,14 +429,26 @@ fun App() {
                         enterTransition = {
                             slideInHorizontally(
                                 initialOffsetX = { fullWidth -> fullWidth },
-                                animationSpec = tween(durationMillis = 450)
-                            ) + fadeIn(animationSpec = tween(durationMillis = 450))
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeIn(animationSpec = tween(durationMillis = 700))
                         },
                         exitTransition = {
                             slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> -fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                        },
+                        popEnterTransition = {
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> -fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                        },
+                        popExitTransition = {
+                            slideOutHorizontally(
                                 targetOffsetX = { fullWidth -> fullWidth },
-                                animationSpec = tween(durationMillis = 450)
-                            ) + fadeOut(animationSpec = tween(durationMillis = 450))
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeOut(animationSpec = tween(durationMillis = 700))
                         }
                     ) {
                         SettingsScreen(
@@ -479,6 +456,102 @@ fun App() {
                             isDarkTheme = isDarkTheme,
                             onBack = {
                                 navController.popBackStack()
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = "editor",
+                        enterTransition = {
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                        },
+                        exitTransition = {
+                            slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> -fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                        },
+                        popEnterTransition = {
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> -fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                        },
+                        popExitTransition = {
+                            slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                        }
+                    ) {
+                        EditorScreen(
+                            appState = appState,
+                            onDismiss = { navController.popBackStack() },
+                            onStartScanWizard = {
+                                appState.updateScannerStep(0)
+                                appState.updateScannedGrids(mutableMapOf())
+                                appState.updateScannedRawRGBs(mutableMapOf())
+                                appState.updateScannedFilePaths(mutableMapOf())
+                                appState.updateGridScales(FaceName.values().associateWith { 0.55f })
+                                appState.updateGridOffsetsX(FaceName.values().associateWith { 0f })
+                                appState.updateGridOffsetsY(FaceName.values().associateWith { 0f })
+                                appState.updateErrorMessage(null)
+                                appState.updateInfoMessage(null)
+                                navController.navigate("scanner")
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = "scanner",
+                        enterTransition = {
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                        },
+                        exitTransition = {
+                            slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> -fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                        },
+                        popEnterTransition = {
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> -fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                        },
+                        popExitTransition = {
+                            slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> fullWidth },
+                                animationSpec = tween(durationMillis = 700)
+                            ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                        }
+                    ) {
+                        ScannerScreen(
+                            appState = appState,
+                            onDismiss = {
+                                navController.popBackStack()
+                            },
+                            onComplete = { completeGrids ->
+                                appState.updateEditorFaces(completeGrids)
+                                navController.popBackStack("dashboard", inclusive = false)
+                                appState.coroutineScope.launch {
+                                    val success = cubeState.setCustomStateAnimated(completeGrids)
+                                    if (success) {
+                                        appState.clearManualMoves()
+                                        appState.saveCurrentState()
+                                        appState.updateActiveSolution(null)
+                                        appState.updateErrorMessage(null)
+                                        appState.updateSuccessMessage(appState.strings.successScanComplete)
+                                    } else {
+                                        appState.updateErrorMessage(appState.strings.invalidCubeDesign)
+                                    }
+                                }
                             }
                         )
                     }

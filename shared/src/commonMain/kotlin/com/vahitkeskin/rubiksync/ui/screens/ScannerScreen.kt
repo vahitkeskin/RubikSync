@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.dialogs
+package com.vahitkeskin.rubiksync.ui.screens
 
 import com.vahitkeskin.rubiksync.ui.state.*
 
@@ -53,16 +53,12 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScannerWizard(
-    show: Boolean,
+fun ScannerScreen(
     appState: RubikAppState,
     onDismiss: () -> Unit,
     onComplete: (Map<FaceName, Array<Array<CubeColor>>>) -> Unit
 ) {
-    if (!show) return
-
     val coroutineScope = appState.coroutineScope
     val currentFace = FaceName.values()[appState.scannerStep]
 
@@ -193,29 +189,11 @@ fun ScannerWizard(
         }
     }
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        containerColor = RubikTheme.colors.backgroundPrimary,
-        dragHandle = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(36.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(AccentBlue, AccentGreen)
-                            )
-                        )
-                )
-            }
-        },
-        modifier = Modifier.fillMaxHeight(0.95f)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(RubikTheme.colors.backgroundPrimary)
+            .safeDrawingPadding()
     ) {
         var boundsStep1 by remember { mutableStateOf<Rect?>(null) }
         var boundsStep2 by remember { mutableStateOf<Rect?>(null) }
@@ -256,8 +234,8 @@ fun ScannerWizard(
             else -> 12.dp
         }
 
-        LaunchedEffect(show) {
-            if (show && !appState.isScannerShowcaseCompleted && appState.scannerShowcaseStep == 0) {
+        LaunchedEffect(Unit) {
+            if (!appState.isScannerShowcaseCompleted && appState.scannerShowcaseStep == 0) {
                 appState.updateScannerShowcaseStep(1)
             }
         }
@@ -1409,8 +1387,7 @@ fun ScannerWizard(
 fun ScannerWizardDarkPreview() {
     PreviewRubikTheme(isDark = true) {
         val appState = rememberPreviewRubikAppState()
-        ScannerWizard(
-            show = true,
+        ScannerScreen(
             appState = appState,
             onDismiss = {},
             onComplete = {}
@@ -1423,8 +1400,7 @@ fun ScannerWizardDarkPreview() {
 fun ScannerWizardLightPreview() {
     PreviewRubikTheme(isDark = false) {
         val appState = rememberPreviewRubikAppState()
-        ScannerWizard(
-            show = true,
+        ScannerScreen(
             appState = appState,
             onDismiss = {},
             onComplete = {}

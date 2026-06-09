@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.dialogs
+package com.vahitkeskin.rubiksync.ui.screens
 
 import com.vahitkeskin.rubiksync.ui.state.*
 
@@ -135,46 +135,23 @@ private fun MiniNetMap(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditorDialog(
-    show: Boolean,
+fun EditorScreen(
     appState: RubikAppState,
     onDismiss: () -> Unit,
     onStartScanWizard: () -> Unit
 ) {
-    if (!show) return
-
     var activeFace by remember { mutableStateOf(FaceName.F) }
     var showJsonImportDialog by remember { mutableStateOf(false) }
     var jsonInputText by remember { mutableStateOf("") }
 
     val cubeState = appState.cubeState
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        containerColor = RubikTheme.colors.backgroundPrimary,
-        dragHandle = {
-            // Custom drag handle with gradient accent bar
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(36.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(AccentOrange, AccentBlue)
-                            )
-                        )
-                )
-            }
-        },
-        modifier = Modifier.fillMaxHeight(0.95f)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(RubikTheme.colors.backgroundPrimary)
+            .safeDrawingPadding()
     ) {
         var boundsStep1 by remember { mutableStateOf<Rect?>(null) }
         var boundsStep2 by remember { mutableStateOf<Rect?>(null) }
@@ -210,8 +187,8 @@ fun EditorDialog(
             else -> 12.dp
         }
 
-        LaunchedEffect(show) {
-            if (show && !appState.isEditorShowcaseCompleted && appState.editorShowcaseStep == 0) {
+        LaunchedEffect(Unit) {
+            if (!appState.isEditorShowcaseCompleted && appState.editorShowcaseStep == 0) {
                 appState.updateEditorShowcaseStep(1)
             }
         }
@@ -826,8 +803,7 @@ fun MiniNetMapLightPreview() {
 fun EditorDialogDarkPreview() {
     PreviewRubikTheme(isDark = true) {
         val appState = rememberPreviewRubikAppState()
-        EditorDialog(
-            show = true,
+        EditorScreen(
             appState = appState,
             onDismiss = {},
             onStartScanWizard = {}

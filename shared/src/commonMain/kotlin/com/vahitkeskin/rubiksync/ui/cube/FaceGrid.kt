@@ -43,7 +43,7 @@ fun FaceGrid(
                     val color = grid[r][c]
                     val isCenter = r == 1 && c == 1
                     val canClick = isClickable && !isCenter
-                    
+
                     Box(
                         modifier = Modifier
                             .size(cellSize)
@@ -73,7 +73,8 @@ fun FaceGrid(
 @Composable
 fun FaceGridDarkPreview() {
     PreviewRubikTheme(isDark = true) {
-        val dummyFaces = FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
+        val dummyFaces =
+            FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
         Box(
             modifier = Modifier
                 .background(RubikTheme.colors.backgroundPrimary)
@@ -92,7 +93,8 @@ fun FaceGridDarkPreview() {
 @Composable
 fun FaceGridLightPreview() {
     PreviewRubikTheme(isDark = false) {
-        val dummyFaces = FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.ORANGE } } }
+        val dummyFaces =
+            FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.ORANGE } } }
         Box(
             modifier = Modifier
                 .background(RubikTheme.colors.backgroundPrimary)

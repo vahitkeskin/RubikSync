@@ -145,7 +145,7 @@ fun FeedbackOverlaySuccessDarkPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
-                .background(Color(0xFF0F172A))
+                .background(Slate900)
         ) {
             FeedbackOverlay(appState = appState)
         }

@@ -126,3 +126,26 @@ val LightTextSecondary = Color(0xFF9CA3AF)
 
 // --- Selection & Overlay Colors ---
 val SelectionMediumMagenta = Color(0xFF3D1519)
+
+// --- Slate Color System (Overlay & Card Components) ---
+val Slate900 = Color(0xFF0F172A)
+val Slate800 = Color(0xFF1E293B)
+val Slate700 = Color(0xFF334155)
+val Slate600 = Color(0xFF475569)
+val Slate500 = Color(0xFF64748B)
+val Slate400 = Color(0xFF94A3B8)
+val Slate200 = Color(0xFFE2E8F0)
+val Slate100 = Color(0xFFF1F5F9)
+
+// --- Action Button Colors ---
+val DesignBgDark = Color(0xFF1E3A8A)
+val DesignBgLight = Color(0xFFDBEAFE)
+val SolveBgDark = Color(0xFF065F46)
+val SolveBgLight = Color(0xFFD1FAE5)
+
+// --- Guide & Cube Body Colors ---
+val LightCubeBody = Color(0xFF1F2937)
+val LightCubeOutline = Color(0x33FFFFFF)
+val GuideBodyDark = Color(0xFF151B22)
+val GuideBodyLight = Color(0xFFD1D5DB)
+val GuideUnscannedSticker = Color(0xFF555555)

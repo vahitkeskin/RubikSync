@@ -49,6 +49,8 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.state.AccentOrange
 import com.vahitkeskin.rubiksync.ui.state.PreviewRubikTheme
+import com.vahitkeskin.rubiksync.ui.state.Slate800
+import com.vahitkeskin.rubiksync.ui.state.Slate900
 
 /**
  * Dinamik konumlandırmalı ve ekran kenarı duyarlı "Sivri uçlu" bilgi balonu.
@@ -209,7 +211,7 @@ private fun BalloonContent(
                     fontWeight = FontWeight.SemiBold,
                     lineHeight = 16.sp
                 ),
-                color = Color(0xFF1E293B),
+                color = Slate800,
                 textAlign = TextAlign.Center
             )
         }
@@ -248,7 +250,7 @@ fun BalloonContentAbovePreview() {
     PreviewRubikTheme(isDark = true) {
         Box(
             modifier = Modifier
-                .background(Color(0xFF0F172A))
+                .background(Slate900)
                 .padding(24.dp)
         ) {
             BalloonContent(

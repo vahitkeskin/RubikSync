@@ -218,7 +218,7 @@ fun ThemeDualPreview(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFF0F172A)) // Sleek dark backdrop slate color
+            .background(Slate900) // Sleek dark backdrop slate color
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -244,13 +244,13 @@ fun ThemeDualPreview(
                     .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
                     .background(LightBgPrimary)
-                    .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(16.dp))
+                    .border(1.dp, Slate200, RoundedCornerShape(16.dp))
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
                     text = "☀️ LIGHT THEME",
-                    color = Color(0xFF64748B),
+                    color = Slate500,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 1.sp
@@ -266,13 +266,13 @@ fun ThemeDualPreview(
                     .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
                     .background(DarkBgPrimary)
-                    .border(1.dp, Color(0xFF334155), RoundedCornerShape(16.dp))
+                    .border(1.dp, Slate700, RoundedCornerShape(16.dp))
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
                     text = "🌙 DARK THEME",
-                    color = Color(0xFF94A3B8),
+                    color = Slate400,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 1.sp

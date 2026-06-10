@@ -1372,7 +1372,7 @@ fun ScannerScreen(
                                 interactionSource = remember { MutableInteractionSource() }
                             )
                     ) {
-                        drawRect(color = Color(0xFF0F172A).copy(alpha = overlayAlpha))
+                        drawRect(color = Slate900.copy(alpha = overlayAlpha))
                         scannerTargetBounds?.let { rect ->
                             val localLeft = rect.left - canvasPositionInRoot.x
                             val localTop = rect.top - canvasPositionInRoot.y
@@ -1401,8 +1401,8 @@ fun ScannerScreen(
                                 alpha = buttonScaleAndAlpha
                             }
                             .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFF1E293B)) // Solid Slate 800
-                            .border(1.dp, Color(0xFF475569), RoundedCornerShape(20.dp)) // Solid Slate 600 border
+                            .background(Slate800) // Solid Slate 800
+                            .border(1.dp, Slate600, RoundedCornerShape(20.dp)) // Solid Slate 600 border
                             .clickable(enabled = isShowcaseActive) {
                                 appState.updateScannerShowcaseStep(0)
                                 appState.updateScannerShowcaseCompleted(true)
@@ -1412,7 +1412,7 @@ fun ScannerScreen(
                     ) {
                         Text(
                             text = appState.strings.skipShowcase,
-                            color = Color(0xFFF1F5F9), // Slate 100
+                            color = Slate100, // Slate 100
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.5.sp

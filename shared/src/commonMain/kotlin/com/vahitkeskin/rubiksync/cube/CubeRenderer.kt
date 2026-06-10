@@ -248,7 +248,7 @@ class CubeRenderer(
                 )
             } else {
                 // Premium dark slate body for light mode to contrast against light background
-                Color(0xFF1F2937)
+                LightCubeBody
             }
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyColor, style = Fill)
 
@@ -257,7 +257,7 @@ class CubeRenderer(
                 DarkOutline
             } else {
                 // Subtle light border to separate the dark cubie bodies in light mode
-                Color(0x33FFFFFF)
+                LightCubeOutline
             }
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyOutlineColor, style = Stroke(width = 0.5f))
 

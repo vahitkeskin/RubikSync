@@ -473,7 +473,7 @@ private fun DrawScope.drawGuideCube(
     // Sort by depth
     renderFaces.sortByDescending { it.depth }
 
-    val bodyColor = if (isDark) Color(0xFF151B22) else Color(0xFFD1D5DB)
+    val bodyColor = if (isDark) GuideBodyDark else GuideBodyLight
 
     // Draw faces
     renderFaces.forEach { rf ->
@@ -505,7 +505,7 @@ private fun DrawScope.drawGuideCube(
                 alpha = 1.0f
             )
         } else {
-            Color(0xFF555555)
+            GuideUnscannedSticker
         }
         drawGuidePolygon(projectedPoints = rf.projectedStickerPoints, color = stickerColor)
     }

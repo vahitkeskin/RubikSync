@@ -57,6 +57,10 @@ import com.vahitkeskin.rubiksync.solver.toSnapshot
 import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import com.vahitkeskin.rubiksync.ui.state.DesignBgDark
+import com.vahitkeskin.rubiksync.ui.state.DesignBgLight
+import com.vahitkeskin.rubiksync.ui.state.SolveBgDark
+import com.vahitkeskin.rubiksync.ui.state.SolveBgLight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -593,9 +597,7 @@ fun ControlPanel(
                                             .clip(RoundedCornerShape(12.dp))
                                             .background(
                                                 if (isDesignEnabled) {
-                                                    if (RubikTheme.colors.isDark) Color(0xFF1E3A8A) else Color(
-                                                        0xFFDBEAFE
-                                                    )
+                                                    if (RubikTheme.colors.isDark) DesignBgDark else DesignBgLight
                                                 } else {
                                                     RubikTheme.colors.buttonDisabledBg
                                                 }
@@ -663,9 +665,7 @@ fun ControlPanel(
                                             .clip(RoundedCornerShape(12.dp))
                                             .background(
                                                 if (isSolveEnabled) {
-                                                    if (RubikTheme.colors.isDark) Color(0xFF065F46) else Color(
-                                                        0xFFD1FAE5
-                                                    )
+                                                    if (RubikTheme.colors.isDark) SolveBgDark else SolveBgLight
                                                 } else {
                                                     RubikTheme.colors.buttonDisabledBg
                                                 }

@@ -85,6 +85,10 @@ import com.vahitkeskin.rubiksync.ui.state.ThemeMode
 import com.vahitkeskin.rubiksync.ui.state.White
 import com.vahitkeskin.rubiksync.ui.state.initializePreviewPersistence
 import com.vahitkeskin.rubiksync.ui.state.rememberRubikAppState
+import com.vahitkeskin.rubiksync.ui.state.Slate900
+import com.vahitkeskin.rubiksync.ui.state.Slate800
+import com.vahitkeskin.rubiksync.ui.state.Slate600
+import com.vahitkeskin.rubiksync.ui.state.Slate100
 import kotlinx.coroutines.launch
 import org.koin.compose.KoinApplication
 
@@ -375,7 +379,7 @@ fun App() {
                                             )
                                     ) {
                                         drawRect(
-                                            color = Color(0xFF0F172A).copy(alpha = overlayAlpha)
+                                            color = Slate900.copy(alpha = overlayAlpha)
                                         )
                                         appState.targetBounds?.let { rect ->
                                             drawRoundRect(
@@ -400,8 +404,8 @@ fun App() {
                                                 alpha = buttonScaleAndAlpha
                                             }
                                             .clip(RoundedCornerShape(20.dp))
-                                            .background(Color(0xFF1E293B)) // Solid Slate 800
-                                            .border(1.dp, Color(0xFF475569), RoundedCornerShape(20.dp)) // Solid Slate 600 border
+                                            .background(Slate800) // Solid Slate 800
+                                            .border(1.dp, Slate600, RoundedCornerShape(20.dp)) // Solid Slate 600 border
                                             .clickable(enabled = isShowcaseActive) {
                                                 appState.updateShowcaseStep(0)
                                                 appState.updateShowcaseCompleted(true)
@@ -413,7 +417,7 @@ fun App() {
                                     ) {
                                         Text(
                                             text = appState.strings.skipShowcase,
-                                            color = Color(0xFFF1F5F9), // Slate 100
+                                            color = Slate100, // Slate 100
                                             fontSize = 11.sp,
                                             fontWeight = FontWeight.Bold,
                                             letterSpacing = 0.5.sp

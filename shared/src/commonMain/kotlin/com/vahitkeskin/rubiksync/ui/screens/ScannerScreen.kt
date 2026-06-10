@@ -1179,7 +1179,59 @@ fun ScannerScreen(
                         }
 
                         val hasCurrentScan = appState.scannedFilePaths.containsKey(currentFace)
-                        if (appState.scannerStep < 5) {
+                        val isAllFacesScanned = appState.scannedFilePaths.size == 6
+
+                        if (isAllFacesScanned) {
+                            Button(
+                                onClick = {
+                                    val completeGrids =
+                                        mutableMapOf<FaceName, Array<Array<CubeColor>>>()
+                                    var isValid = true
+                                    for (face in FaceName.values()) {
+                                        val gridVal = appState.scannedGrids[face]
+                                        val hasPath = appState.scannedFilePaths.containsKey(face)
+                                        if (gridVal != null && hasPath) {
+                                            completeGrids[face] = gridVal
+                                        } else {
+                                            isValid = false
+                                        }
+                                    }
+                                    if (isValid) {
+                                        onComplete(completeGrids)
+                                        appState.updateSuccessMessage(appState.strings.successScanComplete)
+                                    } else {
+                                        appState.updateErrorMessage(appState.strings.errorScanAllFaces)
+                                    }
+                                },
+                                enabled = true,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = RubikTheme.colors.accentOrange,
+                                    contentColor = Color.White
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                                modifier = Modifier.weight(1.1f).height(42.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = CheckIcon,
+                                        contentDescription = "Complete",
+                                        modifier = Modifier.size(14.dp),
+                                        tint = Color.White
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = appState.strings.setButton,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        maxLines = 1
+                                    )
+                                }
+                            }
+                        } else if (appState.scannerStep < 5) {
                             Button(
                                 onClick = {
                                     appState.updateErrorMessage(null)
@@ -1258,19 +1310,14 @@ fun ScannerScreen(
                                         appState.updateErrorMessage(appState.strings.errorScanAllFaces)
                                     }
                                 },
-                                enabled = appState.scannedFilePaths.size == 6,
+                                enabled = false,
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (appState.scannedFilePaths.size == 6) RubikTheme.colors.accentOrange else RubikTheme.colors.backgroundSecondary,
-                                    contentColor = if (appState.scannedFilePaths.size == 6) Color.White else RubikTheme.colors.textSecondary,
                                     disabledContainerColor = RubikTheme.colors.buttonDisabledBg,
                                     disabledContentColor = RubikTheme.colors.buttonDisabledText
                                 ),
                                 shape = RoundedCornerShape(12.dp),
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                                border = if (appState.scannedFilePaths.size == 6) null else BorderStroke(
-                                    1.dp,
-                                    RubikTheme.colors.buttonBorder
-                                ),
+                                border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
                                 modifier = Modifier.weight(1.1f).height(42.dp)
                             ) {
                                 Row(
@@ -1281,7 +1328,7 @@ fun ScannerScreen(
                                         imageVector = CheckIcon,
                                         contentDescription = "Set",
                                         modifier = Modifier.size(14.dp),
-                                        tint = if (appState.scannedFilePaths.size == 6) Color.White else RubikTheme.colors.textSecondary
+                                        tint = RubikTheme.colors.buttonDisabledText
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(

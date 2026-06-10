@@ -1,143 +1,34 @@
 package com.vahitkeskin.rubiksync.ui.screens
 
-import com.vahitkeskin.rubiksync.ui.state.*
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
-import androidx.compose.foundation.BorderStroke
-import com.vahitkeskin.rubiksync.ui.cube.FaceGrid
-import com.vahitkeskin.rubiksync.ui.state.RubikAppState
-import com.vahitkeskin.rubiksync.ui.state.RubikTheme
-import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
-import com.vahitkeskin.rubiksync.utils.parseDetectedState
-import com.vahitkeskin.rubiksync.utils.safe
-import kotlinx.coroutines.launch
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.foundation.Canvas
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.tooling.preview.Preview
-import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
+import com.vahitkeskin.rubiksync.ui.state.*
 
-@Composable
-private fun MiniFaceGrid(
-    face: FaceName,
-    faces: Map<FaceName, Array<Array<CubeColor>>>,
-    isActive: Boolean,
-    onFaceSelect: (FaceName) -> Unit
-) {
-    val grid = faces[face] ?: Array(3) { Array(3) { CubeColor.INTERNAL } }
-    Column(
-        modifier = Modifier
-            .border(
-                width = if (isActive) 1.5.dp else 0.5.dp,
-                color = if (isActive) RubikTheme.colors.accentBlue else RubikTheme.colors.borderSubtle,
-                shape = RoundedCornerShape(4.dp)
-            )
-            .clickable { onFaceSelect(face) }
-            .background(
-                if (isActive) RubikTheme.colors.accentBlue.copy(alpha = 0.08f) else BlackAlpha02,
-                RoundedCornerShape(4.dp)
-            )
-            .padding(2.dp),
-        verticalArrangement = Arrangement.spacedBy(0.5.dp)
-    ) {
-        for (r in 0..2) {
-            Row(horizontalArrangement = Arrangement.spacedBy(0.5.dp)) {
-                for (c in 0..2) {
-                    Box(
-                        modifier = Modifier
-                            .size(7.dp)
-                            .clip(RoundedCornerShape(1.5.dp))
-                            .background(Color(grid[r][c].rgb))
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun MiniNetMap(
-    appState: RubikAppState,
-    faces: Map<FaceName, Array<Array<CubeColor>>>,
-    activeFace: FaceName,
-    onFaceSelect: (FaceName) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(RubikTheme.colors.backgroundPanel)
-            .border(1.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(12.dp))
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        Text(
-            text = appState.strings.cubeMapTitle,
-            color = RubikTheme.colors.textSecondary,
-            fontSize = 7.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 0.5.sp,
-            maxLines = 1
-        )
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            // U face
-            Row {
-                Spacer(modifier = Modifier.width(26.dp))
-                MiniFaceGrid(FaceName.U, faces, activeFace == FaceName.U, onFaceSelect)
-            }
-            // L, F, R, B faces
-            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                MiniFaceGrid(FaceName.L, faces, activeFace == FaceName.L, onFaceSelect)
-                MiniFaceGrid(FaceName.F, faces, activeFace == FaceName.F, onFaceSelect)
-                MiniFaceGrid(FaceName.R, faces, activeFace == FaceName.R, onFaceSelect)
-                MiniFaceGrid(FaceName.B, faces, activeFace == FaceName.B, onFaceSelect)
-            }
-            // D face
-            Row {
-                Spacer(modifier = Modifier.width(26.dp))
-                MiniFaceGrid(FaceName.D, faces, activeFace == FaceName.D, onFaceSelect)
-            }
-        }
-    }
-}
-
+/**
+ * EditorScreen Composable
+ *
+ * Implements a clean, premium editor interface that allows users to manually set
+ * facelet colors on their Rubik's cube or scan using the camera wizard.
+ *
+ * This file acts as the main orchestration screen. Subcomponents are organized
+ * into modular files within the same package.
+ */
 @Composable
 fun EditorScreen(
     appState: RubikAppState,
@@ -146,9 +37,6 @@ fun EditorScreen(
 ) {
     var activeFace by remember { mutableStateOf(FaceName.F) }
     var showJsonImportDialog by remember { mutableStateOf(false) }
-    var jsonInputText by remember { mutableStateOf("") }
-
-    val cubeState = appState.cubeState
 
     Box(
         modifier = Modifier
@@ -161,7 +49,6 @@ fun EditorScreen(
         var boundsStep3 by remember { mutableStateOf<Rect?>(null) }
         var boundsStep4 by remember { mutableStateOf<Rect?>(null) }
         var boundsStep5 by remember { mutableStateOf<Rect?>(null) }
-        var canvasPositionInRoot by remember { mutableStateOf(Offset.Zero) }
 
         val editorTargetBounds = remember(
             appState.editorShowcaseStep,
@@ -196,618 +83,99 @@ fun EditorScreen(
             }
         }
 
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .padding(14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Header Row
-            RubikToolbar(
-                title = appState.strings.editorTitle,
-                subtitle = appState.strings.editorSubtitle,
-                onBackClick = onDismiss,
-                titleFontSize = 17.sp,
-                rightContent = {
-                    Button(
-                        onClick = { showJsonImportDialog = true },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = RubikTheme.colors.backgroundSecondary,
-                            contentColor = RubikTheme.colors.textSecondary
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
-                        modifier = Modifier.height(28.dp)
-                    ) {
-                        Text("📋 JSON", fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                    }
-                }
-            )
-
-            // Scan Card — glassmorphism style
-            Box {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(
-                            Brush.horizontalGradient(
-                                if (RubikTheme.colors.isDark) {
-                                    listOf(DarkGradientBg2, DarkGradientBg4)
-                                } else {
-                                    listOf(AccentBlueFaintBg, AccentBlueSoftBg)
-                                }
-                            )
-                        )
-                        .border(1.dp, RubikTheme.colors.borderSubtle, RoundedCornerShape(14.dp))
-                        .onGloballyPositioned { coords ->
-                            val pos = coords.positionInRoot()
-                            val size = coords.size
-                            boundsStep5 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                        }
-                        .padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f).padding(end = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            text = appState.strings.cameraScanTitle,
-                            color = RubikTheme.colors.textPrimary,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = appState.strings.cameraScanSubtitle,
-                            color = RubikTheme.colors.textSecondary,
-                            fontSize = 9.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-
-                    Button(
-                        onClick = onStartScanWizard.safe(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = RubikTheme.colors.accentBlue,
-                            contentColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(10.dp),
-                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                        modifier = Modifier.height(34.dp)
-                    ) {
-                        Text(appState.strings.scanAction, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                    }
-                }
-                AuraBalloon(
-                    text = appState.strings.showcaseEditorScan,
-                    isVisible = appState.editorShowcaseStep == 5 && !appState.isEditorShowcaseCompleted,
-                    isBelow = true,
-                    onDismiss = { appState.advanceEditorShowcase() }
-                )
-            }
-
-            // Face selector tabs — pill chips with face colors
-            Box {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .onGloballyPositioned { coords ->
-                            val pos = coords.positionInRoot()
-                            val size = coords.size
-                            boundsStep1 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                        },
-                    horizontalArrangement = Arrangement.spacedBy(5.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FaceName.values().forEach { face ->
-                        val isSelected = face == activeFace
-                        val centerColor = when (face) {
-                            FaceName.U -> AccentOrangeDark
-                            FaceName.D -> AccentRedMaterial
-                            FaceName.L -> AccentYellowMaterial
-                            FaceName.R -> LightCardBg
-                            FaceName.F -> AccentGreenMaterial
-                            FaceName.B -> AccentBlueMedium
-                        }
-                        val label = when (face) {
-                            FaceName.U -> appState.strings.faceU
-                            FaceName.D -> appState.strings.faceD
-                            FaceName.L -> appState.strings.faceL
-                            FaceName.R -> appState.strings.faceR
-                            FaceName.F -> appState.strings.faceF
-                            FaceName.B -> appState.strings.faceB
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(
-                                    if (isSelected) {
-                                        if (RubikTheme.colors.isDark) DarkBorderPrimary else AccentBlueFaintBg
-                                    } else {
-                                        RubikTheme.colors.backgroundSecondary
-                                    }
-                                )
-                                .border(
-                                    width = if (isSelected) 1.dp else 0.5.dp,
-                                    color = if (isSelected) RubikTheme.colors.accentBlue else RubikTheme.colors.borderSubtle,
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                                .clickable { activeFace = face }
-                                .padding(horizontal = 12.dp, vertical = 7.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(5.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(8.dp)
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(centerColor)
-                                )
-                                Text(
-                                    text = label,
-                                    color = if (isSelected) {
-                                        if (RubikTheme.colors.isDark) Color.White else AccentBlueNavy
-                                    } else {
-                                        RubikTheme.colors.textSecondary
-                                    },
-                                    fontSize = 11.sp,
-                                    fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
-                                    maxLines = 1
-                                )
-                            }
-                        }
-                    }
-                }
-                AuraBalloon(
-                    text = appState.strings.showcaseEditorFaces,
-                    isVisible = appState.editorShowcaseStep == 1 && !appState.isEditorShowcaseCompleted,
-                    isBelow = true,
-                    onDismiss = { appState.advanceEditorShowcase() }
-                )
-            }
-
-            // Painter Workspace — Active Face Grid + Mini Map side-by-side
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box {
-                    FaceGrid(
-                        face = activeFace,
-                        faces = appState.editorFaces,
-                        cellSize = 48.dp,
-                        spacing = 3.dp,
-                        isClickable = true,
-                        modifier = Modifier.onGloballyPositioned { coords ->
-                            val pos = coords.positionInRoot()
-                            val size = coords.size
-                            boundsStep2 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                        },
-                        onCellClick = { face, row, col ->
-                            val updated = appState.editorFaces.toMutableMap()
-                            val grid = (updated[face] ?: Array(3) { Array(3) { CubeColor.INTERNAL } }).map { it.copyOf() }.toTypedArray()
-                            grid[row][col] = appState.selectedColor
-                            updated[face] = grid
-                            appState.updateEditorFaces(updated)
-                        }
-                    )
-                    AuraBalloon(
-                        text = appState.strings.showcaseEditorGrid,
-                        isVisible = appState.editorShowcaseStep == 2 && !appState.isEditorShowcaseCompleted,
-                        isBelow = false,
-                        onDismiss = { appState.advanceEditorShowcase() }
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                MiniNetMap(
-                    appState = appState,
-                    faces = appState.editorFaces,
-                    activeFace = activeFace,
-                    onFaceSelect = { activeFace = it }
-                )
-            }
-
-            // Color Palette with selected color name
-            Box {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onGloballyPositioned { coords ->
-                            val pos = coords.positionInRoot()
-                            val size = coords.size
-                            boundsStep3 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                        }
-                ) {
-                    val colorName = when (appState.selectedColor) {
-                        CubeColor.ORANGE -> appState.strings.colorOrange
-                        CubeColor.RED -> appState.strings.colorRed
-                        CubeColor.YELLOW -> appState.strings.colorYellow
-                        CubeColor.WHITE -> appState.strings.colorWhite
-                        CubeColor.GREEN -> appState.strings.colorGreen
-                        CubeColor.BLUE -> appState.strings.colorBlue
-                        else -> ""
-                    }
-
-                    Text(
-                        text = "${appState.strings.brushColorPrefix}$colorName",
-                        color = RubikTheme.colors.textSecondary,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 6.dp),
-                        maxLines = 1
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val paletteColors = listOf(
-                            CubeColor.ORANGE, CubeColor.RED, CubeColor.YELLOW,
-                            CubeColor.WHITE, CubeColor.GREEN, CubeColor.BLUE
-                        )
-                        paletteColors.forEach { color ->
-                            val isSelected = appState.selectedColor == color
-
-                            Box(
-                                modifier = Modifier
-                                    .size(if (isSelected) 36.dp else 32.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(Color(color.rgb))
-                                    .border(
-                                        width = if (isSelected) 2.5.dp else 0.5.dp,
-                                        color = if (isSelected) RubikTheme.colors.textPrimary else RubikTheme.colors.borderSubtle,
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
-                                    .clickable { appState.updateSelectedColor(color) },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (isSelected) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(6.dp)
-                                            .clip(RoundedCornerShape(3.dp))
-                                            .background(if (color == CubeColor.WHITE) Color.Black else Color.White)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-                AuraBalloon(
-                    text = appState.strings.showcaseEditorPalette,
-                    isVisible = appState.editorShowcaseStep == 3 && !appState.isEditorShowcaseCompleted,
-                    isBelow = false,
-                    onDismiss = { appState.advanceEditorShowcase() }
-                )
-            }
-
-            // Bottom Action Buttons with icons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Button(
-                    onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = RubikTheme.colors.backgroundSecondary,
-                        contentColor = RubikTheme.colors.textPrimary
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
-                    modifier = Modifier.weight(1f).height(42.dp)
-                ) {
-                    Text(
-                        text = appState.strings.cancelButton,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        appState.updateEditorFaces(mapOf(
-                            FaceName.U to Array(3) { Array(3) { CubeColor.ORANGE } },
-                            FaceName.D to Array(3) { Array(3) { CubeColor.RED } },
-                            FaceName.L to Array(3) { Array(3) { CubeColor.YELLOW } },
-                            FaceName.R to Array(3) { Array(3) { CubeColor.WHITE } },
-                            FaceName.F to Array(3) { Array(3) { CubeColor.GREEN } },
-                            FaceName.B to Array(3) { Array(3) { CubeColor.BLUE } }
-                        ))
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (RubikTheme.colors.isDark) SelectionDarkMagenta else AccentRedFaintBg,
-                        contentColor = RubikTheme.colors.accentRed
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    border = BorderStroke(1.dp, if (RubikTheme.colors.isDark) SelectionMediumMagenta else AccentRedSoftBg),
-                    modifier = Modifier.weight(1f).height(42.dp)
-                ) {
-                    Text(
-                        text = appState.strings.clearButton,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .weight(1.1f)
-                        .height(42.dp)
-                        .onGloballyPositioned { coords ->
-                            val pos = coords.positionInRoot()
-                            val size = coords.size
-                            boundsStep4 = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
-                        }
-                ) {
-                    Button(
-                        onClick = {
-                            onDismiss()
-                            appState.coroutineScope.launch {
-                                val success = cubeState.setCustomStateAnimated(appState.editorFaces)
-                                if (success) {
-                                    appState.clearManualMoves()
-                                    appState.saveCurrentState()
-                                    appState.updateActiveSolution(null)
-                                    appState.updateErrorMessage(null)
-                                    appState.updateSuccessMessage(appState.strings.cubeStateApplied)
-                                } else {
-                                    appState.updateErrorMessage(appState.strings.invalidCubeDesign)
-                                }
-                            }
-                        },
-                        enabled = !cubeState.isAnimating,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = RubikTheme.colors.accentOrange,
-                            contentColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Text(
-                            text = appState.strings.applyButton,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            maxLines = 1
-                        )
-                    }
-                    AuraBalloon(
-                        text = appState.strings.showcaseEditorApply,
-                        isVisible = appState.editorShowcaseStep == 4 && !appState.isEditorShowcaseCompleted,
-                        isBelow = false,
-                        onDismiss = { appState.advanceEditorShowcase() }
-                    )
-                }
-            }
-        }
-
-        // JSON Import Dialog
-        if (showJsonImportDialog) {
-            AlertDialog(
-                onDismissRequest = { showJsonImportDialog = false },
-                title = {
-                    Text(
-                        appState.strings.importJsonTitle,
-                        color = RubikTheme.colors.textPrimary,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1
-                    )
-                },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(
-                            text = appState.strings.pasteJsonDesc,
-                            color = RubikTheme.colors.textSecondary,
-                            fontSize = 11.sp,
-                            maxLines = 2
-                        )
-                        OutlinedTextField(
-                            value = jsonInputText,
-                            onValueChange = { jsonInputText = it },
-                            modifier = Modifier.fillMaxWidth().height(100.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = RubikTheme.colors.textPrimary,
-                                unfocusedTextColor = RubikTheme.colors.textPrimary,
-                                focusedBorderColor = RubikTheme.colors.accentOrange,
-                                unfocusedBorderColor = RubikTheme.colors.borderPrimary
+                // Header / Toolbar Row
+                RubikToolbar(
+                    title = appState.strings.editorTitle,
+                    subtitle = appState.strings.editorSubtitle,
+                    onBackClick = onDismiss,
+                    titleFontSize = 17.sp,
+                    rightContent = {
+                        Button(
+                            onClick = { showJsonImportDialog = true },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = RubikTheme.colors.backgroundSecondary,
+                                contentColor = RubikTheme.colors.textSecondary
                             ),
-                            textStyle = LocalTextStyle.current.copy(fontSize = 11.sp),
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            val parsed = parseDetectedState(jsonInputText)
-                            if (parsed != null) {
-                                appState.updateEditorFaces(parsed)
-                                showJsonImportDialog = false
-                                jsonInputText = ""
-                                appState.updateSuccessMessage(appState.strings.jsonImportSuccess)
-                            } else {
-                                appState.updateErrorMessage(appState.strings.jsonImportError)
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = RubikTheme.colors.accentOrange),
-                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(appState.strings.importJsonButton, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        onClick = {
-                            showJsonImportDialog = false
-                            jsonInputText = ""
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = RubikTheme.colors.backgroundSecondary),
-                        border = BorderStroke(1.dp, RubikTheme.colors.buttonBorder),
-                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(appState.strings.cancelAction, color = RubikTheme.colors.textPrimary, fontSize = 12.sp, maxLines = 1)
-                    }
-                },
-                containerColor = RubikTheme.colors.cardBackground,
-                shape = RoundedCornerShape(20.dp)
-            )
-        }
-
-        val isShowcaseActive = appState.editorShowcaseStep != 0 && !appState.isEditorShowcaseCompleted
-        val overlayAlpha by animateFloatAsState(
-            targetValue = if (isShowcaseActive) 0.85f else 0f,
-            animationSpec = tween(durationMillis = 1000)
-        )
-
-        val buttonScaleAndAlpha by animateFloatAsState(
-            targetValue = if (isShowcaseActive) 1f else 0f,
-            animationSpec = tween(
-                durationMillis = 800,
-                easing = FastOutSlowInEasing
-            )
-        )
-
-        if (overlayAlpha > 0f) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .onGloballyPositioned { coords ->
-                            canvasPositionInRoot = coords.positionInRoot()
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                            modifier = Modifier.height(28.dp)
+                        ) {
+                            Text("📋 JSON", fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                         }
-                        .graphicsLayer(alpha = 0.99f)
-                        .clickable(
-                            onClick = { appState.advanceEditorShowcase() },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        )
-                ) {
-                    drawRect(color = Slate900.copy(alpha = overlayAlpha))
-                    editorTargetBounds?.let { rect ->
-                        val localLeft = rect.left - canvasPositionInRoot.x
-                        val localTop = rect.top - canvasPositionInRoot.y
-                        drawRoundRect(
-                            color = Color.Transparent,
-                            topLeft = Offset(localLeft, localTop),
-                            size = Size(rect.width, rect.height),
-                            cornerRadius = CornerRadius(editorTargetCornerRadius.toPx(), editorTargetCornerRadius.toPx()),
-                            blendMode = BlendMode.Clear
-                        )
                     }
-                }
+                )
 
-                // Skip Showcase/Tutorial Button (styled as a premium, slate button aligned to top-right corner)
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .statusBarsPadding()
-                        .padding(end = 16.dp, top = 12.dp)
-                        .graphicsLayer {
-                            scaleX = buttonScaleAndAlpha
-                            scaleY = buttonScaleAndAlpha
-                            alpha = buttonScaleAndAlpha
-                        }
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Slate800) // Solid Slate 800
-                        .border(1.dp, Slate600, RoundedCornerShape(20.dp)) // Solid Slate 600 border
-                        .clickable(enabled = isShowcaseActive) {
-                            appState.updateEditorShowcaseStep(0)
-                            appState.updateEditorShowcaseCompleted(true)
-                        }
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = appState.strings.skipShowcase,
-                        color = Slate100, // Slate 100
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp
-                    )
-                }
+                // 1. Scan Assistant Entry Point
+                ScanCard(
+                    appState = appState,
+                    onStartScanWizard = onStartScanWizard,
+                    onPositioned = { boundsStep5 = it }
+                )
+
+                // 2. Dynamic Face Selector Tabs
+                FaceSelectorTabs(
+                    appState = appState,
+                    activeFace = activeFace,
+                    onFaceSelect = { activeFace = it },
+                    onPositioned = { boundsStep1 = it }
+                )
+
+                // 3. Grid Workspace (Face Grid & Small Net Map side-by-side)
+                PainterWorkspace(
+                    appState = appState,
+                    activeFace = activeFace,
+                    onFaceSelect = { activeFace = it },
+                    onPositioned = { boundsStep2 = it }
+                )
+
+                // 4. Color Palette Picker
+                ColorPalette(
+                    appState = appState,
+                    onPositioned = { boundsStep3 = it }
+                )
+
+                // 5. Action Controls (Cancel, Clear, Apply)
+                BottomActionButtons(
+                    appState = appState,
+                    onDismiss = onDismiss,
+                    onPositioned = { boundsStep4 = it }
+                )
             }
-        }
-    }
-}
-}
 
-@Preview
-@Composable
-fun MiniFaceGridDarkPreview() {
-    PreviewRubikTheme(isDark = true) {
-        val dummyFaces = FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
-        Box(
-            modifier = Modifier
-                .background(RubikTheme.colors.backgroundPanel)
-                .padding(16.dp)
-        ) {
-            MiniFaceGrid(
-                face = FaceName.F,
-                faces = dummyFaces,
-                isActive = true,
-                onFaceSelect = {}
+            // JSON Import Overlay Dialog
+            if (showJsonImportDialog) {
+                JsonImportDialog(
+                    appState = appState,
+                    onDismissRequest = { showJsonImportDialog = false }
+                )
+            }
+
+            // Interactive Showcase / Tutorial Overlay
+            ShowcaseOverlay(
+                appState = appState,
+                editorTargetBounds = editorTargetBounds,
+                editorTargetCornerRadius = editorTargetCornerRadius
             )
         }
     }
 }
 
-@Preview
-@Composable
-fun MiniNetMapDarkPreview() {
-    PreviewRubikTheme(isDark = true) {
-        val appState = rememberPreviewRubikAppState()
-        MiniNetMap(
-            appState = appState,
-            faces = appState.editorFaces,
-            activeFace = FaceName.F,
-            onFaceSelect = {}
-        )
-    }
-}
+// ==========================================
+// PREVIEWS
+// ==========================================
 
 @Preview
 @Composable
-fun MiniNetMapLightPreview() {
-    PreviewRubikTheme(isDark = false) {
-        val appState = rememberPreviewRubikAppState()
-        MiniNetMap(
-            appState = appState,
-            faces = appState.editorFaces,
-            activeFace = FaceName.U,
-            onFaceSelect = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-fun EditorDialogDarkPreview() {
+private fun EditorDialogDarkPreview() {
     PreviewRubikTheme(isDark = true) {
         val appState = rememberPreviewRubikAppState()
         EditorScreen(

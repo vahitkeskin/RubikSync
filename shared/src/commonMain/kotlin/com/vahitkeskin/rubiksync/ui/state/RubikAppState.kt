@@ -11,6 +11,7 @@ import com.vahitkeskin.rubiksync.solver.IntVector3
 import com.vahitkeskin.rubiksync.solver.AnnotatedMove
 import kotlinx.coroutines.CoroutineScope
 import com.vahitkeskin.rubiksync.utils.CubiePersistable
+import com.vahitkeskin.rubiksync.utils.parseDetectedState
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -260,6 +261,65 @@ class RubikAppState(
     fun updateEditorFaces(faces: Map<FaceName, Array<Array<CubeColor>>>) {
         editorFaces = faces
         saveCurrentState()
+    }
+
+    /**
+     * Updates the color of a specific grid cell on a specific face in the editor.
+     * This ensures encapsulated state mutation instead of direct array index access
+     * from external UI modules.
+     */
+    fun updateEditorFaceCell(face: FaceName, row: Int, col: Int, color: CubeColor) {
+        val updated = editorFaces.toMutableMap()
+        val grid = (updated[face] ?: Array(3) { Array(3) { CubeColor.INTERNAL } })
+            .map { it.copyOf() }
+            .toTypedArray()
+        grid[row][col] = color
+        updated[face] = grid
+        updateEditorFaces(updated)
+    }
+
+    /**
+     * Resets all editor faces to their default colors (solved state configuration).
+     */
+    fun resetEditorFaces() {
+        updateEditorFaces(defaultFaces)
+    }
+
+    /**
+     * Attempts to import editor face colors from a JSON-formatted string representation.
+     * Parses the input and applies it if valid; otherwise triggers error feedback.
+     */
+    fun importEditorFacesFromJson(json: String): Boolean {
+        val parsed = parseDetectedState(json)
+        return if (parsed != null) {
+            updateEditorFaces(parsed)
+            updateSuccessMessage(strings.jsonImportSuccess)
+            true
+        } else {
+            updateErrorMessage(strings.jsonImportError)
+            false
+        }
+    }
+
+    /**
+     * Applies the current editor face configuration to the active cube model state,
+     * validating the layout and triggering appropriate success or error alerts.
+     */
+    fun applyEditorState(onSuccess: () -> Unit) {
+        if (cubeState.isAnimating) return
+        coroutineScope.launch {
+            val success = cubeState.setCustomStateAnimated(editorFaces)
+            if (success) {
+                clearManualMoves()
+                saveCurrentState()
+                updateActiveSolution(null)
+                updateErrorMessage(null)
+                updateSuccessMessage(strings.cubeStateApplied)
+                onSuccess()
+            } else {
+                updateErrorMessage(strings.invalidCubeDesign)
+            }
+        }
     }
 
     fun updateSelectedColor(color: CubeColor) { selectedColor = color }

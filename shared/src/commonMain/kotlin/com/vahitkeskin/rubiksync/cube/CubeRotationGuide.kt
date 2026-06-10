@@ -2,7 +2,12 @@ package com.vahitkeskin.rubiksync.cube
 
 import com.vahitkeskin.rubiksync.ui.state.*
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -45,6 +50,8 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 fun CubeRotationGuide(
     appState: RubikAppState,
     currentFace: FaceName,
+    isExpanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isDark = RubikTheme.colors.isDark
@@ -204,17 +211,9 @@ fun CubeRotationGuide(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .animateContentSize(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    )
-                )
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            var isExpanded by remember { mutableStateOf(true) }
-
             // Header Row (Click to toggle expand/collapse)
             Row(
                 modifier = Modifier
@@ -223,7 +222,7 @@ fun CubeRotationGuide(
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
-                    ) { isExpanded = !isExpanded }
+                    ) { onExpandedChange(!isExpanded) }
                     .padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -247,7 +246,7 @@ fun CubeRotationGuide(
                 // Right side: Collapsible Arrow Button Container
                 val rotationAngle by animateFloatAsState(
                     targetValue = if (isExpanded) 180f else 0f,
-                    animationSpec = tween(durationMillis = 300)
+                    animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
                 )
                 Box(
                     modifier = Modifier
@@ -267,33 +266,43 @@ fun CubeRotationGuide(
                 }
             }
 
-            if (isExpanded) {
-                // 3D Animated Guide Canvas
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(RubikTheme.colors.backgroundPrimary)
-                        .pointerInput(Unit) {
-                            detectTransformGestures { _, pan, _, rotation ->
-                                userYaw.value += rotation
-                                userPitch.value += pan.y * 0.01f
-                            }
-                        },
-                    contentAlignment = Alignment.Center
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = fadeIn(animationSpec = tween(1000, easing = FastOutSlowInEasing)) +
+                        expandVertically(animationSpec = tween(1000, easing = FastOutSlowInEasing)),
+                exit = fadeOut(animationSpec = tween(1000, easing = FastOutSlowInEasing)) +
+                       shrinkVertically(animationSpec = tween(1000, easing = FastOutSlowInEasing))
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Canvas(modifier = Modifier.fillMaxSize()) {
-                        drawGuideCube(miniCubies, yaw + userYaw.value, pitch + userPitch.value, currentFace, appState, isDark)
+                    // 3D Animated Guide Canvas
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(RubikTheme.colors.backgroundPrimary)
+                            .pointerInput(Unit) {
+                                detectTransformGestures { _, pan, _, rotation ->
+                                    userYaw.value += rotation
+                                    userPitch.value += pan.y * 0.01f
+                                }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Canvas(modifier = Modifier.fillMaxSize()) {
+                            drawGuideCube(miniCubies, yaw + userYaw.value, pitch + userPitch.value, currentFace, appState, isDark)
+                        }
                     }
-                }
 
-                Text(
-                    text = guideInstruction,
-                    color = RubikTheme.colors.textSecondary,
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp
-                )
+                    Text(
+                        text = guideInstruction,
+                        color = RubikTheme.colors.textSecondary,
+                        fontSize = 12.sp,
+                        lineHeight = 16.sp
+                    )
+                }
             }
         }
     }
@@ -604,9 +613,12 @@ private fun mapToGuideLocalFace(p: Vector3, localNormal: Vector3): Vector3 {
 fun CubeRotationGuideDarkPreview() {
     PreviewRubikTheme(isDark = true) {
         val appState = rememberPreviewRubikAppState()
+        var isExpanded by remember { mutableStateOf(true) }
         CubeRotationGuide(
             appState = appState,
             currentFace = FaceName.F,
+            isExpanded = isExpanded,
+            onExpandedChange = { isExpanded = it },
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -617,9 +629,12 @@ fun CubeRotationGuideDarkPreview() {
 fun CubeRotationGuideLightPreview() {
     PreviewRubikTheme(isDark = false) {
         val appState = rememberPreviewRubikAppState()
+        var isExpanded by remember { mutableStateOf(true) }
         CubeRotationGuide(
             appState = appState,
             currentFace = FaceName.U,
+            isExpanded = isExpanded,
+            onExpandedChange = { isExpanded = it },
             modifier = Modifier.padding(16.dp)
         )
     }

@@ -63,6 +63,15 @@ fun ScannerScreen(
 ) {
     val coroutineScope = appState.coroutineScope
     val currentFace = FaceName.values()[appState.scannerStep]
+    val currentPath = appState.scannedFilePaths[currentFace]
+    
+    var isGuideExpanded by remember(currentFace) { mutableStateOf(currentPath == null) }
+    
+    LaunchedEffect(currentPath) {
+        if (currentPath != null) {
+            isGuideExpanded = false
+        }
+    }
 
     val scannerScrollState = rememberScrollState()
 
@@ -411,6 +420,8 @@ fun ScannerScreen(
                         CubeRotationGuide(
                             appState = appState,
                             currentFace = currentFace,
+                            isExpanded = isGuideExpanded,
+                            onExpandedChange = { isGuideExpanded = it },
                             modifier = Modifier
                                 .padding(horizontal = 4.dp)
                                 .onGloballyPositioned { coords ->
@@ -432,7 +443,7 @@ fun ScannerScreen(
                         )
                     }
 
-                    val currentPath = appState.scannedFilePaths[currentFace]
+                    // currentPath is defined at top level
                     val isShowcaseSlidersOrPreview =
                         appState.scannerShowcaseStep == 4 || appState.scannerShowcaseStep == 5
 

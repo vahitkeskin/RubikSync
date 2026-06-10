@@ -82,6 +82,16 @@ fun ScannerScreen(
         }
     }
 
+    // Auto-advance showcase steps that require a scanned image if no image is present
+    LaunchedEffect(appState.scannerShowcaseStep, currentPath) {
+        if (!appState.isScannerShowcaseCompleted) {
+            val step = appState.scannerShowcaseStep
+            if (currentPath == null && (step == 4 || step == 5)) {
+                appState.advanceScannerShowcase()
+            }
+        }
+    }
+
     val faceColorMap = mapOf(
         FaceName.U to AccentOrangeDark,
         FaceName.D to AccentRedMaterial,
@@ -443,11 +453,7 @@ fun ScannerScreen(
                         )
                     }
 
-                    // currentPath is defined at top level
-                    val isShowcaseSlidersOrPreview =
-                        appState.scannerShowcaseStep == 4 || appState.scannerShowcaseStep == 5
-
-                    if (currentPath == null && !isShowcaseSlidersOrPreview) {
+                    if (currentPath == null) {
                         // Not scanned yet
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -675,71 +681,7 @@ fun ScannerScreen(
 
                                 // Right Box: Color Preview Grid
                                 val displayGrid = appState.scannedGrids[currentFace]
-                                    ?: if (appState.scannerShowcaseStep != 0) {
-                                        val currentFaceColor = when (currentFace) {
-                                            FaceName.U -> CubeColor.ORANGE
-                                            FaceName.D -> CubeColor.RED
-                                            FaceName.L -> CubeColor.YELLOW
-                                            FaceName.R -> CubeColor.WHITE
-                                            FaceName.F -> CubeColor.GREEN
-                                            FaceName.B -> CubeColor.BLUE
-                                        }
-                                        arrayOf(
-                                            arrayOf(
-                                                CubeColor.ORANGE,
-                                                CubeColor.GREEN,
-                                                CubeColor.YELLOW
-                                            ),
-                                            arrayOf(
-                                                CubeColor.RED,
-                                                currentFaceColor,
-                                                CubeColor.WHITE
-                                            ),
-                                            arrayOf(
-                                                CubeColor.BLUE,
-                                                CubeColor.ORANGE,
-                                                CubeColor.GREEN
-                                            )
-                                        )
-                                    } else null
-
                                 val displayRawGrid = appState.scannedRawRGBs[currentFace]
-                                    ?: if (appState.scannerShowcaseStep != 0) {
-                                        val currentFaceColor = when (currentFace) {
-                                            FaceName.U -> CubeColor.ORANGE
-                                            FaceName.D -> CubeColor.RED
-                                            FaceName.L -> CubeColor.YELLOW
-                                            FaceName.R -> CubeColor.WHITE
-                                            FaceName.F -> CubeColor.GREEN
-                                            FaceName.B -> CubeColor.BLUE
-                                        }
-                                        val currentFaceRGB = when (currentFaceColor) {
-                                            CubeColor.ORANGE -> IntVector3(255, 130, 0)
-                                            CubeColor.RED -> IntVector3(220, 20, 20)
-                                            CubeColor.YELLOW -> IntVector3(240, 240, 0)
-                                            CubeColor.WHITE -> IntVector3(230, 230, 230)
-                                            CubeColor.GREEN -> IntVector3(0, 160, 0)
-                                            CubeColor.BLUE -> IntVector3(0, 0, 200)
-                                            CubeColor.INTERNAL -> IntVector3(21, 27, 38)
-                                        }
-                                        arrayOf(
-                                            arrayOf(
-                                                IntVector3(255, 130, 0),
-                                                IntVector3(0, 160, 0),
-                                                IntVector3(240, 240, 0)
-                                            ),
-                                            arrayOf(
-                                                IntVector3(220, 20, 20),
-                                                currentFaceRGB,
-                                                IntVector3(230, 230, 230)
-                                            ),
-                                            arrayOf(
-                                                IntVector3(0, 0, 200),
-                                                IntVector3(255, 130, 0),
-                                                IntVector3(0, 160, 0)
-                                            )
-                                        )
-                                    } else null
 
                                 Box(
                                     modifier = Modifier

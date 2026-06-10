@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.screens
+package com.vahitkeskin.rubiksync.ui.screens.editor.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable

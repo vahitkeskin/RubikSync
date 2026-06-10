@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.screens
+package com.vahitkeskin.rubiksync.ui.screens.editor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,15 +19,13 @@ import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
 import com.vahitkeskin.rubiksync.ui.state.*
+import com.vahitkeskin.rubiksync.ui.screens.editor.components.*
 
 /**
  * EditorScreen Composable
  *
  * Implements a clean, premium editor interface that allows users to manually set
  * facelet colors on their Rubik's cube or scan using the camera wizard.
- *
- * This file acts as the main orchestration screen. Subcomponents are organized
- * into modular files within the same package.
  */
 @Composable
 fun EditorScreen(

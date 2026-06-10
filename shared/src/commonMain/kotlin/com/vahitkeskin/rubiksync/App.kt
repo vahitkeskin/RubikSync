@@ -57,10 +57,10 @@ import com.vahitkeskin.rubiksync.ui.dashboard.DashboardHeader
 import com.vahitkeskin.rubiksync.ui.components.FeedbackOverlay
 import com.vahitkeskin.rubiksync.ui.cube.InteractiveCubeCanvas
 import com.vahitkeskin.rubiksync.ui.controlpanel.PlaybackController
-import com.vahitkeskin.rubiksync.ui.screens.SettingsScreen
-import com.vahitkeskin.rubiksync.ui.screens.SplashScreen
-import com.vahitkeskin.rubiksync.ui.screens.EditorScreen
-import com.vahitkeskin.rubiksync.ui.screens.ScannerScreen
+import com.vahitkeskin.rubiksync.ui.screens.settings.SettingsScreen
+import com.vahitkeskin.rubiksync.ui.screens.splash.SplashScreen
+import com.vahitkeskin.rubiksync.ui.screens.editor.EditorScreen
+import com.vahitkeskin.rubiksync.ui.screens.scanner.ScannerScreen
 import com.vahitkeskin.rubiksync.ui.state.AccentBlue
 import com.vahitkeskin.rubiksync.ui.state.AccentBlueBright
 import com.vahitkeskin.rubiksync.ui.state.AccentGreen

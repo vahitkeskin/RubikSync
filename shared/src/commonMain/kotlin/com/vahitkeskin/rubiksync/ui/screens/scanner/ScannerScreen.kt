@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.screens
+package com.vahitkeskin.rubiksync.ui.screens.scanner
 
 import com.vahitkeskin.rubiksync.ui.state.*
 

@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.screens
+package com.vahitkeskin.rubiksync.ui.screens.editor.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,10 +19,6 @@ import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.ui.state.BlackAlpha02
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
-
-// ==========================================
-// PRIVATE SUBCOMPOSABLES (visibility control)
-// ==========================================
 
 @Composable
 internal fun MiniFaceGrid(

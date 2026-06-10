@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.screens
+package com.vahitkeskin.rubiksync.ui.screens.splash
 
 import com.vahitkeskin.rubiksync.ui.state.*
 
@@ -117,8 +117,6 @@ fun SplashScreen(
                 )
         )
 
-        // Skip / Entry Button removed since Giriş Yap is not needed
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -215,9 +213,13 @@ fun SplashScreen(
     }
 }
 
+// ==========================================
+// PREVIEWS
+// ==========================================
+
 @Preview
 @Composable
-fun SplashScreenDarkPreview() {
+private fun SplashScreenDarkPreview() {
     PreviewRubikTheme(isDark = true) {
         SplashScreen(
             appState = rememberPreviewRubikAppState(),
@@ -228,7 +230,7 @@ fun SplashScreenDarkPreview() {
 
 @Preview
 @Composable
-fun SplashScreenLightPreview() {
+private fun SplashScreenLightPreview() {
     PreviewRubikTheme(isDark = false) {
         SplashScreen(
             appState = rememberPreviewRubikAppState(),

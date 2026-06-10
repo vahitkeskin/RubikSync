@@ -1,4 +1,4 @@
-package com.vahitkeskin.rubiksync.ui.screens
+package com.vahitkeskin.rubiksync.ui.screens.editor.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*

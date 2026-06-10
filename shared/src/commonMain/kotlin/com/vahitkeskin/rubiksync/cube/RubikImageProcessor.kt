@@ -1,5 +1,6 @@
 package com.vahitkeskin.rubiksync.cube
 
+import com.vahitkeskin.rubiksync.PixelGrid
 import com.vahitkeskin.rubiksync.loadImagePixels
 import com.vahitkeskin.rubiksync.solver.IntVector3
 import com.vahitkeskin.rubiksync.utils.getFaceRawRGB
@@ -294,16 +295,13 @@ class RubikImageProcessor {
         return d2000 + penalty
     }
 
-    // Process a face image and extract raw average RGB values for all 9 cells (3x3 grid)
+    // Process a pixel grid and extract raw average RGB values for all 9 cells (3x3 grid)
     fun processFaceImageRaw(
-        filePath: String,
-        face: FaceName,
+        grid: PixelGrid,
         scale: Float = 0.55f,
         offsetX: Float = 0f,
         offsetY: Float = 0f
-    ): Array<Array<IntVector3>>? {
-        val grid = loadImagePixels(filePath) ?: return null
-        
+    ): Array<Array<IntVector3>> {
         val w = grid.width
         val h = grid.height
         
@@ -399,6 +397,18 @@ class RubikImageProcessor {
         }
         
         return result
+    }
+
+    // Process a face image and extract raw average RGB values for all 9 cells (3x3 grid)
+    fun processFaceImageRaw(
+        filePath: String,
+        face: FaceName,
+        scale: Float = 0.55f,
+        offsetX: Float = 0f,
+        offsetY: Float = 0f
+    ): Array<Array<IntVector3>>? {
+        val grid = loadImagePixels(filePath) ?: return null
+        return processFaceImageRaw(grid, scale, offsetX, offsetY)
     }
 
     // Classifies all scanned face grids using self-calibrating centers and Hungarian optimization

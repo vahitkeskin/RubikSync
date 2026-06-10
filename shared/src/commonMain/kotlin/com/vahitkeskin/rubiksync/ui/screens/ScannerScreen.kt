@@ -27,12 +27,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.CameraCaptureOrPicker
 import com.vahitkeskin.rubiksync.loadImageBitmap
+import com.vahitkeskin.rubiksync.PixelGrid
+import com.vahitkeskin.rubiksync.loadImagePixels
 import com.vahitkeskin.rubiksync.cube.*
 import com.vahitkeskin.rubiksync.solver.*
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.icons.CloseIcon
@@ -172,40 +175,53 @@ fun ScannerScreen(
     val currentOffsetX = appState.gridOffsetsX[currentFace] ?: 0f
     val currentOffsetY = appState.gridOffsetsY[currentFace] ?: 0f
 
-    // Reactively process image when parameters change
-    val currentFaceForEffect = currentFace
-    val currentFilePathForEffect = appState.scannedFilePaths[currentFace]
-    val currentScaleForEffect = currentScale
-    val currentOffsetXForEffect = currentOffsetX
-    val currentOffsetYForEffect = currentOffsetY
+    var cachedPixelGrid by remember { mutableStateOf<PixelGrid?>(null) }
+    val currentFilePath = appState.scannedFilePaths[currentFace]
 
-    LaunchedEffect(
-        currentFaceForEffect,
-        currentFilePathForEffect,
-        currentScaleForEffect,
-        currentOffsetXForEffect,
-        currentOffsetYForEffect
-    ) {
-        if (currentFilePathForEffect != null) {
-            appState.updateRecalculating(true)
-            val parsedRaw = withContext(Dispatchers.Default) {
-                RubikImageProcessor().processFaceImageRaw(
-                    filePath = currentFilePathForEffect,
-                    face = currentFaceForEffect,
-                    scale = currentScaleForEffect,
-                    offsetX = currentOffsetXForEffect,
-                    offsetY = currentOffsetYForEffect
-                )
+    // Cache PixelGrid in background when image path or face changes to prevent disk I/O on slider drag
+    LaunchedEffect(currentFace, currentFilePath) {
+        if (currentFilePath != null) {
+            withContext(Dispatchers.Default) {
+                cachedPixelGrid = loadImagePixels(currentFilePath)
             }
-            appState.updateRecalculating(false)
-            if (parsedRaw != null) {
-                val updatedRaw = appState.scannedRawRGBs.toMutableMap()
-                updatedRaw[currentFaceForEffect] = parsedRaw
-                appState.updateScannedRawRGBs(updatedRaw)
+        } else {
+            cachedPixelGrid = null
+        }
+    }
 
-                appState.updateScannedGrids(RubikImageProcessor().classifyAll(appState.scannedRawRGBs))
-            } else {
-                appState.updateErrorMessage(appState.strings.errorPhotoResolution)
+    // Process image parameters in real-time without blocking main thread
+    LaunchedEffect(
+        currentFace,
+        cachedPixelGrid,
+        currentScale,
+        currentOffsetX,
+        currentOffsetY
+    ) {
+        val grid = cachedPixelGrid
+        if (grid != null) {
+            appState.updateRecalculating(true)
+            withContext(Dispatchers.Default) {
+                val parsedRaw = RubikImageProcessor().processFaceImageRaw(
+                    grid = grid,
+                    scale = currentScale,
+                    offsetX = currentOffsetX,
+                    offsetY = currentOffsetY
+                )
+                
+                if (isActive) {
+                    val updatedRaw = appState.scannedRawRGBs.toMutableMap()
+                    updatedRaw[currentFace] = parsedRaw
+                    
+                    val updatedGrids = RubikImageProcessor().classifyAll(updatedRaw)
+                    
+                    if (isActive) {
+                        withContext(Dispatchers.Main) {
+                            appState.updateScannedRawRGBs(updatedRaw)
+                            appState.updateScannedGrids(updatedGrids)
+                            appState.updateRecalculating(false)
+                        }
+                    }
+                }
             }
         }
     }

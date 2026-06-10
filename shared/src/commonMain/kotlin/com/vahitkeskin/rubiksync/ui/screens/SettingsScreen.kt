@@ -40,11 +40,14 @@ import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun SettingsScreen(
@@ -244,6 +247,30 @@ fun SettingsScreen(
                         animationSpec = tween(300)
                     )
 
+                    val lazyListState = rememberLazyListState()
+                    val density = LocalDensity.current
+                    var lastExpanded by remember { mutableStateOf(false) }
+
+                    LaunchedEffect(isExpanded, appState.appLanguage) {
+                        if (isExpanded) {
+                            val selectedIndex = AppLanguage.values().indexOf(appState.appLanguage)
+                            if (selectedIndex >= 0) {
+                                val itemHeightPx = with(density) { 44.dp.roundToPx() }
+                                val viewportHeightPx = with(density) { 180.dp.roundToPx() }
+                                val centerOffsetPx = -(viewportHeightPx / 2 - itemHeightPx / 2)
+                                
+                                if (!lastExpanded) {
+                                    lazyListState.scrollToItem(selectedIndex, centerOffsetPx)
+                                    lastExpanded = true
+                                } else {
+                                    lazyListState.animateScrollToItem(selectedIndex, centerOffsetPx)
+                                }
+                            }
+                        } else {
+                            lastExpanded = false
+                        }
+                    }
+
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -295,6 +322,7 @@ fun SettingsScreen(
                                     .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
                             ) {
                                 LazyColumn(
+                                    state = lazyListState,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(12.dp))
@@ -307,7 +335,6 @@ fun SettingsScreen(
                                                 .background(if (isSelected) (if (isDarkTheme) SelectionDarkOrange else AccentOrangeSoftBg) else Color.Transparent)
                                                 .clickable {
                                                     appState.updateLanguage(lang)
-                                                    isExpanded = false
                                                 }
                                                 .padding(horizontal = 14.dp, vertical = 12.dp),
                                             horizontalArrangement = Arrangement.SpaceBetween,

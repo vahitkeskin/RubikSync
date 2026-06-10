@@ -846,16 +846,18 @@ class RubikSolver {
     ): List<MoveType> {
         val forwardPath = mutableListOf<MoveType>()
         var curr = intersection
-        while (curr in forwardParent) {
-            val (parent, move) = forwardParent[curr]!!
-            forwardPath.add(0, move)
-            curr = parent
+        while (true) {
+            val step = forwardParent[curr] ?: break
+            forwardPath.add(0, step.second)
+            curr = step.first
         }
 
         val backwardPath = mutableListOf<MoveType>()
         curr = intersection
-        while (curr in backwardParent) {
-            val (parent, move) = backwardParent[curr]!!
+        while (true) {
+            val step = backwardParent[curr] ?: break
+            val move = step.second
+            val parent = step.first
             val inverseMove = MoveType.entries.first {
                 it.axis == move.axis &&
                 it.layerValue == move.layerValue &&

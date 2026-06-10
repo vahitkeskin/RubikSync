@@ -28,6 +28,8 @@ val appModule = module {
     factory { SaveSoundEnabledUseCase(get()) }
     factory { SaveCubeEditableUseCase(get()) }
     factory { SaveShowcaseCompletedUseCase(get()) }
+    factory { SaveEditorShowcaseCompletedUseCase(get()) }
+    factory { SaveScannerShowcaseCompletedUseCase(get()) }
     factory { SaveShakeToScrambleUseCase(get()) }
     factory { GetCameraSettingsUseCase(get()) }
     factory { SaveCameraSettingsUseCase(get()) }

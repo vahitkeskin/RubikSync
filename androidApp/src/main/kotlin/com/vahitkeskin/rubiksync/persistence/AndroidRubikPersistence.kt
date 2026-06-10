@@ -37,6 +37,8 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     private val KEY_SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
     private val KEY_SHOWCASE_COMPLETED = booleanPreferencesKey("showcase_completed")
     private val KEY_SHAKE_TO_SCRAMBLE = booleanPreferencesKey("shake_to_scramble")
+    private val KEY_EDITOR_SHOWCASE_COMPLETED = booleanPreferencesKey("editor_showcase_completed")
+    private val KEY_SCANNER_SHOWCASE_COMPLETED = booleanPreferencesKey("scanner_showcase_completed")
 
 
     override suspend fun saveCubeState(
@@ -175,6 +177,36 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     override suspend fun loadShowcaseCompleted(): Boolean? {
         return try {
             context.dataStore.data.first()[KEY_SHOWCASE_COMPLETED]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun saveEditorShowcaseCompleted(completed: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_EDITOR_SHOWCASE_COMPLETED] = completed
+        }
+    }
+
+    override suspend fun loadEditorShowcaseCompleted(): Boolean? {
+        return try {
+            context.dataStore.data.first()[KEY_EDITOR_SHOWCASE_COMPLETED]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun saveScannerShowcaseCompleted(completed: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_SCANNER_SHOWCASE_COMPLETED] = completed
+        }
+    }
+
+    override suspend fun loadScannerShowcaseCompleted(): Boolean? {
+        return try {
+            context.dataStore.data.first()[KEY_SCANNER_SHOWCASE_COMPLETED]
         } catch (e: Exception) {
             e.printStackTrace()
             null

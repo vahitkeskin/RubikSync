@@ -8,7 +8,9 @@ data class RubikSettings(
     val isCubeEditable: Boolean?,
     val isSoundEnabled: Boolean?,
     val isShowcaseCompleted: Boolean?,
-    val isShakeToScrambleEnabled: Boolean?
+    val isShakeToScrambleEnabled: Boolean?,
+    val isEditorShowcaseCompleted: Boolean?,
+    val isScannerShowcaseCompleted: Boolean?
 )
 
 class GetSettingsUseCase(
@@ -21,6 +23,8 @@ class GetSettingsUseCase(
         val isSoundEnabled = repository.loadSoundEnabled()
         val isShowcaseCompleted = repository.loadShowcaseCompleted()
         val isShakeToScrambleEnabled = repository.loadShakeToScramble()
+        val isEditorShowcaseCompleted = repository.loadEditorShowcaseCompleted()
+        val isScannerShowcaseCompleted = repository.loadScannerShowcaseCompleted()
         
         return RubikSettings(
             themeMode = themeMode,
@@ -28,7 +32,9 @@ class GetSettingsUseCase(
             isCubeEditable = isCubeEditable,
             isSoundEnabled = isSoundEnabled,
             isShowcaseCompleted = isShowcaseCompleted,
-            isShakeToScrambleEnabled = isShakeToScrambleEnabled
+            isShakeToScrambleEnabled = isShakeToScrambleEnabled,
+            isEditorShowcaseCompleted = isEditorShowcaseCompleted,
+            isScannerShowcaseCompleted = isScannerShowcaseCompleted
         )
     }
 }

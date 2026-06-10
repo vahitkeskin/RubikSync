@@ -48,6 +48,22 @@ class SettingsRepositoryImpl(
         return persistence.loadShowcaseCompleted()
     }
 
+    override suspend fun saveEditorShowcaseCompleted(completed: Boolean) {
+        persistence.saveEditorShowcaseCompleted(completed)
+    }
+
+    override suspend fun loadEditorShowcaseCompleted(): Boolean? {
+        return persistence.loadEditorShowcaseCompleted()
+    }
+
+    override suspend fun saveScannerShowcaseCompleted(completed: Boolean) {
+        persistence.saveScannerShowcaseCompleted(completed)
+    }
+
+    override suspend fun loadScannerShowcaseCompleted(): Boolean? {
+        return persistence.loadScannerShowcaseCompleted()
+    }
+
     override suspend fun saveShakeToScramble(enabled: Boolean) {
         persistence.saveShakeToScramble(enabled)
     }

@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.tooling.preview.Preview
@@ -713,35 +714,76 @@ fun EditorScreen(
             )
         }
 
+        val isShowcaseActive = appState.editorShowcaseStep != 0 && !appState.isEditorShowcaseCompleted
         val overlayAlpha by animateFloatAsState(
-            targetValue = if (appState.editorShowcaseStep != 0 && !appState.isEditorShowcaseCompleted) 0.85f else 0f,
+            targetValue = if (isShowcaseActive) 0.85f else 0f,
             animationSpec = tween(durationMillis = 1000)
         )
 
+        val buttonScaleAndAlpha by animateFloatAsState(
+            targetValue = if (isShowcaseActive) 1f else 0f,
+            animationSpec = tween(
+                durationMillis = 800,
+                easing = FastOutSlowInEasing
+            )
+        )
+
         if (overlayAlpha > 0f) {
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onGloballyPositioned { coords ->
-                        canvasPositionInRoot = coords.positionInRoot()
+            Box(modifier = Modifier.fillMaxSize()) {
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned { coords ->
+                            canvasPositionInRoot = coords.positionInRoot()
+                        }
+                        .graphicsLayer(alpha = 0.99f)
+                        .clickable(
+                            onClick = { appState.advanceEditorShowcase() },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        )
+                ) {
+                    drawRect(color = Color(0xFF0F172A).copy(alpha = overlayAlpha))
+                    editorTargetBounds?.let { rect ->
+                        val localLeft = rect.left - canvasPositionInRoot.x
+                        val localTop = rect.top - canvasPositionInRoot.y
+                        drawRoundRect(
+                            color = Color.Transparent,
+                            topLeft = Offset(localLeft, localTop),
+                            size = Size(rect.width, rect.height),
+                            cornerRadius = CornerRadius(editorTargetCornerRadius.toPx(), editorTargetCornerRadius.toPx()),
+                            blendMode = BlendMode.Clear
+                        )
                     }
-                    .graphicsLayer(alpha = 0.99f)
-                    .clickable(
-                        onClick = { appState.advanceEditorShowcase() },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    )
-            ) {
-                drawRect(color = Color(0xFF0F172A).copy(alpha = overlayAlpha))
-                editorTargetBounds?.let { rect ->
-                    val localLeft = rect.left - canvasPositionInRoot.x
-                    val localTop = rect.top - canvasPositionInRoot.y
-                    drawRoundRect(
-                        color = Color.Transparent,
-                        topLeft = Offset(localLeft, localTop),
-                        size = Size(rect.width, rect.height),
-                        cornerRadius = CornerRadius(editorTargetCornerRadius.toPx(), editorTargetCornerRadius.toPx()),
-                        blendMode = BlendMode.Clear
+                }
+
+                // Skip Showcase/Tutorial Button (styled as a premium, slate button aligned to top-right corner)
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .statusBarsPadding()
+                        .padding(end = 16.dp, top = 12.dp)
+                        .graphicsLayer {
+                            scaleX = buttonScaleAndAlpha
+                            scaleY = buttonScaleAndAlpha
+                            alpha = buttonScaleAndAlpha
+                        }
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color(0xFF1E293B)) // Solid Slate 800
+                        .border(1.dp, Color(0xFF475569), RoundedCornerShape(20.dp)) // Solid Slate 600 border
+                        .clickable(enabled = isShowcaseActive) {
+                            appState.updateEditorShowcaseStep(0)
+                            appState.updateEditorShowcaseCompleted(true)
+                        }
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = appState.strings.skipShowcase,
+                        color = Color(0xFFF1F5F9), // Slate 100
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
                     )
                 }
             }

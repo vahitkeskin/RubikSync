@@ -64,6 +64,12 @@ private class FakeRubikPersistence : RubikPersistence {
     override suspend fun saveShowcaseCompleted(completed: Boolean) {}
     override suspend fun loadShowcaseCompleted(): Boolean? = true
 
+    override suspend fun saveEditorShowcaseCompleted(completed: Boolean) {}
+    override suspend fun loadEditorShowcaseCompleted(): Boolean? = true
+
+    override suspend fun saveScannerShowcaseCompleted(completed: Boolean) {}
+    override suspend fun loadScannerShowcaseCompleted(): Boolean? = true
+
     override suspend fun saveShakeToScramble(enabled: Boolean) {}
     override suspend fun loadShakeToScramble(): Boolean? = true
     override suspend fun saveSolveSession(durationMillis: Long, moveCount: Int, timestamp: Long) {}
@@ -103,6 +109,12 @@ private class FakeSettingsRepository : SettingsRepository {
     override suspend fun saveShowcaseCompleted(completed: Boolean) {}
     override suspend fun loadShowcaseCompleted(): Boolean? = true
 
+    override suspend fun saveEditorShowcaseCompleted(completed: Boolean) {}
+    override suspend fun loadEditorShowcaseCompleted(): Boolean? = true
+
+    override suspend fun saveScannerShowcaseCompleted(completed: Boolean) {}
+    override suspend fun loadScannerShowcaseCompleted(): Boolean? = true
+
     override suspend fun saveShakeToScramble(enabled: Boolean) {}
     override suspend fun loadShakeToScramble(): Boolean? = true
 
@@ -137,6 +149,8 @@ fun rememberPreviewRubikAppState(
             saveSoundEnabledUseCase = SaveSoundEnabledUseCase(settingsRepo),
             saveCubeEditableUseCase = SaveCubeEditableUseCase(settingsRepo),
             saveShowcaseCompletedUseCase = SaveShowcaseCompletedUseCase(settingsRepo),
+            saveEditorShowcaseCompletedUseCase = SaveEditorShowcaseCompletedUseCase(settingsRepo),
+            saveScannerShowcaseCompletedUseCase = SaveScannerShowcaseCompletedUseCase(settingsRepo),
             getCameraSettingsUseCase = GetCameraSettingsUseCase(settingsRepo),
             saveCameraSettingsUseCase = SaveCameraSettingsUseCase(settingsRepo),
             saveShakeToScrambleUseCase = SaveShakeToScrambleUseCase(settingsRepo),

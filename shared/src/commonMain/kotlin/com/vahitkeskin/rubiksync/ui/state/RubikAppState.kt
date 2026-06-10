@@ -34,6 +34,8 @@ class RubikAppState(
     private val saveSoundEnabledUseCase: SaveSoundEnabledUseCase,
     private val saveCubeEditableUseCase: SaveCubeEditableUseCase,
     private val saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase,
+    private val saveEditorShowcaseCompletedUseCase: SaveEditorShowcaseCompletedUseCase,
+    private val saveScannerShowcaseCompletedUseCase: SaveScannerShowcaseCompletedUseCase,
     private val getCameraSettingsUseCase: GetCameraSettingsUseCase,
     private val saveCameraSettingsUseCase: SaveCameraSettingsUseCase,
     private val saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase,
@@ -340,7 +342,12 @@ class RubikAppState(
     }
 
     fun updateEditorShowcaseStep(step: Int) { editorShowcaseStep = step }
-    fun updateEditorShowcaseCompleted(completed: Boolean) { isEditorShowcaseCompleted = completed }
+    fun updateEditorShowcaseCompleted(completed: Boolean) {
+        isEditorShowcaseCompleted = completed
+        coroutineScope.launch(Dispatchers.Default) {
+            saveEditorShowcaseCompletedUseCase(completed)
+        }
+    }
     fun showTooltip(id: String) { activeTooltipId = id }
     fun dismissTooltip(id: String) { if (activeTooltipId == id) activeTooltipId = null }
     fun clearActiveTooltip() { activeTooltipId = null }
@@ -354,13 +361,18 @@ class RubikAppState(
             if (currentStep in 1 until totalSteps) editorShowcaseStep = currentStep + 1
             else if (currentStep == totalSteps) {
                 editorShowcaseStep = 0
-                isEditorShowcaseCompleted = true
+                updateEditorShowcaseCompleted(true)
             }
         }
     }
 
     fun updateScannerShowcaseStep(step: Int) { scannerShowcaseStep = step }
-    fun updateScannerShowcaseCompleted(completed: Boolean) { isScannerShowcaseCompleted = completed }
+    fun updateScannerShowcaseCompleted(completed: Boolean) {
+        isScannerShowcaseCompleted = completed
+        coroutineScope.launch(Dispatchers.Default) {
+            saveScannerShowcaseCompletedUseCase(completed)
+        }
+    }
     fun advanceScannerShowcase(totalSteps: Int = 6) {
         if (isScannerShowcaseCompleted) return
         val currentStep = scannerShowcaseStep
@@ -370,7 +382,7 @@ class RubikAppState(
             if (currentStep in 1 until totalSteps) scannerShowcaseStep = currentStep + 1
             else if (currentStep == totalSteps) {
                 scannerShowcaseStep = 0
-                isScannerShowcaseCompleted = true
+                updateScannerShowcaseCompleted(true)
             }
         }
     }
@@ -448,6 +460,8 @@ class RubikAppState(
                     if (settings.isSoundEnabled != null) isSoundEnabled = settings.isSoundEnabled
                     if (settings.isShakeToScrambleEnabled != null) isShakeToScrambleEnabled = settings.isShakeToScrambleEnabled
                     if (settings.isShowcaseCompleted != null) isShowcaseCompleted = settings.isShowcaseCompleted
+                    if (settings.isEditorShowcaseCompleted != null) isEditorShowcaseCompleted = settings.isEditorShowcaseCompleted
+                    if (settings.isScannerShowcaseCompleted != null) isScannerShowcaseCompleted = settings.isScannerShowcaseCompleted
                 }
 
                 val saved = getCubeStateUseCase()
@@ -514,6 +528,8 @@ fun rememberRubikAppState(
     saveSoundEnabledUseCase: SaveSoundEnabledUseCase = koinInject(),
     saveCubeEditableUseCase: SaveCubeEditableUseCase = koinInject(),
     saveShowcaseCompletedUseCase: SaveShowcaseCompletedUseCase = koinInject(),
+    saveEditorShowcaseCompletedUseCase: SaveEditorShowcaseCompletedUseCase = koinInject(),
+    saveScannerShowcaseCompletedUseCase: SaveScannerShowcaseCompletedUseCase = koinInject(),
     getCameraSettingsUseCase: GetCameraSettingsUseCase = koinInject(),
     saveCameraSettingsUseCase: SaveCameraSettingsUseCase = koinInject(),
     saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase = koinInject(),
@@ -522,8 +538,9 @@ fun rememberRubikAppState(
 ) = remember(
     cubeState, coroutineScope, getCubeStateUseCase, saveCubeStateUseCase, getSettingsUseCase,
     saveThemeUseCase, saveLanguageUseCase, saveSoundEnabledUseCase, saveCubeEditableUseCase,
-    saveShowcaseCompletedUseCase, getCameraSettingsUseCase, saveCameraSettingsUseCase,
-    saveShakeToScrambleUseCase, saveSolveSessionUseCase, getSolveSessionsUseCase
+    saveShowcaseCompletedUseCase, saveEditorShowcaseCompletedUseCase, saveScannerShowcaseCompletedUseCase,
+    getCameraSettingsUseCase, saveCameraSettingsUseCase, saveShakeToScrambleUseCase,
+    saveSolveSessionUseCase, getSolveSessionsUseCase
 ) {
     RubikAppState(
         cubeState = cubeState,
@@ -536,6 +553,8 @@ fun rememberRubikAppState(
         saveSoundEnabledUseCase = saveSoundEnabledUseCase,
         saveCubeEditableUseCase = saveCubeEditableUseCase,
         saveShowcaseCompletedUseCase = saveShowcaseCompletedUseCase,
+        saveEditorShowcaseCompletedUseCase = saveEditorShowcaseCompletedUseCase,
+        saveScannerShowcaseCompletedUseCase = saveScannerShowcaseCompletedUseCase,
         getCameraSettingsUseCase = getCameraSettingsUseCase,
         saveCameraSettingsUseCase = saveCameraSettingsUseCase,
         saveShakeToScrambleUseCase = saveShakeToScrambleUseCase,

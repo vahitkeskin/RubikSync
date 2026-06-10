@@ -70,6 +70,12 @@ interface RubikPersistence {
     suspend fun saveShowcaseCompleted(completed: Boolean)
     suspend fun loadShowcaseCompleted(): Boolean?
 
+    suspend fun saveEditorShowcaseCompleted(completed: Boolean)
+    suspend fun loadEditorShowcaseCompleted(): Boolean?
+
+    suspend fun saveScannerShowcaseCompleted(completed: Boolean)
+    suspend fun loadScannerShowcaseCompleted(): Boolean?
+
     suspend fun saveShakeToScramble(enabled: Boolean)
     suspend fun loadShakeToScramble(): Boolean?
 

@@ -1,11 +1,18 @@
 package com.vahitkeskin.rubiksync.cube
 
-import com.vahitkeskin.rubiksync.PixelGrid
 import com.vahitkeskin.rubiksync.loadImagePixels
-import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.solver.IntVector3
 import com.vahitkeskin.rubiksync.utils.getFaceRawRGB
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.exp
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 // Kuhn-Munkres (Hungarian) algorithm implementation for O(N^3) assignment
 class HungarianAlgorithm(private val costMatrix: Array<DoubleArray>) {
@@ -217,6 +224,8 @@ class RubikImageProcessor {
     fun advancedColorDistance(
         lab1: Triple<Double, Double, Double>,
         lab2: Triple<Double, Double, Double>,
+        rgb1: IntVector3? = null,
+        rgb2: IntVector3? = null,
         isWhiteRef: Boolean = false
     ): Double {
         // 1. Base CIEDE2000 Distance
@@ -258,6 +267,27 @@ class RubikImageProcessor {
         if (isWhiteRef) {
             if (l1 < 55.0) {
                 penalty += 300.0 // prevent dark/shadowed colors from matching white
+            }
+        }
+        
+        // D. Red / Orange Pinpoint Separation Penalty using Green-to-Red ratio
+        if (rgb1 != null && rgb2 != null) {
+            val r1 = rgb1.x.toDouble()
+            val g1 = rgb1.y.toDouble()
+            val r2 = rgb2.x.toDouble()
+            val g2 = rgb2.y.toDouble()
+            
+            val gRatio1 = g1 / (r1 + 1.0)
+            val gRatio2 = g2 / (r2 + 1.0)
+            
+            val isRed1 = gRatio1 < 0.23 && r1 > 50.0
+            val isRed2 = gRatio2 < 0.23 && r2 > 50.0
+            
+            val isOrange1 = gRatio1 >= 0.28 && gRatio1 < 0.65 && r1 > 50.0
+            val isOrange2 = gRatio2 >= 0.28 && gRatio2 < 0.65 && r2 > 50.0
+            
+            if ((isRed1 && isOrange2) || (isOrange1 && isRed2)) {
+                penalty += 400.0 // Heavy penalty to prevent swapping Red and Orange
             }
         }
         
@@ -407,7 +437,13 @@ class RubikImageProcessor {
                     val targetColor = standardColors[j]
                     val refRGB = defaultReferences[targetColor] ?: IntVector3(0, 0, 0)
                     val refLab = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
-                    centersCostMatrix[i][j] = advancedColorDistance(centerLab, refLab, targetColor == CubeColor.WHITE)
+                    centersCostMatrix[i][j] = advancedColorDistance(
+                        centerLab,
+                        refLab,
+                        centerRawRGB,
+                        refRGB,
+                        targetColor == CubeColor.WHITE
+                    )
                 }
             }
             
@@ -434,7 +470,13 @@ class RubikImageProcessor {
                         if (color in assignedColors) continue
                         val refRGB = defaultReferences[color] ?: IntVector3(0, 0, 0)
                         val refLab = rgbToLab(refRGB.x, refRGB.y, refRGB.z)
-                        val dist = advancedColorDistance(centerLab, refLab, color == CubeColor.WHITE)
+                        val dist = advancedColorDistance(
+                            centerLab,
+                            refLab,
+                            centerRGB,
+                            refRGB,
+                            color == CubeColor.WHITE
+                        )
                         if (dist < minDist) {
                             minDist = dist
                             closestColor = color
@@ -494,7 +536,14 @@ class RubikImageProcessor {
                         var closestColor = CubeColor.WHITE
                         var minDistance = Double.MAX_VALUE
                         for ((refColor, refLab) in referencesLab) {
-                            val dist = advancedColorDistance(cellLab, refLab, refColor == CubeColor.WHITE)
+                            val refRGB = referencesRGB[refColor]
+                            val dist = advancedColorDistance(
+                                cellLab,
+                                refLab,
+                                cellRGB,
+                                refRGB,
+                                refColor == CubeColor.WHITE
+                            )
                             if (dist < minDistance) {
                                 minDistance = dist
                                 closestColor = refColor
@@ -546,7 +595,14 @@ class RubikImageProcessor {
                     costMatrix[i][j] = if (targetColor == exactColorMatch) 0.0 else 10000.0
                 } else {
                     val refLab = referencesLab[targetColor] ?: Triple(0.0, 0.0, 0.0)
-                    costMatrix[i][j] = advancedColorDistance(cellLab, refLab, targetColor == CubeColor.WHITE)
+                    val refRGB = referencesRGB[targetColor]
+                    costMatrix[i][j] = advancedColorDistance(
+                        cellLab,
+                        refLab,
+                        cell.rgb,
+                        refRGB,
+                        targetColor == CubeColor.WHITE
+                    )
                 }
             }
         }
@@ -584,7 +640,13 @@ class RubikImageProcessor {
 
         for ((face, rgb) in defaultReferences) {
             val refLab = rgbToLab(rgb.first, rgb.second, rgb.third)
-            val dist = advancedColorDistance(centerLab, refLab, face == FaceName.R)
+            val dist = advancedColorDistance(
+                centerLab,
+                refLab,
+                centerRGB,
+                IntVector3(rgb.first, rgb.second, rgb.third),
+                face == FaceName.R
+            )
             if (dist < minDistance) {
                 minDistance = dist
                 closestFace = face
@@ -593,4 +655,3 @@ class RubikImageProcessor {
         return closestFace
     }
 }
-

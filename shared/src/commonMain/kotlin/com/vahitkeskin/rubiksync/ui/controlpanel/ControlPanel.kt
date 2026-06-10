@@ -502,7 +502,27 @@ fun ControlPanel(
                                             onClick = {
                                                 if (isResetEnabled) {
                                                     coroutineScope.launch {
-                                                        cubeState.resetAnimated()
+                                                        val startYaw = appState.yaw
+                                                        val startPitch = appState.pitch
+                                                        val startDist = appState.cameraDistance
+                                                        val startPanX = appState.panX
+                                                        val startPanY = appState.panY
+
+                                                        val targetYaw = -0.55f
+                                                        val targetPitch = 0.40f
+                                                        val targetDist = 10.0f
+                                                        val targetPanX = 0f
+                                                        val targetPanY = 0f
+
+                                                        cubeState.resetAnimated(
+                                                            onProgress = { progress ->
+                                                                appState.updateYaw(startYaw + (targetYaw - startYaw) * progress)
+                                                                appState.updatePitch(startPitch + (targetPitch - startPitch) * progress)
+                                                                appState.updateCameraDistance(startDist + (targetDist - startDist) * progress)
+                                                                appState.updatePanX(startPanX + (targetPanX - startPanX) * progress)
+                                                                appState.updatePanY(startPanY + (targetPanY - startPanY) * progress)
+                                                            }
+                                                        )
                                                         appState.clearManualMoves()
                                                         appState.updateTotalMoveCount(0)
                                                     }

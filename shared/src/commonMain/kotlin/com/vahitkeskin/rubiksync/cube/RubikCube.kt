@@ -4,6 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
+import com.vahitkeskin.rubiksync.currentTimeMillis
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.math.PI
 import kotlin.math.roundToInt
 
@@ -137,39 +140,52 @@ class RubikCubeState {
         if (isAnimating) return
         isAnimating = true
 
-        if (!skipAnimation) {
-            onMoveStarted?.invoke()
-        }
+        try {
+            if (!skipAnimation) {
+                onMoveStarted?.invoke()
+            }
 
-        if (skipAnimation) {
+            if (skipAnimation) {
+                applyDiscreteRotation(move)
+                if (addToHistory) moveHistory.add(move)
+                onStateChanged?.invoke()
+                return
+            }
+
+            val targetAngle = move.angleSign * (PI / 2.0).toFloat()
+            val activeMove = ActiveMove(move.axis, move.layerValue, 0f, targetAngle)
+            currentMove = activeMove
+
+            val duration = rotationSpeedMs
+            val startTime = currentTimeMillis()
+            var elapsed = 0f
+            var useFrameClock = true
+
+            while (elapsed < duration) {
+                if (useFrameClock) {
+                    val frameTime = withTimeoutOrNull(32) {
+                        withFrameMillis { it }
+                    }
+                    if (frameTime == null) {
+                        useFrameClock = false
+                        delay(16)
+                    }
+                } else {
+                    delay(16)
+                }
+                elapsed = (currentTimeMillis() - startTime).toFloat()
+                val t = (elapsed / duration).coerceIn(0f, 1f)
+                val easeT = easeInOutCubic(t)
+                activeMove.currentAngleRad = targetAngle * easeT
+            }
+
             applyDiscreteRotation(move)
             if (addToHistory) moveHistory.add(move)
-            isAnimating = false
             onStateChanged?.invoke()
-            return
+        } finally {
+            currentMove = null
+            isAnimating = false
         }
-
-        val targetAngle = move.angleSign * (PI / 2.0).toFloat()
-        val activeMove = ActiveMove(move.axis, move.layerValue, 0f, targetAngle)
-        currentMove = activeMove
-
-        val duration = rotationSpeedMs
-        val startFrameTime = withFrameMillis { it }
-        var elapsed = 0f
-
-        while (elapsed < duration) {
-            val currentFrameTime = withFrameMillis { it }
-            elapsed = (currentFrameTime - startFrameTime).toFloat()
-            val t = (elapsed / duration).coerceIn(0f, 1f)
-            val easeT = easeInOutCubic(t)
-            activeMove.currentAngleRad = targetAngle * easeT
-        }
-
-        applyDiscreteRotation(move)
-        if (addToHistory) moveHistory.add(move)
-        currentMove = null
-        isAnimating = false
-        onStateChanged?.invoke()
     }
 
     fun applyDiscreteRotation(move: MoveType) {
@@ -190,25 +206,24 @@ class RubikCubeState {
 
     suspend fun scramble(turns: Int = 20) {
         if (isAnimating) return
-        // Scramble with slightly faster speed for visual pacing
         val originalSpeed = rotationSpeedMs
-        rotationSpeedMs = 120f
+        try {
+            rotationSpeedMs = 120f
+            val moves = MoveType.values()
+            var lastMove: MoveType? = null
 
-        val moves = MoveType.values()
-        var lastMove: MoveType? = null
-
-        repeat(turns) {
-            // Pick a move that doesn't immediately undo the previous one
-            var move = moves.random()
-            while (lastMove != null && move.axis == lastMove.axis && move.layerValue == lastMove.layerValue && move.angleSign == -lastMove.angleSign) {
-                move = moves.random()
+            repeat(turns) {
+                var move = moves.random()
+                while (lastMove != null && move.axis == lastMove.axis && move.layerValue == lastMove.layerValue && move.angleSign == -lastMove.angleSign) {
+                    move = moves.random()
+                }
+                executeMove(move)
+                lastMove = move
             }
-            executeMove(move)
-            lastMove = move
+        } finally {
+            rotationSpeedMs = originalSpeed
+            onStateChanged?.invoke()
         }
-
-        rotationSpeedMs = originalSpeed
-        onStateChanged?.invoke()
     }
 
     suspend fun undo() {
@@ -246,11 +261,14 @@ class RubikCubeState {
 
         isAnimating = true
         currentMove = null
-        cubies.animateTransforms(targets, durationMs)
-        moveHistory.clear()
-        isAnimating = false
-        onStateChanged?.invoke()
-        return true
+        try {
+            cubies.animateTransforms(targets, durationMs)
+            moveHistory.clear()
+            onStateChanged?.invoke()
+            return true
+        } finally {
+            isAnimating = false
+        }
     }
 
     private fun computeCustomStatePlacements(
@@ -396,8 +414,11 @@ class RubikCubeState {
         isAnimating = true
         currentMove = null
         moveHistory.clear()
-        cubies.animateTransforms(solvedLayout, durationMs, onProgress)
-        isAnimating = false
-        onStateChanged?.invoke()
+        try {
+            cubies.animateTransforms(solvedLayout, durationMs, onProgress)
+            onStateChanged?.invoke()
+        } finally {
+            isAnimating = false
+        }
     }
 }

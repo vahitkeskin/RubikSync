@@ -153,7 +153,7 @@ fun DashboardHeader(
                     label = "editableBorder"
                 )
 
-                val isLockEnabled = !cubeState.isAnimating
+                val isLockEnabled = true
                 Box(
                     modifier = Modifier
                         .size(34.dp)
@@ -227,7 +227,7 @@ fun DashboardHeader(
                     label = "shakeBorder"
                 )
 
-                val isShakeEnabled = appState.isCubeEditable && !cubeState.isAnimating
+                val isShakeEnabled = appState.isCubeEditable
                 Box(
                     modifier = Modifier
                         .size(34.dp)
@@ -302,7 +302,7 @@ fun DashboardHeader(
                     label = "soundBorder"
                 )
 
-                val isSoundBtnEnabled = appState.isCubeEditable && !cubeState.isAnimating
+                val isSoundBtnEnabled = appState.isCubeEditable
                 Box(
                     modifier = Modifier
                         .size(34.dp)

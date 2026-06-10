@@ -1,6 +1,7 @@
 package com.vahitkeskin.rubiksync.ui.dashboard
 
 import com.vahitkeskin.rubiksync.ui.state.*
+import com.vahitkeskin.rubiksync.utils.combinedClickableSingle
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -370,7 +371,7 @@ fun DashboardHeader(
                                 )
                             }
                         }
-                        .combinedClickable(
+                        .combinedClickableSingle(
                             onClick = {
                                 onNavigateToSettings()
                             },

@@ -30,6 +30,7 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
 import com.vahitkeskin.rubiksync.utils.parseDetectedState
+import com.vahitkeskin.rubiksync.utils.safe
 import kotlinx.coroutines.launch
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Offset
@@ -275,7 +276,7 @@ fun EditorScreen(
                     }
 
                     Button(
-                        onClick = onStartScanWizard,
+                        onClick = onStartScanWizard.safe(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = RubikTheme.colors.accentBlue,
                             contentColor = Color.White

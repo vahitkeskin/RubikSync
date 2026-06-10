@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import com.vahitkeskin.rubiksync.utils.combinedClickableSingle
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -602,7 +603,7 @@ fun ControlPanel(
                                                     RubikTheme.colors.buttonDisabledBg
                                                 }
                                             )
-                                            .combinedClickable(
+                                            .combinedClickableSingle(
                                                 interactionSource = remember { MutableInteractionSource() },
                                                 indication = if (isDesignEnabled) LocalIndication.current else null,
                                                 onClick = {

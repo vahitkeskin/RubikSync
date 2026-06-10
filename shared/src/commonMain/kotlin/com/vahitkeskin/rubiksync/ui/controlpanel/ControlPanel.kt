@@ -314,9 +314,15 @@ fun ControlPanel(
                             ) {
                                 AuraBalloon(
                                     text = appState.strings.showcaseScrambleText,
-                                    isVisible = appState.showcaseStep == 7 && !appState.isShowcaseCompleted,
+                                    isVisible = (appState.showcaseStep == 7 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "scramble",
                                     isBelow = false,
-                                    onDismiss = { appState.advanceShowcase() }
+                                    onDismiss = {
+                                        if (appState.activeTooltipId == "scramble") {
+                                            appState.dismissTooltip("scramble")
+                                        } else {
+                                            appState.advanceShowcase()
+                                        }
+                                    }
                                 )
                                 Box(
                                     modifier = Modifier
@@ -344,6 +350,9 @@ fun ControlPanel(
                                                         cubeState.scramble()
                                                     }
                                                 }
+                                            },
+                                            onLongClick = {
+                                                appState.showTooltip("scramble")
                                             }
                                         ),
                                     contentAlignment = Alignment.Center
@@ -382,9 +391,15 @@ fun ControlPanel(
                             ) {
                                 AuraBalloon(
                                     text = appState.strings.showcaseUndoText,
-                                    isVisible = appState.showcaseStep == 8 && !appState.isShowcaseCompleted,
+                                    isVisible = (appState.showcaseStep == 8 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "undo",
                                     isBelow = false,
-                                    onDismiss = { appState.advanceShowcase() }
+                                    onDismiss = {
+                                        if (appState.activeTooltipId == "undo") {
+                                            appState.dismissTooltip("undo")
+                                        } else {
+                                            appState.advanceShowcase()
+                                        }
+                                    }
                                 )
                                 Box(
                                     modifier = Modifier
@@ -412,6 +427,9 @@ fun ControlPanel(
                                                         cubeState.undo()
                                                     }
                                                 }
+                                            },
+                                            onLongClick = {
+                                                appState.showTooltip("undo")
                                             }
                                         ),
                                     contentAlignment = Alignment.Center
@@ -449,9 +467,15 @@ fun ControlPanel(
                             ) {
                                 AuraBalloon(
                                     text = appState.strings.showcaseResetText,
-                                    isVisible = appState.showcaseStep == 9 && !appState.isShowcaseCompleted,
+                                    isVisible = (appState.showcaseStep == 9 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "reset",
                                     isBelow = false,
-                                    onDismiss = { appState.advanceShowcase() }
+                                    onDismiss = {
+                                        if (appState.activeTooltipId == "reset") {
+                                            appState.dismissTooltip("reset")
+                                        } else {
+                                            appState.advanceShowcase()
+                                        }
+                                    }
                                 )
                                 Box(
                                     modifier = Modifier
@@ -483,6 +507,9 @@ fun ControlPanel(
                                                         appState.updateTotalMoveCount(0)
                                                     }
                                                 }
+                                            },
+                                            onLongClick = {
+                                                appState.showTooltip("reset")
                                             }
                                         ),
                                     contentAlignment = Alignment.Center
@@ -530,9 +557,15 @@ fun ControlPanel(
                                 ) {
                                     AuraBalloon(
                                         text = appState.strings.showcaseDesignText,
-                                        isVisible = appState.showcaseStep == 10 && !appState.isShowcaseCompleted,
+                                        isVisible = (appState.showcaseStep == 10 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "design",
                                         isBelow = false,
-                                        onDismiss = { appState.advanceShowcase() }
+                                        onDismiss = {
+                                            if (appState.activeTooltipId == "design") {
+                                                appState.dismissTooltip("design")
+                                            } else {
+                                                appState.advanceShowcase()
+                                            }
+                                        }
                                     )
                                     Box(
                                         modifier = Modifier
@@ -547,11 +580,18 @@ fun ControlPanel(
                                                     RubikTheme.colors.buttonDisabledBg
                                                 }
                                             )
-                                            .clickable {
-                                                if (isDesignEnabled) {
-                                                    appState.updateShowEditorDialog(true)
+                                            .combinedClickable(
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                indication = if (isDesignEnabled) LocalIndication.current else null,
+                                                onClick = {
+                                                    if (isDesignEnabled) {
+                                                        appState.updateShowEditorDialog(true)
+                                                    }
+                                                },
+                                                onLongClick = {
+                                                    appState.showTooltip("design")
                                                 }
-                                            },
+                                            ),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
@@ -587,9 +627,15 @@ fun ControlPanel(
                                 ) {
                                     AuraBalloon(
                                         text = appState.strings.showcaseSolveText,
-                                        isVisible = appState.showcaseStep == 11 && !appState.isShowcaseCompleted,
+                                        isVisible = (appState.showcaseStep == 11 && !appState.isShowcaseCompleted) || appState.activeTooltipId == "solve",
                                         isBelow = false,
-                                        onDismiss = { appState.advanceShowcase() }
+                                        onDismiss = {
+                                            if (appState.activeTooltipId == "solve") {
+                                                appState.dismissTooltip("solve")
+                                            } else {
+                                                appState.advanceShowcase()
+                                            }
+                                        }
                                     )
                                     Box(
                                         modifier = Modifier
@@ -604,33 +650,40 @@ fun ControlPanel(
                                                     RubikTheme.colors.buttonDisabledBg
                                                 }
                                             )
-                                            .clickable {
-                                                if (isSolveEnabled) {
-                                                    appState.updateRecalculating(true)
-                                                    coroutineScope.launch(Dispatchers.Default) {
-                                                        try {
-                                                            val currentSnapshot =
-                                                                cubeState.toSnapshot()
-                                                            val solver = RubikSolver()
-                                                            val lblDetails = solver.solveAnnotated(
-                                                                currentSnapshot
-                                                            )
-                                                            withContext(Dispatchers.Main) {
-                                                                appState.updateActiveSolution(
-                                                                    lblDetails?.map { it.move })
-                                                                appState.updateActiveSolutionDetails(
-                                                                    lblDetails
+                                            .combinedClickable(
+                                                interactionSource = remember { MutableInteractionSource() },
+                                                indication = if (isSolveEnabled) LocalIndication.current else null,
+                                                onClick = {
+                                                    if (isSolveEnabled) {
+                                                        appState.updateRecalculating(true)
+                                                        coroutineScope.launch(Dispatchers.Default) {
+                                                            try {
+                                                                val currentSnapshot =
+                                                                    cubeState.toSnapshot()
+                                                                val solver = RubikSolver()
+                                                                val lblDetails = solver.solveAnnotated(
+                                                                    currentSnapshot
                                                                 )
-                                                                appState.updateRecalculating(false)
-                                                            }
-                                                        } catch (e: Throwable) {
-                                                            withContext(Dispatchers.Main) {
-                                                                appState.updateRecalculating(false)
+                                                                withContext(Dispatchers.Main) {
+                                                                    appState.updateActiveSolution(
+                                                                        lblDetails?.map { it.move })
+                                                                    appState.updateActiveSolutionDetails(
+                                                                        lblDetails
+                                                                    )
+                                                                    appState.updateRecalculating(false)
+                                                                }
+                                                            } catch (e: Throwable) {
+                                                                withContext(Dispatchers.Main) {
+                                                                    appState.updateRecalculating(false)
+                                                                }
                                                             }
                                                         }
                                                     }
+                                                },
+                                                onLongClick = {
+                                                    appState.showTooltip("solve")
                                                 }
-                                            },
+                                            ),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         if (appState.isRecalculating) {

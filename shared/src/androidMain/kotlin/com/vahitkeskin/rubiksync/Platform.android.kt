@@ -250,6 +250,7 @@ actual val isCameraSupported: Boolean = true
 @Composable
 fun CameraPreviewDialog(
     faceName: String,
+    guidanceText: String,
     onDismiss: () -> Unit,
     onImageCaptured: (String) -> Unit
 ) {
@@ -378,17 +379,27 @@ fun CameraPreviewDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .padding(vertical = 16.dp, horizontal = 24.dp),
+                    .background(Color.Black.copy(alpha = 0.65f))
+                    .padding(vertical = 12.dp, horizontal = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Küp yüzünü sarı çerçeve içine hizalayın",
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Küp yüzünü sarı çerçeve içine hizalayın",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = guidanceText,
+                        color = AccentOrange,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
             
             // Capture Buttons controls bar
@@ -477,6 +488,7 @@ actual fun CameraCaptureOrPicker(
     takePhotoLabel: String,
     chooseGalleryLabel: String,
     selectImageLabel: String,
+    guidanceText: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -578,7 +590,10 @@ actual fun CameraCaptureOrPicker(
         
         // Gallery Card
         Card(
-            onClick = { galleryLauncher.launch("image/*") },
+            onClick = { 
+                Toast.makeText(context, guidanceText, Toast.LENGTH_LONG).show()
+                galleryLauncher.launch("image/*") 
+            },
             colors = CardDefaults.cardColors(
                 containerColor = if (isDark) accentOrange.copy(alpha = 0.16f) else accentOrange.copy(alpha = 0.08f)
             ),
@@ -619,6 +634,7 @@ actual fun CameraCaptureOrPicker(
     if (showCameraPreview) {
         CameraPreviewDialog(
             faceName = faceName,
+            guidanceText = guidanceText,
             onDismiss = { showCameraPreview = false },
             onImageCaptured = { filePath ->
                 showCameraPreview = false
@@ -837,6 +853,7 @@ fun CameraCaptureOrPickerPreview() {
             takePhotoLabel = "Fotoğraf Çek",
             chooseGalleryLabel = "Galeriden Seç",
             selectImageLabel = "Resim Seçin",
+            guidanceText = "Lütfen Ön (Yeşil) yüzeyini tarayın.",
             onImageSelected = {},
             modifier = androidx.compose.ui.Modifier.fillMaxWidth()
         )

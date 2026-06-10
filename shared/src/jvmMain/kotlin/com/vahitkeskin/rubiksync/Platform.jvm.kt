@@ -119,6 +119,7 @@ actual fun CameraCaptureOrPicker(
     takePhotoLabel: String,
     chooseGalleryLabel: String,
     selectImageLabel: String,
+    guidanceText: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -221,6 +222,7 @@ fun CameraCaptureOrPickerJvmPreview() {
             takePhotoLabel = "Fotoğraf Çek",
             chooseGalleryLabel = "Galeriden Seç",
             selectImageLabel = "Resim Seçin",
+            guidanceText = "Lütfen Ön (Yeşil) yüzeyini tarayın.",
             onImageSelected = {},
             modifier = Modifier.width(200.dp)
         )

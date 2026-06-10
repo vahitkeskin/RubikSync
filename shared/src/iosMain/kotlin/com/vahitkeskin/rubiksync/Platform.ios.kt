@@ -367,6 +367,7 @@ class CameraViewController(
 @Composable
 fun CameraPreviewDialog(
     faceName: String,
+    guidanceText: String,
     onDismiss: () -> Unit,
     onImageCaptured: (String) -> Unit
 ) {
@@ -455,17 +456,27 @@ fun CameraPreviewDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .padding(vertical = 16.dp, horizontal = 24.dp),
+                    .background(Color.Black.copy(alpha = 0.65f))
+                    .padding(vertical = 12.dp, horizontal = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Küp yüzünü sarı çerçeve içine hizalayın",
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Küp yüzünü sarı çerçeve içine hizalayın",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = guidanceText,
+                        color = AccentOrange,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
             
             Row(
@@ -571,6 +582,7 @@ actual fun CameraCaptureOrPicker(
     takePhotoLabel: String,
     chooseGalleryLabel: String,
     selectImageLabel: String,
+    guidanceText: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -710,6 +722,7 @@ actual fun CameraCaptureOrPicker(
     if (showCameraPreview) {
         CameraPreviewDialog(
             faceName = faceName,
+            guidanceText = guidanceText,
             onDismiss = { showCameraPreview = false },
             onImageCaptured = { filePath ->
                 showCameraPreview = false
@@ -910,6 +923,7 @@ fun CameraPreviewDialogIosPreview() {
     PreviewRubikTheme(isDark = true) {
         CameraPreviewDialog(
             faceName = "F",
+            guidanceText = "Lütfen Ön (Yeşil) yüzeyini tarayın.",
             onDismiss = {},
             onImageCaptured = {}
         )
@@ -925,6 +939,7 @@ fun CameraCaptureOrPickerIosPreview() {
             takePhotoLabel = "Fotoğraf Çek",
             chooseGalleryLabel = "Galeriden Seç",
             selectImageLabel = "Resim Seçin",
+            guidanceText = "Lütfen Ön (Yeşil) yüzeyini tarayın.",
             onImageSelected = {},
             modifier = Modifier.fillMaxWidth()
         )

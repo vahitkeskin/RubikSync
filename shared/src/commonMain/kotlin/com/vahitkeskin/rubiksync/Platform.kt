@@ -37,6 +37,7 @@ expect fun CameraCaptureOrPicker(
     takePhotoLabel: String,
     chooseGalleryLabel: String,
     selectImageLabel: String,
+    guidanceText: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 )

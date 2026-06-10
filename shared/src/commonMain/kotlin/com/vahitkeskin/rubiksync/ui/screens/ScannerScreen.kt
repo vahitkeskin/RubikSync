@@ -459,6 +459,7 @@ fun ScannerScreen(
                                         takePhotoLabel = appState.strings.takePhotoLabel,
                                         chooseGalleryLabel = appState.strings.chooseGalleryLabel,
                                         selectImageLabel = appState.strings.selectImageLabel,
+                                        guidanceText = guidanceMessage,
                                         onImageSelected = { filePath ->
                                             coroutineScope.launch {
                                                 appState.updateRecalculating(true)

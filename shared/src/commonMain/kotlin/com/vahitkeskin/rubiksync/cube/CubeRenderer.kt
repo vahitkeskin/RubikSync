@@ -238,17 +238,27 @@ class CubeRenderer(
             val spec = 0.0f
             val totalLight = 1.0f
 
-            // Draw Premium Light/White Cubie Body
-            val bodyBase = if (isDark) 0.80f else 0.92f
-            val bodyColor = Color(
-                red = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f),
-                green = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f),
-                blue = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f)
-            )
+            // Draw Premium Cubie Body (Contrast adjusted: dark in light mode, light in dark mode)
+            val bodyColor = if (isDark) {
+                val bodyBase = 0.80f
+                Color(
+                    red = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f),
+                    green = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f),
+                    blue = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f)
+                )
+            } else {
+                // Premium dark slate body for light mode to contrast against light background
+                Color(0xFF1F2937)
+            }
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyColor, style = Fill)
 
             // Draw a subtle border around the cubie body for 3D depth and separation
-            val bodyOutlineColor = if (isDark) DarkOutline else BlackAlpha20
+            val bodyOutlineColor = if (isDark) {
+                DarkOutline
+            } else {
+                // Subtle light border to separate the dark cubie bodies in light mode
+                Color(0x33FFFFFF)
+            }
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyOutlineColor, style = Stroke(width = 0.5f))
 
             // Draw Colored Sticker

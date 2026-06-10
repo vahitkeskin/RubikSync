@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.vahitkeskin.rubiksync.persistence.AndroidRubikPersistence
+import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,11 +15,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Register Room & DataStore persistence
-        com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry.persistence =
-            com.vahitkeskin.rubiksync.persistence.AndroidRubikPersistence(this)
+        RubikPersistenceRegistry.persistence = AndroidRubikPersistence(this)
 
         // Set platform app context for sound playback
-        com.vahitkeskin.rubiksync.setAppContext(this)
+        setAppContext(this)
 
         setContent {
             App()

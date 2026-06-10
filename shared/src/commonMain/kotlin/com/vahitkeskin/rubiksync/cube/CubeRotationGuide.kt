@@ -253,9 +253,7 @@ fun CubeRotationGuide(
                         .size(28.dp)
                         .clip(RoundedCornerShape(14.dp))
                         .background(
-                            if (RubikTheme.colors.isDark) Color(0x20FFFFFF) else Color(
-                                0x0A000000
-                            )
+                            if (RubikTheme.colors.isDark) WhiteAlpha12 else BlackAlpha04
                         )
                         .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(14.dp)),
                     contentAlignment = Alignment.Center

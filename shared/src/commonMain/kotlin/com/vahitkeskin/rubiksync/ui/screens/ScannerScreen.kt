@@ -442,35 +442,35 @@ fun ScannerScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.weight(1f).padding(vertical = 8.dp)
                 ) {
-                    Box {
-                        CubeRotationGuide(
-                            appState = appState,
-                            currentFace = currentFace,
-                            isExpanded = isGuideExpanded,
-                            onExpandedChange = { isGuideExpanded = it },
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .onGloballyPositioned { coords ->
-                                    val pos = coords.positionInRoot()
-                                    val size = coords.size
-                                    boundsStep2 = Rect(
-                                        pos.x,
-                                        pos.y,
-                                        pos.x + size.width,
-                                        pos.y + size.height
-                                    )
-                                }
-                        )
-                        AuraBalloon(
-                            text = appState.strings.showcaseScannerGuide,
-                            isVisible = appState.scannerShowcaseStep == 2 && !appState.isScannerShowcaseCompleted,
-                            isBelow = true,
-                            onDismiss = { appState.advanceScannerShowcase() }
-                        )
-                    }
-
                     if (currentPath == null) {
-                        // Not scanned yet
+                        // Not scanned yet - display guide card statically at the top
+                        Box {
+                            CubeRotationGuide(
+                                appState = appState,
+                                currentFace = currentFace,
+                                isExpanded = isGuideExpanded,
+                                onExpandedChange = { isGuideExpanded = it },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .onGloballyPositioned { coords ->
+                                        val pos = coords.positionInRoot()
+                                        val size = coords.size
+                                        boundsStep2 = Rect(
+                                            pos.x,
+                                            pos.y,
+                                            pos.x + size.width,
+                                            pos.y + size.height
+                                        )
+                                    }
+                            )
+                            AuraBalloon(
+                                text = appState.strings.showcaseScannerGuide,
+                                isVisible = appState.scannerShowcaseStep == 2 && !appState.isScannerShowcaseCompleted,
+                                isBelow = true,
+                                onDismiss = { appState.advanceScannerShowcase() }
+                            )
+                        }
+
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -575,7 +575,7 @@ fun ScannerScreen(
                             }
                         }
                     } else {
-                        // Image exists — interactive alignment
+                        // Image exists — interactive alignment layout with scrollable guide card
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -594,6 +594,35 @@ fun ScannerScreen(
                                 }
                                 .verticalScroll(scannerScrollState)
                         ) {
+                            Box {
+                                CubeRotationGuide(
+                                    appState = appState,
+                                    currentFace = currentFace,
+                                    isExpanded = isGuideExpanded,
+                                    onExpandedChange = { isGuideExpanded = it },
+                                    modifier = Modifier
+                                        .padding(horizontal = 4.dp)
+                                        .onGloballyPositioned { coords ->
+                                            val pos = coords.positionInRoot()
+                                            val size = coords.size
+                                            boundsStep2 = Rect(
+                                                pos.x,
+                                                pos.y,
+                                                pos.x + size.width,
+                                                pos.y + size.height
+                                            )
+                                        }
+                                )
+                                AuraBalloon(
+                                    text = appState.strings.showcaseScannerGuide,
+                                    isVisible = appState.scannerShowcaseStep == 2 && !appState.isScannerShowcaseCompleted,
+                                    isBelow = true,
+                                    onDismiss = { appState.advanceScannerShowcase() }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
                             // 1. Side-by-Side Photo Preview and Color Grid
                             Row(
                                 modifier = Modifier

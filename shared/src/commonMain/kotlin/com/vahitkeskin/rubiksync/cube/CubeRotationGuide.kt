@@ -211,7 +211,7 @@ fun CubeRotationGuide(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(all = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             // Header Row (Click to toggle expand/collapse)
@@ -242,7 +242,7 @@ fun CubeRotationGuide(
                         fontWeight = FontWeight.SemiBold
                     )
                 }
-                
+
                 // Right side: Collapsible Arrow Button Container
                 val rotationAngle by animateFloatAsState(
                     targetValue = if (isExpanded) 180f else 0f,
@@ -252,7 +252,11 @@ fun CubeRotationGuide(
                     modifier = Modifier
                         .size(28.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(if (RubikTheme.colors.isDark) Color(0x20FFFFFF) else Color(0x0A000000))
+                        .background(
+                            if (RubikTheme.colors.isDark) Color(0x20FFFFFF) else Color(
+                                0x0A000000
+                            )
+                        )
                         .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(14.dp)),
                     contentAlignment = Alignment.Center
                 ) {
@@ -271,7 +275,7 @@ fun CubeRotationGuide(
                 enter = fadeIn(animationSpec = tween(1000, easing = FastOutSlowInEasing)) +
                         expandVertically(animationSpec = tween(1000, easing = FastOutSlowInEasing)),
                 exit = fadeOut(animationSpec = tween(1000, easing = FastOutSlowInEasing)) +
-                       shrinkVertically(animationSpec = tween(1000, easing = FastOutSlowInEasing))
+                        shrinkVertically(animationSpec = tween(1000, easing = FastOutSlowInEasing))
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -292,7 +296,14 @@ fun CubeRotationGuide(
                         contentAlignment = Alignment.Center
                     ) {
                         Canvas(modifier = Modifier.fillMaxSize()) {
-                            drawGuideCube(miniCubies, yaw + userYaw.value, pitch + userPitch.value, currentFace, appState, isDark)
+                            drawGuideCube(
+                                miniCubies,
+                                yaw + userYaw.value,
+                                pitch + userPitch.value,
+                                currentFace,
+                                appState,
+                                isDark
+                            )
                         }
                     }
 
@@ -545,7 +556,10 @@ private fun DrawScope.drawGuideCube(
             else -> null
         }
 
-        val showColors = faceName != null && (faceName == targetFace || appState.scannedFilePaths.containsKey(faceName))
+        val showColors =
+            faceName != null && (faceName == targetFace || appState.scannedFilePaths.containsKey(
+                faceName
+            ))
         val stickerColor = if (showColors) {
             val scannedColor = getScannedOrFaceletColor(rf.facePos, rf.face.localNormal, appState)
             Color(
@@ -597,13 +611,33 @@ private fun mapToGuideLocalFace(p: Vector3, localNormal: Vector3): Vector3 {
     val u: Vector3
     val v: Vector3
     when {
-        localNormal.y > 0.5f -> { u = Vector3.UnitX; v = Vector3.UnitZ }
-        localNormal.y < -0.5f -> { u = Vector3.UnitX; v = Vector3(0f, 0f, -1f) }
-        localNormal.x > 0.5f -> { u = Vector3(0f, 0f, -1f); v = Vector3.UnitY }
-        localNormal.x < -0.5f -> { u = Vector3.UnitZ; v = Vector3.UnitY }
-        localNormal.z > 0.5f -> { u = Vector3.UnitX; v = Vector3.UnitY }
-        localNormal.z < -0.5f -> { u = Vector3(-1f, 0f, 0f); v = Vector3.UnitY }
-        else -> { u = Vector3.UnitX; v = Vector3.UnitY }
+        localNormal.y > 0.5f -> {
+            u = Vector3.UnitX; v = Vector3.UnitZ
+        }
+
+        localNormal.y < -0.5f -> {
+            u = Vector3.UnitX; v = Vector3(0f, 0f, -1f)
+        }
+
+        localNormal.x > 0.5f -> {
+            u = Vector3(0f, 0f, -1f); v = Vector3.UnitY
+        }
+
+        localNormal.x < -0.5f -> {
+            u = Vector3.UnitZ; v = Vector3.UnitY
+        }
+
+        localNormal.z > 0.5f -> {
+            u = Vector3.UnitX; v = Vector3.UnitY
+        }
+
+        localNormal.z < -0.5f -> {
+            u = Vector3(-1f, 0f, 0f); v = Vector3.UnitY
+        }
+
+        else -> {
+            u = Vector3.UnitX; v = Vector3.UnitY
+        }
     }
     return localNormal * 0.5f + u * p.x + v * p.y
 }

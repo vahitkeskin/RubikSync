@@ -2,8 +2,11 @@ package com.vahitkeskin.rubiksync.cube
 
 import com.vahitkeskin.rubiksync.ui.state.*
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.background
@@ -19,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -200,31 +204,27 @@ fun CubeRotationGuide(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
+                )
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // Top: 3D Animated Guide Canvas (Large, full width, 200.dp height)
-            Box(
+            var isExpanded by remember { mutableStateOf(true) }
+
+            // Header Row (Click to toggle expand/collapse)
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(animatedGuideHeight)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(RubikTheme.colors.backgroundPrimary)
-                    .pointerInput(Unit) {
-                        detectTransformGestures { _, pan, _, rotation ->
-                            userYaw.value += rotation
-                            userPitch.value += pan.y * 0.01f
-                        }
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawGuideCube(miniCubies, yaw + userYaw.value, pitch + userPitch.value, currentFace, appState, isDark)
-                }
-            }
-            // Bottom: Details and Net
-            Row(
-                modifier = Modifier.fillMaxWidth(),
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { isExpanded = !isExpanded }
+                    .padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -232,28 +232,69 @@ fun CubeRotationGuide(
                     Text(
                         text = faceTitle,
                         color = RubikTheme.colors.textPrimary,
-                        fontSize = 17.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = faceColorName,
                         color = faceColorHex,
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
                 
-                // Small 2D Net Indicator
-                Mini2DNet(currentFace)
+                // Right side: Collapsible Arrow Button Container
+                val rotationAngle by animateFloatAsState(
+                    targetValue = if (isExpanded) 180f else 0f,
+                    animationSpec = tween(durationMillis = 300)
+                )
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(if (RubikTheme.colors.isDark) Color(0x20FFFFFF) else Color(0x0A000000))
+                        .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(14.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "▼",
+                        color = RubikTheme.colors.textPrimary,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.rotate(rotationAngle)
+                    )
+                }
             }
 
-            Text(
-                text = guideInstruction,
-                color = RubikTheme.colors.textSecondary,
-                fontSize = 12.sp,
-                lineHeight = 16.sp
-            )
+            if (isExpanded) {
+                // 3D Animated Guide Canvas
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(RubikTheme.colors.backgroundPrimary)
+                        .pointerInput(Unit) {
+                            detectTransformGestures { _, pan, _, rotation ->
+                                userYaw.value += rotation
+                                userPitch.value += pan.y * 0.01f
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawGuideCube(miniCubies, yaw + userYaw.value, pitch + userPitch.value, currentFace, appState, isDark)
+                    }
+                }
+
+                Text(
+                    text = guideInstruction,
+                    color = RubikTheme.colors.textSecondary,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp
+                )
+            }
         }
     }
 }

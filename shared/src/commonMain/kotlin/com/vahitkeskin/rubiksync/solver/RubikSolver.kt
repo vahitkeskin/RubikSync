@@ -7,7 +7,36 @@ import com.vahitkeskin.rubiksync.cube.RubikCubeState
 class RubikSolver {
 
     fun solve(startState: RubikCubeState): List<MoveType>? {
-        return solve(startState.toSnapshot())
+        val startSnapshot = startState.toSnapshot()
+        
+        // 1. Check if already solved
+        if (isCubeSolved(startSnapshot)) {
+            return emptyList()
+        }
+        
+        // 2. Try bidirectional BFS for absolute shortest path up to depth 6
+        val shortSolution = solveBidirectional(startSnapshot, maxDepth = 6)
+        if (shortSolution != null) {
+            return shortSolution
+        }
+        
+        // 3. Try to use inverse history if it exists and solves the cube
+        if (startState.moveHistory.isNotEmpty()) {
+            val inverseHistory = startState.moveHistory.map { current ->
+                MoveType.entries.first {
+                    it.axis == current.axis &&
+                    it.layerValue == current.layerValue &&
+                    it.angleSign == -current.angleSign
+                }
+            }.reversed()
+            val optimized = compressMoves(inverseHistory)
+            if (verifySolution(startSnapshot, optimized)) {
+                return optimized
+            }
+        }
+        
+        // 4. Fallback to full LBL solver
+        return solve(startSnapshot)
     }
 
     fun solve(startSnapshot: CubeSnapshot): List<MoveType>? {
@@ -325,7 +354,40 @@ class RubikSolver {
     }
 
     fun solveAnnotated(startState: RubikCubeState): List<AnnotatedMove>? {
-        return solveAnnotated(startState.toSnapshot())
+        val startSnapshot = startState.toSnapshot()
+        
+        // 1. Check if already solved
+        if (isCubeSolved(startSnapshot)) {
+            return emptyList()
+        }
+        
+        // 2. Try bidirectional BFS for absolute shortest path up to depth 6
+        val shortSolution = solveBidirectional(startSnapshot, maxDepth = 6)
+        if (shortSolution != null) {
+            val phaseName = "En Kısa Yol (Optimal)"
+            val phaseDesc = "Küpün durumu analiz edilerek optimal çözüm yolu hesaplandı."
+            return shortSolution.map { AnnotatedMove(it, phaseName, phaseDesc) }
+        }
+        
+        // 3. Try to use inverse history if it exists and solves the cube
+        if (startState.moveHistory.isNotEmpty()) {
+            val inverseHistory = startState.moveHistory.map { current ->
+                MoveType.entries.first {
+                    it.axis == current.axis &&
+                    it.layerValue == current.layerValue &&
+                    it.angleSign == -current.angleSign
+                }
+            }.reversed()
+            val optimized = compressMoves(inverseHistory)
+            if (verifySolution(startSnapshot, optimized)) {
+                val phaseName = "Optimal Karıştırma Çözümü"
+                val phaseDesc = "Küpün hareket geçmişi analiz edilerek en kısa çözüm yolu hesaplandı."
+                return optimized.map { AnnotatedMove(it, phaseName, phaseDesc) }
+            }
+        }
+        
+        // 4. Fallback to full LBL solver
+        return solveAnnotated(startSnapshot)
     }
 
     fun solveAnnotated(startSnapshot: CubeSnapshot): List<AnnotatedMove>? {
@@ -676,5 +738,133 @@ class RubikSolver {
 
         // compressAnnotatedMoves fonksiyonu ile çözülen adımlar sadeleştiriliyor
         return compressAnnotatedMoves(allMoves)
+    }
+
+    private fun isCubeSolved(snap: CubeSnapshot): Boolean {
+        val allCubiePositions = mutableListOf<IntVector3>()
+        for (x in -1..1) {
+            for (y in -1..1) {
+                for (z in -1..1) {
+                    allCubiePositions.add(IntVector3(x, y, z))
+                }
+            }
+        }
+        return allCubiePositions.filter { pos ->
+            val sum = kotlin.math.abs(pos.x) + kotlin.math.abs(pos.y) + kotlin.math.abs(pos.z)
+            sum >= 2
+        }.all { pos ->
+            isCubieSolved(snap, pos)
+        }
+    }
+
+    private fun verifySolution(start: CubeSnapshot, solution: List<MoveType>): Boolean {
+        var state = start
+        for (move in solution) {
+            state = state.applyMove(move)
+        }
+        return isCubeSolved(state)
+    }
+
+    private fun solveBidirectional(start: CubeSnapshot, maxDepth: Int = 6): List<MoveType>? {
+        if (isCubeSolved(start)) return emptyList()
+
+        val allowedMoves = MoveType.entries
+
+        val forwardQueue = ArrayDeque<CubeSnapshot>()
+        val forwardParent = mutableMapOf<CubeSnapshot, Pair<CubeSnapshot, MoveType>>()
+        forwardQueue.add(start)
+
+        val backwardQueue = ArrayDeque<CubeSnapshot>()
+        val backwardParent = mutableMapOf<CubeSnapshot, Pair<CubeSnapshot, MoveType>>()
+        
+        val solved = RubikCubeState().toSnapshot()
+        backwardQueue.add(solved)
+
+        val forwardDepth = mutableMapOf<CubeSnapshot, Int>()
+        forwardDepth[start] = 0
+        val backwardDepth = mutableMapOf<CubeSnapshot, Int>()
+        backwardDepth[solved] = 0
+
+        val maxStates = 40000
+
+        while (forwardQueue.isNotEmpty() || backwardQueue.isNotEmpty()) {
+            if (forwardParent.size + backwardParent.size > maxStates) {
+                break
+            }
+
+            // Expand Forward
+            if (forwardQueue.isNotEmpty()) {
+                val curr = forwardQueue.removeFirst()
+                val currDepth = forwardDepth[curr] ?: 0
+
+                if (currDepth < (maxDepth + 1) / 2) {
+                    for (move in allowedMoves) {
+                        val next = curr.applyMove(move)
+                        if (next !in forwardDepth) {
+                            forwardDepth[next] = currDepth + 1
+                            forwardParent[next] = Pair(curr, move)
+                            
+                            if (next in backwardDepth) {
+                                return reconstructPath(next, forwardParent, backwardParent)
+                            }
+                            
+                            forwardQueue.add(next)
+                        }
+                    }
+                }
+            }
+
+            // Expand Backward
+            if (backwardQueue.isNotEmpty()) {
+                val curr = backwardQueue.removeFirst()
+                val currDepth = backwardDepth[curr] ?: 0
+
+                if (currDepth < maxDepth / 2) {
+                    for (move in allowedMoves) {
+                        val next = curr.applyMove(move)
+                        if (next !in backwardDepth) {
+                            backwardDepth[next] = currDepth + 1
+                            backwardParent[next] = Pair(curr, move)
+                            
+                            if (next in forwardDepth) {
+                                return reconstructPath(next, forwardParent, backwardParent)
+                            }
+                            
+                            backwardQueue.add(next)
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    private fun reconstructPath(
+        intersection: CubeSnapshot,
+        forwardParent: Map<CubeSnapshot, Pair<CubeSnapshot, MoveType>>,
+        backwardParent: Map<CubeSnapshot, Pair<CubeSnapshot, MoveType>>
+    ): List<MoveType> {
+        val forwardPath = mutableListOf<MoveType>()
+        var curr = intersection
+        while (curr in forwardParent) {
+            val (parent, move) = forwardParent[curr]!!
+            forwardPath.add(0, move)
+            curr = parent
+        }
+
+        val backwardPath = mutableListOf<MoveType>()
+        curr = intersection
+        while (curr in backwardParent) {
+            val (parent, move) = backwardParent[curr]!!
+            val inverseMove = MoveType.entries.first {
+                it.axis == move.axis &&
+                it.layerValue == move.layerValue &&
+                it.angleSign == -move.angleSign
+            }
+            backwardPath.add(inverseMove)
+            curr = parent
+        }
+
+        return compressMoves(forwardPath + backwardPath)
     }
 }

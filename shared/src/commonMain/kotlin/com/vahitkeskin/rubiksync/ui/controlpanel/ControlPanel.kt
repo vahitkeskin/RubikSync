@@ -678,11 +678,9 @@ fun ControlPanel(
                                                         appState.updateRecalculating(true)
                                                         coroutineScope.launch(Dispatchers.Default) {
                                                             try {
-                                                                val currentSnapshot =
-                                                                    cubeState.toSnapshot()
                                                                 val solver = RubikSolver()
                                                                 val lblDetails = solver.solveAnnotated(
-                                                                    currentSnapshot
+                                                                    cubeState
                                                                 )
                                                                 withContext(Dispatchers.Main) {
                                                                     appState.updateActiveSolution(

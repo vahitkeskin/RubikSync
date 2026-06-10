@@ -177,8 +177,15 @@ class RubikAppState(
     val isSolved: Boolean
         get() {
             return cubeState.cubies.all { cubie ->
-                cubie.gridPos == cubie.originalPos &&
-                        cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
+                val sum = kotlin.math.abs(cubie.originalPos.x.roundToInt()) +
+                          kotlin.math.abs(cubie.originalPos.y.roundToInt()) +
+                          kotlin.math.abs(cubie.originalPos.z.roundToInt())
+                if (sum < 2) {
+                    true
+                } else {
+                    cubie.gridPos == cubie.originalPos &&
+                            cubie.rightBasis.x > 0.9f && cubie.upBasis.y > 0.9f && cubie.forwardBasis.z > 0.9f
+                }
             }
         }
 
@@ -256,7 +263,10 @@ class RubikAppState(
     }
 
     fun updateSelectedColor(color: CubeColor) { selectedColor = color }
-    fun updateActiveSolution(solution: List<MoveType>?) { activeSolution = solution }
+    fun updateActiveSolution(solution: List<MoveType>?) {
+        activeSolution = solution
+        currentSolutionStep = 0
+    }
     fun updateActiveSolutionDetails(details: List<AnnotatedMove>?) { activeSolutionDetails = details }
     fun updateCurrentSolutionStep(step: Int) { currentSolutionStep = step }
     fun incrementSolutionStep() { currentSolutionStep++ }

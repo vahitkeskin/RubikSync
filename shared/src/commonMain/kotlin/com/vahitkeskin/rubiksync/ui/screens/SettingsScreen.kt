@@ -36,7 +36,7 @@ import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.ThemeMode
 import com.vahitkeskin.rubiksync.getCurrentYear
 import com.vahitkeskin.rubiksync.BindBackHandler
-import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -89,50 +89,14 @@ fun SettingsScreen(
                 .safeDrawingPadding()
                 .padding(horizontal = 20.dp)
         ) {
-            // Top Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Geri butonu
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(bgSecondary)
-                        .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
-                        .clickable { onBack() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = ArrowBackIcon,
-                        contentDescription = "Geri",
-                        tint = textPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                Column {
-                    Text(
-                        text = appState.strings.settingsTitle,
-                        color = textPrimary,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 1.sp
-                    )
-                    Text(
-                        text = appState.strings.settingsSubtitle,
-                        color = textSecondary,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                        letterSpacing = 0.5.sp
-                    )
-                }
-            }
+            RubikToolbar(
+                title = appState.strings.settingsTitle,
+                subtitle = appState.strings.settingsSubtitle,
+                onBackClick = onBack,
+                titleFontSize = 20.sp,
+                subtitleFontSize = 11.sp,
+                modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
+            )
 
             Column(
                 modifier = Modifier

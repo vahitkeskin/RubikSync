@@ -46,6 +46,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
 
 @Composable
 private fun MiniFaceGrid(
@@ -206,63 +207,26 @@ fun EditorScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Header Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Geri butonu
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(RubikTheme.colors.backgroundSecondary)
-                        .border(0.5.dp, RubikTheme.colors.cardBorder, RoundedCornerShape(12.dp))
-                        .clickable { onDismiss() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = ArrowBackIcon,
-                        contentDescription = "Geri",
-                        tint = RubikTheme.colors.textPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
+            RubikToolbar(
+                title = appState.strings.editorTitle,
+                subtitle = appState.strings.editorSubtitle,
+                onBackClick = onDismiss,
+                titleFontSize = 17.sp,
+                rightContent = {
+                    Button(
+                        onClick = { showJsonImportDialog = true },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = RubikTheme.colors.backgroundSecondary,
+                            contentColor = RubikTheme.colors.textSecondary
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                        modifier = Modifier.height(28.dp)
+                    ) {
+                        Text("📋 JSON", fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                    }
                 }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = appState.strings.editorTitle,
-                        color = RubikTheme.colors.textPrimary,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = appState.strings.editorSubtitle,
-                        color = RubikTheme.colors.textSecondary,
-                        fontSize = 10.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Button(
-                    onClick = { showJsonImportDialog = true },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = RubikTheme.colors.backgroundSecondary,
-                        contentColor = RubikTheme.colors.textSecondary
-                    ),
-                    shape = RoundedCornerShape(8.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
-                    modifier = Modifier.height(28.dp)
-                ) {
-                    Text("📋 JSON", fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                }
-            }
+            )
 
             // Scan Card — glassmorphism style
             Box {

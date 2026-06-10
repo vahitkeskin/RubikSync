@@ -53,6 +53,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
 
 @Composable
 fun ScannerScreen(
@@ -253,52 +254,12 @@ fun ScannerScreen(
             ) {
                 // 1. Header & Connected Step Indicators
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Geri butonu
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(RubikTheme.colors.backgroundSecondary)
-                                .border(
-                                    0.5.dp,
-                                    RubikTheme.colors.cardBorder,
-                                    RoundedCornerShape(12.dp)
-                                )
-                                .clickable { onDismiss() },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = ArrowBackIcon,
-                                contentDescription = "Geri",
-                                tint = RubikTheme.colors.textPrimary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(14.dp))
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = appState.strings.scannerTitle,
-                                color = RubikTheme.colors.textPrimary,
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                maxLines = 1
-                            )
-
-                            Text(
-                                text = "${appState.scannedFilePaths.size}/6${appState.strings.facesScanned}",
-                                color = RubikTheme.colors.textSecondary,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                maxLines = 1
-                            )
-                        }
-                    }
+                    RubikToolbar(
+                        title = appState.strings.scannerTitle,
+                        subtitle = "${appState.scannedFilePaths.size}/6${appState.strings.facesScanned}",
+                        onBackClick = onDismiss,
+                        titleFontSize = 17.sp
+                    )
 
                     Spacer(modifier = Modifier.height(10.dp))
 

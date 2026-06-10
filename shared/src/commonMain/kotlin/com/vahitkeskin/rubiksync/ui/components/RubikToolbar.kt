@@ -17,7 +17,12 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.ui.icons.ArrowBackIcon
+import com.vahitkeskin.rubiksync.ui.icons.CloseIcon
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import androidx.compose.ui.tooling.preview.Preview
+import com.vahitkeskin.rubiksync.ui.state.PreviewRubikTheme
+import androidx.compose.ui.graphics.Color
+import com.vahitkeskin.rubiksync.ui.icons.GalleryIcon
 
 /**
  * A highly customizable, reusable top toolbar component for RubikSync screens.
@@ -99,6 +104,54 @@ fun RubikToolbar(
         if (rightContent != null) {
             Spacer(modifier = Modifier.width(8.dp))
             rightContent()
+        }
+    }
+}
+
+@Preview
+@Composable
+@Preview
+fun RubikToolbarDarkPreview() {
+    PreviewRubikTheme(isDark = true) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(RubikTheme.colors.backgroundPrimary)
+                .padding(16.dp)
+        ) {
+            RubikToolbar(
+                title = "Tarama Ekranı",
+                subtitle = "3/6 Yüz Tarandı",
+                showBackButton = true,
+                rightContent = {
+                    Icon(
+                        imageVector = GalleryIcon,
+                        contentDescription = "Kapat",
+                        tint = RubikTheme.colors.textPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun RubikToolbarLightPreview() {
+    PreviewRubikTheme(isDark = false) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(RubikTheme.colors.backgroundPrimary)
+                .padding(16.dp)
+        ) {
+            RubikToolbar(
+                title = "Tarama Ekranı",
+                subtitle = "3/6 Yüz Tarandı",
+                showBackButton = true,
+                onBackClick = {}
+            )
         }
     }
 }

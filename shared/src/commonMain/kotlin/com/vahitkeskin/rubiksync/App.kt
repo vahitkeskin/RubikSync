@@ -449,13 +449,19 @@ fun App() {
                                                 modifier = Modifier
                                                     .fillMaxSize()
                                                     .graphicsLayer(alpha = 0.99f)
-                                                    .clickable(
-                                                        onClick = {
-                                                            appState.advanceShowcase()
-                                                        },
-                                                        indication = null,
-                                                        interactionSource = remember { MutableInteractionSource() }
-                                                    )
+                                                    .let { modifier ->
+                                                        if (isShowcaseActive) {
+                                                            modifier.clickable(
+                                                                onClick = {
+                                                                    appState.advanceShowcase()
+                                                                },
+                                                                indication = null,
+                                                                interactionSource = remember { MutableInteractionSource() }
+                                                            )
+                                                        } else {
+                                                            modifier
+                                                        }
+                                                    }
                                             ) {
                                                 drawRect(
                                                     color = Slate900.copy(alpha = overlayAlpha)
@@ -492,11 +498,17 @@ fun App() {
                                                         Slate600,
                                                         RoundedCornerShape(20.dp)
                                                     ) // Solid Slate 600 border
-                                                    .clickable(enabled = isShowcaseActive) {
-                                                        appState.updateShowcaseStep(0)
-                                                        appState.updateShowcaseCompleted(true)
-                                                        appState.updateEditorShowcaseCompleted(true)
-                                                        appState.updateScannerShowcaseCompleted(true)
+                                                    .let { modifier ->
+                                                        if (isShowcaseActive) {
+                                                            modifier.clickable {
+                                                                appState.updateShowcaseStep(0)
+                                                                appState.updateShowcaseCompleted(true)
+                                                                appState.updateEditorShowcaseCompleted(true)
+                                                                appState.updateScannerShowcaseCompleted(true)
+                                                            }
+                                                        } else {
+                                                            modifier
+                                                        }
                                                     }
                                                     .padding(horizontal = 16.dp, vertical = 6.dp),
                                                 contentAlignment = Alignment.Center

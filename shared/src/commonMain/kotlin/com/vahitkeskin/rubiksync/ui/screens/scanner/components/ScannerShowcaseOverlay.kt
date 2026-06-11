@@ -61,11 +61,17 @@ internal fun ScannerShowcaseOverlay(
                         canvasPositionInRoot = coords.positionInRoot()
                     }
                     .graphicsLayer(alpha = 0.99f)
-                    .clickable(
-                        onClick = { appState.advanceScannerShowcase() },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    )
+                    .let { modifier ->
+                        if (isShowcaseActive) {
+                            modifier.clickable(
+                                onClick = { appState.advanceScannerShowcase() },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            )
+                        } else {
+                            modifier
+                        }
+                    }
             ) {
                 drawRect(color = Slate900.copy(alpha = overlayAlpha))
                 scannerTargetBounds?.let { rect ->
@@ -98,9 +104,15 @@ internal fun ScannerShowcaseOverlay(
                     .clip(RoundedCornerShape(20.dp))
                     .background(Slate800) // Solid Slate 800
                     .border(1.dp, Slate600, RoundedCornerShape(20.dp)) // Solid Slate 600 border
-                    .clickable(enabled = isShowcaseActive) {
-                        appState.updateScannerShowcaseStep(0)
-                        appState.updateScannerShowcaseCompleted(true)
+                    .let { modifier ->
+                        if (isShowcaseActive) {
+                            modifier.clickable {
+                                appState.updateScannerShowcaseStep(0)
+                                appState.updateScannerShowcaseCompleted(true)
+                            }
+                        } else {
+                            modifier
+                        }
                     }
                     .padding(horizontal = 16.dp, vertical = 6.dp),
                 contentAlignment = Alignment.Center

@@ -61,11 +61,17 @@ internal fun ShowcaseOverlay(
                         canvasPositionInRoot = coords.positionInRoot()
                     }
                     .graphicsLayer(alpha = 0.99f)
-                    .clickable(
-                        onClick = { appState.advanceEditorShowcase() },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    )
+                    .let { modifier ->
+                        if (isShowcaseActive) {
+                            modifier.clickable(
+                                onClick = { appState.advanceEditorShowcase() },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            )
+                        } else {
+                            modifier
+                        }
+                    }
             ) {
                 drawRect(color = Slate900.copy(alpha = overlayAlpha))
                 editorTargetBounds?.let { rect ->
@@ -95,9 +101,15 @@ internal fun ShowcaseOverlay(
                     .clip(RoundedCornerShape(20.dp))
                     .background(Slate800)
                     .border(1.dp, Slate600, RoundedCornerShape(20.dp))
-                    .clickable(enabled = isShowcaseActive) {
-                        appState.updateEditorShowcaseStep(0)
-                        appState.updateEditorShowcaseCompleted(true)
+                    .let { modifier ->
+                        if (isShowcaseActive) {
+                            modifier.clickable {
+                                appState.updateEditorShowcaseStep(0)
+                                appState.updateEditorShowcaseCompleted(true)
+                            }
+                        } else {
+                            modifier
+                        }
                     }
                     .padding(horizontal = 16.dp, vertical = 6.dp),
                 contentAlignment = Alignment.Center

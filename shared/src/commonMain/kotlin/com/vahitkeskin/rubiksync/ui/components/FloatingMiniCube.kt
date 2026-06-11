@@ -153,12 +153,12 @@ fun FloatingMiniCube(
 
         val isDarkTheme = RubikTheme.colors.isDark
         val cornerRadius = with(density) { (16.dp.toPx() * t).toDp() }
-        
+
         // Use solid background (alpha = 1.0) in light mode to prevent shadow bleed-through
         val bgAlpha = if (isDarkTheme) 0.85f * t else t
         val cardBgColor = RubikTheme.colors.backgroundSecondary.copy(alpha = bgAlpha)
         val borderColor = RubikTheme.colors.cardBorder.copy(alpha = t)
-        
+
         // Use a subtle shadow in light mode for a clean, premium flat card aesthetic
         val shadowElevation = if (isDarkTheme) (8 * t).dp else (2 * t).dp
 

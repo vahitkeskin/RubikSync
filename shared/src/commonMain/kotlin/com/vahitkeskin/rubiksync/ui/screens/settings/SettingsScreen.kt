@@ -46,18 +46,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.screens.settings.components.ThemeOptionCard
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.vahitkeskin.rubiksync.ui.navigation.Screen
 import com.vahitkeskin.rubiksync.utils.RubikConstants
 
 @Composable
 fun SettingsScreen(
     appState: RubikAppState,
     isDarkTheme: Boolean,
-    onBack: () -> Unit,
-    onNavigateToReadme: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     BindBackHandler(enabled = true) {
-        onBack()
+        navController.popBackStack()
     }
 
     val bgSecondary = RubikTheme.colors.backgroundSecondary
@@ -91,7 +93,7 @@ fun SettingsScreen(
             RubikToolbar(
                 title = appState.strings.settingsTitle,
                 subtitle = appState.strings.settingsSubtitle,
-                onBackClick = onBack,
+                onBackClick = { navController.popBackStack() },
                 titleFontSize = 20.sp,
                 subtitleFontSize = 11.sp,
                 modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
@@ -449,7 +451,7 @@ fun SettingsScreen(
                             fontSize = 12.sp
                         )
                         androidx.compose.material3.Button(
-                            onClick = onNavigateToReadme,
+                            onClick = { navController.navigate(Screen.Readme.route) },
                             colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                                 containerColor = bgTertiary,
                                 contentColor = RubikTheme.colors.accentBlue
@@ -500,8 +502,7 @@ private fun SettingsScreenDarkPreview() {
         SettingsScreen(
             appState = rememberPreviewRubikAppState(),
             isDarkTheme = true,
-            onBack = {},
-            onNavigateToReadme = {}
+            navController = rememberNavController()
         )
     }
 }
@@ -513,8 +514,7 @@ private fun SettingsScreenLightPreview() {
         SettingsScreen(
             appState = rememberPreviewRubikAppState(),
             isDarkTheme = false,
-            onBack = {},
-            onNavigateToReadme = {}
+            navController = rememberNavController()
         )
     }
 }

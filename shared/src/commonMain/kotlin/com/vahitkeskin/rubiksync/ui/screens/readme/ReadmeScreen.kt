@@ -12,16 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
 fun ReadmeScreen(
     appState: RubikAppState,
     isDarkTheme: Boolean,
-    onBack: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     BindBackHandler(enabled = true) {
-        onBack()
+        navController.popBackStack()
     }
 
     Box(
@@ -46,7 +47,7 @@ fun ReadmeScreen(
         ) {
             RubikToolbar(
                 title = appState.strings.readmeScreenTitle,
-                onBackClick = onBack,
+                onBackClick = { navController.popBackStack() },
                 titleFontSize = 20.sp,
                 modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
             )

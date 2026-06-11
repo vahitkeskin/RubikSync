@@ -20,6 +20,9 @@ import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
 import com.vahitkeskin.rubiksync.ui.state.*
 import com.vahitkeskin.rubiksync.ui.screens.editor.components.*
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.vahitkeskin.rubiksync.ui.navigation.Screen
 
 /**
  * EditorScreen Composable
@@ -30,8 +33,7 @@ import com.vahitkeskin.rubiksync.ui.screens.editor.components.*
 @Composable
 fun EditorScreen(
     appState: RubikAppState,
-    onDismiss: () -> Unit,
-    onStartScanWizard: () -> Unit
+    navController: NavController
 ) {
     var activeFace by remember { mutableStateOf(FaceName.F) }
     var showJsonImportDialog by remember { mutableStateOf(false) }
@@ -94,7 +96,7 @@ fun EditorScreen(
                 RubikToolbar(
                     title = appState.strings.editorTitle,
                     subtitle = appState.strings.editorSubtitle,
-                    onBackClick = onDismiss,
+                    onBackClick = { navController.popBackStack() },
                     titleFontSize = 17.sp,
                     rightContent = {
                         Button(
@@ -115,7 +117,18 @@ fun EditorScreen(
                 // 1. Scan Assistant Entry Point
                 ScanCard(
                     appState = appState,
-                    onStartScanWizard = onStartScanWizard,
+                    onStartScanWizard = {
+                        appState.updateScannerStep(0)
+                        appState.updateScannedGrids(mutableMapOf())
+                        appState.updateScannedRawRGBs(mutableMapOf())
+                        appState.updateScannedFilePaths(mutableMapOf())
+                        appState.updateGridScales(FaceName.values().associateWith { 0.55f })
+                        appState.updateGridOffsetsX(FaceName.values().associateWith { 0f })
+                        appState.updateGridOffsetsY(FaceName.values().associateWith { 0f })
+                        appState.updateErrorMessage(null)
+                        appState.updateInfoMessage(null)
+                        navController.navigate(Screen.Scanner.route)
+                    },
                     onPositioned = { boundsStep5 = it }
                 )
 
@@ -144,7 +157,7 @@ fun EditorScreen(
                 // 5. Action Controls (Cancel, Clear, Apply)
                 BottomActionButtons(
                     appState = appState,
-                    onDismiss = onDismiss,
+                    onDismiss = { navController.popBackStack() },
                     onPositioned = { boundsStep4 = it }
                 )
             }
@@ -178,8 +191,7 @@ private fun EditorDialogDarkPreview() {
         val appState = rememberPreviewRubikAppState()
         EditorScreen(
             appState = appState,
-            onDismiss = {},
-            onStartScanWizard = {}
+            navController = rememberNavController()
         )
     }
 }

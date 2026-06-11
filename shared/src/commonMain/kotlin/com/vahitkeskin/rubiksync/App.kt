@@ -270,11 +270,7 @@ fun App() {
                                     // Splash Screen
                                     SplashScreen(
                                         appState = appState,
-                                        onSplashComplete = {
-                                            navController.navigate(Screen.Dashboard.route) {
-                                                popUpTo(Screen.Splash.route) { inclusive = true }
-                                            }
-                                        }
+                                        navController = navController
                                     )
                                 }
                             )
@@ -322,12 +318,7 @@ fun App() {
                                     SettingsScreen(
                                         appState = appState,
                                         isDarkTheme = isDarkTheme,
-                                        onBack = {
-                                            navController.popBackStack()
-                                        },
-                                        onNavigateToReadme = {
-                                            navController.navigate(Screen.Readme.route)
-                                        }
+                                        navController = navController
                                     )
                                 }
                             )
@@ -363,9 +354,7 @@ fun App() {
                                     ReadmeScreen(
                                         appState = appState,
                                         isDarkTheme = isDarkTheme,
-                                        onBack = {
-                                            navController.popBackStack()
-                                        }
+                                        navController = navController
                                     )
                                 }
                             )
@@ -400,22 +389,7 @@ fun App() {
                                     // Editor Screen
                                     EditorScreen(
                                         appState = appState,
-                                        onDismiss = { navController.popBackStack() },
-                                        onStartScanWizard = {
-                                            appState.updateScannerStep(0)
-                                            appState.updateScannedGrids(mutableMapOf())
-                                            appState.updateScannedRawRGBs(mutableMapOf())
-                                            appState.updateScannedFilePaths(mutableMapOf())
-                                            appState.updateGridScales(
-                                                FaceName.values().associateWith { 0.55f })
-                                            appState.updateGridOffsetsX(
-                                                FaceName.values().associateWith { 0f })
-                                            appState.updateGridOffsetsY(
-                                                FaceName.values().associateWith { 0f })
-                                            appState.updateErrorMessage(null)
-                                            appState.updateInfoMessage(null)
-                                            navController.navigate(Screen.Scanner.route)
-                                        }
+                                        navController = navController
                                     )
                                 }
                             )
@@ -450,26 +424,7 @@ fun App() {
                                     // Scanner Screen
                                     ScannerScreen(
                                         appState = appState,
-                                        onDismiss = {
-                                            navController.popBackStack()
-                                        },
-                                        onComplete = { completeGrids ->
-                                            appState.updateEditorFaces(completeGrids)
-                                            navController.popBackStack(Screen.Dashboard.route, inclusive = false)
-                                            appState.coroutineScope.launch {
-                                                val success =
-                                                    appState.cubeState.setCustomStateAnimated(completeGrids)
-                                                if (success) {
-                                                    appState.clearManualMoves()
-                                                    appState.saveCurrentState()
-                                                    appState.updateActiveSolution(null)
-                                                    appState.updateErrorMessage(null)
-                                                    appState.updateSuccessMessage(appState.strings.successScanComplete)
-                                                } else {
-                                                    appState.updateErrorMessage(appState.strings.invalidCubeDesign)
-                                                }
-                                            }
-                                        }
+                                        navController = navController
                                     )
                                 }
                             )

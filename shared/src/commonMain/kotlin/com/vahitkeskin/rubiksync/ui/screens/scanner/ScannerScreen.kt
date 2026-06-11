@@ -55,6 +55,10 @@ import com.vahitkeskin.rubiksync.ui.state.rememberPreviewRubikAppState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.vahitkeskin.rubiksync.ui.navigation.Screen
 
 /**
  * ScannerScreen Composable
@@ -65,8 +69,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun ScannerScreen(
     appState: RubikAppState,
-    onDismiss: () -> Unit,
-    onComplete: (Map<FaceName, Array<Array<CubeColor>>>) -> Unit
+    navController: NavController
 ) {
     val currentFace = FaceName.values()[appState.scannerStep]
     val currentPath = appState.scannedFilePaths[currentFace]
@@ -292,7 +295,7 @@ fun ScannerScreen(
                     RubikToolbar(
                         title = appState.strings.scannerTitle,
                         subtitle = "${appState.scannedFilePaths.size}/6${appState.strings.facesScanned}",
-                        onBackClick = onDismiss,
+                        onBackClick = { navController.popBackStack() },
                         titleFontSize = 17.sp
                     )
 
@@ -412,8 +415,24 @@ fun ScannerScreen(
                 ScannerBottomBar(
                     appState = appState,
                     currentFace = currentFace,
-                    onDismiss = onDismiss,
-                    onComplete = onComplete,
+                    onDismiss = { navController.popBackStack() },
+                    onComplete = { completeGrids ->
+                        appState.updateEditorFaces(completeGrids)
+                        navController.popBackStack(Screen.Dashboard.route, inclusive = false)
+                        appState.coroutineScope.launch {
+                            val success =
+                                appState.cubeState.setCustomStateAnimated(completeGrids)
+                            if (success) {
+                                appState.clearManualMoves()
+                                appState.saveCurrentState()
+                                appState.updateActiveSolution(null)
+                                appState.updateErrorMessage(null)
+                                appState.updateSuccessMessage(appState.strings.successScanComplete)
+                            } else {
+                                appState.updateErrorMessage(appState.strings.invalidCubeDesign)
+                            }
+                        }
+                    },
                     onPositioned = { boundsStep6 = it }
                 )
             }
@@ -434,8 +453,7 @@ fun ScannerWizardDarkPreview() {
         val appState = rememberPreviewRubikAppState()
         ScannerScreen(
             appState = appState,
-            onDismiss = {},
-            onComplete = {}
+            navController = rememberNavController()
         )
     }
 }
@@ -447,8 +465,7 @@ fun ScannerWizardLightPreview() {
         val appState = rememberPreviewRubikAppState()
         ScannerScreen(
             appState = appState,
-            onDismiss = {},
-            onComplete = {}
+            navController = rememberNavController()
         )
     }
 }

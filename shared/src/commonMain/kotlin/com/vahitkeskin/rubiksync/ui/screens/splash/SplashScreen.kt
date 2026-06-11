@@ -26,6 +26,9 @@ import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.vahitkeskin.rubiksync.ui.navigation.Screen
 import kotlinx.coroutines.delay
 import kotlin.math.PI
 import kotlin.math.sin
@@ -34,7 +37,7 @@ import kotlin.math.sin
 @Composable
 fun SplashScreen(
     appState: RubikAppState,
-    onSplashComplete: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     // 1. Separate state for the preview cube
@@ -94,7 +97,9 @@ fun SplashScreen(
         
         progress = 1f
         delay(300) // small pause at 100%
-        onSplashComplete()
+        navController.navigate(Screen.Dashboard.route) {
+            popUpTo(Screen.Splash.route) { inclusive = true }
+        }
     }
 
     Box(
@@ -223,7 +228,7 @@ private fun SplashScreenDarkPreview() {
     PreviewRubikTheme(isDark = true) {
         SplashScreen(
             appState = rememberPreviewRubikAppState(),
-            onSplashComplete = {}
+            navController = rememberNavController()
         )
     }
 }
@@ -234,7 +239,7 @@ private fun SplashScreenLightPreview() {
     PreviewRubikTheme(isDark = false) {
         SplashScreen(
             appState = rememberPreviewRubikAppState(),
-            onSplashComplete = {}
+            navController = rememberNavController()
         )
     }
 }

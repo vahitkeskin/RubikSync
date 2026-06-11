@@ -140,4 +140,10 @@ val RuStrings = AppStrings(
     skipShowcase = "Пропустить обучение",
     bestTimesTitle = "Лучшее время",
     movesCountLabel = "%s ходов",
+    scanGuidanceExampleU = "Положите куб на стол, оранжевая сторона сверху",
+    scanGuidanceExampleD = "Переверните куб, красная сторона сверху",
+    scanGuidanceExampleL = "Поверните куб влево, жёлтый центр смотрит на вас",
+    scanGuidanceExampleR = "Поверните куб вправо, белый центр смотрит на вас",
+    scanGuidanceExampleF = "Держите куб прямо, зелёный центр смотрит на вас",
+    scanGuidanceExampleB = "Поверните куб на 180°, синий центр смотрит на вас",
 )

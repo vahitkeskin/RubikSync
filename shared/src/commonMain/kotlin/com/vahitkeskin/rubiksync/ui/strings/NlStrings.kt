@@ -140,4 +140,10 @@ val NlStrings = AppStrings(
     skipShowcase = "Uitleg overslaan",
     bestTimesTitle = "Beste tijden",
     movesCountLabel = "%s stappen",
+    scanGuidanceExampleU = "Leg de kubus op tafel, oranje zijde naar boven",
+    scanGuidanceExampleD = "Draai de kubus om, rode zijde naar boven",
+    scanGuidanceExampleL = "Draai de kubus naar links, geel midden naar u toe",
+    scanGuidanceExampleR = "Draai de kubus naar rechts, wit midden naar u toe",
+    scanGuidanceExampleF = "Houd de kubus recht, groen midden naar u toe",
+    scanGuidanceExampleB = "Draai de kubus 180°, blauw midden naar u toe",
 )

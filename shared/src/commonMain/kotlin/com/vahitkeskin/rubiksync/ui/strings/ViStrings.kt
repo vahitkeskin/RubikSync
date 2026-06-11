@@ -140,4 +140,10 @@ val ViStrings = AppStrings(
     skipShowcase = "Bỏ qua hướng dẫn",
     bestTimesTitle = "Thời gian tốt nhất",
     movesCountLabel = "%s bước",
+    scanGuidanceExampleU = "Đặt khối Rubik lên bàn, mặt cam hướng lên trên",
+    scanGuidanceExampleD = "Lật khối Rubik, mặt đỏ hướng lên trên",
+    scanGuidanceExampleL = "Xoay khối Rubik sang trái, tâm vàng hướng về phía bạn",
+    scanGuidanceExampleR = "Xoay khối Rubik sang phải, tâm trắng hướng về phía bạn",
+    scanGuidanceExampleF = "Giữ khối Rubik thẳng, tâm xanh lá hướng về phía bạn",
+    scanGuidanceExampleB = "Xoay khối Rubik 180°, tâm xanh dương hướng về phía bạn",
 )

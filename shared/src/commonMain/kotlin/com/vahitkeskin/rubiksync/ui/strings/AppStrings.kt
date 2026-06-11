@@ -140,6 +140,12 @@ data class AppStrings(
     val skipShowcase: String,
     val bestTimesTitle: String,
     val movesCountLabel: String,
+    val scanGuidanceExampleU: String,
+    val scanGuidanceExampleD: String,
+    val scanGuidanceExampleL: String,
+    val scanGuidanceExampleR: String,
+    val scanGuidanceExampleF: String,
+    val scanGuidanceExampleB: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

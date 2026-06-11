@@ -140,4 +140,10 @@ val ArStrings = AppStrings(
     skipShowcase = "تخطي التعليمات",
     bestTimesTitle = "أفضل الأوقات",
     movesCountLabel = "%s حركات",
+    scanGuidanceExampleU = "ضع المكعب على الطاولة، الوجه البرتقالي للأعلى",
+    scanGuidanceExampleD = "اقلب المكعب، الوجه الأحمر للأعلى",
+    scanGuidanceExampleL = "أدر المكعب لليسار، المركز الأصفر يواجهك",
+    scanGuidanceExampleR = "أدر المكعب لليمين، المركز الأبيض يواجهك",
+    scanGuidanceExampleF = "أمسك المكعب بشكل مستقيم، المركز الأخضر يواجهك",
+    scanGuidanceExampleB = "أدر المكعب 180°، المركز الأزرق يواجهك",
 )

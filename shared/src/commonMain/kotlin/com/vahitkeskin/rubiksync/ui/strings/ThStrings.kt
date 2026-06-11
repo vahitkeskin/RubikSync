@@ -140,4 +140,10 @@ val ThStrings = AppStrings(
     skipShowcase = "ข้ามคำแนะนำ",
     bestTimesTitle = "เวลาที่ดีที่สุด",
     movesCountLabel = "%s ครั้ง",
+    scanGuidanceExampleU = "วางรูบิกบนโต๊ะ หน้าสีส้มหงายขึ้น",
+    scanGuidanceExampleD = "พลิกรูบิก หน้าสีแดงหงายขึ้น",
+    scanGuidanceExampleL = "หมุนรูบิกไปทางซ้าย ศูนย์กลางสีเหลืองหันมาทางคุณ",
+    scanGuidanceExampleR = "หมุนรูบิกไปทางขวา ศูนย์กลางสีขาวหันมาทางคุณ",
+    scanGuidanceExampleF = "ถือรูบิกตรง ศูนย์กลางสีเขียวหันมาทางคุณ",
+    scanGuidanceExampleB = "หมุนรูบิก 180° ศูนย์กลางสีน้ำเงินหันมาทางคุณ",
 )

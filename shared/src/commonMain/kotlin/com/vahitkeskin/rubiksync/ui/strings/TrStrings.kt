@@ -140,4 +140,10 @@ val TrStrings = AppStrings(
     skipShowcase = "Tanıtım Atla",
     bestTimesTitle = "En İyi Süreler",
     movesCountLabel = "%s hamle",
+    scanGuidanceExampleU = "Küpü masaya koyun, turuncu yüz yukarı baksın",
+    scanGuidanceExampleD = "Küpü ters çevirin, kırmızı yüz yukarı baksın",
+    scanGuidanceExampleL = "Küpü sola döndürün, sarı merkez size baksın",
+    scanGuidanceExampleR = "Küpü sağa döndürün, beyaz merkez size baksın",
+    scanGuidanceExampleF = "Küpü düz tutun, yeşil merkez size baksın",
+    scanGuidanceExampleB = "Küpü 180° çevirin, mavi merkez size baksın",
 )

@@ -140,4 +140,10 @@ val ZhStrings = AppStrings(
     skipShowcase = "跳过教程",
     bestTimesTitle = "最佳成绩",
     movesCountLabel = "%s 步",
+    scanGuidanceExampleU = "将魔方放在桌上，橙色面朝上",
+    scanGuidanceExampleD = "翻转魔方，红色面朝上",
+    scanGuidanceExampleL = "向左转动魔方，黄色中心面向你",
+    scanGuidanceExampleR = "向右转动魔方，白色中心面向你",
+    scanGuidanceExampleF = "正面持握魔方，绿色中心面向你",
+    scanGuidanceExampleB = "将魔方旋转180°，蓝色中心面向你",
 )

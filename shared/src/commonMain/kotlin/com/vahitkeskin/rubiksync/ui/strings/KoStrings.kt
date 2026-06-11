@@ -140,4 +140,10 @@ val KoStrings = AppStrings(
     skipShowcase = "튜토리얼 건너뛰기",
     bestTimesTitle = "최고 기록",
     movesCountLabel = "%s 수",
+    scanGuidanceExampleU = "큐브를 테이블에 놓고 주황색 면이 위를 향하게 하세요",
+    scanGuidanceExampleD = "큐브를 뒤집어 빨간색 면이 위를 향하게 하세요",
+    scanGuidanceExampleL = "큐브를 왼쪽으로 돌려 노란색 중심이 앞을 향하게 하세요",
+    scanGuidanceExampleR = "큐브를 오른쪽으로 돌려 흰색 중심이 앞을 향하게 하세요",
+    scanGuidanceExampleF = "큐브를 바로 잡고 초록색 중심이 앞을 향하게 하세요",
+    scanGuidanceExampleB = "큐브를 180° 돌려 파란색 중심이 앞을 향하게 하세요",
 )

@@ -140,4 +140,10 @@ val AzStrings = AppStrings(
     skipShowcase = "Tanıtımı Keç",
     bestTimesTitle = "Ən yaxşı vaxtlar",
     movesCountLabel = "%s gediş",
+    scanGuidanceExampleU = "Kubu masanın üstünə qoyun, narıncı üz yuxarı baxsın",
+    scanGuidanceExampleD = "Kubu tərsinə çevirin, qırmızı üz yuxarı baxsın",
+    scanGuidanceExampleL = "Kubu sola döndərin, sarı mərkəz sizə baxsın",
+    scanGuidanceExampleR = "Kubu sağa döndərin, ağ mərkəz sizə baxsın",
+    scanGuidanceExampleF = "Kubu düz tutun, yaşıl mərkəz sizə baxsın",
+    scanGuidanceExampleB = "Kubu 180° çevirin, mavi mərkəz sizə baxsın",
 )

@@ -140,4 +140,10 @@ val IdStrings = AppStrings(
     skipShowcase = "Lewati Panduan",
     bestTimesTitle = "Waktu Terbaik",
     movesCountLabel = "%s langkah",
+    scanGuidanceExampleU = "Letakkan kubus di meja, sisi oranye menghadap atas",
+    scanGuidanceExampleD = "Balikkan kubus, sisi merah menghadap atas",
+    scanGuidanceExampleL = "Putar kubus ke kiri, pusat kuning menghadap Anda",
+    scanGuidanceExampleR = "Putar kubus ke kanan, pusat putih menghadap Anda",
+    scanGuidanceExampleF = "Pegang kubus lurus, pusat hijau menghadap Anda",
+    scanGuidanceExampleB = "Putar kubus 180°, pusat biru menghadap Anda",
 )

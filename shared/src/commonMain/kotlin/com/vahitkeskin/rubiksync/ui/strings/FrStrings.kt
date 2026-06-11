@@ -140,4 +140,10 @@ val FrStrings = AppStrings(
     skipShowcase = "Passer le didacticiel",
     bestTimesTitle = "Meilleurs temps",
     movesCountLabel = "%s mouvements",
+    scanGuidanceExampleU = "Posez le cube sur la table, face orange vers le haut",
+    scanGuidanceExampleD = "Retournez le cube, face rouge vers le haut",
+    scanGuidanceExampleL = "Tournez le cube à gauche, centre jaune face à vous",
+    scanGuidanceExampleR = "Tournez le cube à droite, centre blanc face à vous",
+    scanGuidanceExampleF = "Tenez le cube droit, centre vert face à vous",
+    scanGuidanceExampleB = "Tournez le cube à 180°, centre bleu face à vous",
 )

@@ -140,4 +140,10 @@ val EnStrings = AppStrings(
     skipShowcase = "Skip Tutorial",
     bestTimesTitle = "Best Times",
     movesCountLabel = "%s moves",
+    scanGuidanceExampleU = "Place the cube on a table, orange face facing up",
+    scanGuidanceExampleD = "Flip the cube over, red face facing up",
+    scanGuidanceExampleL = "Turn the cube left, yellow center facing you",
+    scanGuidanceExampleR = "Turn the cube right, white center facing you",
+    scanGuidanceExampleF = "Hold the cube straight, green center facing you",
+    scanGuidanceExampleB = "Rotate the cube 180°, blue center facing you",
 )

@@ -140,4 +140,10 @@ val HiStrings = AppStrings(
     skipShowcase = "ट्यूटोरियल छोड़ें",
     bestTimesTitle = "सबसे अच्छा समय",
     movesCountLabel = "%s चालें",
+    scanGuidanceExampleU = "क्यूब को मेज पर रखें, नारंगी चेहरा ऊपर की ओर",
+    scanGuidanceExampleD = "क्यूब को पलटें, लाल चेहरा ऊपर की ओर",
+    scanGuidanceExampleL = "क्यूब को बाईं ओर घुमाएँ, पीला केंद्र आपकी ओर",
+    scanGuidanceExampleR = "क्यूब को दाईं ओर घुमाएँ, सफ़ेद केंद्र आपकी ओर",
+    scanGuidanceExampleF = "क्यूब को सीधा पकड़ें, हरा केंद्र आपकी ओर",
+    scanGuidanceExampleB = "क्यूब को 180° घुमाएँ, नीला केंद्र आपकी ओर",
 )

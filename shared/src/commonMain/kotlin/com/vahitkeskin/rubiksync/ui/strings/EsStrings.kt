@@ -140,4 +140,10 @@ val EsStrings = AppStrings(
     skipShowcase = "Omitir tutorial",
     bestTimesTitle = "Mejores tiempos",
     movesCountLabel = "%s movimientos",
+    scanGuidanceExampleU = "Coloque el cubo en la mesa, cara naranja hacia arriba",
+    scanGuidanceExampleD = "Voltee el cubo, cara roja hacia arriba",
+    scanGuidanceExampleL = "Gire el cubo a la izquierda, centro amarillo mirando hacia usted",
+    scanGuidanceExampleR = "Gire el cubo a la derecha, centro blanco mirando hacia usted",
+    scanGuidanceExampleF = "Sostenga el cubo recto, centro verde mirando hacia usted",
+    scanGuidanceExampleB = "Gire el cubo 180°, centro azul mirando hacia usted",
 )

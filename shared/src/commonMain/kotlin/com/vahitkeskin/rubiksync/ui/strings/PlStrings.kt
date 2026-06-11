@@ -140,4 +140,10 @@ val PlStrings = AppStrings(
     skipShowcase = "Pomiń samouczek",
     bestTimesTitle = "Najlepsze czasy",
     movesCountLabel = "%s ruchów",
+    scanGuidanceExampleU = "Połóż kostkę na stole, pomarańczowa ściana do góry",
+    scanGuidanceExampleD = "Odwróć kostkę, czerwona ściana do góry",
+    scanGuidanceExampleL = "Obróć kostkę w lewo, żółty środek w Twoją stronę",
+    scanGuidanceExampleR = "Obróć kostkę w prawo, biały środek w Twoją stronę",
+    scanGuidanceExampleF = "Trzymaj kostkę prosto, zielony środek w Twoją stronę",
+    scanGuidanceExampleB = "Obróć kostkę o 180°, niebieski środek w Twoją stronę",
 )

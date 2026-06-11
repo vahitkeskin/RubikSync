@@ -140,4 +140,10 @@ val JaStrings = AppStrings(
     skipShowcase = "チュートリアルをスキップ",
     bestTimesTitle = "ベストタイム",
     movesCountLabel = "%s 手",
+    scanGuidanceExampleU = "キューブをテーブルに置き、オレンジの面を上にしてください",
+    scanGuidanceExampleD = "キューブを裏返し、赤い面を上にしてください",
+    scanGuidanceExampleL = "キューブを左に回し、黄色の中心を手前にしてください",
+    scanGuidanceExampleR = "キューブを右に回し、白い中心を手前にしてください",
+    scanGuidanceExampleF = "キューブをまっすぐ持ち、緑の中心を手前にしてください",
+    scanGuidanceExampleB = "キューブを180°回転させ、青い中心を手前にしてください",
 )

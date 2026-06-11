@@ -140,4 +140,10 @@ val DeStrings = AppStrings(
     skipShowcase = "Anleitung überspringen",
     bestTimesTitle = "Beste Zeiten",
     movesCountLabel = "%s Züge",
+    scanGuidanceExampleU = "Legen Sie den Würfel auf den Tisch, orange Seite nach oben",
+    scanGuidanceExampleD = "Drehen Sie den Würfel um, rote Seite nach oben",
+    scanGuidanceExampleL = "Drehen Sie den Würfel nach links, gelbe Mitte zeigt zu Ihnen",
+    scanGuidanceExampleR = "Drehen Sie den Würfel nach rechts, weiße Mitte zeigt zu Ihnen",
+    scanGuidanceExampleF = "Halten Sie den Würfel gerade, grüne Mitte zeigt zu Ihnen",
+    scanGuidanceExampleB = "Drehen Sie den Würfel um 180°, blaue Mitte zeigt zu Ihnen",
 )

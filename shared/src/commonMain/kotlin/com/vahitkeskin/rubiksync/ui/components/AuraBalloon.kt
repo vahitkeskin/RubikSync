@@ -23,6 +23,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +40,7 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
@@ -107,7 +111,8 @@ fun AuraBalloon(
 
                     // Ok ucunun (pointer) balon üzerindeki yatay konumu - balon gövdesinden dışarı taşmayı önle
                     balloonWidth = popupContentSize.width.toFloat()
-                    val minArrowX = with(density) { 16.dp.toPx() }
+                    // 16.dp (cornerRadius) + 9.dp (half arrowWidth) = 25.dp
+                    val minArrowX = with(density) { 25.dp.toPx() }
                     val maxArrowX =
                         if (balloonWidth > 0f) (balloonWidth - minArrowX).coerceAtLeast(minArrowX) else minArrowX
                     arrowX = (anchorCenter - x).toFloat().coerceIn(minArrowX, maxArrowX)
@@ -150,8 +155,21 @@ private fun BalloonContent(
     animationProgress: Float,
     transformOrigin: TransformOrigin
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    val arrowWidthPx = with(LocalDensity.current) { 18.dp.toPx() }
+    val arrowHeightPx = with(LocalDensity.current) { 10.dp.toPx() }
+    val cornerRadiusPx = with(LocalDensity.current) { 16.dp.toPx() }
+
+    val balloonShape = remember(arrowX, isBelow) {
+        BalloonShape(
+            arrowWidth = arrowWidthPx,
+            arrowHeight = arrowHeightPx,
+            arrowX = arrowX,
+            isBelow = isBelow,
+            cornerRadius = cornerRadiusPx
+        )
+    }
+
+    Box(
         modifier = Modifier
             .widthIn(max = 280.dp)
             .graphicsLayer {
@@ -161,86 +179,96 @@ private fun BalloonContent(
                 this.transformOrigin = transformOrigin
             }
             .clickable(indication = null, interactionSource = null) { onDismiss() }
-    ) {
-        if (isBelow) {
-            // Sivri uç (Arrow) - Üstte, yukarıyı gösteriyor
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .zIndex(1f)
-                    .offset(y = 1.dp)
-            ) {
-                val arrowWidth = 18.dp.toPx()
-                val arrowHeight = 10.dp.toPx()
-
-                val arrowPath = Path().apply {
-                    moveTo(arrowX - arrowWidth / 2, arrowHeight)
-                    lineTo(arrowX, 0f)
-                    lineTo(arrowX + arrowWidth / 2, arrowHeight)
-                    close()
-                }
-
-                drawOutline(
-                    outline = Outline.Generic(arrowPath),
-                    color = Color.White
-                )
-            }
-        }
-
-        // Balon gövdesi (Açık Renk)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(12.dp, RoundedCornerShape(16.dp))
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
-                .border(
-                    width = 1.dp,
-                    brush = Brush.linearGradient(
-                        listOf(AccentOrange.copy(alpha = 0.4f), Color.White)
-                    ),
-                    shape = RoundedCornerShape(16.dp)
-                )
-                .padding(horizontal = 14.dp, vertical = 12.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    lineHeight = 16.sp
+            .shadow(12.dp, balloonShape)
+            .clip(balloonShape)
+            .background(Color.White)
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    listOf(AccentOrange.copy(alpha = 0.4f), Color.White)
                 ),
-                color = Slate800,
-                textAlign = TextAlign.Center
+                shape = balloonShape
             )
+            .padding(
+                start = 14.dp,
+                end = 14.dp,
+                top = if (isBelow) 22.dp else 12.dp,
+                bottom = if (!isBelow) 22.dp else 12.dp
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 16.sp
+            ),
+            color = Slate800,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+class BalloonShape(
+    private val arrowWidth: Float,
+    private val arrowHeight: Float,
+    private val arrowX: Float,
+    private val isBelow: Boolean,
+    private val cornerRadius: Float
+) : Shape {
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        val path = Path()
+        val w = size.width
+        val h = size.height
+        val cr = cornerRadius
+
+        if (isBelow) {
+            val top = arrowHeight
+            val bottom = h
+            
+            path.moveTo(cr, top)
+            path.lineTo(arrowX - arrowWidth / 2f, top)
+            path.lineTo(arrowX, 0f)
+            path.lineTo(arrowX + arrowWidth / 2f, top)
+            
+            path.lineTo(w - cr, top)
+            path.arcTo(Rect(w - cr * 2, top, w, top + cr * 2), -90f, 90f, false)
+            
+            path.lineTo(w, bottom - cr)
+            path.arcTo(Rect(w - cr * 2, bottom - cr * 2, w, bottom), 0f, 90f, false)
+            
+            path.lineTo(cr, bottom)
+            path.arcTo(Rect(0f, bottom - cr * 2, cr * 2, bottom), 90f, 90f, false)
+            
+            path.lineTo(0f, top + cr)
+            path.arcTo(Rect(0f, top, cr * 2, top + cr * 2), 180f, 90f, false)
+            
+            path.close()
+        } else {
+            val top = 0f
+            val bottom = h - arrowHeight
+            
+            path.moveTo(cr, top)
+            path.lineTo(w - cr, top)
+            path.arcTo(Rect(w - cr * 2, top, w, top + cr * 2), -90f, 90f, false)
+            
+            path.lineTo(w, bottom - cr)
+            path.arcTo(Rect(w - cr * 2, bottom - cr * 2, w, bottom), 0f, 90f, false)
+            
+            path.lineTo(arrowX + arrowWidth / 2f, bottom)
+            path.lineTo(arrowX, h)
+            path.lineTo(arrowX - arrowWidth / 2f, bottom)
+            
+            path.lineTo(cr, bottom)
+            path.arcTo(Rect(0f, bottom - cr * 2, cr * 2, bottom), 90f, 90f, false)
+            
+            path.lineTo(0f, top + cr)
+            path.arcTo(Rect(0f, top, cr * 2, top + cr * 2), 180f, 90f, false)
+            
+            path.close()
         }
-
-        if (!isBelow) {
-            // Sivri uç (Arrow) - Altta, aşağıyı gösteriyor
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .zIndex(1f)
-                    .offset(y = (-1).dp)
-            ) {
-                val arrowWidth = 18.dp.toPx()
-                val arrowHeight = 10.dp.toPx()
-
-                val arrowPath = Path().apply {
-                    moveTo(arrowX - arrowWidth / 2, 0f)
-                    lineTo(arrowX, arrowHeight)
-                    lineTo(arrowX + arrowWidth / 2, 0f)
-                    close()
-                }
-
-                drawOutline(
-                    outline = Outline.Generic(arrowPath),
-                    color = Color.White
-                )
-            }
-        }
+        
+        return Outline.Generic(path)
     }
 }
 

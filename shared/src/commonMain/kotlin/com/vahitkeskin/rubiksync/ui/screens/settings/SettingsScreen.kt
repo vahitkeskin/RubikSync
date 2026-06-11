@@ -9,6 +9,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.ui.draw.rotate
@@ -356,6 +357,7 @@ fun SettingsScreen(
                         .clip(RoundedCornerShape(16.dp))
                         .background(bgSecondary)
                         .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
+                        .animateContentSize()
                         .padding(16.dp)
                 ) {
                     Row(

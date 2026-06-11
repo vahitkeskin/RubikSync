@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.FaceName
-import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+import com.vahitkeskin.rubiksync.ui.components.balloon.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.state.*
 
 @Composable

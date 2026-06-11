@@ -27,13 +27,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.PixelGrid
-import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.CubeRotationGuide
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.cube.RubikImageProcessor
 import com.vahitkeskin.rubiksync.loadImageBitmap
 import com.vahitkeskin.rubiksync.loadImagePixels
-import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+import com.vahitkeskin.rubiksync.ui.components.balloon.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
 import com.vahitkeskin.rubiksync.ui.screens.scanner.components.ConnectedStepIndicators
 import com.vahitkeskin.rubiksync.ui.screens.scanner.components.GridAlignControls

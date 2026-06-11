@@ -16,11 +16,10 @@ import com.vahitkeskin.rubiksync.cube.GestureHandler
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.state.PreviewRubikTheme
-import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+import com.vahitkeskin.rubiksync.ui.components.balloon.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.state.rememberPreviewRubikAppState
 import kotlinx.coroutines.launch
 import androidx.compose.ui.tooling.preview.Preview
-import kotlin.math.PI
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.geometry.Rect

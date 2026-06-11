@@ -13,7 +13,7 @@ import com.vahitkeskin.rubiksync.CameraCaptureOrPicker
 import com.vahitkeskin.rubiksync.cube.CubeRotationGuide
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.cube.RubikImageProcessor
-import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+import com.vahitkeskin.rubiksync.ui.components.balloon.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.state.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.CubeColor
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.solver.IntVector3
-import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+import com.vahitkeskin.rubiksync.ui.components.balloon.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.state.*
 
 @Composable

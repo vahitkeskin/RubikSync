@@ -54,8 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.solver.RubikSolver
-import com.vahitkeskin.rubiksync.solver.toSnapshot
-import com.vahitkeskin.rubiksync.ui.components.AuraBalloon
+import com.vahitkeskin.rubiksync.ui.components.balloon.AuraBalloon
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.state.DesignBgDark

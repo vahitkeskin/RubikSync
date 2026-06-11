@@ -159,6 +159,10 @@ class RubikAppState(
     var targetCornerRadius by mutableStateOf(16.dp)
         private set
 
+    // Main Cube bounds in root coordinate system for PIP transition
+    var mainCubeBounds by mutableStateOf<androidx.compose.ui.geometry.Rect?>(null)
+        private set
+
     var isEditorShowcaseCompleted by mutableStateOf(false)
         private set
     var editorShowcaseStep by mutableStateOf(0)
@@ -345,6 +349,10 @@ class RubikAppState(
     fun updateTargetVisuals(bounds: androidx.compose.ui.geometry.Rect?, radius: Dp) {
         targetBounds = bounds
         targetCornerRadius = radius
+    }
+
+    fun updateMainCubeBounds(bounds: androidx.compose.ui.geometry.Rect?) {
+        mainCubeBounds = bounds
     }
 
     fun updateScannerStep(step: Int) { scannerStep = step }

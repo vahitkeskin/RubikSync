@@ -63,13 +63,13 @@ fun InteractiveCubeCanvas(
     Box(
         modifier = modifier
             .onGloballyPositioned { coords ->
+                val pos = coords.positionInRoot()
+                val size = coords.size
+                val rect = Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height)
+                appState.updateMainCubeBounds(rect)
+
                 if (appState.showcaseStep == 5 && !appState.isShowcaseCompleted) {
-                    val pos = coords.positionInRoot()
-                    val size = coords.size
-                    appState.updateTargetVisuals(
-                        Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height),
-                        16.dp
-                    )
+                    appState.updateTargetVisuals(rect, 16.dp)
                 }
             }
     ) {

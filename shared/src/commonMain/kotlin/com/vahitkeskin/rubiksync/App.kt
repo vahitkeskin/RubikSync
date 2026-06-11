@@ -49,6 +49,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.vahitkeskin.rubiksync.ui.components.FloatingMiniCube
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.cube.getMoveMathDetails
 import com.vahitkeskin.rubiksync.di.appModule
@@ -560,6 +562,14 @@ fun App() {
                         )
                     }
                 }
+
+                val currentBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = currentBackStackEntry?.destination?.route
+
+                FloatingMiniCube(
+                    appState = appState,
+                    currentRoute = currentRoute
+                )
             }
         }
     }

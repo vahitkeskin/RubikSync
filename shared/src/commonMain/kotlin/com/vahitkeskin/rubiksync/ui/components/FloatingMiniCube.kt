@@ -44,6 +44,8 @@ fun FloatingMiniCube(
     currentRoute: String?,
     modifier: Modifier = Modifier
 ) {
+    if (com.vahitkeskin.rubiksync.ui.state.PipManager.isInAndroidPipMode) return
+
     // A solve is active if there is an unresolved active solution
     val isSolving =
         appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
@@ -114,12 +116,11 @@ fun FloatingMiniCube(
         }
 
         // Target resting position considering manual drag offsets (clamped inside safe area)
-        val xEnd =
-            (xEndDefault + dragOffsetX).coerceIn(marginPx, screenWidthPx - pipSizePx - marginPx)
-        val yEnd = (yEndDefault + dragOffsetY).coerceIn(
-            topLimitPx,
-            screenHeightPx - pipSizePx - bottomLimitPx
-        )
+        val safeMaxX = maxOf(marginPx, screenWidthPx - pipSizePx - marginPx)
+        val safeMaxY = maxOf(topLimitPx, screenHeightPx - pipSizePx - bottomLimitPx)
+
+        val xEnd = (xEndDefault + dragOffsetX).coerceIn(marginPx, safeMaxX)
+        val yEnd = (yEndDefault + dragOffsetY).coerceIn(topLimitPx, safeMaxY)
 
         // Start coordinates: Main home cube's coordinates (or center of screen fallback)
         val mainBounds = appState.mainCubeBounds

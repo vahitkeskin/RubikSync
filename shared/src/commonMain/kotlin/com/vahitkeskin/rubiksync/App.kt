@@ -96,6 +96,7 @@ import com.vahitkeskin.rubiksync.ui.state.Slate600
 import com.vahitkeskin.rubiksync.ui.state.Slate100
 import kotlinx.coroutines.launch
 import com.vahitkeskin.rubiksync.ui.navigation.Screen
+import com.vahitkeskin.rubiksync.ui.state.PipManager
 import org.koin.compose.KoinApplication
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -236,74 +237,17 @@ fun App() {
                     com.vahitkeskin.rubiksync.ui.state.PipManager.isSolvingActive = isSolving
                 }
 
-                if (com.vahitkeskin.rubiksync.ui.state.PipManager.isInAndroidPipMode) {
+                val navController = rememberNavController()
+
+                Box(modifier = Modifier.fillMaxSize()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Brush.verticalGradient(colors = backgroundGradient))
-                            .padding(8.dp)
+                            .graphicsLayer {
+                                alpha = if (com.vahitkeskin.rubiksync.ui.state.PipManager.isInAndroidPipMode) 0f else 1f
+                            }
                     ) {
-                        Canvas(modifier = Modifier.fillMaxSize()) {
-                            val renderer = CubeRenderer(
-                                state = appState.cubeState,
-                                yaw = appState.yaw,
-                                pitch = appState.pitch,
-                                cameraDistance = appState.cameraDistance + 2f,
-                                panX = appState.panX,
-                                panY = appState.panY,
-                                isDark = isDarkTheme
-                            )
-                            renderer.draw(this, size.width, size.height)
-                        }
-
-                        val totalSteps = appState.activeSolution?.size ?: 1
-                        val currentStep = appState.currentSolutionStep
-                        val progress = currentStep.toFloat() / totalSteps.toFloat()
-
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(8.dp)
-                                .background(
-                                    Color.Black.copy(alpha = 0.5f),
-                                    RoundedCornerShape(6.dp)
-                                )
-                                .padding(horizontal = 6.dp, vertical = 3.dp)
-                        ) {
-                            Text(
-                                text = "$currentStep/$totalSteps",
-                                color = Color.White,
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .fillMaxWidth()
-                                .height(3.dp)
-                                .background(Color.White.copy(alpha = 0.2f))
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .fillMaxWidth(progress)
-                                    .background(
-                                        Brush.horizontalGradient(
-                                            colors = listOf(AccentOrange, AccentBlue)
-                                        )
-                                    )
-                            )
-                        }
-                    }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Brush.verticalGradient(colors = backgroundGradient))
-                    ) {
-                        val navController = rememberNavController()
 
                         LaunchedEffect(appState.showEditorDialog) {
                             if (appState.showEditorDialog) {
@@ -711,6 +655,69 @@ fun App() {
                             appState = appState,
                             currentRoute = currentRoute
                         )
+                    }
+
+                    if (PipManager.isInAndroidPipMode) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Brush.verticalGradient(colors = backgroundGradient))
+                                .padding(8.dp)
+                        ) {
+                            Canvas(modifier = Modifier.fillMaxSize()) {
+                                val renderer = CubeRenderer(
+                                    state = appState.cubeState,
+                                    yaw = appState.yaw,
+                                    pitch = appState.pitch,
+                                    cameraDistance = appState.cameraDistance + 2f,
+                                    panX = appState.panX,
+                                    panY = appState.panY,
+                                    isDark = isDarkTheme
+                                )
+                                renderer.draw(this, size.width, size.height)
+                            }
+
+                            val totalSteps = appState.activeSolution?.size ?: 1
+                            val currentStep = appState.currentSolutionStep
+                            val progress = currentStep.toFloat() / totalSteps.toFloat()
+
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(8.dp)
+                                    .background(
+                                        Color.Black.copy(alpha = 0.5f),
+                                        RoundedCornerShape(6.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 3.dp)
+                            ) {
+                                Text(
+                                    text = "$currentStep/$totalSteps",
+                                    color = Color.White,
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .fillMaxWidth()
+                                    .height(3.dp)
+                                    .background(Color.White.copy(alpha = 0.2f))
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .fillMaxWidth(progress)
+                                        .background(
+                                            Brush.horizontalGradient(
+                                                colors = listOf(AccentOrange, AccentBlue)
+                                            )
+                                        )
+                                )
+                            }
+                        }
                     }
                 }
             }

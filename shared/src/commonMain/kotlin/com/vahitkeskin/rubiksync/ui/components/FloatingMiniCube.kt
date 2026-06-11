@@ -31,6 +31,11 @@ import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.state.AccentOrange
 import com.vahitkeskin.rubiksync.ui.state.AccentBlue
 import kotlin.math.roundToInt
+import androidx.compose.ui.tooling.preview.Preview
+import com.vahitkeskin.rubiksync.ui.state.PreviewRubikTheme
+import com.vahitkeskin.rubiksync.ui.state.rememberPreviewRubikAppState
+import com.vahitkeskin.rubiksync.ui.state.initializePreviewPersistence
+import com.vahitkeskin.rubiksync.cube.MoveType
 
 @Composable
 fun FloatingMiniCube(
@@ -254,6 +259,54 @@ fun FloatingMiniCube(
                     )
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FloatingMiniCubeDarkPreview() {
+    initializePreviewPersistence()
+    val appState = rememberPreviewRubikAppState().apply {
+        updateActiveSolution(listOf(MoveType.U, MoveType.R_PRIME, MoveType.F, MoveType.B))
+        updateCurrentSolutionStep(1)
+    }
+
+    PreviewRubikTheme(isDark = true) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFF1E1E1E))
+        ) {
+            FloatingMiniCube(
+                appState = appState,
+                currentRoute = "settings",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FloatingMiniCubeLightPreview() {
+    initializePreviewPersistence()
+    val appState = rememberPreviewRubikAppState().apply {
+        updateActiveSolution(listOf(MoveType.U, MoveType.R_PRIME, MoveType.F, MoveType.B))
+        updateCurrentSolutionStep(2)
+    }
+
+    PreviewRubikTheme(isDark = false) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F5F5))
+        ) {
+            FloatingMiniCube(
+                appState = appState,
+                currentRoute = "settings",
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }

@@ -146,6 +146,8 @@ data class AppStrings(
     val scanGuidanceExampleR: String,
     val scanGuidanceExampleF: String,
     val scanGuidanceExampleB: String,
+    val showReadmeButton: String,
+    val readmeScreenTitle: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

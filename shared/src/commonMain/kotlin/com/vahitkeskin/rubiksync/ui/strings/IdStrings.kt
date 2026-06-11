@@ -146,4 +146,6 @@ val IdStrings = AppStrings(
     scanGuidanceExampleR = "Putar kubus ke kanan, pusat putih menghadap Anda",
     scanGuidanceExampleF = "Pegang kubus lurus, pusat hijau menghadap Anda",
     scanGuidanceExampleB = "Putar kubus 180°, pusat biru menghadap Anda",
+    showReadmeButton = "Baca 📖",
+    readmeScreenTitle = "Panduan Pengguna",
 )

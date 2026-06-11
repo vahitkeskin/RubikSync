@@ -146,4 +146,6 @@ val RuStrings = AppStrings(
     scanGuidanceExampleR = "Поверните куб вправо, белый центр смотрит на вас",
     scanGuidanceExampleF = "Держите куб прямо, зелёный центр смотрит на вас",
     scanGuidanceExampleB = "Поверните куб на 180°, синий центр смотрит на вас",
+    showReadmeButton = "Читать 📖",
+    readmeScreenTitle = "Руководство пользователя",
 )

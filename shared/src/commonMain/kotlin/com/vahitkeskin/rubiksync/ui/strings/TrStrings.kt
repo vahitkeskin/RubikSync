@@ -146,4 +146,6 @@ val TrStrings = AppStrings(
     scanGuidanceExampleR = "Küpü sağa döndürün, beyaz merkez size baksın",
     scanGuidanceExampleF = "Küpü düz tutun, yeşil merkez size baksın",
     scanGuidanceExampleB = "Küpü 180° çevirin, mavi merkez size baksın",
+    showReadmeButton = "Oku 📖",
+    readmeScreenTitle = "Kullanım Kılavuzu",
 )

@@ -146,4 +146,6 @@ val HiStrings = AppStrings(
     scanGuidanceExampleR = "क्यूब को दाईं ओर घुमाएँ, सफ़ेद केंद्र आपकी ओर",
     scanGuidanceExampleF = "क्यूब को सीधा पकड़ें, हरा केंद्र आपकी ओर",
     scanGuidanceExampleB = "क्यूब को 180° घुमाएँ, नीला केंद्र आपकी ओर",
+    showReadmeButton = "पढ़ें 📖",
+    readmeScreenTitle = "उपयोगकर्ता मार्गदर्शिका",
 )

@@ -65,6 +65,7 @@ import com.vahitkeskin.rubiksync.ui.screens.settings.SettingsScreen
 import com.vahitkeskin.rubiksync.ui.screens.splash.SplashScreen
 import com.vahitkeskin.rubiksync.ui.screens.editor.EditorScreen
 import com.vahitkeskin.rubiksync.ui.screens.scanner.ScannerScreen
+import com.vahitkeskin.rubiksync.ui.screens.readme.ReadmeScreen
 import com.vahitkeskin.rubiksync.ui.state.AccentBlue
 import com.vahitkeskin.rubiksync.ui.state.AccentBlueBright
 import com.vahitkeskin.rubiksync.ui.state.AccentGreen
@@ -554,6 +555,45 @@ fun App() {
                                 }
                             ) {
                                 SettingsScreen(
+                                    appState = appState,
+                                    isDarkTheme = isDarkTheme,
+                                    onBack = {
+                                        navController.popBackStack()
+                                    },
+                                    onNavigateToReadme = {
+                                        navController.navigate("readme")
+                                    }
+                                )
+                            }
+
+                            composable(
+                                route = "readme",
+                                enterTransition = {
+                                    slideInHorizontally(
+                                        initialOffsetX = { fullWidth -> fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                                },
+                                exitTransition = {
+                                    slideOutHorizontally(
+                                        targetOffsetX = { fullWidth -> -fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                                },
+                                popEnterTransition = {
+                                    slideInHorizontally(
+                                        initialOffsetX = { fullWidth -> -fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                                },
+                                popExitTransition = {
+                                    slideOutHorizontally(
+                                        targetOffsetX = { fullWidth -> fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                                }
+                            ) {
+                                ReadmeScreen(
                                     appState = appState,
                                     isDarkTheme = isDarkTheme,
                                     onBack = {

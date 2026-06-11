@@ -146,4 +146,6 @@ val ViStrings = AppStrings(
     scanGuidanceExampleR = "Xoay khối Rubik sang phải, tâm trắng hướng về phía bạn",
     scanGuidanceExampleF = "Giữ khối Rubik thẳng, tâm xanh lá hướng về phía bạn",
     scanGuidanceExampleB = "Xoay khối Rubik 180°, tâm xanh dương hướng về phía bạn",
+    showReadmeButton = "Đọc 📖",
+    readmeScreenTitle = "Hướng dẫn sử dụng",
 )

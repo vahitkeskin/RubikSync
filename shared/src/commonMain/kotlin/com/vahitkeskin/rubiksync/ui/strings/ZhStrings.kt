@@ -146,4 +146,6 @@ val ZhStrings = AppStrings(
     scanGuidanceExampleR = "向右转动魔方，白色中心面向你",
     scanGuidanceExampleF = "正面持握魔方，绿色中心面向你",
     scanGuidanceExampleB = "将魔方旋转180°，蓝色中心面向你",
+    showReadmeButton = "阅读 📖",
+    readmeScreenTitle = "用户手册",
 )

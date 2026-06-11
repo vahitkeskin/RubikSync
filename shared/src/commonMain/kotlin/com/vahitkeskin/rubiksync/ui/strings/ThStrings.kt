@@ -146,4 +146,6 @@ val ThStrings = AppStrings(
     scanGuidanceExampleR = "หมุนรูบิกไปทางขวา ศูนย์กลางสีขาวหันมาทางคุณ",
     scanGuidanceExampleF = "ถือรูบิกตรง ศูนย์กลางสีเขียวหันมาทางคุณ",
     scanGuidanceExampleB = "หมุนรูบิก 180° ศูนย์กลางสีน้ำเงินหันมาทางคุณ",
+    showReadmeButton = "อ่าน 📖",
+    readmeScreenTitle = "คู่มือการใช้งาน",
 )

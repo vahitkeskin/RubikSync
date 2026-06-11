@@ -917,6 +917,162 @@ actual fun releaseCubeSound() {
 
 actual fun currentTimeMillis(): Long = (NSDate().timeIntervalSince1970 * 1000).toLong()
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+@Composable
+actual fun PlatformWebView(
+    url: String,
+    modifier: Modifier
+) {
+    var rawMarkdown by remember { mutableStateOf<String?>(null) }
+    var errorText by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(url) {
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+            try {
+                val nsUrl = NSURL.URLWithString(url)
+                if (nsUrl == null) {
+                    errorText = "Invalid URL"
+                    return@withContext
+                }
+                val data = NSData.dataWithContentsOfURL(nsUrl)
+                if (data == null) {
+                    errorText = "Failed to download content"
+                    return@withContext
+                }
+                val content = NSString.create(data = data, encoding = NSUTF8StringEncoding)
+                if (content == null) {
+                    errorText = "Failed to decode content"
+                    return@withContext
+                }
+                rawMarkdown = content.toString()
+            } catch (e: Exception) {
+                errorText = e.message ?: "Unknown error"
+            }
+        }
+    }
+
+    if (errorText != null) {
+        Box(
+            modifier = modifier
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Error loading documentation:\n$errorText",
+                color = RubikTheme.colors.textPrimary,
+                textAlign = TextAlign.Center
+            )
+        }
+    } else if (rawMarkdown == null) {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = RubikTheme.colors.accentBlue)
+        }
+    } else {
+        val isDark = RubikTheme.colors.isDark
+        val colorMode = if (isDark) "dark" else "light"
+
+        val cssUrl = "https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown-$colorMode.min.css"
+
+        val base64Markdown = kotlin.io.encoding.Base64.encode(rawMarkdown!!.encodeToByteArray())
+
+        val htmlContent = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link id="theme-stylesheet" rel="stylesheet" href="$cssUrl">
+                <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+                <style>
+                    html, body {
+                        background-color: transparent !important;
+                        margin: 0;
+                        padding: 0;
+                        width: 100%;
+                        height: 100%;
+                    }
+                    body {
+                        box-sizing: border-box;
+                        padding: 16px;
+                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+                    }
+                    .markdown-body {
+                        box-sizing: border-box;
+                        min-width: 200px;
+                        max-width: 980px;
+                        margin: 0 auto;
+                        background-color: transparent !important;
+                    }
+                    @media (max-width: 767px) {
+                        .markdown-body {
+                            padding: 8px;
+                        }
+                    }
+                </style>
+            </head>
+            <body class="markdown-body" data-color-mode="$colorMode" data-dark-theme="dark" data-light-theme="light">
+                <div id="content">Loading...</div>
+                <script>
+                    try {
+                        const base64Str = "$base64Markdown";
+                        const binString = atob(base64Str);
+                        const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0));
+                        const markdown = new TextDecoder().decode(bytes);
+                        document.getElementById('content').innerHTML = marked.parse(markdown);
+                    } catch (err) {
+                        document.getElementById('content').innerHTML = "<h1>Error parsing documentation</h1><p>" + err.message + "</p>";
+                    }
+                </script>
+            </body>
+            </html>
+        """.trimIndent()
+
+        val htmlRef = remember {
+            object {
+                var value = ""
+                var markdown = ""
+            }
+        }
+
+        UIKitView(
+            factory = {
+                val webView = platform.WebKit.WKWebView()
+                webView.opaque = false
+                webView.backgroundColor = platform.UIKit.UIColor.clearColor
+                webView
+            },
+            update = { webView ->
+                if (htmlRef.value != htmlContent) {
+                    val isMarkdownChanged = htmlRef.markdown != rawMarkdown
+                    htmlRef.value = htmlContent
+                    htmlRef.markdown = rawMarkdown!!
+
+                    if (isMarkdownChanged) {
+                        webView.loadHTMLString(htmlContent, baseURL = NSURL.URLWithString("https://localhost"))
+                    } else {
+                        val js = """
+                            (function() {
+                                const link = document.getElementById('theme-stylesheet');
+                                if (link) {
+                                    link.href = '$cssUrl';
+                                }
+                                const body = document.body;
+                                if (body) {
+                                    body.setAttribute('data-color-mode', '$colorMode');
+                                }
+                            })();
+                        """.trimIndent()
+                        webView.evaluateJavaScript(js, null)
+                    }
+                }
+            },
+            modifier = modifier
+        )
+    }
+}
+
 @Preview
 @Composable
 fun CameraPreviewDialogIosPreview() {

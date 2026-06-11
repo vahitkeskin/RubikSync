@@ -4,6 +4,11 @@ import com.vahitkeskin.rubiksync.ui.state.*
 import com.vahitkeskin.rubiksync.ui.icons.GalleryIcon
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -15,12 +20,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
@@ -212,6 +224,47 @@ actual fun releaseCubeSound() {
 }
 
 actual fun currentTimeMillis(): Long = System.currentTimeMillis()
+
+@Composable
+actual fun PlatformWebView(
+    url: String,
+    modifier: Modifier
+) {
+    val scrollState = rememberScrollState()
+    val textPrimary = RubikTheme.colors.textPrimary
+    var rawMarkdown by remember { mutableStateOf("Yükleniyor... / Loading...") }
+
+    LaunchedEffect(url) {
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val conn = java.net.URL(url).openConnection() as java.net.HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
+                val text = conn.inputStream.bufferedReader().use { it.readText() }
+                rawMarkdown = text
+            } catch (e: Exception) {
+                rawMarkdown = "Belge yüklenirken hata oluştu:\n${e.message}\n\nİnternet bağlantınızı kontrol edin."
+            }
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .padding(16.dp)
+            .verticalScroll(scrollState)
+    ) {
+        SelectionContainer {
+            Text(
+                text = rawMarkdown,
+                color = textPrimary,
+                fontSize = 13.sp,
+                fontFamily = FontFamily.Monospace,
+                lineHeight = 18.sp
+            )
+        }
+    }
+}
 
 @androidx.compose.ui.tooling.preview.Preview
 @Composable

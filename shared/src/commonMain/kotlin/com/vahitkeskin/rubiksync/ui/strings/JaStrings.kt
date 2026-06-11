@@ -146,4 +146,6 @@ val JaStrings = AppStrings(
     scanGuidanceExampleR = "キューブを右に回し、白い中心を手前にしてください",
     scanGuidanceExampleF = "キューブをまっすぐ持ち、緑の中心を手前にしてください",
     scanGuidanceExampleB = "キューブを180°回転させ、青い中心を手前にしてください",
+    showReadmeButton = "読む 📖",
+    readmeScreenTitle = "ユーザーマニュアル",
 )

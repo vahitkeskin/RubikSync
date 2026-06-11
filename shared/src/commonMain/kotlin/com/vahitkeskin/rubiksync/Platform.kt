@@ -60,3 +60,9 @@ expect fun playCubeRotateSound()
 expect fun releaseCubeSound()
 
 expect fun currentTimeMillis(): Long
+
+@Composable
+expect fun PlatformWebView(
+    url: String,
+    modifier: Modifier = Modifier
+)

@@ -146,4 +146,6 @@ val ItStrings = AppStrings(
     scanGuidanceExampleR = "Ruota il cubo a destra, centro bianco rivolto verso di te",
     scanGuidanceExampleF = "Tieni il cubo dritto, centro verde rivolto verso di te",
     scanGuidanceExampleB = "Ruota il cubo di 180°, centro blu rivolto verso di te",
+    showReadmeButton = "Leggi 📖",
+    readmeScreenTitle = "Manuale utente",
 )

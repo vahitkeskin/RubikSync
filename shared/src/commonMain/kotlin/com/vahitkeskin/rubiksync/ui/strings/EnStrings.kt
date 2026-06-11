@@ -146,4 +146,6 @@ val EnStrings = AppStrings(
     scanGuidanceExampleR = "Turn the cube right, white center facing you",
     scanGuidanceExampleF = "Hold the cube straight, green center facing you",
     scanGuidanceExampleB = "Rotate the cube 180°, blue center facing you",
+    showReadmeButton = "Read 📖",
+    readmeScreenTitle = "User Manual",
 )

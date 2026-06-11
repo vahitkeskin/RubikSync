@@ -52,3 +52,40 @@ fun Map<FaceName, Array<Array<CubeColor>>>.getFaceColor(face: FaceName, row: Int
 fun Map<FaceName, Array<Array<IntVector3>>>.getFaceRawRGB(face: FaceName, row: Int, col: Int): IntVector3 {
     return this[face]?.getOrNull(row)?.getOrNull(col) ?: IntVector3(0, 0, 0)
 }
+
+/**
+ * Encodes a string into base64.
+ */
+fun base64Encode(text: String): String {
+    val bytes = text.encodeToByteArray()
+    val table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    val result = StringBuilder()
+    var i = 0
+    while (i < bytes.size) {
+        val b0 = bytes[i].toInt() and 0xFF
+        val b1 = if (i + 1 < bytes.size) bytes[i + 1].toInt() and 0xFF else -1
+        val b2 = if (i + 2 < bytes.size) bytes[i + 2].toInt() and 0xFF else -1
+        
+        val pad1 = b1 == -1
+        val pad2 = b2 == -1
+        
+        val chunk = (b0 shl 16) or 
+                    ((if (b1 != -1) b1 else 0) shl 8) or 
+                    (if (b2 != -1) b2 else 0)
+        
+        val c0 = (chunk shr 18) and 63
+        val c1 = (chunk shr 12) and 63
+        val c2 = (chunk shr 6) and 63
+        val c3 = chunk and 63
+        
+        result.append(table[c0])
+        result.append(table[c1])
+        result.append(if (pad1) '=' else table[c2])
+        result.append(if (pad2) '=' else table[c3])
+        
+        i += 3
+    }
+    return result.toString()
+}
+
+const val README_URL = "https://raw.githubusercontent.com/vahitkeskin/RubikSync/main/README.md"

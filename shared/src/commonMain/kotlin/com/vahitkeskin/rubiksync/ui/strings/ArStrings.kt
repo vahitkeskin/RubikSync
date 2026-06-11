@@ -146,4 +146,6 @@ val ArStrings = AppStrings(
     scanGuidanceExampleR = "أدر المكعب لليمين، المركز الأبيض يواجهك",
     scanGuidanceExampleF = "أمسك المكعب بشكل مستقيم، المركز الأخضر يواجهك",
     scanGuidanceExampleB = "أدر المكعب 180°، المركز الأزرق يواجهك",
+    showReadmeButton = "اقرأ 📖",
+    readmeScreenTitle = "دليل المستخدم",
 )

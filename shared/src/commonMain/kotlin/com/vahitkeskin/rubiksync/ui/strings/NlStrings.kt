@@ -146,4 +146,6 @@ val NlStrings = AppStrings(
     scanGuidanceExampleR = "Draai de kubus naar rechts, wit midden naar u toe",
     scanGuidanceExampleF = "Houd de kubus recht, groen midden naar u toe",
     scanGuidanceExampleB = "Draai de kubus 180°, blauw midden naar u toe",
+    showReadmeButton = "Lees 📖",
+    readmeScreenTitle = "Gebruikershandleiding",
 )

@@ -146,4 +146,6 @@ val KoStrings = AppStrings(
     scanGuidanceExampleR = "큐브를 오른쪽으로 돌려 흰색 중심이 앞을 향하게 하세요",
     scanGuidanceExampleF = "큐브를 바로 잡고 초록색 중심이 앞을 향하게 하세요",
     scanGuidanceExampleB = "큐브를 180° 돌려 파란색 중심이 앞을 향하게 하세요",
+    showReadmeButton = "읽기 📖",
+    readmeScreenTitle = "사용자 설명서",
 )

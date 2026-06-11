@@ -51,6 +51,7 @@ fun SettingsScreen(
     appState: RubikAppState,
     isDarkTheme: Boolean,
     onBack: () -> Unit,
+    onNavigateToReadme: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     BindBackHandler(enabled = true) {
@@ -416,6 +417,37 @@ fun SettingsScreen(
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = appState.strings.readmeScreenTitle,
+                            color = textSecondary,
+                            fontSize = 12.sp
+                        )
+                        androidx.compose.material3.Button(
+                            onClick = onNavigateToReadme,
+                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                containerColor = bgTertiary,
+                                contentColor = RubikTheme.colors.accentBlue
+                            ),
+                            shape = RoundedCornerShape(6.dp),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                            modifier = Modifier.height(26.dp)
+                        ) {
+                            Text(
+                                text = appState.strings.showReadmeButton,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -447,7 +479,8 @@ private fun SettingsScreenDarkPreview() {
         SettingsScreen(
             appState = rememberPreviewRubikAppState(),
             isDarkTheme = true,
-            onBack = {}
+            onBack = {},
+            onNavigateToReadme = {}
         )
     }
 }
@@ -459,7 +492,8 @@ private fun SettingsScreenLightPreview() {
         SettingsScreen(
             appState = rememberPreviewRubikAppState(),
             isDarkTheme = false,
-            onBack = {}
+            onBack = {},
+            onNavigateToReadme = {}
         )
     }
 }

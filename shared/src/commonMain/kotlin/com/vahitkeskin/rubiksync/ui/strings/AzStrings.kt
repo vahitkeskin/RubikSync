@@ -146,4 +146,6 @@ val AzStrings = AppStrings(
     scanGuidanceExampleR = "Kubu sağa döndərin, ağ mərkəz sizə baxsın",
     scanGuidanceExampleF = "Kubu düz tutun, yaşıl mərkəz sizə baxsın",
     scanGuidanceExampleB = "Kubu 180° çevirin, mavi mərkəz sizə baxsın",
+    showReadmeButton = "Oxu 📖",
+    readmeScreenTitle = "İstifadəçi Təlimatı",
 )

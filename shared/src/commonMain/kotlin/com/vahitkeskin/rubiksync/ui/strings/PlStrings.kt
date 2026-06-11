@@ -146,4 +146,6 @@ val PlStrings = AppStrings(
     scanGuidanceExampleR = "Obróć kostkę w prawo, biały środek w Twoją stronę",
     scanGuidanceExampleF = "Trzymaj kostkę prosto, zielony środek w Twoją stronę",
     scanGuidanceExampleB = "Obróć kostkę o 180°, niebieski środek w Twoją stronę",
+    showReadmeButton = "Czytaj 📖",
+    readmeScreenTitle = "Instrukcja obsługi",
 )

@@ -146,4 +146,6 @@ val DeStrings = AppStrings(
     scanGuidanceExampleR = "Drehen Sie den Würfel nach rechts, weiße Mitte zeigt zu Ihnen",
     scanGuidanceExampleF = "Halten Sie den Würfel gerade, grüne Mitte zeigt zu Ihnen",
     scanGuidanceExampleB = "Drehen Sie den Würfel um 180°, blaue Mitte zeigt zu Ihnen",
+    showReadmeButton = "Lesen 📖",
+    readmeScreenTitle = "Benutzerhandbuch",
 )

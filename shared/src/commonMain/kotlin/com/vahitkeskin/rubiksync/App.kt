@@ -95,6 +95,7 @@ import com.vahitkeskin.rubiksync.ui.state.Slate800
 import com.vahitkeskin.rubiksync.ui.state.Slate600
 import com.vahitkeskin.rubiksync.ui.state.Slate100
 import kotlinx.coroutines.launch
+import com.vahitkeskin.rubiksync.ui.navigation.Screen
 import org.koin.compose.KoinApplication
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -306,34 +307,34 @@ fun App() {
 
                         LaunchedEffect(appState.showEditorDialog) {
                             if (appState.showEditorDialog) {
-                                navController.navigate("editor")
+                                navController.navigate(Screen.Editor.route)
                                 appState.updateShowEditorDialog(false)
                             }
                         }
 
                         LaunchedEffect(appState.showScannerWizard) {
                             if (appState.showScannerWizard) {
-                                navController.navigate("scanner")
+                                navController.navigate(Screen.Scanner.route)
                                 appState.updateShowScannerWizard(false)
                             }
                         }
 
                         NavHost(
                             navController = navController,
-                            startDestination = "splash",
+                            startDestination = Screen.Splash.route,
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            composable("splash") {
+                            composable(Screen.Splash.route) {
                                 SplashScreen(
                                     appState = appState,
                                     onSplashComplete = {
-                                        navController.navigate("dashboard") {
-                                            popUpTo("splash") { inclusive = true }
+                                        navController.navigate(Screen.Dashboard.route) {
+                                            popUpTo(Screen.Splash.route) { inclusive = true }
                                         }
                                     }
                                 )
                             }
-                            composable("dashboard") {
+                            composable(Screen.Dashboard.route) {
                                 val overlayAlpha by animateFloatAsState(
                                     targetValue = if (appState.showcaseStep != 0 && !appState.isShowcaseCompleted) 0.85f else 0f,
                                     animationSpec = tween(durationMillis = 1000)
@@ -400,7 +401,7 @@ fun App() {
                                                 cubeState = cubeState,
                                                 appState = appState,
                                                 onNavigateToSettings = {
-                                                    navController.navigate("settings")
+                                                    navController.navigate(Screen.Settings.route)
                                                 }
                                             )
 
@@ -528,7 +529,7 @@ fun App() {
                             }
 
                             composable(
-                                route = "settings",
+                                route = Screen.Settings.route,
                                 enterTransition = {
                                     slideInHorizontally(
                                         initialOffsetX = { fullWidth -> fullWidth },
@@ -561,13 +562,13 @@ fun App() {
                                         navController.popBackStack()
                                     },
                                     onNavigateToReadme = {
-                                        navController.navigate("readme")
+                                        navController.navigate(Screen.Readme.route)
                                     }
                                 )
                             }
 
                             composable(
-                                route = "readme",
+                                route = Screen.Readme.route,
                                 enterTransition = {
                                     slideInHorizontally(
                                         initialOffsetX = { fullWidth -> fullWidth },
@@ -603,7 +604,7 @@ fun App() {
                             }
 
                             composable(
-                                route = "editor",
+                                route = Screen.Editor.route,
                                 enterTransition = {
                                     slideInHorizontally(
                                         initialOffsetX = { fullWidth -> fullWidth },
@@ -645,13 +646,13 @@ fun App() {
                                             FaceName.values().associateWith { 0f })
                                         appState.updateErrorMessage(null)
                                         appState.updateInfoMessage(null)
-                                        navController.navigate("scanner")
+                                        navController.navigate(Screen.Scanner.route)
                                     }
                                 )
                             }
 
                             composable(
-                                route = "scanner",
+                                route = Screen.Scanner.route,
                                 enterTransition = {
                                     slideInHorizontally(
                                         initialOffsetX = { fullWidth -> fullWidth },
@@ -684,7 +685,7 @@ fun App() {
                                     },
                                     onComplete = { completeGrids ->
                                         appState.updateEditorFaces(completeGrids)
-                                        navController.popBackStack("dashboard", inclusive = false)
+                                        navController.popBackStack(Screen.Dashboard.route, inclusive = false)
                                         appState.coroutineScope.launch {
                                             val success =
                                                 cubeState.setCustomStateAnimated(completeGrids)

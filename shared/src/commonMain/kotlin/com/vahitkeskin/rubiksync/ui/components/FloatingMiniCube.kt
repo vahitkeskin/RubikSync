@@ -36,6 +36,7 @@ import com.vahitkeskin.rubiksync.ui.state.PreviewRubikTheme
 import com.vahitkeskin.rubiksync.ui.state.rememberPreviewRubikAppState
 import com.vahitkeskin.rubiksync.ui.state.initializePreviewPersistence
 import com.vahitkeskin.rubiksync.cube.MoveType
+import com.vahitkeskin.rubiksync.ui.navigation.Screen
 
 @Composable
 fun FloatingMiniCube(
@@ -46,7 +47,7 @@ fun FloatingMiniCube(
     // A solve is active if there is an unresolved active solution
     val isSolving =
         appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
-    val isTargetActive = (currentRoute == "settings" || currentRoute == "readme") && isSolving
+    val isTargetActive = (currentRoute == Screen.Settings.route || currentRoute == Screen.Readme.route) && isSolving
 
     SideEffect {
         println("FloatingMiniCube debug: currentRoute='$currentRoute', isSolving=$isSolving, activeSolutionSize=${appState.activeSolution?.size}, step=${appState.currentSolutionStep}, isTargetActive=$isTargetActive, mainBounds=${appState.mainCubeBounds}")
@@ -284,7 +285,7 @@ fun FloatingMiniCubeDarkPreview() {
         ) {
             FloatingMiniCube(
                 appState = appState,
-                currentRoute = "settings",
+                currentRoute = Screen.Settings.route,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -308,7 +309,7 @@ fun FloatingMiniCubeLightPreview() {
         ) {
             FloatingMiniCube(
                 appState = appState,
-                currentRoute = "settings",
+                currentRoute = Screen.Settings.route,
                 modifier = Modifier.fillMaxSize()
             )
         }

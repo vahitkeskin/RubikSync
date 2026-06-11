@@ -9,6 +9,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.ui.draw.rotate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -440,35 +442,41 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    AnimatedVisibility(
+                        visible = appState.appLanguage == AppLanguage.TR,
+                        enter = scaleIn(),
+                        exit = scaleOut()
                     ) {
-                        Text(
-                            text = appState.strings.readmeScreenTitle,
-                            color = textSecondary,
-                            fontSize = 12.sp
-                        )
-                        androidx.compose.material3.Button(
-                            onClick = { navController.navigate(Screen.Readme.route) },
-                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                                containerColor = bgTertiary,
-                                contentColor = RubikTheme.colors.accentBlue
-                            ),
-                            shape = RoundedCornerShape(6.dp),
-                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                                horizontal = 8.dp,
-                                vertical = 2.dp
-                            ),
-                            modifier = Modifier.height(26.dp)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = appState.strings.showReadmeButton,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1
+                                text = appState.strings.readmeScreenTitle,
+                                color = textSecondary,
+                                fontSize = 12.sp
                             )
+                            androidx.compose.material3.Button(
+                                onClick = { navController.navigate(Screen.Readme.route) },
+                                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                    containerColor = bgTertiary,
+                                    contentColor = RubikTheme.colors.accentBlue
+                                ),
+                                shape = RoundedCornerShape(6.dp),
+                                contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                    horizontal = 8.dp,
+                                    vertical = 2.dp
+                                ),
+                                modifier = Modifier.height(26.dp)
+                            ) {
+                                Text(
+                                    text = appState.strings.showReadmeButton,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
                 }

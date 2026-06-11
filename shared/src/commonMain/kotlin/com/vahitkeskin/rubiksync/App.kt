@@ -91,6 +91,7 @@ import com.vahitkeskin.rubiksync.ui.state.Slate800
 import com.vahitkeskin.rubiksync.ui.state.Slate600
 import com.vahitkeskin.rubiksync.ui.state.Slate100
 import kotlinx.coroutines.launch
+import com.vahitkeskin.rubiksync.ui.navigation.RubikNavGraph
 import com.vahitkeskin.rubiksync.ui.navigation.Screen
 import com.vahitkeskin.rubiksync.ui.state.PipManager
 import org.koin.compose.KoinApplication
@@ -259,176 +260,12 @@ fun App() {
                             }
                         }
 
-                        NavHost(
+                        RubikNavGraph(
                             navController = navController,
-                            startDestination = Screen.Splash.route,
+                            appState = appState,
+                            isDarkTheme = isDarkTheme,
                             modifier = Modifier.fillMaxSize()
-                        ) {
-                            composable(
-                                route = Screen.Splash.route,
-                                content = {
-                                    // Splash Screen
-                                    SplashScreen(
-                                        appState = appState,
-                                        navController = navController
-                                    )
-                                }
-                            )
-
-                            composable(
-                                route = Screen.Dashboard.route,
-                                content = {
-                                    // Dashboard Screen
-                                    DashboardScreen(
-                                        appState = appState,
-                                        cubeState = appState.cubeState,
-                                        navController = navController
-                                    )
-                                }
-                            )
-
-                            composable(
-                                route = Screen.Settings.route,
-                                enterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { fullWidth -> fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                                },
-                                exitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { fullWidth -> -fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                                },
-                                popEnterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { fullWidth -> -fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                                },
-                                popExitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { fullWidth -> fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                                },
-                                content = {
-                                    // Settings Screen
-                                    SettingsScreen(
-                                        appState = appState,
-                                        isDarkTheme = isDarkTheme,
-                                        navController = navController
-                                    )
-                                }
-                            )
-
-                            composable(
-                                route = Screen.Readme.route,
-                                enterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { fullWidth -> fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                                },
-                                exitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { fullWidth -> -fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                                },
-                                popEnterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { fullWidth -> -fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                                },
-                                popExitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { fullWidth -> fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                                },
-                                content = {
-                                    // Readme Screen
-                                    ReadmeScreen(
-                                        appState = appState,
-                                        isDarkTheme = isDarkTheme,
-                                        navController = navController
-                                    )
-                                }
-                            )
-
-                            composable(
-                                route = Screen.Editor.route,
-                                enterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { fullWidth -> fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                                },
-                                exitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { fullWidth -> -fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                                },
-                                popEnterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { fullWidth -> -fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                                },
-                                popExitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { fullWidth -> fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                                },
-                                content = {
-                                    // Editor Screen
-                                    EditorScreen(
-                                        appState = appState,
-                                        navController = navController
-                                    )
-                                }
-                            )
-
-                            composable(
-                                route = Screen.Scanner.route,
-                                enterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { fullWidth -> fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                                },
-                                exitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { fullWidth -> -fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                                },
-                                popEnterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { fullWidth -> -fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                                },
-                                popExitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { fullWidth -> fullWidth },
-                                        animationSpec = tween(durationMillis = 700)
-                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                                },
-                                content = {
-                                    // Scanner Screen
-                                    ScannerScreen(
-                                        appState = appState,
-                                        navController = navController
-                                    )
-                                }
-                            )
-                        }
+                        )
 
                         val currentBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentRoute = currentBackStackEntry?.destination?.route

@@ -87,5 +87,3 @@ fun base64Encode(text: String): String {
     }
     return result.toString()
 }
-
-const val README_URL = "https://raw.githubusercontent.com/vahitkeskin/RubikSync/main/README.md"

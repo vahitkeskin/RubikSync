@@ -4,7 +4,7 @@ import com.vahitkeskin.rubiksync.ui.state.*
 import com.vahitkeskin.rubiksync.BindBackHandler
 import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
 import com.vahitkeskin.rubiksync.PlatformWebView
-import com.vahitkeskin.rubiksync.utils.README_URL
+import com.vahitkeskin.rubiksync.utils.RubikConstants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -52,7 +52,7 @@ fun ReadmeScreen(
             )
 
             PlatformWebView(
-                url = README_URL,
+                url = RubikConstants.README_URL,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)

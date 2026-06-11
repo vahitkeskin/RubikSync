@@ -27,6 +27,9 @@ interface SettingsRepository {
     suspend fun saveShakeToScramble(enabled: Boolean)
     suspend fun loadShakeToScramble(): Boolean?
 
+    suspend fun saveScrambleSoundTooltipShown(shown: Boolean)
+    suspend fun loadScrambleSoundTooltipShown(): Boolean?
+
     suspend fun saveCameraSettings(
         yaw: Float,
         pitch: Float,

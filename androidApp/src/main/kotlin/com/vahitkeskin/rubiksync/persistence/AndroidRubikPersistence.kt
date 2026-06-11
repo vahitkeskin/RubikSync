@@ -39,6 +39,7 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     private val KEY_SHAKE_TO_SCRAMBLE = booleanPreferencesKey("shake_to_scramble")
     private val KEY_EDITOR_SHOWCASE_COMPLETED = booleanPreferencesKey("editor_showcase_completed")
     private val KEY_SCANNER_SHOWCASE_COMPLETED = booleanPreferencesKey("scanner_showcase_completed")
+    private val KEY_SCRAMBLE_SOUND_TOOLTIP_SHOWN = booleanPreferencesKey("scramble_sound_tooltip_shown")
 
 
     override suspend fun saveCubeState(
@@ -222,6 +223,21 @@ class AndroidRubikPersistence(private val context: Context) : RubikPersistence {
     override suspend fun loadShakeToScramble(): Boolean? {
         return try {
             context.dataStore.data.first()[KEY_SHAKE_TO_SCRAMBLE]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    override suspend fun saveScrambleSoundTooltipShown(shown: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_SCRAMBLE_SOUND_TOOLTIP_SHOWN] = shown
+        }
+    }
+
+    override suspend fun loadScrambleSoundTooltipShown(): Boolean? {
+        return try {
+            context.dataStore.data.first()[KEY_SCRAMBLE_SOUND_TOOLTIP_SHOWN]
         } catch (e: Exception) {
             e.printStackTrace()
             null

@@ -79,6 +79,9 @@ interface RubikPersistence {
     suspend fun saveShakeToScramble(enabled: Boolean)
     suspend fun loadShakeToScramble(): Boolean?
 
+    suspend fun saveScrambleSoundTooltipShown(shown: Boolean)
+    suspend fun loadScrambleSoundTooltipShown(): Boolean?
+
     suspend fun saveSolveSession(durationMillis: Long, moveCount: Int, timestamp: Long)
     suspend fun loadSolveSessions(): List<SolveSession>
 }

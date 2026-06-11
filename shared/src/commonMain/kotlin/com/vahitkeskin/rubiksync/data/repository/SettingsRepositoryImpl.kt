@@ -72,6 +72,14 @@ class SettingsRepositoryImpl(
         return persistence.loadShakeToScramble()
     }
 
+    override suspend fun saveScrambleSoundTooltipShown(shown: Boolean) {
+        persistence.saveScrambleSoundTooltipShown(shown)
+    }
+
+    override suspend fun loadScrambleSoundTooltipShown(): Boolean? {
+        return persistence.loadScrambleSoundTooltipShown()
+    }
+
     override suspend fun saveCameraSettings(
         yaw: Float,
         pitch: Float,

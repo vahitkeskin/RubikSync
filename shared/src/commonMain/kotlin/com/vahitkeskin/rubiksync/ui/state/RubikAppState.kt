@@ -40,6 +40,7 @@ class RubikAppState(
     private val getCameraSettingsUseCase: GetCameraSettingsUseCase,
     private val saveCameraSettingsUseCase: SaveCameraSettingsUseCase,
     private val saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase,
+    private val saveScrambleSoundTooltipShownUseCase: SaveScrambleSoundTooltipShownUseCase,
     private val saveSolveSessionUseCase: SaveSolveSessionUseCase,
     private val getSolveSessionsUseCase: GetSolveSessionsUseCase
 ) {
@@ -171,6 +172,9 @@ class RubikAppState(
     var isScannerShowcaseCompleted by mutableStateOf(false)
         private set
     var scannerShowcaseStep by mutableStateOf(0)
+        private set
+
+    var isScrambleSoundTooltipShown by mutableStateOf(false)
         private set
 
     // User-triggered active tooltip ID (locks, sounds, shake, etc.)
@@ -399,6 +403,11 @@ class RubikAppState(
         coroutineScope.launch(Dispatchers.Default) { saveShakeToScrambleUseCase(enabled) }
     }
 
+    fun updateScrambleSoundTooltipShown(shown: Boolean) {
+        isScrambleSoundTooltipShown = shown
+        coroutineScope.launch(Dispatchers.Default) { saveScrambleSoundTooltipShownUseCase(shown) }
+    }
+
     fun updateShowcaseCompleted(completed: Boolean) {
         isShowcaseCompleted = completed
         coroutineScope.launch(Dispatchers.Default) { saveShowcaseCompletedUseCase(completed) }
@@ -540,6 +549,7 @@ class RubikAppState(
                     if (settings.isShowcaseCompleted != null) isShowcaseCompleted = settings.isShowcaseCompleted
                     if (settings.isEditorShowcaseCompleted != null) isEditorShowcaseCompleted = settings.isEditorShowcaseCompleted
                     if (settings.isScannerShowcaseCompleted != null) isScannerShowcaseCompleted = settings.isScannerShowcaseCompleted
+                    if (settings.isScrambleSoundTooltipShown != null) isScrambleSoundTooltipShown = settings.isScrambleSoundTooltipShown
                 }
 
                 val saved = getCubeStateUseCase()
@@ -611,6 +621,7 @@ fun rememberRubikAppState(
     getCameraSettingsUseCase: GetCameraSettingsUseCase = koinInject(),
     saveCameraSettingsUseCase: SaveCameraSettingsUseCase = koinInject(),
     saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase = koinInject(),
+    saveScrambleSoundTooltipShownUseCase: SaveScrambleSoundTooltipShownUseCase = koinInject(),
     saveSolveSessionUseCase: SaveSolveSessionUseCase = koinInject(),
     getSolveSessionsUseCase: GetSolveSessionsUseCase = koinInject()
 ) = remember(
@@ -618,7 +629,7 @@ fun rememberRubikAppState(
     saveThemeUseCase, saveLanguageUseCase, saveSoundEnabledUseCase, saveCubeEditableUseCase,
     saveShowcaseCompletedUseCase, saveEditorShowcaseCompletedUseCase, saveScannerShowcaseCompletedUseCase,
     getCameraSettingsUseCase, saveCameraSettingsUseCase, saveShakeToScrambleUseCase,
-    saveSolveSessionUseCase, getSolveSessionsUseCase
+    saveScrambleSoundTooltipShownUseCase, saveSolveSessionUseCase, getSolveSessionsUseCase
 ) {
     RubikAppState(
         cubeState = cubeState,
@@ -636,6 +647,7 @@ fun rememberRubikAppState(
         getCameraSettingsUseCase = getCameraSettingsUseCase,
         saveCameraSettingsUseCase = saveCameraSettingsUseCase,
         saveShakeToScrambleUseCase = saveShakeToScrambleUseCase,
+        saveScrambleSoundTooltipShownUseCase = saveScrambleSoundTooltipShownUseCase,
         saveSolveSessionUseCase = saveSolveSessionUseCase,
         getSolveSessionsUseCase = getSolveSessionsUseCase
     )

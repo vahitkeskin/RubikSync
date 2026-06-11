@@ -72,6 +72,8 @@ private class FakeRubikPersistence : RubikPersistence {
 
     override suspend fun saveShakeToScramble(enabled: Boolean) {}
     override suspend fun loadShakeToScramble(): Boolean? = true
+    override suspend fun saveScrambleSoundTooltipShown(shown: Boolean) {}
+    override suspend fun loadScrambleSoundTooltipShown(): Boolean? = true
     override suspend fun saveSolveSession(durationMillis: Long, moveCount: Int, timestamp: Long) {}
     override suspend fun loadSolveSessions(): List<com.vahitkeskin.rubiksync.utils.SolveSession> = emptyList()
 }
@@ -117,6 +119,8 @@ private class FakeSettingsRepository : SettingsRepository {
 
     override suspend fun saveShakeToScramble(enabled: Boolean) {}
     override suspend fun loadShakeToScramble(): Boolean? = true
+    override suspend fun saveScrambleSoundTooltipShown(shown: Boolean) {}
+    override suspend fun loadScrambleSoundTooltipShown(): Boolean? = true
 
     override suspend fun saveCameraSettings(
         yaw: Float,
@@ -154,6 +158,7 @@ fun rememberPreviewRubikAppState(
             getCameraSettingsUseCase = GetCameraSettingsUseCase(settingsRepo),
             saveCameraSettingsUseCase = SaveCameraSettingsUseCase(settingsRepo),
             saveShakeToScrambleUseCase = SaveShakeToScrambleUseCase(settingsRepo),
+            saveScrambleSoundTooltipShownUseCase = SaveScrambleSoundTooltipShownUseCase(settingsRepo),
             saveSolveSessionUseCase = SaveSolveSessionUseCase(),
             getSolveSessionsUseCase = GetSolveSessionsUseCase()
         ).apply {

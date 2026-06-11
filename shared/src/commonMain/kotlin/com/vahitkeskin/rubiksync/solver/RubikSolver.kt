@@ -23,7 +23,7 @@ class RubikSolver {
         // 3. Try to use inverse history if it exists and solves the cube
         if (startState.moveHistory.isNotEmpty()) {
             val inverseHistory = startState.moveHistory.map { current ->
-                MoveType.entries.first {
+                MoveType.values().first {
                     it.axis == current.axis &&
                     it.layerValue == current.layerValue &&
                     it.angleSign == -current.angleSign
@@ -52,7 +52,7 @@ class RubikSolver {
 
         // findId fonksiyonu ile küp kimliği bulunuyor
         val redEdgeIds = redEdges.map { findId(state, it) }
-        val basicMoves = MoveType.entries
+        val basicMoves = MoveType.values().toList()
 
         for (i in redEdges.indices) {
             val goalEdges = redEdges.take(i + 1)
@@ -372,7 +372,7 @@ class RubikSolver {
         // 3. Try to use inverse history if it exists and solves the cube
         if (startState.moveHistory.isNotEmpty()) {
             val inverseHistory = startState.moveHistory.map { current ->
-                MoveType.entries.first {
+                MoveType.values().first {
                     it.axis == current.axis &&
                     it.layerValue == current.layerValue &&
                     it.angleSign == -current.angleSign
@@ -403,7 +403,7 @@ class RubikSolver {
 
         // findId fonksiyonu ile küp kimliği bulunuyor
         val redEdgeIds = redEdges.map { findId(state, it) }
-        val basicMoves = MoveType.entries
+        val basicMoves = MoveType.values().toList()
 
         val phase1Name = "Alt Artı Oluşturma"
         val phase1Desc = "Alt katmanda kırmızı renkte artı (cross) simgesi oluşturuluyor. Bu adım, sonraki katmanların doğru konumlandırılması için referans noktası sağlar."
@@ -768,7 +768,7 @@ class RubikSolver {
     private fun solveBidirectional(start: CubeSnapshot, maxDepth: Int = 6): List<MoveType>? {
         if (isCubeSolved(start)) return emptyList()
 
-        val allowedMoves = MoveType.entries
+        val allowedMoves = MoveType.values()
 
         val forwardQueue = ArrayDeque<CubeSnapshot>()
         val forwardParent = mutableMapOf<CubeSnapshot, Pair<CubeSnapshot, MoveType>>()
@@ -858,7 +858,7 @@ class RubikSolver {
             val step = backwardParent[curr] ?: break
             val move = step.second
             val parent = step.first
-            val inverseMove = MoveType.entries.first {
+            val inverseMove = MoveType.values().first {
                 it.axis == move.axis &&
                 it.layerValue == move.layerValue &&
                 it.angleSign == -move.angleSign

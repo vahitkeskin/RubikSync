@@ -209,7 +209,7 @@ class RubikCubeState {
         val originalSpeed = rotationSpeedMs
         try {
             rotationSpeedMs = 120f
-            val moves = MoveType.entries
+            val moves = MoveType.values()
             var lastMove: MoveType? = null
 
             repeat(turns) {
@@ -231,7 +231,7 @@ class RubikCubeState {
         val lastMove = moveHistory.removeLast()
         
         // The inverse of a move has the opposite angleSign
-        val inverseMove = MoveType.entries.first {
+        val inverseMove = MoveType.values().first {
             it.axis == lastMove.axis &&
             it.layerValue == lastMove.layerValue &&
             it.angleSign == -lastMove.angleSign

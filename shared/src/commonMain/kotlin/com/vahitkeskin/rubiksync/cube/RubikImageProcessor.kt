@@ -437,7 +437,7 @@ class RubikImageProcessor {
         if (rawGrids.size == 6) {
             // --- DYNAMIC CENTER CALIBRATION VIA HUNGARIAN OPTIMIZATION ---
             val centersCostMatrix = Array(6) { DoubleArray(6) }
-            val faceNames = FaceName.entries
+            val faceNames = FaceName.values()
             
             for (i in 0 until 6) {
                 val face = faceNames[i]
@@ -469,7 +469,7 @@ class RubikImageProcessor {
         } else {
             // Fallback: simple nearest-neighbor assignment for scanned centers
             val assignedColors = mutableSetOf<CubeColor>()
-            for (face in FaceName.entries) {
+            for (face in FaceName.values()) {
                 val rawFaceGrid = rawGrids[face]
                 if (rawFaceGrid != null) {
                     val centerRGB = rawFaceGrid[1][1]
@@ -517,7 +517,7 @@ class RubikImageProcessor {
                 FaceName.F to CubeColor.GREEN,
                 FaceName.B to CubeColor.BLUE
             )
-            for (face in FaceName.entries) {
+            for (face in FaceName.values()) {
                 if (face !in lockedCenters) {
                     lockedCenters[face] = defaultCenterMapping[face] ?: CubeColor.INTERNAL
                 }
@@ -526,7 +526,7 @@ class RubikImageProcessor {
 
         // Pre-create output grids
         val resultGrids = mutableMapOf<FaceName, Array<Array<CubeColor>>>()
-        for (face in FaceName.entries) {
+        for (face in FaceName.values()) {
             val classifiedGrid = Array(3) { Array(3) { CubeColor.INTERNAL } }
             classifiedGrid[1][1] = lockedCenters[face] ?: CubeColor.INTERNAL
             resultGrids[face] = classifiedGrid
@@ -534,7 +534,7 @@ class RubikImageProcessor {
 
         // If fewer than 6 faces are scanned, we fall back to nearest-neighbor classification
         if (rawGrids.size < 6) {
-            for (face in FaceName.entries) {
+            for (face in FaceName.values()) {
                 val rawFaceGrid = rawGrids[face] ?: continue
                 val classifiedGrid = resultGrids[face] ?: Array(3) { Array(3) { CubeColor.INTERNAL } }
                 for (r in 0..2) {
@@ -570,7 +570,7 @@ class RubikImageProcessor {
         // Collect 48 non-center facelets
         data class FaceletInfo(val face: FaceName, val row: Int, val col: Int, val rgb: IntVector3)
         val cellsList = mutableListOf<FaceletInfo>()
-        for (face in FaceName.entries) {
+        for (face in FaceName.values()) {
             val rawFaceGrid = rawGrids[face] ?: Array(3) { Array(3) { IntVector3(0, 0, 0) } }
             for (r in 0..2) {
                 for (c in 0..2) {

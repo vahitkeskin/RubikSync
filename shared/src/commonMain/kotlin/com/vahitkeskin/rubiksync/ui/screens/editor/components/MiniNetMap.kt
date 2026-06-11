@@ -76,7 +76,7 @@ internal fun MiniNetMap(
 @Composable
 private fun MiniFaceGridDarkPreview() {
     PreviewRubikTheme(isDark = true) {
-        val dummyFaces = FaceName.entries.associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
+        val dummyFaces = FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
         Box(
             modifier = Modifier
                 .background(RubikTheme.colors.backgroundPanel)

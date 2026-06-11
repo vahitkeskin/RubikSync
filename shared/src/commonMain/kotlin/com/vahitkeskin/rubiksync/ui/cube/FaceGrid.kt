@@ -74,7 +74,7 @@ fun FaceGrid(
 fun FaceGridDarkPreview() {
     PreviewRubikTheme(isDark = true) {
         val dummyFaces =
-            FaceName.entries.associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
+            FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.GREEN } } }
         Box(
             modifier = Modifier
                 .background(RubikTheme.colors.backgroundPrimary)
@@ -94,7 +94,7 @@ fun FaceGridDarkPreview() {
 fun FaceGridLightPreview() {
     PreviewRubikTheme(isDark = false) {
         val dummyFaces =
-            FaceName.entries.associateWith { Array(3) { Array(3) { CubeColor.ORANGE } } }
+            FaceName.values().associateWith { Array(3) { Array(3) { CubeColor.ORANGE } } }
         Box(
             modifier = Modifier
                 .background(RubikTheme.colors.backgroundPrimary)

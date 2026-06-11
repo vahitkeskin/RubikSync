@@ -22,7 +22,7 @@ fun optimizeMoves(moves: List<MoveType>): List<MoveType> {
             if (i < list.size - 2) {
                 val m3 = list[i + 2]
                 if (m1 == m2 && m2 == m3) {
-                    val inverse = MoveType.entries.first {
+                    val inverse = MoveType.values().first {
                         it.axis == m1.axis && it.layerValue == m1.layerValue && it.angleSign == -m1.angleSign
                     }
                     list.removeAt(i + 2)

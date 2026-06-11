@@ -43,7 +43,7 @@ internal fun FaceSelectorTabs(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FaceName.entries.forEach { face ->
+            FaceName.values().forEach { face ->
                 val isSelected = face == activeFace
                 val centerColor = when (face) {
                     FaceName.U -> AccentOrangeDark

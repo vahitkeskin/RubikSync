@@ -6,5 +6,6 @@ package com.vahitkeskin.rubiksync.utils
 class RubikConstants {
     companion object {
         const val README_URL = "https://raw.githubusercontent.com/vahitkeskin/RubikSync/main/README.md"
+        const val WEBSITE_URL = "https://vahitkeskin.github.io/iamvahitkeskin/"
     }
 }

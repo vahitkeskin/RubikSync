@@ -45,6 +45,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.screens.settings.components.ThemeOptionCard
+import androidx.compose.ui.platform.LocalUriHandler
+import com.vahitkeskin.rubiksync.utils.RubikConstants
 
 @Composable
 fun SettingsScreen(
@@ -59,6 +61,7 @@ fun SettingsScreen(
     }
 
     val bgSecondary = RubikTheme.colors.backgroundSecondary
+    val uriHandler = LocalUriHandler.current
     val bgTertiary = RubikTheme.colors.backgroundTertiary
     val textPrimary = RubikTheme.colors.textPrimary
     val textSecondary = RubikTheme.colors.textSecondary
@@ -214,7 +217,7 @@ fun SettingsScreen(
                                 val itemHeightPx = with(density) { 44.dp.roundToPx() }
                                 val viewportHeightPx = with(density) { 180.dp.roundToPx() }
                                 val centerOffsetPx = -(viewportHeightPx / 2 - itemHeightPx / 2)
-                                
+
                                 if (!lastExpanded) {
                                     lazyListState.scrollToItem(selectedIndex, centerOffsetPx)
                                     lastExpanded = true
@@ -264,8 +267,16 @@ fun SettingsScreen(
 
                     AnimatedVisibility(
                         visible = isExpanded,
-                        enter = expandVertically(animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)),
-                        exit = shrinkVertically(animationSpec = tween(300)) + fadeOut(animationSpec = tween(300))
+                        enter = expandVertically(animationSpec = tween(300)) + fadeIn(
+                            animationSpec = tween(
+                                300
+                            )
+                        ),
+                        exit = shrinkVertically(animationSpec = tween(300)) + fadeOut(
+                            animationSpec = tween(
+                                300
+                            )
+                        )
                     ) {
                         Column {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -282,7 +293,7 @@ fun SettingsScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(12.dp))
-                                    ) {
+                                ) {
                                     items(AppLanguage.values().toList()) { lang ->
                                         val isSelected = appState.appLanguage == lang
                                         Row(
@@ -394,7 +405,10 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -410,7 +424,11 @@ fun SettingsScreen(
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
-                                text = "Kotlin Multiplatform",
+                                modifier = Modifier
+                                    .clickable {
+                                        uriHandler.openUri(RubikConstants.WEBSITE_URL)
+                                    },
+                                text = "vahitkeskin",
                                 color = textPrimary,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
@@ -437,7 +455,10 @@ fun SettingsScreen(
                                 contentColor = RubikTheme.colors.accentBlue
                             ),
                             shape = RoundedCornerShape(6.dp),
-                            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                horizontal = 8.dp,
+                                vertical = 2.dp
+                            ),
                             modifier = Modifier.height(26.dp)
                         ) {
                             Text(

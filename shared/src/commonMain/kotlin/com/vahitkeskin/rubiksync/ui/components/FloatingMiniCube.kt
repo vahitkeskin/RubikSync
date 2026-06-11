@@ -39,7 +39,8 @@ fun FloatingMiniCube(
     modifier: Modifier = Modifier
 ) {
     // A solve is active if there is an unresolved active solution
-    val isSolving = appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
+    val isSolving =
+        appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
     val isTargetActive = currentRoute == "settings" && isSolving
 
     SideEffect {
@@ -81,8 +82,11 @@ fun FloatingMiniCube(
         val marginPx = with(density) { marginDp.toPx() }
 
         // System insets for navigation bar and status bar to keep PIP in the safe area
-        val navBarHeightPx = androidx.compose.foundation.layout.WindowInsets.navigationBars.getBottom(density).toFloat()
-        val statusBarHeightPx = androidx.compose.foundation.layout.WindowInsets.statusBars.getTop(density).toFloat()
+        val navBarHeightPx =
+            androidx.compose.foundation.layout.WindowInsets.navigationBars.getBottom(density)
+                .toFloat()
+        val statusBarHeightPx =
+            androidx.compose.foundation.layout.WindowInsets.statusBars.getTop(density).toFloat()
 
         val topLimitPx = statusBarHeightPx + marginPx
         val bottomLimitPx = navBarHeightPx + marginPx
@@ -104,8 +108,12 @@ fun FloatingMiniCube(
         }
 
         // Target resting position considering manual drag offsets (clamped inside safe area)
-        val xEnd = (xEndDefault + dragOffsetX).coerceIn(marginPx, screenWidthPx - pipSizePx - marginPx)
-        val yEnd = (yEndDefault + dragOffsetY).coerceIn(topLimitPx, screenHeightPx - pipSizePx - bottomLimitPx)
+        val xEnd =
+            (xEndDefault + dragOffsetX).coerceIn(marginPx, screenWidthPx - pipSizePx - marginPx)
+        val yEnd = (yEndDefault + dragOffsetY).coerceIn(
+            topLimitPx,
+            screenHeightPx - pipSizePx - bottomLimitPx
+        )
 
         // Start coordinates: Main home cube's coordinates (or center of screen fallback)
         val mainBounds = appState.mainCubeBounds
@@ -188,7 +196,10 @@ fun FloatingMiniCube(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(8.dp)
-                        .background(Color.Black.copy(alpha = 0.5f * alpha), RoundedCornerShape(6.dp))
+                        .background(
+                            Color.Black.copy(alpha = 0.5f * alpha),
+                            RoundedCornerShape(6.dp)
+                        )
                         .padding(horizontal = 6.dp, vertical = 3.dp)
                 ) {
                     Text(
@@ -205,7 +216,10 @@ fun FloatingMiniCube(
                         .align(Alignment.TopEnd)
                         .padding(8.dp)
                         .size(20.dp)
-                        .background(Color.Black.copy(alpha = 0.5f * alpha), RoundedCornerShape(10.dp))
+                        .background(
+                            Color.Black.copy(alpha = 0.5f * alpha),
+                            RoundedCornerShape(10.dp)
+                        )
                         .clickable {
                             appState.updatePlaybackRunning(false)
                             appState.updateActiveSolution(null) // Reset solution and close PIP

@@ -70,9 +70,9 @@ fun ScannerScreen(
 ) {
     val currentFace = FaceName.values()[appState.scannerStep]
     val currentPath = appState.scannedFilePaths[currentFace]
-    
+
     var isGuideExpanded by remember(currentFace) { mutableStateOf(currentPath == null) }
-    
+
     LaunchedEffect(currentPath) {
         if (currentPath != null) {
             isGuideExpanded = false
@@ -208,13 +208,13 @@ fun ScannerScreen(
                     offsetX = currentOffsetX,
                     offsetY = currentOffsetY
                 )
-                
+
                 if (isActive) {
                     val updatedRaw = appState.scannedRawRGBs.toMutableMap()
                     updatedRaw[currentFace] = parsedRaw
-                    
+
                     val updatedGrids = RubikImageProcessor().classifyAll(updatedRaw)
-                    
+
                     if (isActive) {
                         withContext(Dispatchers.Main) {
                             appState.updateScannedRawRGBs(updatedRaw)

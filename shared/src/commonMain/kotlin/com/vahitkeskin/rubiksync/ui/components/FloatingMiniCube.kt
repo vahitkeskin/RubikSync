@@ -46,7 +46,7 @@ fun FloatingMiniCube(
     // A solve is active if there is an unresolved active solution
     val isSolving =
         appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
-    val isTargetActive = currentRoute == "settings" && isSolving
+    val isTargetActive = (currentRoute == "settings" || currentRoute == "readme") && isSolving
 
     SideEffect {
         println("FloatingMiniCube debug: currentRoute='$currentRoute', isSolving=$isSolving, activeSolutionSize=${appState.activeSolution?.size}, step=${appState.currentSolutionStep}, isTargetActive=$isTargetActive, mainBounds=${appState.mainCubeBounds}")

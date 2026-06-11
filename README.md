@@ -417,6 +417,44 @@ $$\sum_{j=1}^{48} x_{ij} = 1 \quad (\forall i), \quad \sum_{i=1}^{48} x_{ij} = 1
 
 ---
 
+### 🏛️ 6. Matematiksel Modellerin Mucitleri ve Bilimsel Tarihçesi
+Uygulama içerisinde kullanılan ileri düzey matematiksel formüllerin arkasındaki bilim insanları ve teorik katkıları şunlardır:
+
+* 👤 **Benjamin Olinde Rodrigues (1795–1851):** Fransız matematikçi ve bankerdir. 1840 yılında yayımladığı çalışmasında, bir vektörün belirli bir eksen etrafında döndürülmesini kuaterniyonlara ihtiyaç duymadan doğrudan matris ve vektör işlemleriyle ifade eden **Rodrigues Rotasyon Formülü**'nü geliştirmiştir. 3D grafik motorumuzda cubie dönüşlerini hesaplamak için bu formül kullanılır.
+* 👤 **Leonhard Euler (1707–1783):** İsviçreli efsanevi matematikçi ve fizikçidir. Katı cisimlerin 3 boyutlu uzaydaki yönelimlerini tanımlamak için Euler dönüş matrislerini geliştirmiştir. Uygulamamızdaki 3D kamera projeksiyon matrisleri ($R_x$ ve $R_y$), Euler'in dönme teoremlerine dayanır.
+* 👤 **Johann Heinrich Lambert (1728–1777):** İsviçreli çok yönlü bilim insanıdır. 1760 yılında yazdığı *Photometria* eserinde, bir yüzeyden yansıyan ışık miktarının yüzey normali ile ışık kaynağı açısının kosinüsüyle doğru orantılı olduğunu bulan **Lambertian Yansıma Modeli**'ni kurmuştur. 3D küpümüzün gerçekçi gölgelemesi bu modele dayanır.
+* 👤 **Herbert Kociemba (1954–günümüz):** Alman matematikçi, fizikçi ve yazılımcıdır. 1992 yılında geliştirdiği **İki Fazlı (Two-Phase) Arama Algoritması**, Rubik Küpü'nün devasa durum uzayını alt gruplara (coset) indirgeyerek saniyeler içinde optimal çözümler bulmayı başarmıştır. Projedeki `RubikSolver.kt` doğrudan Kociemba'nın bu matematiksel dehası üzerine kuruludur.
+* 👤 **Harold Kuhn (1925–2014) & James Munkres (1930–günümüz):** Amerikalı matematikçilerdir. Macar matematikçiler Dénes Kőnig ve Jenő Egerváry'nin teorik çalışmalarını temel alarak, iki parçalı grafiklerde minimum maliyetli eşlemeyi çözen **Hungarian (Kuhn-Munkres) Algoritması**'nı 1955 ve 1957 yıllarında geliştirmişlerdir. Kameradan gelen renk dağılımını düzeltmek için bu algoritma kullanılır.
+* 👤 **Commission Internationale de l'Éclairage (CIE):** 1913'te kurulan Uluslararası Aydınlatma Komisyonu, insan gözünün renk algısını modelleyen CIE L*a*b* uzayını (1976) ve renk sapmalarını endüstriyel standartta ölçen **CIEDE2000 (Delta E)** formülünü (2001) geliştirmiştir.
+* 👤 **Pierre Bézier (1910–1999):** Fransız mühendistir. Otomotiv tasarımı için geliştirdiği parametrik eğriler (Bézier Eğrileri), bilgisayar grafiklerinde ve arayüz animasyonlarında geçiş yumuşatmalarında (Easing) kullanılır. `FloatingMiniCube` PiP animasyonunun `FastOutSlowInEasing` eğrisi bu matematiksel modele dayanır.
+
+---
+
+### 🎓 7. Rubik Küpü Çözümünde Kullanılan Bilimsel Çalışma Alanları
+Bir Rubik Küpünü taramak, analiz etmek ve çözmek, tek bir algoritmadan ibaret olmayıp disiplinler arası birçok bilimsel çalışma alanını kapsar:
+
+1. 🧮 **Soyut Cebir ve Grup Teorisi (Abstract Algebra & Group Theory):**
+   * Rubik Küpünün tüm geçerli durumları simetrik permütasyon grubunun bir alt kümesi olan **Rubik Küpü Grubu ($\mathcal{G}$)** olarak tanımlanır.
+   * Çözüm algoritmaları, grup içerisindeki üreteç kümelerini (generators), alt grupları (subgroups), konjugasyon (conjugacy) ve komütatör (commutators) teorilerini inceler.
+   * Kociemba algoritmasının temelindeki G0 -> G1 alt grup geçişleri, grup teorisinin en doğrudan pratik uygulamalarından biridir.
+2. 📊 **Kombinatorik ve Sayma Analizi (Combinatorics):**
+   * Küpteki 8 köşe ve 12 kenar parçasının toplam konum ve yönelim ihtimallerinin hesaplanması, fiziksel kısıtlar (parite ve yönelim kısıtları) altında elenen geçersiz durumlar kombinatorik formüllerle çözülür.
+   * Toplam $4.33 \times 10^{19}$ olası durumun sınıflandırılması bu alanın konusudur.
+3. 🤖 **Yapay Zeka ve Sezgisel Arama Algoritmaları (Heuristic Search & Artificial Intelligence):**
+   * Devasa durumlardan oluşan bir grafta en kısa/optimal yolu bulmak için **IDA* (Iterative Deepening A*)**, A* ve BFS (Breadth-First Search) gibi sezgisel arama yöntemleri kullanılır.
+   * Arama sırasında dallanmayı azaltmak için kullanılan "Budama Tabloları" (Pruning Tables) ve "Desen Veritabanları" (Pattern Databases) yapay zekanın arama teorisi alt dalında çalışılır.
+4. 🕸️ **Graf Teorisi ve Hesaplama Karmaşıklığı (Graph Theory & Computational Complexity):**
+   * Rubik Küpü grubu, durumların düğüm (vertex), hamlelerin ise kenar (edge) olduğu devasa bir **Cayley Grafı** oluşturur.
+   * Bu grafın en uzak iki noktası arasındaki mesafeyi bulma problemi (graf çapı - diameter), teorik bilgisayar biliminde en zor problemlerden biridir ve Rubik Küpü için bu değerin **20** olduğu (Tanrı Sayısı / God's Number) 2010 yılında bilgisayar destekli ispatlarla gösterilmiştir.
+5. 👁️ **Bilgisayarlı Görü ve Dijital Görüntü İşleme (Computer Vision & Digital Image Processing):**
+   * Kameradan veya galeriden alınan 2D resimlerden küp yüzeyini çıkarma, perspektif düzeltme, gürültü azaltma, sRGB renk uzayından doğrusal XYZ uzayına ve ardından algısal olarak homojen CIE L*a*b* uzayına geçiş işlemleri bilgisayarlı görü biliminin temel konularıdır.
+   * Işık değişimlerinden etkilenmeyen renk tespiti (color constancy) çalışmaları bu alanda yoğunlaşır.
+6. 💵 **Kombinatoryal Optimizasyon ve Yöneylem Araştırması (Combinatorial Optimization & Operations Research):**
+   * Çekilen fotoğraflardan çıkarılan renklerin, fiziksel küp kurallarına (her renkten tam olarak 8 adet) en az hata ile eşlenmesi problemi, iki parçalı graf eşleme (Bipartite Matching / Assignment Problem) olarak modellenir.
+   * Doğrusal programlama kısıtları altında minimum maliyetin Kuhn-Munkres (Hungarian) algoritmasıyla $O(N^3)$ zamanda çözülmesi bu alandaki araştırmaların bir ürünüdür.
+
+---
+
 ## 🏗️ Sistem Mimarisi ve Veri Akış Modeli
 
 ### 1. 🌊 Global Uygulama Mimarisi ve Veri Akış Modeli

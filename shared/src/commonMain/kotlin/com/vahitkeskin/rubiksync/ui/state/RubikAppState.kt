@@ -91,7 +91,7 @@ class RubikAppState(
     var appLanguage by mutableStateOf(
         run {
             val sysCode = getSystemLanguageCode().lowercase()
-            AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
+            AppLanguage.entries.find { it.code == sysCode } ?: AppLanguage.EN
         }
     )
         private set
@@ -222,11 +222,11 @@ class RubikAppState(
     var scannedFilePaths by mutableStateOf(mutableMapOf<FaceName, String>())
         private set
 
-    var gridScales by mutableStateOf(FaceName.values().associateWith { 0.55f }.toMutableMap())
+    var gridScales by mutableStateOf(FaceName.entries.associateWith { 0.55f }.toMutableMap())
         private set
-    var gridOffsetsX by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
+    var gridOffsetsX by mutableStateOf(FaceName.entries.associateWith { 0f }.toMutableMap())
         private set
-    var gridOffsetsY by mutableStateOf(FaceName.values().associateWith { 0f }.toMutableMap())
+    var gridOffsetsY by mutableStateOf(FaceName.entries.associateWith { 0f }.toMutableMap())
         private set
 
     private val _manualMoves = mutableStateListOf<MoveType>()
@@ -540,8 +540,8 @@ class RubikAppState(
                     if (settings.themeMode != null) themeMode = try { ThemeMode.valueOf(settings.themeMode) } catch (_: Exception) { ThemeMode.SYSTEM }
                     if (settings.languageCode != null) {
                         val sysCode = getSystemLanguageCode().lowercase()
-                        val defaultLang = AppLanguage.values().find { it.code == sysCode } ?: AppLanguage.EN
-                        appLanguage = AppLanguage.values().find { it.code == settings.languageCode } ?: defaultLang
+                        val defaultLang = AppLanguage.entries.find { it.code == sysCode } ?: AppLanguage.EN
+                        appLanguage = AppLanguage.entries.find { it.code == settings.languageCode } ?: defaultLang
                     }
                     if (settings.isCubeEditable != null) isCubeEditable = settings.isCubeEditable
                     if (settings.isSoundEnabled != null) isSoundEnabled = settings.isSoundEnabled

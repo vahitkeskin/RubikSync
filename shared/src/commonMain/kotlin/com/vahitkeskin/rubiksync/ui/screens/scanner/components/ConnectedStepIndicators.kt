@@ -39,7 +39,7 @@ internal fun ConnectedStepIndicators(
                     onPositioned(Rect(pos.x, pos.y, pos.x + size.width, pos.y + size.height))
                 }
         ) {
-            FaceName.values().forEachIndexed { index, face ->
+            FaceName.entries.forEachIndexed { index, face ->
                 val isCurrent = (appState.scannerStep == index)
                 val isScanned = appState.scannedFilePaths.containsKey(face)
 
@@ -52,7 +52,7 @@ internal fun ConnectedStepIndicators(
                 if (index > 0) {
                     // Connecting line
                     val prevScanned =
-                        appState.scannedFilePaths.containsKey(FaceName.values()[index - 1])
+                        appState.scannedFilePaths.containsKey(FaceName.entries[index - 1])
 
                     Box(
                         modifier = Modifier

@@ -29,7 +29,7 @@ internal fun ScanGuidanceCard(
     val displayMessage = appState.infoMessage ?: guidanceMessage
     val isSuccess = appState.infoMessage != null
 
-    val currentFace = FaceName.values()[appState.scannerStep]
+    val currentFace = FaceName.entries[appState.scannerStep]
     val isCurrentFaceScanned = appState.scannedFilePaths.containsKey(currentFace)
     val allScanned = appState.scannedFilePaths.size == 6
 

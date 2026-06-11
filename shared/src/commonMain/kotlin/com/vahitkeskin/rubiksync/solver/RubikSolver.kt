@@ -52,7 +52,7 @@ class RubikSolver {
 
         // findId fonksiyonu ile küp kimliği bulunuyor
         val redEdgeIds = redEdges.map { findId(state, it) }
-        val basicMoves = MoveType.values().toList()
+        val basicMoves = MoveType.entries
 
         for (i in redEdges.indices) {
             val goalEdges = redEdges.take(i + 1)
@@ -403,7 +403,7 @@ class RubikSolver {
 
         // findId fonksiyonu ile küp kimliği bulunuyor
         val redEdgeIds = redEdges.map { findId(state, it) }
-        val basicMoves = MoveType.values().toList()
+        val basicMoves = MoveType.entries
 
         val phase1Name = "Alt Artı Oluşturma"
         val phase1Desc = "Alt katmanda kırmızı renkte artı (cross) simgesi oluşturuluyor. Bu adım, sonraki katmanların doğru konumlandırılması için referans noktası sağlar."

@@ -122,7 +122,7 @@ internal fun ScannerBottomBar(
                     onClick = {
                         val completeGrids = mutableMapOf<FaceName, Array<Array<CubeColor>>>()
                         var isValid = true
-                        for (face in FaceName.values()) {
+                        for (face in FaceName.entries) {
                             val gridVal = appState.scannedGrids[face]
                             val hasPath = appState.scannedFilePaths.containsKey(face)
                             if (gridVal != null && hasPath) {
@@ -174,7 +174,7 @@ internal fun ScannerBottomBar(
                         var foundNext = false
                         for (i in 1..5) {
                             val nextIdx = (appState.scannerStep + i) % 6
-                            val nextFace = FaceName.values()[nextIdx]
+                            val nextFace = FaceName.entries[nextIdx]
                             if (!appState.scannedFilePaths.containsKey(nextFace)) {
                                 appState.updateScannerStep(nextIdx)
                                 foundNext = true
@@ -221,7 +221,7 @@ internal fun ScannerBottomBar(
                     onClick = {
                         val completeGrids = mutableMapOf<FaceName, Array<Array<CubeColor>>>()
                         var isValid = true
-                        for (face in FaceName.values()) {
+                        for (face in FaceName.entries) {
                             val gridVal = appState.scannedGrids[face]
                             val hasPath = appState.scannedFilePaths.containsKey(face)
                             if (gridVal != null && hasPath) {

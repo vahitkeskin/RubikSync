@@ -299,7 +299,7 @@ fun SettingsScreen(
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(12.dp))
                                 ) {
-                                    items(AppLanguage.values().toList()) { lang ->
+                                    items(AppLanguage.entries) { lang ->
                                         val isSelected = appState.appLanguage == lang
                                         Row(
                                             modifier = Modifier
@@ -333,7 +333,7 @@ fun SettingsScreen(
                                                 )
                                             }
                                         }
-                                        if (lang != AppLanguage.values().last()) {
+                                        if (lang != AppLanguage.entries.last()) {
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth()

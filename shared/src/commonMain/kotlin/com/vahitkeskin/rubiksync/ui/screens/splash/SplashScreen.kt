@@ -57,14 +57,14 @@ fun SplashScreen(
     LaunchedEffect(Unit) {
         // Scramble slightly at start
         repeat(5) {
-            val nextMove = MoveType.values().random()
+            val nextMove = MoveType.entries.random()
             splashCubeState.executeMove(nextMove, skipAnimation = true)
         }
         
         // Continuously turn layers
         while (true) {
             delay(200)
-            val nextMove = MoveType.values().random()
+            val nextMove = MoveType.entries.random()
             splashCubeState.executeMove(nextMove)
         }
     }

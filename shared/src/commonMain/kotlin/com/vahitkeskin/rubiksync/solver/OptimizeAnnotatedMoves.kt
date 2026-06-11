@@ -22,7 +22,7 @@ fun optimizeAnnotatedMoves(moves: List<AnnotatedMove>): List<AnnotatedMove> {
             if (i < list.size - 2) {
                 val m3 = list[i + 2]
                 if (m1.move == m2.move && m2.move == m3.move) {
-                    val inverse = MoveType.values().first {
+                    val inverse = MoveType.entries.first {
                         it.axis == m1.move.axis && it.layerValue == m1.move.layerValue && it.angleSign == -m1.move.angleSign
                     }
                     list.removeAt(i + 2)

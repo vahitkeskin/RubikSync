@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -52,6 +53,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.vahitkeskin.rubiksync.ui.components.FloatingMiniCube
 import com.vahitkeskin.rubiksync.cube.FaceName
+import com.vahitkeskin.rubiksync.cube.CubeRenderer
 import com.vahitkeskin.rubiksync.cube.getMoveMathDetails
 import com.vahitkeskin.rubiksync.di.appModule
 import com.vahitkeskin.rubiksync.ui.controlpanel.ControlPanel
@@ -226,11 +228,75 @@ fun App() {
 
         ProvideRubikColors(colors = rubikColors) {
             MaterialTheme(colorScheme = colorScheme) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Brush.verticalGradient(colors = backgroundGradient))
-                ) {
+                val isSolving = appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
+                LaunchedEffect(isSolving) {
+                    com.vahitkeskin.rubiksync.ui.state.PipManager.isSolvingActive = isSolving
+                }
+
+                if (com.vahitkeskin.rubiksync.ui.state.PipManager.isInAndroidPipMode) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Brush.verticalGradient(colors = backgroundGradient))
+                            .padding(8.dp)
+                    ) {
+                        Canvas(modifier = Modifier.fillMaxSize()) {
+                            val renderer = CubeRenderer(
+                                state = appState.cubeState,
+                                yaw = appState.yaw,
+                                pitch = appState.pitch,
+                                cameraDistance = appState.cameraDistance + 2f,
+                                panX = appState.panX,
+                                panY = appState.panY,
+                                isDark = isDarkTheme
+                            )
+                            renderer.draw(this, size.width, size.height)
+                        }
+
+                        val totalSteps = appState.activeSolution?.size ?: 1
+                        val currentStep = appState.currentSolutionStep
+                        val progress = currentStep.toFloat() / totalSteps.toFloat()
+
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(8.dp)
+                                .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+                                .padding(horizontal = 6.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = "$currentStep/$totalSteps",
+                                color = Color.White,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .height(3.dp)
+                                .background(Color.White.copy(alpha = 0.2f))
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(progress)
+                                    .background(
+                                        Brush.horizontalGradient(
+                                            colors = listOf(AccentOrange, AccentBlue)
+                                        )
+                                    )
+                            )
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Brush.verticalGradient(colors = backgroundGradient))
+                    ) {
                     val navController = rememberNavController()
 
                     LaunchedEffect(appState.showEditorDialog) {
@@ -586,6 +652,7 @@ fun App() {
             }
         }
     }
+}
 }
 
 @Preview

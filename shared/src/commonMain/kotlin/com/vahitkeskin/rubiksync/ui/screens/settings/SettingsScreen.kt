@@ -446,8 +446,8 @@ fun SettingsScreen(
 
                     AnimatedVisibility(
                         visible = appState.appLanguage == AppLanguage.TR,
-                        enter = scaleIn(),
-                        exit = scaleOut()
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),

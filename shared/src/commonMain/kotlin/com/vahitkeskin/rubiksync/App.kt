@@ -228,7 +228,8 @@ fun App() {
 
         ProvideRubikColors(colors = rubikColors) {
             MaterialTheme(colorScheme = colorScheme) {
-                val isSolving = appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
+                val isSolving =
+                    appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
                 LaunchedEffect(isSolving) {
                     com.vahitkeskin.rubiksync.ui.state.PipManager.isSolvingActive = isSolving
                 }
@@ -261,7 +262,10 @@ fun App() {
                             modifier = Modifier
                                 .align(Alignment.TopStart)
                                 .padding(8.dp)
-                                .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+                                .background(
+                                    Color.Black.copy(alpha = 0.5f),
+                                    RoundedCornerShape(6.dp)
+                                )
                                 .padding(horizontal = 6.dp, vertical = 3.dp)
                         ) {
                             Text(
@@ -297,362 +301,368 @@ fun App() {
                             .fillMaxSize()
                             .background(Brush.verticalGradient(colors = backgroundGradient))
                     ) {
-                    val navController = rememberNavController()
+                        val navController = rememberNavController()
 
-                    LaunchedEffect(appState.showEditorDialog) {
-                        if (appState.showEditorDialog) {
-                            navController.navigate("editor")
-                            appState.updateShowEditorDialog(false)
+                        LaunchedEffect(appState.showEditorDialog) {
+                            if (appState.showEditorDialog) {
+                                navController.navigate("editor")
+                                appState.updateShowEditorDialog(false)
+                            }
                         }
-                    }
 
-                    LaunchedEffect(appState.showScannerWizard) {
-                        if (appState.showScannerWizard) {
-                            navController.navigate("scanner")
-                            appState.updateShowScannerWizard(false)
+                        LaunchedEffect(appState.showScannerWizard) {
+                            if (appState.showScannerWizard) {
+                                navController.navigate("scanner")
+                                appState.updateShowScannerWizard(false)
+                            }
                         }
-                    }
 
-                    NavHost(
-                        navController = navController,
-                        startDestination = "splash",
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        composable("splash") {
-                            SplashScreen(
-                                appState = appState,
-                                onSplashComplete = {
-                                    navController.navigate("dashboard") {
-                                        popUpTo("splash") { inclusive = true }
+                        NavHost(
+                            navController = navController,
+                            startDestination = "splash",
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            composable("splash") {
+                                SplashScreen(
+                                    appState = appState,
+                                    onSplashComplete = {
+                                        navController.navigate("dashboard") {
+                                            popUpTo("splash") { inclusive = true }
+                                        }
+                                    }
+                                )
+                            }
+                            composable("dashboard") {
+                                val overlayAlpha by animateFloatAsState(
+                                    targetValue = if (appState.showcaseStep != 0 && !appState.isShowcaseCompleted) 0.85f else 0f,
+                                    animationSpec = tween(durationMillis = 1000)
+                                )
+
+                                val isShowcaseActive =
+                                    appState.showcaseStep != 0 && !appState.isShowcaseCompleted
+                                val buttonScaleAndAlpha by animateFloatAsState(
+                                    targetValue = if (isShowcaseActive) 1f else 0f,
+                                    animationSpec = tween(
+                                        durationMillis = 800,
+                                        easing = FastOutSlowInEasing
+                                    )
+                                )
+
+                                // Shake to scramble feature detection
+                                rememberShakeDetector(
+                                    enabled = appState.isShakeToScrambleEnabled && appState.isCubeEditable && !cubeState.isAnimating
+                                ) {
+                                    appState.clearManualMoves()
+                                    appState.coroutineScope.launch {
+                                        cubeState.scramble()
                                     }
                                 }
-                            )
-                        }
-                        composable("dashboard") {
-                            val overlayAlpha by animateFloatAsState(
-                                targetValue = if (appState.showcaseStep != 0 && !appState.isShowcaseCompleted) 0.85f else 0f,
-                                animationSpec = tween(durationMillis = 1000)
-                            )
 
-                            val isShowcaseActive =
-                                appState.showcaseStep != 0 && !appState.isShowcaseCompleted
-                            val buttonScaleAndAlpha by animateFloatAsState(
-                                targetValue = if (isShowcaseActive) 1f else 0f,
-                                animationSpec = tween(
-                                    durationMillis = 800,
-                                    easing = FastOutSlowInEasing
-                                )
-                            )
-
-                            // Shake to scramble feature detection
-                            rememberShakeDetector(
-                                enabled = appState.isShakeToScrambleEnabled && appState.isCubeEditable && !cubeState.isAnimating
-                            ) {
-                                appState.clearManualMoves()
-                                appState.coroutineScope.launch {
-                                    cubeState.scramble()
+                                LaunchedEffect(appState.isShowcaseCompleted) {
+                                    if (!appState.isShowcaseCompleted && appState.showcaseStep == 0) {
+                                        kotlinx.coroutines.delay(1000)
+                                        appState.updateShowcaseStep(1)
+                                    }
                                 }
-                            }
 
-                            LaunchedEffect(appState.isShowcaseCompleted) {
-                                if (!appState.isShowcaseCompleted && appState.showcaseStep == 0) {
-                                    kotlinx.coroutines.delay(1000)
-                                    appState.updateShowcaseStep(1)
-                                }
-                            }
-
-                            Box(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
                                 Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .safeDrawingPadding()
+                                    modifier = Modifier.fillMaxSize()
                                 ) {
-                                    // Subtle ambient glow behind the cube area
                                     Box(
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .fillMaxHeight(0.65f)
-                                            .align(Alignment.Center)
-                                            .background(
-                                                Brush.radialGradient(
-                                                    colors = listOf(
-                                                        RubikTheme.colors.glowOrange,
-                                                        RubikTheme.colors.glowBlue,
-                                                        Color.Transparent
-                                                    )
-                                                )
-                                            )
-                                    )
-
-                                    Column(
-                                        modifier = Modifier.fillMaxSize(),
-                                        horizontalAlignment = Alignment.CenterHorizontally
+                                            .fillMaxSize()
+                                            .safeDrawingPadding()
                                     ) {
-                                        // 1. Top Dashboard (Title & Stats)
-                                        DashboardHeader(
-                                            cubeState = cubeState,
-                                            appState = appState,
-                                            onNavigateToSettings = {
-                                                navController.navigate("settings")
-                                            }
-                                        )
-
-                                        // 2. Main 3D Canvas (occupies remaining height)
-                                        InteractiveCubeCanvas(
-                                            appState = appState,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .fillMaxWidth()
-                                        )
-
-                                        // 3. Playback controller (shown directly below the 3D canvas only when solution is active)
-                                        if (appState.activeSolution != null) {
-                                            PlaybackController(
-                                                appState = appState,
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = 12.dp, vertical = 4.dp)
-                                            )
-                                        } else {
-                                            // 4. Control Panel (Shown at the bottom when solver is not active)
-                                            ControlPanel(
-                                                appState = appState,
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = 12.dp, vertical = 4.dp)
-                                            )
-                                        }
-                                    }
-
-                                    // 7. Global Feedback Overlays
-                                    FeedbackOverlay(appState = appState)
-                                }
-
-                                // 8. Showcase Spotlight Overlay (drawn outside safearea, aligned with root)
-                                if (overlayAlpha > 0f) {
-                                    Box(
-                                        modifier = Modifier.fillMaxSize()
-                                    ) {
-                                        Canvas(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .graphicsLayer(alpha = 0.99f)
-                                                .clickable(
-                                                    onClick = {
-                                                        appState.advanceShowcase()
-                                                    },
-                                                    indication = null,
-                                                    interactionSource = remember { MutableInteractionSource() }
-                                                )
-                                        ) {
-                                            drawRect(
-                                                color = Slate900.copy(alpha = overlayAlpha)
-                                            )
-                                            appState.targetBounds?.let { rect ->
-                                                drawRoundRect(
-                                                    color = Color.Transparent,
-                                                    topLeft = Offset(rect.left, rect.top),
-                                                    size = Size(rect.width, rect.height),
-                                                    cornerRadius = CornerRadius(
-                                                        appState.targetCornerRadius.toPx(),
-                                                        appState.targetCornerRadius.toPx()
-                                                    ),
-                                                    blendMode = BlendMode.Clear
-                                                )
-                                            }
-                                        }
-
-                                        // Skip Showcase/Tutorial Button (polite, solid background, top-left status bar aware)
+                                        // Subtle ambient glow behind the cube area
                                         Box(
                                             modifier = Modifier
-                                                .align(Alignment.TopStart)
-                                                .statusBarsPadding()
-                                                .padding(start = 16.dp, top = 12.dp)
-                                                .graphicsLayer {
-                                                    scaleX = buttonScaleAndAlpha
-                                                    scaleY = buttonScaleAndAlpha
-                                                    alpha = buttonScaleAndAlpha
-                                                }
-                                                .clip(RoundedCornerShape(20.dp))
-                                                .background(Slate800) // Solid Slate 800
-                                                .border(
-                                                    1.dp,
-                                                    Slate600,
-                                                    RoundedCornerShape(20.dp)
-                                                ) // Solid Slate 600 border
-                                                .clickable(enabled = isShowcaseActive) {
-                                                    appState.updateShowcaseStep(0)
-                                                    appState.updateShowcaseCompleted(true)
-                                                    appState.updateEditorShowcaseCompleted(true)
-                                                    appState.updateScannerShowcaseCompleted(true)
-                                                }
-                                                .padding(horizontal = 16.dp, vertical = 6.dp),
-                                            contentAlignment = Alignment.Center
+                                                .fillMaxWidth()
+                                                .fillMaxHeight(0.65f)
+                                                .align(Alignment.Center)
+                                                .background(
+                                                    Brush.radialGradient(
+                                                        colors = listOf(
+                                                            RubikTheme.colors.glowOrange,
+                                                            RubikTheme.colors.glowBlue,
+                                                            Color.Transparent
+                                                        )
+                                                    )
+                                                )
+                                        )
+
+                                        Column(
+                                            modifier = Modifier.fillMaxSize(),
+                                            horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
-                                            Text(
-                                                text = appState.strings.skipShowcase,
-                                                color = Slate100, // Slate 100
-                                                fontSize = 11.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                letterSpacing = 0.5.sp
+                                            // 1. Top Dashboard (Title & Stats)
+                                            DashboardHeader(
+                                                cubeState = cubeState,
+                                                appState = appState,
+                                                onNavigateToSettings = {
+                                                    navController.navigate("settings")
+                                                }
                                             )
+
+                                            // 2. Main 3D Canvas (occupies remaining height)
+                                            InteractiveCubeCanvas(
+                                                appState = appState,
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .fillMaxWidth()
+                                            )
+
+                                            // 3. Playback controller (shown directly below the 3D canvas only when solution is active)
+                                            if (appState.activeSolution != null) {
+                                                PlaybackController(
+                                                    appState = appState,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(
+                                                            horizontal = 12.dp,
+                                                            vertical = 4.dp
+                                                        )
+                                                )
+                                            } else {
+                                                // 4. Control Panel (Shown at the bottom when solver is not active)
+                                                ControlPanel(
+                                                    appState = appState,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(
+                                                            horizontal = 12.dp,
+                                                            vertical = 4.dp
+                                                        )
+                                                )
+                                            }
+                                        }
+
+                                        // 7. Global Feedback Overlays
+                                        FeedbackOverlay(appState = appState)
+                                    }
+
+                                    // 8. Showcase Spotlight Overlay (drawn outside safearea, aligned with root)
+                                    if (overlayAlpha > 0f) {
+                                        Box(
+                                            modifier = Modifier.fillMaxSize()
+                                        ) {
+                                            Canvas(
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .graphicsLayer(alpha = 0.99f)
+                                                    .clickable(
+                                                        onClick = {
+                                                            appState.advanceShowcase()
+                                                        },
+                                                        indication = null,
+                                                        interactionSource = remember { MutableInteractionSource() }
+                                                    )
+                                            ) {
+                                                drawRect(
+                                                    color = Slate900.copy(alpha = overlayAlpha)
+                                                )
+                                                appState.targetBounds?.let { rect ->
+                                                    drawRoundRect(
+                                                        color = Color.Transparent,
+                                                        topLeft = Offset(rect.left, rect.top),
+                                                        size = Size(rect.width, rect.height),
+                                                        cornerRadius = CornerRadius(
+                                                            appState.targetCornerRadius.toPx(),
+                                                            appState.targetCornerRadius.toPx()
+                                                        ),
+                                                        blendMode = BlendMode.Clear
+                                                    )
+                                                }
+                                            }
+
+                                            // Skip Showcase/Tutorial Button (polite, solid background, top-left status bar aware)
+                                            Box(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopStart)
+                                                    .statusBarsPadding()
+                                                    .padding(start = 16.dp, top = 12.dp)
+                                                    .graphicsLayer {
+                                                        scaleX = buttonScaleAndAlpha
+                                                        scaleY = buttonScaleAndAlpha
+                                                        alpha = buttonScaleAndAlpha
+                                                    }
+                                                    .clip(RoundedCornerShape(20.dp))
+                                                    .background(Slate800) // Solid Slate 800
+                                                    .border(
+                                                        1.dp,
+                                                        Slate600,
+                                                        RoundedCornerShape(20.dp)
+                                                    ) // Solid Slate 600 border
+                                                    .clickable(enabled = isShowcaseActive) {
+                                                        appState.updateShowcaseStep(0)
+                                                        appState.updateShowcaseCompleted(true)
+                                                        appState.updateEditorShowcaseCompleted(true)
+                                                        appState.updateScannerShowcaseCompleted(true)
+                                                    }
+                                                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = appState.strings.skipShowcase,
+                                                    color = Slate100, // Slate 100
+                                                    fontSize = 11.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    letterSpacing = 0.5.sp
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        composable(
-                            route = "settings",
-                            enterTransition = {
-                                slideInHorizontally(
-                                    initialOffsetX = { fullWidth -> fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                            },
-                            exitTransition = {
-                                slideOutHorizontally(
-                                    targetOffsetX = { fullWidth -> -fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                            },
-                            popEnterTransition = {
-                                slideInHorizontally(
-                                    initialOffsetX = { fullWidth -> -fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                            },
-                            popExitTransition = {
-                                slideOutHorizontally(
-                                    targetOffsetX = { fullWidth -> fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                            }
-                        ) {
-                            SettingsScreen(
-                                appState = appState,
-                                isDarkTheme = isDarkTheme,
-                                onBack = {
-                                    navController.popBackStack()
-                                }
-                            )
-                        }
-
-                        composable(
-                            route = "editor",
-                            enterTransition = {
-                                slideInHorizontally(
-                                    initialOffsetX = { fullWidth -> fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                            },
-                            exitTransition = {
-                                slideOutHorizontally(
-                                    targetOffsetX = { fullWidth -> -fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                            },
-                            popEnterTransition = {
-                                slideInHorizontally(
-                                    initialOffsetX = { fullWidth -> -fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                            },
-                            popExitTransition = {
-                                slideOutHorizontally(
-                                    targetOffsetX = { fullWidth -> fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                            }
-                        ) {
-                            EditorScreen(
-                                appState = appState,
-                                onDismiss = { navController.popBackStack() },
-                                onStartScanWizard = {
-                                    appState.updateScannerStep(0)
-                                    appState.updateScannedGrids(mutableMapOf())
-                                    appState.updateScannedRawRGBs(mutableMapOf())
-                                    appState.updateScannedFilePaths(mutableMapOf())
-                                    appState.updateGridScales(
-                                        FaceName.values().associateWith { 0.55f })
-                                    appState.updateGridOffsetsX(
-                                        FaceName.values().associateWith { 0f })
-                                    appState.updateGridOffsetsY(
-                                        FaceName.values().associateWith { 0f })
-                                    appState.updateErrorMessage(null)
-                                    appState.updateInfoMessage(null)
-                                    navController.navigate("scanner")
-                                }
-                            )
-                        }
-
-                        composable(
-                            route = "scanner",
-                            enterTransition = {
-                                slideInHorizontally(
-                                    initialOffsetX = { fullWidth -> fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                            },
-                            exitTransition = {
-                                slideOutHorizontally(
-                                    targetOffsetX = { fullWidth -> -fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                            },
-                            popEnterTransition = {
-                                slideInHorizontally(
-                                    initialOffsetX = { fullWidth -> -fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeIn(animationSpec = tween(durationMillis = 700))
-                            },
-                            popExitTransition = {
-                                slideOutHorizontally(
-                                    targetOffsetX = { fullWidth -> fullWidth },
-                                    animationSpec = tween(durationMillis = 700)
-                                ) + fadeOut(animationSpec = tween(durationMillis = 700))
-                            }
-                        ) {
-                            ScannerScreen(
-                                appState = appState,
-                                onDismiss = {
-                                    navController.popBackStack()
+                            composable(
+                                route = "settings",
+                                enterTransition = {
+                                    slideInHorizontally(
+                                        initialOffsetX = { fullWidth -> fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
                                 },
-                                onComplete = { completeGrids ->
-                                    appState.updateEditorFaces(completeGrids)
-                                    navController.popBackStack("dashboard", inclusive = false)
-                                    appState.coroutineScope.launch {
-                                        val success =
-                                            cubeState.setCustomStateAnimated(completeGrids)
-                                        if (success) {
-                                            appState.clearManualMoves()
-                                            appState.saveCurrentState()
-                                            appState.updateActiveSolution(null)
-                                            appState.updateErrorMessage(null)
-                                            appState.updateSuccessMessage(appState.strings.successScanComplete)
-                                        } else {
-                                            appState.updateErrorMessage(appState.strings.invalidCubeDesign)
+                                exitTransition = {
+                                    slideOutHorizontally(
+                                        targetOffsetX = { fullWidth -> -fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                                },
+                                popEnterTransition = {
+                                    slideInHorizontally(
+                                        initialOffsetX = { fullWidth -> -fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                                },
+                                popExitTransition = {
+                                    slideOutHorizontally(
+                                        targetOffsetX = { fullWidth -> fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                                }
+                            ) {
+                                SettingsScreen(
+                                    appState = appState,
+                                    isDarkTheme = isDarkTheme,
+                                    onBack = {
+                                        navController.popBackStack()
+                                    }
+                                )
+                            }
+
+                            composable(
+                                route = "editor",
+                                enterTransition = {
+                                    slideInHorizontally(
+                                        initialOffsetX = { fullWidth -> fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                                },
+                                exitTransition = {
+                                    slideOutHorizontally(
+                                        targetOffsetX = { fullWidth -> -fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                                },
+                                popEnterTransition = {
+                                    slideInHorizontally(
+                                        initialOffsetX = { fullWidth -> -fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                                },
+                                popExitTransition = {
+                                    slideOutHorizontally(
+                                        targetOffsetX = { fullWidth -> fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                                }
+                            ) {
+                                EditorScreen(
+                                    appState = appState,
+                                    onDismiss = { navController.popBackStack() },
+                                    onStartScanWizard = {
+                                        appState.updateScannerStep(0)
+                                        appState.updateScannedGrids(mutableMapOf())
+                                        appState.updateScannedRawRGBs(mutableMapOf())
+                                        appState.updateScannedFilePaths(mutableMapOf())
+                                        appState.updateGridScales(
+                                            FaceName.values().associateWith { 0.55f })
+                                        appState.updateGridOffsetsX(
+                                            FaceName.values().associateWith { 0f })
+                                        appState.updateGridOffsetsY(
+                                            FaceName.values().associateWith { 0f })
+                                        appState.updateErrorMessage(null)
+                                        appState.updateInfoMessage(null)
+                                        navController.navigate("scanner")
+                                    }
+                                )
+                            }
+
+                            composable(
+                                route = "scanner",
+                                enterTransition = {
+                                    slideInHorizontally(
+                                        initialOffsetX = { fullWidth -> fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                                },
+                                exitTransition = {
+                                    slideOutHorizontally(
+                                        targetOffsetX = { fullWidth -> -fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                                },
+                                popEnterTransition = {
+                                    slideInHorizontally(
+                                        initialOffsetX = { fullWidth -> -fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeIn(animationSpec = tween(durationMillis = 700))
+                                },
+                                popExitTransition = {
+                                    slideOutHorizontally(
+                                        targetOffsetX = { fullWidth -> fullWidth },
+                                        animationSpec = tween(durationMillis = 700)
+                                    ) + fadeOut(animationSpec = tween(durationMillis = 700))
+                                }
+                            ) {
+                                ScannerScreen(
+                                    appState = appState,
+                                    onDismiss = {
+                                        navController.popBackStack()
+                                    },
+                                    onComplete = { completeGrids ->
+                                        appState.updateEditorFaces(completeGrids)
+                                        navController.popBackStack("dashboard", inclusive = false)
+                                        appState.coroutineScope.launch {
+                                            val success =
+                                                cubeState.setCustomStateAnimated(completeGrids)
+                                            if (success) {
+                                                appState.clearManualMoves()
+                                                appState.saveCurrentState()
+                                                appState.updateActiveSolution(null)
+                                                appState.updateErrorMessage(null)
+                                                appState.updateSuccessMessage(appState.strings.successScanComplete)
+                                            } else {
+                                                appState.updateErrorMessage(appState.strings.invalidCubeDesign)
+                                            }
                                         }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
+
+                        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentRoute = currentBackStackEntry?.destination?.route
+
+                        FloatingMiniCube(
+                            appState = appState,
+                            currentRoute = currentRoute
+                        )
                     }
-
-                    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentRoute = currentBackStackEntry?.destination?.route
-
-                    FloatingMiniCube(
-                        appState = appState,
-                        currentRoute = currentRoute
-                    )
                 }
             }
         }
     }
-}
 }
 
 @Preview

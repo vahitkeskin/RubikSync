@@ -26,7 +26,7 @@ internal object LayerMoveSelector {
         var bestMove: MoveType? = null
         var bestAlignment = Float.NEGATIVE_INFINITY
 
-        for (move in MoveType.values()) {
+        for (move in MoveType.entries) {
             if (!cubeState.isCubieInLayer(hit.cubie, move.axis, move.layerValue)) continue
             if (abs(move.axis.dot(faceNormal)) >= AXIS_PERPENDICULAR_EPSILON) continue
 

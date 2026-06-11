@@ -217,7 +217,7 @@ fun SettingsScreen(
 
                     LaunchedEffect(isExpanded, appState.appLanguage) {
                         if (isExpanded) {
-                            val selectedIndex = AppLanguage.values().indexOf(appState.appLanguage)
+                            val selectedIndex = AppLanguage.entries.indexOf(appState.appLanguage)
                             if (selectedIndex >= 0) {
                                 val itemHeightPx = with(density) { 44.dp.roundToPx() }
                                 val viewportHeightPx = with(density) { 180.dp.roundToPx() }
@@ -299,7 +299,7 @@ fun SettingsScreen(
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(12.dp))
                                 ) {
-                                    items(AppLanguage.values()) { lang ->
+                                    items(AppLanguage.entries) { lang ->
                                         val isSelected = appState.appLanguage == lang
                                         Row(
                                             modifier = Modifier
@@ -333,7 +333,7 @@ fun SettingsScreen(
                                                 )
                                             }
                                         }
-                                        if (lang != AppLanguage.values().last()) {
+                                        if (lang != AppLanguage.entries.last()) {
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth()

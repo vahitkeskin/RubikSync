@@ -71,7 +71,7 @@ fun ScannerScreen(
     appState: RubikAppState,
     navController: NavController
 ) {
-    val currentFace = FaceName.values()[appState.scannerStep]
+    val currentFace = FaceName.entries[appState.scannerStep]
     val currentPath = appState.scannedFilePaths[currentFace]
 
     var isGuideExpanded by remember(currentFace) { mutableStateOf(currentPath == null) }
@@ -131,7 +131,7 @@ fun ScannerScreen(
     val faceDisplayName = faceNameLocalized[currentFace] ?: currentFace.name
 
     val isCurrentFaceScanned = appState.scannedFilePaths.containsKey(currentFace)
-    val unscannedFaces = FaceName.values().filter { !appState.scannedFilePaths.containsKey(it) }
+    val unscannedFaces = FaceName.entries.filter { !appState.scannedFilePaths.containsKey(it) }
 
     val remainingList = unscannedFaces.joinToString(", ") { face ->
         val name = faceNameLocalized[face] ?: face.name

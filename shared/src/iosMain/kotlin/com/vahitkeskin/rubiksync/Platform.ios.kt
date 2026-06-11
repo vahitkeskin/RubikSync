@@ -1050,7 +1050,8 @@ actual fun PlatformWebView(
                     htmlRef.markdown = rawMarkdown!!
 
                     if (isMarkdownChanged) {
-                        webView.loadHTMLString(htmlContent, baseURL = NSURL.URLWithString("https://localhost"))
+                        val baseURL = url.substringBeforeLast("/") + "/"
+                        webView.loadHTMLString(htmlContent, baseURL = NSURL.URLWithString(baseURL))
                     } else {
                         val js = """
                             (function() {

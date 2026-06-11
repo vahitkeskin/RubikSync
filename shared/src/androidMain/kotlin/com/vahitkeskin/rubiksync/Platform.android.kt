@@ -969,7 +969,8 @@ actual fun PlatformWebView(
                     htmlRef.markdown = rawMarkdown!!
 
                     if (isMarkdownChanged) {
-                        webView.loadDataWithBaseURL("https://localhost", htmlContent, "text/html", "UTF-8", null)
+                        val baseURL = url.substringBeforeLast("/") + "/"
+                        webView.loadDataWithBaseURL(baseURL, htmlContent, "text/html", "UTF-8", null)
                     } else {
                         val js = """
                             (function() {

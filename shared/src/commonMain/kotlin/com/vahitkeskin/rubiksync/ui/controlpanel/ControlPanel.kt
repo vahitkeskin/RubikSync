@@ -78,7 +78,6 @@ fun ControlPanel(
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
 
     var wasShowcaseActive by remember { mutableStateOf(false) }
-    var showScrambleSoundTooltip by remember { mutableStateOf(false) }
 
     LaunchedEffect(appState.showcaseStep) {
         val isActive = appState.showcaseStep != 0 && !appState.isShowcaseCompleted
@@ -330,14 +329,6 @@ fun ControlPanel(
                                         }
                                     }
                                 )
-                                AuraBalloon(
-                                    text = appState.strings.showcaseSoundText,
-                                    isVisible = showScrambleSoundTooltip && appState.activeTooltipId != "scramble" && appState.showcaseStep != 7,
-                                    isBelow = false,
-                                    onDismiss = {
-                                        showScrambleSoundTooltip = false
-                                    }
-                                )
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -364,11 +355,11 @@ fun ControlPanel(
                                                         cubeState.scramble()
                                                     }
                                                     if (!appState.isScrambleSoundTooltipShown) {
-                                                        showScrambleSoundTooltip = true
+                                                        appState.showTooltip("sound")
                                                         appState.updateScrambleSoundTooltipShown(true)
                                                         coroutineScope.launch {
                                                             kotlinx.coroutines.delay(3000)
-                                                            showScrambleSoundTooltip = false
+                                                            appState.dismissTooltip("sound")
                                                         }
                                                     }
                                                 }

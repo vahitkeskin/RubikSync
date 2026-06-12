@@ -187,34 +187,93 @@ def preflight_checks
   [w, h]
 end
 
+# ─── Dinamik Element Bulma ve Dokunma ─────────────────────────────────────────
+def tap_by_text(text_pattern, fallback_x, fallback_y)
+  # Ekran yapısını dump et
+  adb("shell uiautomator dump /sdcard/window_dump.xml >/dev/null 2>&1")
+  xml = adb("shell cat /sdcard/window_dump.xml")
+  
+  if xml.nil? || xml.empty?
+    log_warn("UI dump okunamadı, varsayılan koordinata basılıyor: (#{fallback_x}, #{fallback_y})")
+    tap(fallback_x, fallback_y)
+    return
+  end
+
+  # Emojiler veya HTML entities (örn: &#129504; Yapay Zeka) için geniş eşleştirme yapalım
+  escaped_pattern = Regexp.escape(text_pattern)
+  pattern = /text="[^"]*#{escaped_pattern}[^"]*"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/
+  match = xml.match(pattern)
+  
+  # Eğer bulunamazsa case-insensitive dene
+  if match.nil?
+    pattern_i = /text="[^"]*#{escaped_pattern}[^"]*"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/i
+    match = xml.match(pattern_i)
+  end
+
+  if match
+    x1, y1, x2, y2 = match[1].to_i, match[2].to_i, match[3].to_i, match[4].to_i
+    cx = (x1 + x2) / 2
+    cy = (y1 + y2) / 2
+    log_info("Dinamik element bulundu: '#{text_pattern}' -> Koordinat: (#{cx}, #{cy})")
+    tap(cx, cy)
+  else
+    clean_pattern = text_pattern.gsub(/[^\p{L}\s\d]/, "").strip
+    if !clean_pattern.empty? && clean_pattern != text_pattern
+      log_info("Emoji temizlendi, sade metin ile aranıyor: '#{clean_pattern}'")
+      pattern_clean = /text="[^"]*#{Regexp.escape(clean_pattern)}[^"]*"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/i
+      match = xml.match(pattern_clean)
+      if match
+        x1, y1, x2, y2 = match[1].to_i, match[2].to_i, match[3].to_i, match[4].to_i
+        cx = (x1 + x2) / 2
+        cy = (y1 + y2) / 2
+        log_info("Dinamik element (sade) bulundu: '#{clean_pattern}' -> Koordinat: (#{cx}, #{cy})")
+        tap(cx, cy)
+        return
+      end
+    end
+
+    log_warn("Dinamik element bulunamadı: '#{text_pattern}'. Varsayılan koordinata basılıyor: (#{fallback_x}, #{fallback_y})")
+    tap(fallback_x, fallback_y)
+  end
+end
+
+def dismiss_showcase
+  # Ekranı uiautomator ile kontrol et, eğer "Tanıtım Atla" varsa bas
+  adb("shell uiautomator dump /sdcard/window_dump.xml >/dev/null 2>&1")
+  xml = adb("shell cat /sdcard/window_dump.xml")
+  if xml && xml.include?("Tanıtım Atla")
+    log_info("Tanıtım/Tutorial tespit edildi, atlanıyor...")
+    pattern = /text="Tanıtım Atla"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/
+    match = xml.match(pattern)
+    if match
+      x1, y1, x2, y2 = match[1].to_i, match[2].to_i, match[3].to_i, match[4].to_i
+      tap((x1 + x2) / 2, (y1 + y2) / 2)
+      wait(800)
+    end
+  end
+end
+
 # ─── Ana Ekran Görüntüsü Akışı ───────────────────────────────────────────────
 def run_screenshot_flow(screen_w, screen_h)
-  # Koordinat hesaplamaları (1080x2400 baz, oransal)
-  cx = screen_w / 2       # Ekran ortası X
-  cy = screen_h / 2       # Ekran ortası Y
+  cx = screen_w / 2
+  cy = screen_h / 2
 
-  # Header butonları — sağ üstte (lock, shake, sound, settings sırasıyla)
-  # Header padding: start=16dp, end=16dp. Butonlar: 34dp, spacing: 8dp
-  # Settings butonu en sağda, sırayla sola doğru: settings, sound, shake, lock
-  header_y = (screen_h * 0.04).to_i   # ~95px (status bar + padding)
+  # Oransal yedek koordinatlar (1080x2400 bazlı)
+  settings_fallback_x = screen_w - (screen_w * 0.08).to_i
+  settings_fallback_y = (screen_h * 0.075).to_i
 
-  # Settings gear icon — sağ üst köşe
-  settings_x = screen_w - (screen_w * 0.04).to_i
-  settings_y = header_y + 17
+  moves_tab_fallback_x = (screen_w * 0.21).to_i
+  actions_tab_fallback_x = (screen_w * 0.50).to_i
+  ai_tab_fallback_x = (screen_w * 0.79).to_i
+  tab_fallback_y = (screen_h * 0.76).to_i
 
-  # ControlPanel tab selector oranları — ekranın altında
-  # ControlPanel paneli yaklaşık ekranın %60'ından başlıyor
-  panel_top_y = (screen_h * 0.68).to_i
-  tab_y = panel_top_y + (screen_h * 0.02).to_i
+  scramble_fallback_x = (screen_w * 0.20).to_i
+  scramble_fallback_y = (screen_h * 0.85).to_i
 
-  # 3 tab: Moves | Actions | AI — eşit genişlikte
-  tab_w = screen_w / 3
-  moves_tab_x = tab_w / 2
-  actions_tab_x = tab_w + tab_w / 2
-  ai_tab_x = 2 * tab_w + tab_w / 2
+  design_fallback_x = (screen_w * 0.25).to_i
+  design_fallback_y = (screen_h * 0.85).to_i
 
-  # Editor Screen — "Scan with Camera" card (üstte)
-  scan_card_y = (screen_h * 0.18).to_i
+  scan_card_fallback_y = (screen_h * 0.17).to_i
 
   start_time = Time.now
   saved_files = []
@@ -229,7 +288,7 @@ def run_screenshot_flow(screen_w, screen_h)
   force_stop
   wait(500)
   launch_app
-  wait(1500) # Splash animasyonunun ortasını yakala (tam ortasında loading bar görünür)
+  wait(1500) # Splash loading barı ortala
   saved_files << take_screenshot(1)
 
   # Splash tamamlanmasını bekle → Dashboard'a geçiş
@@ -240,41 +299,37 @@ def run_screenshot_flow(screen_w, screen_h)
   # ═══════════════════════════════════════════════════════════════════════════
   log_step(2, "Dashboard — Moves Tab (Ana Ekran)")
   wait(ANIM_WAIT_MS)
+  dismiss_showcase
 
-  # Showcase aktifse dismiss et (ekrana dokun)
-  3.times do
-    tap(cx, cy)
-    wait(400)
-  end
-  wait(500)
-
-  # Scramble yap — küp karışık görünsün (Actions tab'a geç, Scramble'a bas, Moves'a dön)
-  tap(actions_tab_x, tab_y)
+  # Scramble yap — eylemler tabına geçip karıştırıp geri döneceğiz
+  log_info("Eylemler sekmesine geçiliyor...")
+  # Tab geçişini swipe ile yapmak daha güvenilirdir
+  swipe(800, tab_fallback_y, 200, tab_fallback_y, 300)
   wait(ANIM_WAIT_MS)
-  # Actions tab'daki ilk buton Scramble — sol tarafta
-  scramble_x = screen_w / 6
-  scramble_y = tab_y + (screen_h * 0.04).to_i
-  tap(scramble_x, scramble_y)
-  wait(2000) # Scramble animasyonu
 
-  # Moves tab'a geri dön
-  tap(moves_tab_x, tab_y)
+  log_info("Küp karıştırılıyor...")
+  tap_by_text("Karıştır", scramble_fallback_x, scramble_fallback_y)
+  wait(2000) # Scramble animasyonu bekle
+
+  log_info("Moves sekmesine geri dönülüyor...")
+  swipe(200, tab_fallback_y, 800, tab_fallback_y, 300)
   wait(ANIM_WAIT_MS)
+
   saved_files << take_screenshot(2)
 
   # ═══════════════════════════════════════════════════════════════════════════
   # 3. DASHBOARD — Actions Tab
   # ═══════════════════════════════════════════════════════════════════════════
-  log_step(3, "Dashboard — Actions Tab (Scramble/Undo/Reset)")
-  tap(actions_tab_x, tab_y)
+  log_step(3, "Dashboard — Actions Tab (Eylemler)")
+  swipe(800, tab_fallback_y, 200, tab_fallback_y, 300)
   wait(ANIM_WAIT_MS)
   saved_files << take_screenshot(3)
 
   # ═══════════════════════════════════════════════════════════════════════════
-  # 4. DASHBOARD — AI Tab (Design + Solve)
+  # 4. DASHBOARD — AI Tab (AI Destekli Çözümleyici)
   # ═══════════════════════════════════════════════════════════════════════════
-  log_step(4, "Dashboard — AI Tab (Design + Solve)")
-  tap(ai_tab_x, tab_y)
+  log_step(4, "Dashboard — AI Tab (Tasarla + Çöz)")
+  swipe(800, tab_fallback_y, 200, tab_fallback_y, 300)
   wait(ANIM_WAIT_MS)
   saved_files << take_screenshot(4)
 
@@ -282,61 +337,47 @@ def run_screenshot_flow(screen_w, screen_h)
   # 5. SETTINGS SCREEN
   # ═══════════════════════════════════════════════════════════════════════════
   log_step(5, "Settings — Tema, Dil, Hakkında")
-  tap(settings_x, settings_y)
-  wait(ANIM_WAIT_MS + 300) # Slide-in animasyonu (700ms) + biraz extra
+  tap_by_text("⚙️", settings_fallback_x, settings_fallback_y)
+  wait(ANIM_WAIT_MS + 300)
+  dismiss_showcase
   saved_files << take_screenshot(5)
 
   # ═══════════════════════════════════════════════════════════════════════════
   # 6. README / ABOUT SCREEN (Settings içinden)
   # ═══════════════════════════════════════════════════════════════════════════
-  log_step(6, "Readme — Uygulama Dokümantasyonu")
-  # Readme butonu Settings ekranının altında
-  # About kartının altındaki Readme linkine bas
-  readme_y = (screen_h * 0.82).to_i
-  tap(cx, readme_y)
+  log_step(6, "Readme — Kullanım Kılavuzu")
+  tap_by_text("Kullanım Kılavuzu", cx, (screen_h * 0.82).to_i)
   wait(ANIM_WAIT_MS + 300)
-
-  # Eğer Readme açılmadıysa sayfayı scroll edip tekrar dene
-  scroll_readme_y = (screen_h * 0.85).to_i
-  tap(cx, scroll_readme_y)
-  wait(ANIM_WAIT_MS)
-
   saved_files << take_screenshot(6)
-  back # Readme'den geri → Settings
+  back # Settings ekranına geri dön
 
   # ═══════════════════════════════════════════════════════════════════════════
   # 7. EDITOR SCREEN (Dashboard'dan)
   # ═══════════════════════════════════════════════════════════════════════════
   log_step(7, "Editor — Küp Tasarımcısı")
-  back # Settings'den geri → Dashboard
+  back # Settings'den Dashboard'a geri dön
   wait(ANIM_WAIT_MS)
+  dismiss_showcase
 
-  # AI tab'a geç → Design butonuna bas
-  tap(ai_tab_x, tab_y)
-  wait(ANIM_WAIT_MS)
-
-  # Design butonu AI tab'ın sol yarısında
-  design_x = screen_w / 4
-  design_y = tab_y + (screen_h * 0.04).to_i
-  tap(design_x, design_y)
+  # AI tabında olmalıyız (Settings'e gitmeden önce oradaydık), Tasarla butonuna basalım
+  tap_by_text("Tasarla", design_fallback_x, design_fallback_y)
   wait(ANIM_WAIT_MS + 300)
+  dismiss_showcase
   saved_files << take_screenshot(7)
 
   # ═══════════════════════════════════════════════════════════════════════════
-  # 8. SCANNER SCREEN (Editor içinden — Scan with Camera)
+  # 8. SCANNER SCREEN (Editor içinden — Tara)
   # ═══════════════════════════════════════════════════════════════════════════
   log_step(8, "Scanner — Kamera Tarama Sihirbazı")
-  # Editor'da "Scan with Camera" kartına bas (üst kısımda)
-  tap(cx, scan_card_y)
-  wait(ANIM_WAIT_MS + 300)
+  tap_by_text("Tara", cx, scan_card_fallback_y)
+  wait(ANIM_WAIT_MS + 500)
+  dismiss_showcase
   saved_files << take_screenshot(8)
 
   # ═══════════════════════════════════════════════════════════════════════════
   # SONUÇ
   # ═══════════════════════════════════════════════════════════════════════════
   elapsed = (Time.now - start_time).round(1)
-
-  # Cihazdan temp dosya temizliği
   adb("shell rm -f #{DEVICE_TMP}")
 
   puts

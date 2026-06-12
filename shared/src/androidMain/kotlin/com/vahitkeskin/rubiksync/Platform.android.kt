@@ -6,10 +6,14 @@ import com.vahitkeskin.rubiksync.ui.icons.GalleryIcon
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.provider.Settings
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.BackHandler
 import androidx.activity.result.contract.ActivityResultContracts
@@ -507,7 +511,16 @@ actual fun CameraCaptureOrPicker(
         if (isGranted) {
             showCameraPreview = true
         } else {
-            Toast.makeText(context, cameraPermissionDenied, Toast.LENGTH_LONG).show()
+            val activity = context as? Activity
+            val shouldShowRationale = activity?.let { ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.CAMERA) } ?: false
+            if (!shouldShowRationale) {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", context.packageName, null)
+                }
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(context, cameraPermissionDenied, Toast.LENGTH_LONG).show()
+            }
         }
     }
     

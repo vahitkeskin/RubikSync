@@ -466,8 +466,32 @@ class RubikAppState(
         coroutineScope.launch {
             if (currentStep in 1..totalSteps) scannerShowcaseStep = -currentStep
             kotlinx.coroutines.delay(1050)
-            if (currentStep in 1 until totalSteps) scannerShowcaseStep = currentStep + 1
-            else if (currentStep == totalSteps) {
+            
+            val currentFace = FaceName.entries.getOrNull(scannerStep)
+            val currentPath = currentFace?.let { scannedFilePaths[it] }
+            
+            val nextStep = if (currentPath == null) {
+                // Görüntü yok (taranmamış): 1 -> 2 -> 3 -> 6 (4 ve 5. adımlar atlanır çünkü ScannedWorkspace ve GridAlignControls çizilmez)
+                when (currentStep) {
+                    1 -> 2
+                    2 -> 3
+                    3 -> 6
+                    else -> 0
+                }
+            } else {
+                // Görüntü var (taranmış): 1 -> 2 -> 4 -> 5 -> 6 (3. adım atlanır çünkü UnscannedWorkspace çizilmez)
+                when (currentStep) {
+                    1 -> 2
+                    2 -> 4
+                    4 -> 5
+                    5 -> 6
+                    else -> 0
+                }
+            }
+            
+            if (nextStep in 1..totalSteps) {
+                scannerShowcaseStep = nextStep
+            } else {
                 scannerShowcaseStep = 0
                 updateScannerShowcaseCompleted(true)
             }

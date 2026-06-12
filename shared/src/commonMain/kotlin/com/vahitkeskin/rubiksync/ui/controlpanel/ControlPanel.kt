@@ -81,9 +81,6 @@ fun ControlPanel(
     LaunchedEffect(appState.showcaseStep) {
         val isActive = appState.showcaseStep != 0 && !appState.isShowcaseCompleted
         if (isActive) wasShowcaseActive = true
-        if (appState.showcaseStep == 0) {
-            wasShowcaseActive = false
-        }
     }
 
     val targetPage = remember(appState.showcaseStep, wasShowcaseActive) {
@@ -104,7 +101,12 @@ fun ControlPanel(
                     animationSpec = tween(durationMillis = 1200, easing = FastOutSlowInEasing)
                 )
             } catch (e: Exception) {
-                // If cancelled by touch, we just ignore
+                // If cancelled by touch, ignore
+            } finally {
+                // If showcase finished and we animated back to 0, clear the flag now
+                if (appState.showcaseStep == 0 && targetPage == 0) {
+                    wasShowcaseActive = false
+                }
             }
         }
     }

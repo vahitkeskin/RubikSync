@@ -10,8 +10,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.persistence.AndroidRubikPersistence
 import com.vahitkeskin.rubiksync.utils.RubikPersistenceRegistry
 
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 

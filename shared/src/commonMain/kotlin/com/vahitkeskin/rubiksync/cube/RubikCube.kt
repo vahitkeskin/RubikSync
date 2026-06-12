@@ -228,7 +228,7 @@ class RubikCubeState {
 
     suspend fun undo() {
         if (isAnimating || moveHistory.isEmpty()) return
-        val lastMove = moveHistory.removeLast()
+        val lastMove = moveHistory.removeAt(moveHistory.lastIndex)
         
         // The inverse of a move has the opposite angleSign
         val inverseMove = MoveType.entries.first {

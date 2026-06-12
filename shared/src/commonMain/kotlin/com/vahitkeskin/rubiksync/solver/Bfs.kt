@@ -21,7 +21,7 @@ fun bfs(
 
     while (queue.isNotEmpty()) {
         if (visited.size > 50000) return null
-        val (state, path, depth) = queue.removeFirst()
+        val (state, path, depth) = queue.removeAt(0)
 
         if (depth >= maxDepth) continue
 

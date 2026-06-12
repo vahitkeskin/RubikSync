@@ -794,7 +794,7 @@ class RubikSolver {
 
             // Expand Forward
             if (forwardQueue.isNotEmpty()) {
-                val curr = forwardQueue.removeFirst()
+                val curr = forwardQueue.removeAt(0)
                 val currDepth = forwardDepth[curr] ?: 0
 
                 if (currDepth < (maxDepth + 1) / 2) {
@@ -816,7 +816,7 @@ class RubikSolver {
 
             // Expand Backward
             if (backwardQueue.isNotEmpty()) {
-                val curr = backwardQueue.removeFirst()
+                val curr = backwardQueue.removeAt(0)
                 val currDepth = backwardDepth[curr] ?: 0
 
                 if (currDepth < maxDepth / 2) {

@@ -86,6 +86,11 @@ internal fun UnscannedWorkspace(
                         chooseGalleryLabel = appState.strings.chooseGalleryLabel,
                         selectImageLabel = appState.strings.selectImageLabel,
                         guidanceText = guidanceMessage,
+                        permissionRequiredTitle = appState.strings.permissionRequiredTitle,
+                        cameraPermissionDesc = appState.strings.cameraPermissionDesc,
+                        permissionLater = appState.strings.permissionLater,
+                        permissionGrant = appState.strings.permissionGrant,
+                        cameraPermissionDenied = appState.strings.cameraPermissionDenied,
                         onImageSelected = { filePath ->
                             coroutineScope.launch {
                                 appState.updateRecalculating(true)

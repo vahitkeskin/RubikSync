@@ -38,6 +38,11 @@ expect fun CameraCaptureOrPicker(
     chooseGalleryLabel: String,
     selectImageLabel: String,
     guidanceText: String,
+    permissionRequiredTitle: String,
+    cameraPermissionDesc: String,
+    permissionLater: String,
+    permissionGrant: String,
+    cameraPermissionDenied: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 )

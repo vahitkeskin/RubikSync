@@ -148,4 +148,9 @@ val EsStrings = AppStrings(
     scanGuidanceExampleB = "Gire el cubo 180°, centro azul mirando hacia usted",
     showReadmeButton = "Leer 📖",
     readmeScreenTitle = "Manual de usuario",
+    permissionRequiredTitle = "Kamera İzni Gerekli",
+    cameraPermissionDesc = "Zeka küpünün renklerini otomatik olarak algılamak için kameranızı kullanmamız gerekiyor. Kameranızla küpün yüzlerini fotoğraflayarak saniyeler içinde çözümü görebilirsiniz. İzniniz güvenle saklanır.",
+    permissionLater = "Daha Sonra",
+    permissionGrant = "İzin Ver",
+    cameraPermissionDenied = "Kamera izni reddedildi. Taramak için galeriyi kullanabilirsiniz.",
 )

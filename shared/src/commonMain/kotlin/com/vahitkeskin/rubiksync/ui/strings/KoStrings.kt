@@ -148,4 +148,9 @@ val KoStrings = AppStrings(
     scanGuidanceExampleB = "큐브를 180° 돌려 파란색 중심이 앞을 향하게 하세요",
     showReadmeButton = "읽기 📖",
     readmeScreenTitle = "사용자 설명서",
+    permissionRequiredTitle = "Kamera İzni Gerekli",
+    cameraPermissionDesc = "Zeka küpünün renklerini otomatik olarak algılamak için kameranızı kullanmamız gerekiyor. Kameranızla küpün yüzlerini fotoğraflayarak saniyeler içinde çözümü görebilirsiniz. İzniniz güvenle saklanır.",
+    permissionLater = "Daha Sonra",
+    permissionGrant = "İzin Ver",
+    cameraPermissionDenied = "Kamera izni reddedildi. Taramak için galeriyi kullanabilirsiniz.",
 )

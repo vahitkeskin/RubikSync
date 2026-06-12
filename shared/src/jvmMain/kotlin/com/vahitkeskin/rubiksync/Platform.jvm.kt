@@ -132,6 +132,11 @@ actual fun CameraCaptureOrPicker(
     chooseGalleryLabel: String,
     selectImageLabel: String,
     guidanceText: String,
+    permissionRequiredTitle: String,
+    cameraPermissionDesc: String,
+    permissionLater: String,
+    permissionGrant: String,
+    cameraPermissionDenied: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -276,6 +281,11 @@ fun CameraCaptureOrPickerJvmPreview() {
             chooseGalleryLabel = "Galeriden Seç",
             selectImageLabel = "Resim Seçin",
             guidanceText = "Lütfen Ön (Yeşil) yüzeyini tarayın.",
+            permissionRequiredTitle = "Kamera İzni Gerekli",
+            cameraPermissionDesc = "Açıklama",
+            permissionLater = "Daha Sonra",
+            permissionGrant = "İzin Ver",
+            cameraPermissionDenied = "Reddedildi",
             onImageSelected = {},
             modifier = Modifier.width(200.dp)
         )

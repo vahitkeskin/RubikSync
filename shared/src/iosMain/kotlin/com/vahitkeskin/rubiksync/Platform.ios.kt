@@ -583,6 +583,11 @@ actual fun CameraCaptureOrPicker(
     chooseGalleryLabel: String,
     selectImageLabel: String,
     guidanceText: String,
+    permissionRequiredTitle: String,
+    cameraPermissionDesc: String,
+    permissionLater: String,
+    permissionGrant: String,
+    cameraPermissionDenied: String,
     onImageSelected: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -732,76 +737,24 @@ actual fun CameraCaptureOrPicker(
     }
     
     if (showPermissionExplanation) {
-        Dialog(onDismissRequest = { showPermissionExplanation = false }) {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = DarkCardBg),
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Kamera İzni Gerekli",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    
-                    Text(
-                        text = "Zeka küpünün renklerini otomatik olarak algılamak için kameranızı kullanmamız gerekiyor. Kameranızla küpün yüzlerini fotoğraflayarak saniyeler içinde çözümü görebilirsiniz. İzniniz güvenle saklanır.",
-                        color = LightCardBorder,
-                        fontSize = 13.sp,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 18.sp
-                    )
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Button(
-                            onClick = { showPermissionExplanation = false },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = WhiteAlpha07,
-                                contentColor = Color.LightGray
-                            ),
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Daha Sonra", fontSize = 13.sp)
-                        }
-                        
-                        Button(
-                            onClick = {
-                                showPermissionExplanation = false
-                                AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo) { granted ->
-                                    dispatch_async(dispatch_get_main_queue()) {
-                                        if (granted) {
-                                            showCameraPreview = true
-                                        }
-                                    }
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = AccentBlue,
-                                contentColor = Color.White
-                            ),
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("İzin Ver", fontSize = 13.sp)
+        com.vahitkeskin.rubiksync.ui.components.CustomPopupDialog(
+            icon = CameraIcon,
+            title = permissionRequiredTitle,
+            description = cameraPermissionDesc,
+            cancelText = permissionLater,
+            confirmText = permissionGrant,
+            onDismiss = { showPermissionExplanation = false },
+            onConfirm = {
+                showPermissionExplanation = false
+                AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo) { granted ->
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if (granted) {
+                            showCameraPreview = true
                         }
                     }
                 }
             }
-        }
+        )
     }
     
     if (showSettingsExplanation) {
@@ -1097,8 +1050,13 @@ fun CameraCaptureOrPickerIosPreview() {
             chooseGalleryLabel = "Galeriden Seç",
             selectImageLabel = "Resim Seçin",
             guidanceText = "Lütfen Ön (Yeşil) yüzeyini tarayın.",
+            permissionRequiredTitle = "Kamera İzni Gerekli",
+            cameraPermissionDesc = "Açıklama",
+            permissionLater = "Daha Sonra",
+            permissionGrant = "İzin Ver",
+            cameraPermissionDenied = "Reddedildi",
             onImageSelected = {},
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.width(300.dp)
         )
     }
 }

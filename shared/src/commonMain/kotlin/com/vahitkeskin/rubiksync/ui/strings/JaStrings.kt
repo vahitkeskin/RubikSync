@@ -148,4 +148,9 @@ val JaStrings = AppStrings(
     scanGuidanceExampleB = "キューブを180°回転させ、青い中心を手前にしてください",
     showReadmeButton = "読む 📖",
     readmeScreenTitle = "ユーザーマニュアル",
+    permissionRequiredTitle = "Kamera İzni Gerekli",
+    cameraPermissionDesc = "Zeka küpünün renklerini otomatik olarak algılamak için kameranızı kullanmamız gerekiyor. Kameranızla küpün yüzlerini fotoğraflayarak saniyeler içinde çözümü görebilirsiniz. İzniniz güvenle saklanır.",
+    permissionLater = "Daha Sonra",
+    permissionGrant = "İzin Ver",
+    cameraPermissionDenied = "Kamera izni reddedildi. Taramak için galeriyi kullanabilirsiniz.",
 )

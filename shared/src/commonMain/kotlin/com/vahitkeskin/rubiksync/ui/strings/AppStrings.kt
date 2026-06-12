@@ -148,6 +148,11 @@ data class AppStrings(
     val scanGuidanceExampleB: String,
     val showReadmeButton: String,
     val readmeScreenTitle: String,
+    val permissionRequiredTitle: String,
+    val cameraPermissionDesc: String,
+    val permissionLater: String,
+    val permissionGrant: String,
+    val cameraPermissionDenied: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

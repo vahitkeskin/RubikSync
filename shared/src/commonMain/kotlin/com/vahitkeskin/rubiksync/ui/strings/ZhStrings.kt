@@ -148,4 +148,9 @@ val ZhStrings = AppStrings(
     scanGuidanceExampleB = "将魔方旋转180°，蓝色中心面向你",
     showReadmeButton = "阅读 📖",
     readmeScreenTitle = "用户手册",
+    permissionRequiredTitle = "Kamera İzni Gerekli",
+    cameraPermissionDesc = "Zeka küpünün renklerini otomatik olarak algılamak için kameranızı kullanmamız gerekiyor. Kameranızla küpün yüzlerini fotoğraflayarak saniyeler içinde çözümü görebilirsiniz. İzniniz güvenle saklanır.",
+    permissionLater = "Daha Sonra",
+    permissionGrant = "İzin Ver",
+    cameraPermissionDenied = "Kamera izni reddedildi. Taramak için galeriyi kullanabilirsiniz.",
 )

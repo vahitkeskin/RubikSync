@@ -148,4 +148,9 @@ val EnStrings = AppStrings(
     scanGuidanceExampleB = "Rotate the cube 180°, blue center facing you",
     showReadmeButton = "Read 📖",
     readmeScreenTitle = "User Manual",
+    permissionRequiredTitle = "Camera Permission Required",
+    cameraPermissionDesc = "We need to use your camera to automatically detect the colors of the Rubik's cube. By taking photos of the cube's faces with your camera, you can see the solution in seconds. Your permission is stored securely.",
+    permissionLater = "Later",
+    permissionGrant = "Allow",
+    cameraPermissionDenied = "Camera permission denied. You can use the gallery to scan.",
 )

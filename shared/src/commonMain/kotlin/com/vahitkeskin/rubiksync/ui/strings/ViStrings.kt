@@ -148,4 +148,9 @@ val ViStrings = AppStrings(
     scanGuidanceExampleB = "Xoay khối Rubik 180°, tâm xanh dương hướng về phía bạn",
     showReadmeButton = "Đọc 📖",
     readmeScreenTitle = "Hướng dẫn sử dụng",
+    permissionRequiredTitle = "Kamera İzni Gerekli",
+    cameraPermissionDesc = "Zeka küpünün renklerini otomatik olarak algılamak için kameranızı kullanmamız gerekiyor. Kameranızla küpün yüzlerini fotoğraflayarak saniyeler içinde çözümü görebilirsiniz. İzniniz güvenle saklanır.",
+    permissionLater = "Daha Sonra",
+    permissionGrant = "İzin Ver",
+    cameraPermissionDenied = "Kamera izni reddedildi. Taramak için galeriyi kullanabilirsiniz.",
 )

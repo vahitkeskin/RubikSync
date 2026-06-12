@@ -148,4 +148,9 @@ val TrStrings = AppStrings(
     scanGuidanceExampleB = "Küpü 180° çevirin, mavi merkez size baksın",
     showReadmeButton = "Oku 📖",
     readmeScreenTitle = "Kullanım Kılavuzu",
+    permissionRequiredTitle = "Kamera İzni Gerekli",
+    cameraPermissionDesc = "Zeka küpünün renklerini otomatik olarak algılamak için kameranızı kullanmamız gerekiyor. Kameranızla küpün yüzlerini fotoğraflayarak saniyeler içinde çözümü görebilirsiniz. İzniniz güvenle saklanır.",
+    permissionLater = "Daha Sonra",
+    permissionGrant = "İzin Ver",
+    cameraPermissionDenied = "Kamera izni reddedildi. Taramak için galeriyi kullanabilirsiniz.",
 )

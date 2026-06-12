@@ -81,21 +81,31 @@ fun ControlPanel(
     LaunchedEffect(appState.showcaseStep) {
         val isActive = appState.showcaseStep != 0 && !appState.isShowcaseCompleted
         if (isActive) wasShowcaseActive = true
-        val targetPage = when (appState.showcaseStep) {
+        if (appState.showcaseStep == 0) {
+            wasShowcaseActive = false
+        }
+    }
+
+    val targetPage = remember(appState.showcaseStep, wasShowcaseActive) {
+        when (appState.showcaseStep) {
             6 -> 0
             in 7..9 -> 1
             in 10..11 -> 2
-            0 -> if (wasShowcaseActive) {
-                wasShowcaseActive = false; 0
-            } else null
-
+            0 -> if (wasShowcaseActive) 0 else null
             else -> null
         }
-        if (targetPage != null && pagerState.currentPage != targetPage) {
-            pagerState.animateScrollToPage(
-                page = targetPage,
-                animationSpec = tween(durationMillis = 1200, easing = FastOutSlowInEasing)
-            )
+    }
+
+    LaunchedEffect(targetPage) {
+        if (targetPage != null) {
+            try {
+                pagerState.animateScrollToPage(
+                    page = targetPage,
+                    animationSpec = tween(durationMillis = 1200, easing = FastOutSlowInEasing)
+                )
+            } catch (e: Exception) {
+                // If cancelled by touch, we just ignore
+            }
         }
     }
 

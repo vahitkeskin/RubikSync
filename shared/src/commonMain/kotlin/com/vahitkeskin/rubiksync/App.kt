@@ -95,6 +95,7 @@ import com.vahitkeskin.rubiksync.ui.navigation.RubikNavGraph
 import com.vahitkeskin.rubiksync.ui.navigation.Screen
 import com.vahitkeskin.rubiksync.ui.state.PipManager
 import org.koin.compose.KoinApplication
+import com.vahitkeskin.rubiksync.ui.state.SystemAppearance
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -228,6 +229,7 @@ fun App() {
 
         ProvideRubikColors(colors = rubikColors) {
             MaterialTheme(colorScheme = colorScheme) {
+                SystemAppearance(isDarkTheme)
                 val isSolving =
                     appState.activeSolution != null && appState.currentSolutionStep < appState.activeSolution!!.size
                 LaunchedEffect(isSolving) {

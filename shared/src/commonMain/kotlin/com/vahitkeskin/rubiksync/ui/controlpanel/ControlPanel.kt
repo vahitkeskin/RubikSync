@@ -84,7 +84,17 @@ fun ControlPanel(
     }
 
     val targetPage = remember(appState.showcaseStep, wasShowcaseActive) {
-        when (appState.showcaseStep) {
+        val current = appState.showcaseStep
+        val step = kotlin.math.abs(current)
+        val isTransitioning = current < 0
+        
+        val actualStepForPager = if (isTransitioning) {
+            if (step == 11) 0 else step + 1
+        } else {
+            step
+        }
+
+        when (actualStepForPager) {
             6 -> 0
             in 7..9 -> 1
             in 10..11 -> 2

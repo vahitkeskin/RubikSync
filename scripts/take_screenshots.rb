@@ -7,13 +7,9 @@
 # ║  Bağlı Android cihazdan 8 adet Play Store uyumlu ekran görüntüsü alır.       ║
 # ║  ADB üzerinden uygulamayı açar, ekranlar arasında gezinir ve                 ║
 # ║  cihazın orijinal çözünürlüğünde (1080x2400) screenshot kaydeder.            ║
+# ║  Ayrıca APK ve Bundle derlemelerini otomatik masaüstüne kopyalar.            ║
 # ║                                                                              ║
 # ║  Kullanım: ruby scripts/take_screenshots.rb                                  ║
-# ║                                                                              ║
-# ║  Gereksinimler:                                                              ║
-# ║    • ADB kurulu ve PATH'te (brew install android-platform-tools)             ║
-# ║    • USB/WiFi ile bağlı Android cihaz                                        ║
-# ║    • RubikSync uygulaması cihazda yüklü                                      ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 require "fileutils"
@@ -26,6 +22,7 @@ MAIN_ACTIVITY  = "#{PACKAGE}.MainActivity"
 OUTPUT_DIR     = File.expand_path("~/Desktop")
 DEVICE_TMP     = "/sdcard/rubiksync_screenshot.png"
 TOTAL_SHOTS    = 8
+PROJECT_ROOT   = File.expand_path("..", File.dirname(__FILE__))
 
 # Compose animasyon geçiş süresi (ms). Nav geçişleri 700ms, splash ~2s.
 ANIM_WAIT_MS   = 1200
@@ -170,7 +167,6 @@ def preflight_checks
   end
 
   # Uygulama yüklü mü?
-  # pm path doğrudan paketi kontrol eder ve multi-user sorunlarından kaçınır
   pkg_check = adb("shell pm path #{PACKAGE}")
   unless pkg_check && pkg_check.include?("package:")
     log_error("#{PACKAGE} uygulaması cihazda yüklü değil!")
@@ -189,7 +185,6 @@ end
 
 # ─── Dinamik Element Bulma ve Dokunma ─────────────────────────────────────────
 def tap_by_text(text_pattern, fallback_x, fallback_y)
-  # Ekran yapısını dump et
   adb("shell uiautomator dump /sdcard/window_dump.xml >/dev/null 2>&1")
   xml = adb("shell cat /sdcard/window_dump.xml")
   
@@ -199,12 +194,10 @@ def tap_by_text(text_pattern, fallback_x, fallback_y)
     return
   end
 
-  # Emojiler veya HTML entities (örn: &#129504; Yapay Zeka) için geniş eşleştirme yapalım
   escaped_pattern = Regexp.escape(text_pattern)
   pattern = /text="[^"]*#{escaped_pattern}[^"]*"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/
   match = xml.match(pattern)
   
-  # Eğer bulunamazsa case-insensitive dene
   if match.nil?
     pattern_i = /text="[^"]*#{escaped_pattern}[^"]*"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/i
     match = xml.match(pattern_i)
@@ -238,7 +231,6 @@ def tap_by_text(text_pattern, fallback_x, fallback_y)
 end
 
 def dismiss_showcase
-  # Ekranı uiautomator ile kontrol et, eğer "Tanıtım Atla" varsa bas
   adb("shell uiautomator dump /sdcard/window_dump.xml >/dev/null 2>&1")
   xml = adb("shell cat /sdcard/window_dump.xml")
   if xml && xml.include?("Tanıtım Atla")
@@ -258,13 +250,9 @@ def run_screenshot_flow(screen_w, screen_h)
   cx = screen_w / 2
   cy = screen_h / 2
 
-  # Oransal yedek koordinatlar (1080x2400 bazlı)
   settings_fallback_x = screen_w - (screen_w * 0.08).to_i
   settings_fallback_y = (screen_h * 0.075).to_i
 
-  moves_tab_fallback_x = (screen_w * 0.21).to_i
-  actions_tab_fallback_x = (screen_w * 0.50).to_i
-  ai_tab_fallback_x = (screen_w * 0.79).to_i
   tab_fallback_y = (screen_h * 0.76).to_i
 
   scramble_fallback_x = (screen_w * 0.20).to_i
@@ -281,102 +269,65 @@ def run_screenshot_flow(screen_w, screen_h)
   puts "#{C::BOLD}#{C::CYAN}  ─── Ekran Görüntüsü Süreci Başladı ───#{C::RESET}"
   puts
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # 1. SPLASH SCREEN
-  # ═══════════════════════════════════════════════════════════════════════════
   log_step(1, "Splash Screen — Uygulama başlatılıyor...")
   force_stop
   wait(500)
   launch_app
-  wait(1500) # Splash loading barı ortala
+  wait(1500)
   saved_files << take_screenshot(1)
-
-  # Splash tamamlanmasını bekle → Dashboard'a geçiş
   wait(SPLASH_WAIT_MS)
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # 2. DASHBOARD — Moves Tab (Dark Theme)
-  # ═══════════════════════════════════════════════════════════════════════════
   log_step(2, "Dashboard — Moves Tab (Ana Ekran)")
   wait(ANIM_WAIT_MS)
   dismiss_showcase
-
-  # Scramble yap — eylemler tabına geçip karıştırıp geri döneceğiz
   log_info("Eylemler sekmesine geçiliyor...")
-  # Tab geçişini swipe ile yapmak daha güvenilirdir
   swipe(800, tab_fallback_y, 200, tab_fallback_y, 300)
   wait(ANIM_WAIT_MS)
-
   log_info("Küp karıştırılıyor...")
   tap_by_text("Karıştır", scramble_fallback_x, scramble_fallback_y)
-  wait(2000) # Scramble animasyonu bekle
-
+  wait(2000)
   log_info("Moves sekmesine geri dönülüyor...")
   swipe(200, tab_fallback_y, 800, tab_fallback_y, 300)
   wait(ANIM_WAIT_MS)
-
   saved_files << take_screenshot(2)
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # 3. DASHBOARD — Actions Tab
-  # ═══════════════════════════════════════════════════════════════════════════
   log_step(3, "Dashboard — Actions Tab (Eylemler)")
   swipe(800, tab_fallback_y, 200, tab_fallback_y, 300)
   wait(ANIM_WAIT_MS)
   saved_files << take_screenshot(3)
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # 4. DASHBOARD — AI Tab (AI Destekli Çözümleyici)
-  # ═══════════════════════════════════════════════════════════════════════════
   log_step(4, "Dashboard — AI Tab (Tasarla + Çöz)")
   swipe(800, tab_fallback_y, 200, tab_fallback_y, 300)
   wait(ANIM_WAIT_MS)
   saved_files << take_screenshot(4)
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # 5. SETTINGS SCREEN
-  # ═══════════════════════════════════════════════════════════════════════════
   log_step(5, "Settings — Tema, Dil, Hakkında")
   tap_by_text("⚙️", settings_fallback_x, settings_fallback_y)
   wait(ANIM_WAIT_MS + 300)
   dismiss_showcase
   saved_files << take_screenshot(5)
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # 6. README / ABOUT SCREEN (Settings içinden)
-  # ═══════════════════════════════════════════════════════════════════════════
   log_step(6, "Readme — Kullanım Kılavuzu")
   tap_by_text("Kullanım Kılavuzu", cx, (screen_h * 0.82).to_i)
   wait(ANIM_WAIT_MS + 300)
   saved_files << take_screenshot(6)
-  back # Settings ekranına geri dön
+  back
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # 7. EDITOR SCREEN (Dashboard'dan)
-  # ═══════════════════════════════════════════════════════════════════════════
   log_step(7, "Editor — Küp Tasarımcısı")
-  back # Settings'den Dashboard'a geri dön
+  back
   wait(ANIM_WAIT_MS)
   dismiss_showcase
-
-  # AI tabında olmalıyız (Settings'e gitmeden önce oradaydık), Tasarla butonuna basalım
   tap_by_text("Tasarla", design_fallback_x, design_fallback_y)
   wait(ANIM_WAIT_MS + 300)
   dismiss_showcase
   saved_files << take_screenshot(7)
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # 8. SCANNER SCREEN (Editor içinden — Tara)
-  # ═══════════════════════════════════════════════════════════════════════════
   log_step(8, "Scanner — Kamera Tarama Sihirbazı")
   tap_by_text("Tara", cx, scan_card_fallback_y)
   wait(ANIM_WAIT_MS + 500)
   dismiss_showcase
   saved_files << take_screenshot(8)
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # SONUÇ
-  # ═══════════════════════════════════════════════════════════════════════════
   elapsed = (Time.now - start_time).round(1)
   adb("shell rm -f #{DEVICE_TMP}")
 
@@ -397,7 +348,6 @@ def run_screenshot_flow(screen_w, screen_h)
   puts "  #{C::DIM}─────────────────────────────────────────────#{C::RESET}"
   puts
 
-  # Play Store uyumluluk kontrolü
   puts "  #{C::BOLD}#{C::CYAN}📱 Play Store Uyumluluk:#{C::RESET}"
   puts "  #{C::GREEN}✓#{C::RESET} Çözünürlük: #{screen_w}x#{screen_h}"
   puts "  #{C::GREEN}✓#{C::RESET} Format: PNG (kayıpsız)"
@@ -406,18 +356,85 @@ def run_screenshot_flow(screen_w, screen_h)
   puts
 end
 
-# ─── Çalıştır ─────────────────────────────────────────────────────────────────
-begin
-  screen_w, screen_h = preflight_checks
-  run_screenshot_flow(screen_w, screen_h)
-rescue Interrupt
-  puts
-  log_warn("İşlem kullanıcı tarafından iptal edildi.")
-  adb("shell rm -f #{DEVICE_TMP}")
-  exit(1)
-rescue => e
-  log_error("Beklenmeyen hata: #{e.message}")
-  log_error(e.backtrace&.first.to_s)
-  adb("shell rm -f #{DEVICE_TMP}")
-  exit(1)
+# ─── Gradle Build ve Kopyalama Araçları ───────────────────────────────────────
+def run_gradle_task(task, output_relative_path, output_name)
+  puts "\n#{C::BOLD}#{C::CYAN}--- #{task} Başlatılıyor ---#{C::RESET}"
+  
+  Dir.chdir(PROJECT_ROOT) do
+    success = system("./gradlew #{task}")
+    
+    if success
+      if File.exist?(output_relative_path)
+        dest_path = File.join(OUTPUT_DIR, output_name)
+        FileUtils.cp(output_relative_path, dest_path)
+        log_success("#{output_name} başarıyla masaüstüne kopyalandı!")
+      else
+        log_error("Derleme başarılı oldu ancak dosya bulunamadı: #{output_relative_path}")
+      end
+    else
+      log_error("Gradle #{task} işlemi başarısız oldu.")
+    end
+  end
+end
+
+# ─── İnteraktif Menü (Ana Döngü) ──────────────────────────────────────────────
+loop do
+  puts "\n#{C::BOLD}#{C::CYAN}======================================#{C::RESET}"
+  puts "#{C::BOLD}   RubikSync Otomasyon Araçları#{C::RESET}"
+  puts "#{C::BOLD}#{C::CYAN}======================================#{C::RESET}"
+  puts "1. 8 Adet Ekran Görüntüsü Al (Otomatik ADB)"
+  puts "2. APK Release Oluştur"
+  puts "3. APK Debug Oluştur"
+  puts "4. Bundle Release (AAB) Oluştur"
+  puts "5. Bundle Debug (AAB) Oluştur"
+  puts "0. Çıkış"
+  puts "#{C::BOLD}#{C::CYAN}======================================#{C::RESET}"
+  print "Lütfen bir seçenek girin (0-5): "
+  
+  choice = STDIN.gets.chomp
+  
+  case choice
+  when '1'
+    begin
+      screen_w, screen_h = preflight_checks
+      run_screenshot_flow(screen_w, screen_h)
+    rescue Interrupt
+      puts
+      log_warn("İşlem kullanıcı tarafından iptal edildi.")
+      adb("shell rm -f #{DEVICE_TMP}")
+    rescue => e
+      log_error("Beklenmeyen hata: #{e.message}")
+      log_error(e.backtrace&.first.to_s)
+      adb("shell rm -f #{DEVICE_TMP}")
+    end
+  when '2'
+    run_gradle_task(
+      "assembleRelease", 
+      "androidApp/build/outputs/apk/release/androidApp-release.apk", 
+      "RubikSync_Release.apk"
+    )
+  when '3'
+    run_gradle_task(
+      "assembleDebug", 
+      "androidApp/build/outputs/apk/debug/androidApp-debug.apk", 
+      "RubikSync_Debug.apk"
+    )
+  when '4'
+    run_gradle_task(
+      "bundleRelease", 
+      "androidApp/build/outputs/bundle/release/androidApp-release.aab", 
+      "RubikSync_Release.aab"
+    )
+  when '5'
+    run_gradle_task(
+      "bundleDebug", 
+      "androidApp/build/outputs/bundle/debug/androidApp-debug.aab", 
+      "RubikSync_Debug.aab"
+    )
+  when '0'
+    puts "👋 Çıkılıyor..."
+    break
+  else
+    puts "⚠️ Geçersiz seçim, lütfen tekrar deneyin."
+  end
 end

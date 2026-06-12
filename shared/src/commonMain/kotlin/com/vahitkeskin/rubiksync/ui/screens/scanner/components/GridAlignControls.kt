@@ -175,8 +175,7 @@ internal fun GridAlignControls(
                     viewport != null &&
                     scannerTargetBounds != null &&
                     scannerTargetBounds.bottom >= viewport.top + 10f &&
-                    scannerTargetBounds.top <= viewport.bottom - 10f &&
-                    !isScrollInProgress
+                    scannerTargetBounds.top <= viewport.bottom - 10f
 
             AuraBalloon(
                 text = appState.strings.showcaseScannerSliders,

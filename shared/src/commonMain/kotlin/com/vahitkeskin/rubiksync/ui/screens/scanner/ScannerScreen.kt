@@ -370,9 +370,18 @@ fun ScannerScreen(
                                             )
                                         }
                                 )
+                                val viewport = viewportBounds
+                                val target = scannerTargetBounds
+                                val isGuideVisible = appState.scannerShowcaseStep == 2 &&
+                                        !appState.isScannerShowcaseCompleted &&
+                                        viewport != null &&
+                                        target != null &&
+                                        target.bottom >= viewport.top + 10f &&
+                                        target.top <= viewport.bottom - 10f
+
                                 AuraBalloon(
                                     text = appState.strings.showcaseScannerGuide,
-                                    isVisible = appState.scannerShowcaseStep == 2 && !appState.isScannerShowcaseCompleted,
+                                    isVisible = isGuideVisible,
                                     isBelow = true,
                                     onDismiss = { appState.advanceScannerShowcase() }
                                 )

@@ -2,18 +2,18 @@
 # frozen_string_literal: true
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                  RubikSync — Play Store Screenshot Automator               ║
-# ║                                                                            ║
-# ║  Bağlı Android cihazdan 8 adet Play Store uyumlu ekran görüntüsü alır.    ║
-# ║  ADB üzerinden uygulamayı açar, ekranlar arasında gezinir ve               ║
-# ║  cihazın orijinal çözünürlüğünde (1080x2400) screenshot kaydeder.         ║
-# ║                                                                            ║
-# ║  Kullanım: ruby scripts/take_screenshots.rb                               ║
-# ║                                                                            ║
-# ║  Gereksinimler:                                                            ║
-# ║    • ADB kurulu ve PATH'te (brew install android-platform-tools)           ║
-# ║    • USB/WiFi ile bağlı Android cihaz                                      ║
-# ║    • RubikSync uygulaması cihazda yüklü                                    ║
+# ║                  RubikSync — Play Store Screenshot Automator                 ║
+# ║                                                                              ║
+# ║  Bağlı Android cihazdan 8 adet Play Store uyumlu ekran görüntüsü alır.       ║
+# ║  ADB üzerinden uygulamayı açar, ekranlar arasında gezinir ve                 ║
+# ║  cihazın orijinal çözünürlüğünde (1080x2400) screenshot kaydeder.            ║
+# ║                                                                              ║
+# ║  Kullanım: ruby scripts/take_screenshots.rb                                  ║
+# ║                                                                              ║
+# ║  Gereksinimler:                                                              ║
+# ║    • ADB kurulu ve PATH'te (brew install android-platform-tools)             ║
+# ║    • USB/WiFi ile bağlı Android cihaz                                        ║
+# ║    • RubikSync uygulaması cihazda yüklü                                      ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 require "fileutils"

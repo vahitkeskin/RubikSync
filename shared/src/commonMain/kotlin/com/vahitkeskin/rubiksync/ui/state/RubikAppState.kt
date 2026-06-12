@@ -416,6 +416,7 @@ class RubikAppState(
     fun advanceShowcase() {
         if (isShowcaseCompleted) return
         val currentStep = showcaseStep
+        if (currentStep < 0) return
         coroutineScope.launch {
             if (currentStep in 1..11) showcaseStep = -currentStep
             targetBounds = null
@@ -442,6 +443,7 @@ class RubikAppState(
     fun advanceEditorShowcase(totalSteps: Int = 5) {
         if (isEditorShowcaseCompleted) return
         val currentStep = editorShowcaseStep
+        if (currentStep < 0) return
         coroutineScope.launch {
             if (currentStep in 1..totalSteps) editorShowcaseStep = -currentStep
             kotlinx.coroutines.delay(1050)
@@ -463,6 +465,7 @@ class RubikAppState(
     fun advanceScannerShowcase(totalSteps: Int = 6) {
         if (isScannerShowcaseCompleted) return
         val currentStep = scannerShowcaseStep
+        if (currentStep < 0) return
         coroutineScope.launch {
             if (currentStep in 1..totalSteps) scannerShowcaseStep = -currentStep
             kotlinx.coroutines.delay(1050)

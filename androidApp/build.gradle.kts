@@ -35,7 +35,7 @@ dependencies {
     androidTestImplementation(libs.androidx.testExt.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.compose.uiTest)
-    androidTestImplementation("org.jetbrains.compose.ui:ui-test-junit4:${libs.versions.composeMultiplatform.get()}")
+    androidTestImplementation(libs.compose.uiTestJUnit4)
 }
 
 android {

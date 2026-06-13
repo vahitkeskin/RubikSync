@@ -26,6 +26,12 @@ To run unit tests on the Android host environment (robolectric or JVM mock-based
 ./gradlew :shared:testAndroidHostTest
 ```
 
+### 4. Run Android Instrumented UI Tests (Device/Emulator)
+To run UI tests directly on a connected Android phone or active emulator (this will physically open the app and click the buttons automatically):
+```bash
+./gradlew :androidApp:connectedDebugAndroidTest
+```
+
 ---
 
 ## 🎯 Run Specific Actions / Tests (Selectively)

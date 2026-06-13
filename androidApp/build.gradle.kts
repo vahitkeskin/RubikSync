@@ -30,6 +30,12 @@ dependencies {
 
     // DataStore Preferences
     implementation(libs.androidx.datastore.preferences)
+
+    // Android Instrumented Testing
+    androidTestImplementation(libs.androidx.testExt.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.compose.uiTest)
+    androidTestImplementation("org.jetbrains.compose.ui:ui-test-junit4:${libs.versions.composeMultiplatform.get()}")
 }
 
 android {
@@ -42,6 +48,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     packaging {
         resources {

@@ -1,5 +1,8 @@
 package com.vahitkeskin.rubiksync
 
+import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
+import com.vahitkeskin.rubiksync.ui.strings.AppStringsMap
+import com.vahitkeskin.rubiksync.ui.strings.EnStrings
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -27,55 +30,55 @@ class RubikAndroidUiTest {
 
     @Test
     fun testAppLaunchAndInteractions() {
-        // 1. Wait for Compose initialization and verify the app title is displayed on splash screen
-        composeTestRule.onNodeWithText("RubikSync", substring = true).assertIsDisplayed()
+        // Resolve localized strings based on device's active system language
+        val sysCode = getSystemLanguageCode().lowercase()
+        val currentLang = AppLanguage.entries.find { it.code == sysCode } ?: AppLanguage.EN
+        val strings = AppStringsMap[currentLang] ?: EnStrings
+
+        // 1. Wait for theme initialization and verify the app title is displayed on the splash screen
+        composeTestRule.waitUntil(timeoutMillis = 5000) {
+            try {
+                composeTestRule.onNodeWithText(strings.appTitle, substring = true, ignoreCase = true).assertIsDisplayed()
+                true
+            } catch (_: AssertionError) {
+                false
+            }
+        }
 
         // 2. Wait for the splash screen duration (around 3.3s total) to transition to the Dashboard
-        // We use composeTestRule's idle synchronization or a small delay
         composeTestRule.waitForIdle()
         Thread.sleep(4000)
 
-        // 3. Verify Dashboard components are rendered:
-        // We look for tab titles which are always displayed: "Hamleler" or "Moves" depending on default language
-        val movesTab = try {
-            composeTestRule.onNodeWithText("HAMLELER")
+        // 3. Skip tutorial/showcase if active to prevent overlay from intercepting or obscuring elements
+        try {
+            composeTestRule.onNodeWithText(strings.skipShowcase).performClick()
+            composeTestRule.waitForIdle()
+            Thread.sleep(1500) // Allow tutorial exit animation to settle fully
         } catch (_: AssertionError) {
-            composeTestRule.onNodeWithText("MOVES")
+            // Showcase already completed or not active
         }
-        movesTab.assertIsDisplayed()
 
-        // 4. Act: Click on the Actions tab to show solve/scramble buttons
-        val actionsTab = try {
-            composeTestRule.onNodeWithText("AKSİYONLAR")
-        } catch (_: AssertionError) {
-            composeTestRule.onNodeWithText("ACTIONS")
-        }
+        // 4. Verify Dashboard components are rendered (e.g., Moves tab)
+        composeTestRule.onNodeWithText(strings.tabMoves).assertIsDisplayed()
+
+        // 5. Act: Click on the Actions tab to show solve/scramble buttons
+        val actionsTab = composeTestRule.onNodeWithText(strings.tabActions)
         actionsTab.assertIsDisplayed()
         actionsTab.performClick()
+        composeTestRule.waitForIdle()
+        Thread.sleep(1500) // Allow page scroll animation to settle fully
 
-        // 5. Verify the Scramble and Reset buttons are displayed under the actions tab
-        val scrambleButton = try {
-            composeTestRule.onNodeWithText("KARIŞTIR")
-        } catch (_: AssertionError) {
-            composeTestRule.onNodeWithText("SCRAMBLE")
-        }
-        scrambleButton.assertIsDisplayed()
+        // 6. Verify the Scramble button is displayed under the actions tab
+        composeTestRule.onNodeWithText(strings.scrambleButton).assertIsDisplayed()
 
-        // 6. Act: Click on the AI tab to show design/solve buttons
-        val aiTab = try {
-            composeTestRule.onNodeWithText("YAPAY ZEKA")
-        } catch (_: AssertionError) {
-            composeTestRule.onNodeWithText("AI")
-        }
+        // 7. Act: Click on the AI tab to show design/solve buttons
+        val aiTab = composeTestRule.onNodeWithText(strings.tabAI)
         aiTab.assertIsDisplayed()
         aiTab.performClick()
+        composeTestRule.waitForIdle()
+        Thread.sleep(1500) // Allow page scroll animation to settle fully
 
-        // 7. Verify the design and solve buttons are visible
-        val designButton = try {
-            composeTestRule.onNodeWithText("TASARLA")
-        } catch (_: AssertionError) {
-            composeTestRule.onNodeWithText("DESIGN")
-        }
-        designButton.assertIsDisplayed()
+        // 8. Verify the design button is visible
+        composeTestRule.onNodeWithText(strings.designButton).assertIsDisplayed()
     }
 }

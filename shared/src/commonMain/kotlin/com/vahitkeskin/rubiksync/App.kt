@@ -97,6 +97,9 @@ import com.vahitkeskin.rubiksync.ui.state.PipManager
 import org.koin.compose.KoinApplication
 import com.vahitkeskin.rubiksync.ui.state.SystemAppearance
 
+// TODO: KMP-compliant Unit Tests & UI Tests are available under shared/src/commonTest.
+// Refer to the root level TODO_TESTING.md for commands to run scramble, solve, reset,
+// language, theme, and timer action tests.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {

@@ -17,6 +17,10 @@
 
 ---
 
+<p align="center">
+  <img src="assets/fullbackground.png" width="100%" alt="RubikSync Hero Banner"/>
+</p>
+
 📱 **RubikSync**, Android, iOS ve Masaüstü (JVM) platformlarında çalışan; fiziksel Rubik Küpünüzü kamera veya galeri aracılığıyla tarayarak saniyeler içinde **3D simülasyon ortamında çözüm adımlarını sunan** yenilikçi bir Kotlin Multiplatform mobil ve masaüstü uygulamasıdır.
 
 🤖 Uygulama; gelişmiş renk analizi filtreleri, platforma özgü yerel kamera akışları, interaktif kılavuz çizgileri, zenginleştirilmiş 3D görselleştirme motoru ve en gelişmiş zeka küpü çözme algoritmalarından biri olan **Kociemba Algoritması**'nı bünyesinde barındırır.
@@ -600,42 +604,20 @@ graph TD
 
 ---
 
-## 📱 Ekran ve Kullanıcı Deneyimi Tanıtımı
+## 📱 Ekran ve Kullanıcı Deneyimi Tanıtımı (App Screenshots & Walkthrough)
 
-### 1. 🏠 Ana Ekran & 3D İnteraktif Simülasyon
-* 🎮 **3D Küp Alanı:** Uygulama açıldığında kullanıcıyı karşılayan tam ekran 3D küp görünümüdür.
-* 🕹️ **Katman Kontrolleri:** Kullanıcı küpü elle karıştırabilir, katmanları sağa-sola döndürebilir.
-* 📏 **Hamle Sayacı & Durum:** Ekranın üst kısmında küpün hamle sayısı ve çözülmüş/karışık durumu.
-* 🎓 **Interaktif Tanıtım (Showcase):** İlk açılışta adım adım tüm arayüz elemanlarını tanıtan spotlight rehber sistemi.
-* 🎮 **3 Sekmeli Kontrol Paneli:** Hareketler (U/D/L/R/F/B hamle ızgarası), Eylemler (Karıştır/Geri Al/Sıfırla/Tasarla) ve AI (Çöz) sekmeleri.
-* 🧩 **Çözüm Modu:** **"Çöz"** butonuna basılarak Kociemba algoritması tetiklenir. Çözüm bulunduğunda animasyonlu oynatıcı aktifleşir.
-* ⏱️ **Hamle Hızı Kontrolü:** Çözüm animasyonu sırasında kaydırıcı ile hız ayarlanabilir.
-* 🏆 **En İyi Süreler:** Çözüm geçmişi hamle sayısıyla birlikte listelenir.
+Uygulamanın görsel arayüzü, 3D grafik motoru ve tarama sihirbazının ekran görüntüleri ile detaylı özellikleri aşağıdaki tabloda alternatifli (checkerboard) düzende sunulmuştur:
 
-### 2. 📷 Özel Kamera Tarama Ekranı
-* 📸 **Fotoğraf Çek Arayüzü:** Sihirbaz içinden tetiklenen tam ekran arayüzdür.
-* 🔳 **Kılavuz Çerçeve:** Kesikli sarı kare çerçeve ve yeşil 3x3 ızgara çizgileri canlı kamera görüntüsünün üzerine bindirilir.
-* ⚡ **Deklanşör:** Kullanıcı küpü tam kare çerçevenin içine hizalayarak deklanşör butonuyla çekimi gerçekleştirir. Flaş butonuyla karanlık ortamlarda aydınlatma sağlanabilir.
-* 🟧 **Karışık Küp Önizleme:** Guidance kartında mini 3x3 grid ile merkez renk vurgulanarak hangi yüzün taranacağı gösterilir.
-
-### 3. 🔧 Hizalama ve Renk Kalibrasyon Arayüzü
-* 🖼️ **Örnekleme Penceresi:** Fotoğraf çekildikten veya galeriden seçildikten sonra otomatik olarak açılır.
-* ✏️ **İnce Ayar:** Fotoğrafın üzerinde yeşil renkte ızgara çizgileri gösterilir. Sürgülerle (Sliders) ızgara küpün üzerine tam oturtulur.
-* 🔴 **Elle Düzeltme:** Algılanan 3x3 renk dağılımı hemen altta gösterilir. Eğer herhangi bir renk yanlış algılanmışsa kullanıcı o hücreye dokunarak listeden doğru rengi seçebilir.
-* 💾 **Kayıt ve İlerleme:** **"Onayla"** butonuna basıldığında o yüzün renk dağılımı kaydedilir ve bir sonraki yüze geçilir. 6 yüz de tarandığında Kociemba çözücü algoritması arka planda çalışarak çözümü üretir.
-
-### 4. 🎨 Küp Tasarımcısı Ekranı
-* 🖌️ **Boya Modu:** 6 farklı renk seçeneğinden biri seçilerek sticker'lar tek tek boyanabilir.
-* 🗺️ **Mini Ağ Haritası:** Küpün 6 yüzünün açılmış net (T-şeklinde) görünümü.
-* 📋 **JSON İçe Aktarma:** Harici küp durumunu JSON olarak yapıştırma desteği.
-* 📷 **Tarama Sihirbazı Başlatıcı:** Kamera ile otomatik algılama moduna geçiş.
-* ✅ **Uygulama & Doğrulama:** Tasarlanan renk şemasının geçerliliği kontrol edilerek 3D küpe uygulanır.
-
-### 5. ⚙️ Ayarlar Ekranı
-* 🌙 **Tema Seçimi:** Açık / Karanlık / Sistem modu seçimi (görsel önizlemeli kartlar).
-* 🌐 **Dil Seçimi:** 19 dil desteği ile tam çeviri.
-* ℹ️ **Hakkında:** Versiyon, platform ve telif hakkı bilgileri.
-* 🔮 **FloatingMiniCube:** Çözüm aktifken ayarlar ekranında PiP mini küp görünür.
+| Özellik ve Detaylı Açıklaması | Ekran Görüntüsü |
+| :--- | :---: |
+| **1. 🏠 Ana Ekran & 3D İnteraktif Simülasyon**<br><br>Uygulama açıldığında kullanıcıyı karşılayan tam ekran 3D küp görünümüdür. Katmanlar elle karıştırılabilir ve döndürülebilir. Üst panelde hamle sayısı, çözüldü/karışık durumu ve kilit/ses/sallama ayarları yer alır. Alt paneldeki üç sekmeli kontrol alanı (Manevralar, Eylemler, AI) ile tüm etkileşimler tek noktadan yönetilir. | <img src="assets/1.png" width="240" alt="Ana Ekran ve 3D Simülatör"/> |
+| <img src="assets/2.png" width="240" alt="İnteraktif Tanıtım Sihirbazı"/> | **2. 🎓 İnteraktif Tanıtım Sihirbazı (Showcase)**<br><br>İlk açılışta adım adım tüm arayüz elemanlarını (kilit, ses, ayarlar, 3D canvas, manevralar, eylemler, çöz vb.) şık bir spotlight halkası ile odaklayarak kullanıcıya tanıtan interaktif onboarding rehberidir. |
+| **3. 🎮 Katman Dönüş ve Manevra Kontrol Paneli (Moves Grid)**<br><br>Küp katmanlarını tek tek döndürmek için U, D, L, R, F, B manevra butonları ve ters yön varyasyonları. Yapılan son 14 hamle, hemen üstte yer alan yatay kaydırılabilir geçmiş şeridinde görsel etiketler halinde listelenir. | <img src="assets/3.png" width="240" alt="Manevra Kontrol Paneli"/> |
+| <img src="assets/4.png" width="240" alt="Yapay Zeka Çözüm Oynatıcısı"/> | **4. ⏯️ Yapay Zeka Çözüm Oynatıcısı (AI Playback)**<br><br>Çözüm bulunduğunda aktifleşen animasyonlu oynatıcı. Oynat, duraklat, ileri/geri sar butonları ile çözüm adımları simüle edilir. Hamleler arası geçiş hızı (milisaniye cinsinden) hız sürgüsüyle dinamik olarak ayarlanabilir. |
+| **5. 🎨 Küp Tasarımcısı & Hücre Boyama Editörü (Manual Editor)**<br><br>Küpün renklerini elle boyamak için 6 renkli palet ve açılmış net T-şeklinde 6 yüz ağ haritası. Hatalı durumlarda üst şeritte hata uyarıları gösterilerek kullanıcının yanlış küp durumunu onaylaması engellenir. | <img src="assets/5.png" width="240" alt="Küp Tasarımcısı"/> |
+| <img src="assets/6.png" width="240" alt="Kamera ile Tarama Sihirbazı"/> | **6. 📷 Kamera ile Tarama Sihirbazı (Scanner Wizard)**<br><br>Android (CameraX) ve iOS (AVFoundation) platformlarına özgü yerel kamera akışı. Ekranda yer alan sarı kılavuz çerçeve ve yeşil 3x3 örnekleme noktaları ile küpün 6 yüzü sırasıyla fotoğraflanarak sisteme aktarılır. |
+| **7. 📐 Izgara Hizalama & Renk Kalibrasyon Sürgüleri (Calibration)**<br><br>Fotoğraf çekildikten sonra 3x3 örnekleme ızgarasının (yeşil dots) boyutunu, yatay ve dikey konumunu sürgülerle (Sliders) ayarlayarak sticker alanlarına tam oturtmayı sağlayan kalibrasyon sihirbazıdır. | <img src="assets/7.png" width="240" alt="Izgara Kalibrasyonu"/> |
+| <img src="assets/8.png" width="240" alt="Ayarlar ve Tema Tercihleri Paneli"/> | **8. ⚙️ Ayarlar ve Tema Tercihleri Paneli (Settings Screen)**<br><br>Açık / Karanlık / Sistem tema modları ve 19 farklı dil seçeneğinin yönetildiği ayarlar ekranıdır. Çözüm devam ederken bu ekrana geçildiğinde sağ alt köşede **FloatingMiniCube (PiP)** 3D küçültülmüş çözüm izleme ekranı belirir. |
 
 ---
 

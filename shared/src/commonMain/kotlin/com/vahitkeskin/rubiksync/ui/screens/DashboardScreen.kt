@@ -63,7 +63,7 @@ fun DashboardScreen(
 
     // Shake to scramble feature detection
     rememberShakeDetector(
-        enabled = appState.isShakeToScrambleEnabled && appState.isCubeEditable && !cubeState.isAnimating
+        enabled = appState.isShakeToScrambleEnabled && appState.isCubeEditable && !cubeState.isAnimating && appState.isShowcaseCompleted
     ) {
         appState.clearManualMoves()
         appState.coroutineScope.launch {

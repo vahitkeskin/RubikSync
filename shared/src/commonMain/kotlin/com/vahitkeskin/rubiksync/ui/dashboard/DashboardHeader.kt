@@ -199,9 +199,10 @@ fun DashboardHeader(
                     )
                 }
 
+                val isShakeEnabled = appState.isCubeEditable && appState.isShowcaseCompleted
                 // Shake to scramble toggle
                 val shakeBgColor by animateColorAsState(
-                    targetValue = if (!appState.isCubeEditable) {
+                    targetValue = if (!isShakeEnabled) {
                         RubikTheme.colors.cardBackground.copy(alpha = 0.4f)
                     } else if (appState.isShakeToScrambleEnabled) {
                         RubikTheme.colors.accentOrange.copy(alpha = 0.12f)
@@ -212,7 +213,7 @@ fun DashboardHeader(
                     label = "shakeBg"
                 )
                 val shakeBorderColor by animateColorAsState(
-                    targetValue = if (!appState.isCubeEditable) {
+                    targetValue = if (!isShakeEnabled) {
                         RubikTheme.colors.cardBorder.copy(alpha = 0.2f)
                     } else if (appState.isShakeToScrambleEnabled) {
                         RubikTheme.colors.accentOrange.copy(alpha = 0.3f)
@@ -223,7 +224,6 @@ fun DashboardHeader(
                     label = "shakeBorder"
                 )
 
-                val isShakeEnabled = appState.isCubeEditable
                 Box(
                     modifier = Modifier
                         .size(34.dp)
@@ -258,7 +258,7 @@ fun DashboardHeader(
                         text = if (appState.isShakeToScrambleEnabled) "📳" else "📱",
                         fontSize = 14.sp,
                         maxLines = 1,
-                        modifier = Modifier.alpha(if (appState.isCubeEditable) 1f else 0.35f)
+                        modifier = Modifier.alpha(if (isShakeEnabled) 1f else 0.35f)
                     )
                     AuraBalloon(
                         text = appState.strings.showcaseShakeToScrambleText,

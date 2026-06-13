@@ -668,6 +668,61 @@ graph TD
 
 ---
 
+## 🧪 Test Stratejisi ve Doğrulama (Testing & Verification)
+
+Uygulamanın hem iş mantığını (Domain/UseCases) hem de görsel arayüzünü (UI) doğrulamak için Kotlin Multiplatform (KMP) standartlarına uygun kapsamlı bir test altyapısı kurulmuştur. Test grubu hem JVM (Masaüstü) ortamında ultra hızlı çalışabilen **Birim Testleri (Unit Tests)** hem de gerçek cihazlarda çalışan **Aletli Arayüz Testlerini (Instrumented UI Tests)** içerir.
+
+### 1. Birim Test Grubu (`RubikUnitTest.kt`)
+[RubikUnitTest.kt](file:///shared/src/commonTest/kotlin/com/vahitkeskin/rubiksync/RubikUnitTest.kt) dosyası, uygulamanın temel akışlarını ve durum makinesini (state machine) test etmek amacıyla in-memory taklit sınıflar (`FakeSettingsRepository`, `FakeCubeRepository`) kullanarak çalışır.
+
+*   **Karıştırma Aksiyonu (`scramble`)**: Küpün karıştırılmasını simüle eder ve başlangıç durumundan çıktığını doğrular.
+*   **Çözme Aksiyonu (`solve`)**: Küpü karıştırıp `RubikSolver` (Kociemba Arama Motoru) ile çözüm adımları üretir, adımları küpe uygular ve küpün çözüldüğünü doğrular.
+*   **Sıfırlama Aksiyonu (`reset`)**: Küp karıştırıldıktan sonra sıfırlanmasını ve geçmişin temizlendiğini doğrular.
+*   **Dil Değiştirme Aksiyonu (`dil değiştir`)**: Dil değiştirildiğinde `AppStrings` dil paketinin ve başlığın güncellendiğini doğrular.
+*   **Tema Değiştirme Aksiyonu (`tema değiştir`)**: Koyu ve açık temalar arası geçişin durum üzerinde güncellendiğini ve yerel depolama çağrısını doğrular.
+*   **Ses Ayarları Aksiyonu (`ses aç/kapat`)**: Ses ayarlarının durumunu doğrular.
+*   **Kronometre Aksiyonu (`kronometre`)**: Çözüm kronometresinin başlama, duraklatılma ve sıfırlanma süreçlerini doğrular.
+
+### 2. Arayüz ve Tanıtım Sihirbazı UI Testi (`RubikAndroidUiTest.kt`)
+[RubikAndroidUiTest.kt](file:///androidApp/src/androidTest/kotlin/com/vahitkeskin/rubiksync/RubikAndroidUiTest.kt) dosyası, gerçek cihazda/emülatörde uygulamayı başlatarak fiziksel kullanıcı etkileşimlerini simüle eder.
+
+*   **DataStore Sıfırlama (`@Before`)**: Test her başladığında cihazdaki `showcase` durumlarını sıfırlayarak temiz bir başlangıç yapar.
+*   **11 Adımlı Tanıtım Sihirbazı Geçişi**: Sihirbazın skip edilmesi yerine tüm tanıtım balonları sırasıyla beklenir ve tıklanarak geçilir:
+    1.  *Kilit ikonu* (`strings.showcaseEditableText`)
+    2.  *Karıştırmak için salla* (`strings.showcaseShakeToScrambleText`)
+    3.  *Ses ikonu* (`strings.showcaseSoundText`)
+    4.  *Ayarlar butonu* (`strings.showcaseSettingsText`)
+    5.  *3D Etkileşimli Küp Canvas'ı* (`strings.showcaseInteractiveCubeText`)
+    6.  *Müzik/Manevra paneli* (`strings.showcaseMovesText`) - *Otomatik Pager Kaydırması (Page 0)*
+    7.  *Karıştırma butonu* (`strings.showcaseScrambleText`) - *Otomatik Pager Kaydırması (Page 1)*
+    8.  *Geri al butonu* (`strings.showcaseUndoText`)
+    9.  *Sıfırla butonu* (`strings.showcaseResetText`)
+    10. *Tasarım butonu* (`strings.showcaseDesignText`) - *Otomatik Pager Kaydırması (Page 2)*
+    11. *Çözüm butonu* (`strings.showcaseSolveText`)
+*   **Animasyon ve Sayfa Geçiş Senkronizasyonu**: Balon geçişlerindeki 1050ms'lik sönümleme ve 1200ms'lik sayfa kaydırma (pager scroll) animasyonlarının kararlı şekilde tamamlanması için `2000ms` bekleme süreleri uygulanmıştır.
+
+---
+
+### 💻 Testleri Çalıştırma Komutları (Terminal)
+
+| Hedef Platform / Test Türü | 🛠️ Terminal Komutu | 📝 Açıklama |
+| :--- | :--- | :--- |
+| **Tüm Testleri Çalıştır** | `./gradlew allTests` | Tüm platformlardaki tüm test suite'lerini çalıştırır. |
+| **JVM (Desktop) Testleri** | `./gradlew :shared:jvmTest` | JVM üzerinde tüm birim ve ortak UI testlerini koşturur (hızlı). |
+| **Android Host Testleri** | `./gradlew :shared:testAndroidHostTest` | Android host ortamında birim testleri koşturur. |
+| **Android Cihaz/Emülatör UI Testi** | `./gradlew :androidApp:connectedDebugAndroidTest` | Bağlı cihazda/emülatörde uygulamayı açarak **11 adımlı tanıtım balonlarını adım adım tıklayıp geçer**, Actions ve AI sekmelerini test eder. |
+
+#### 🎯 Belirli Birim Testlerini Filtreleyerek Çalıştırma:
+*   **Karıştırma Aksiyonu**: `./gradlew :shared:jvmTest --tests "com.vahitkeskin.rubiksync.RubikUnitTest.testScrambleAction"`
+*   **Çözme Aksiyonu**: `./gradlew :shared:jvmTest --tests "com.vahitkeskin.rubiksync.RubikUnitTest.testSolveAction"`
+*   **Sıfırlama Aksiyonu**: `./gradlew :shared:jvmTest --tests "com.vahitkeskin.rubiksync.RubikUnitTest.testResetAction"`
+*   **Dil Değiştirme Aksiyonu**: `./gradlew :shared:jvmTest --tests "com.vahitkeskin.rubiksync.RubikUnitTest.testChangeLanguageAction"`
+*   **Tema Değiştirme Aksiyonu**: `./gradlew :shared:jvmTest --tests "com.vahitkeskin.rubiksync.RubikUnitTest.testChangeThemeAction"`
+*   **Ses Ayarları Aksiyonu**: `./gradlew :shared:jvmTest --tests "com.vahitkeskin.rubiksync.RubikUnitTest.testSoundSettingsAction"`
+*   **Kronometre Aksiyonu**: `./gradlew :shared:jvmTest --tests "com.vahitkeskin.rubiksync.RubikUnitTest.testTimerAction"`
+
+---
+
 ## 📐 Proje İstatistikleri
 
 | 📊 Metrik | 📈 Değer |

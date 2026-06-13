@@ -1,13 +1,18 @@
 package com.vahitkeskin.rubiksync
 
-import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
-import com.vahitkeskin.rubiksync.ui.strings.AppStringsMap
-import com.vahitkeskin.rubiksync.ui.strings.EnStrings
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.vahitkeskin.rubiksync.persistence.AndroidRubikPersistence
+import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
+import com.vahitkeskin.rubiksync.ui.strings.AppStringsMap
+import com.vahitkeskin.rubiksync.ui.strings.EnStrings
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,6 +32,18 @@ class RubikAndroidUiTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+    @Before
+    fun setUp() {
+        // Reset showcase persistence before the test starts to guarantee it runs
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val persistence = AndroidRubikPersistence(context)
+        runBlocking {
+            persistence.saveShowcaseCompleted(false)
+            persistence.saveEditorShowcaseCompleted(false)
+            persistence.saveScannerShowcaseCompleted(false)
+        }
+    }
 
     @Test
     fun testAppLaunchAndInteractions() {
@@ -49,13 +66,40 @@ class RubikAndroidUiTest {
         composeTestRule.waitForIdle()
         Thread.sleep(4000)
 
-        // 3. Skip tutorial/showcase if active to prevent overlay from intercepting or obscuring elements
-        try {
-            composeTestRule.onNodeWithText(strings.skipShowcase).performClick()
+        // 3. Traverse through all showcase balloons step-by-step with natural delays and animations
+        val showcaseSteps = listOf(
+            strings.showcaseEditableText,
+            strings.showcaseShakeToScrambleText,
+            strings.showcaseSoundText,
+            strings.showcaseSettingsText,
+            strings.showcaseInteractiveCubeText,
+            strings.showcaseMovesText,
+            strings.showcaseScrambleText,
+            strings.showcaseUndoText,
+            strings.showcaseResetText,
+            strings.showcaseDesignText,
+            strings.showcaseSolveText
+        )
+
+        showcaseSteps.forEachIndexed { index, stepText ->
+            // Wait for the specific showcase balloon text to be displayed
+            composeTestRule.waitUntil(timeoutMillis = 8000) {
+                try {
+                    composeTestRule.onNodeWithText(stepText).assertIsDisplayed()
+                    true
+                } catch (_: AssertionError) {
+                    false
+                }
+            }
+
+            // Click the balloon text itself to dismiss and advance to the next step
+            composeTestRule.onNodeWithText(stepText).performClick()
             composeTestRule.waitForIdle()
-            Thread.sleep(1500) // Allow tutorial exit animation to settle fully
-        } catch (_: AssertionError) {
-            // Showcase already completed or not active
+
+            // Wait for transitions and page scroll animations to fully settle
+            // App has a 1050ms delay inside advanceShowcase, and pager scroll animation is 1200ms.
+            // 2000ms sleep is extremely safe and natural.
+            Thread.sleep(2000)
         }
 
         // 4. Verify Dashboard components are rendered (e.g., Moves tab)

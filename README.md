@@ -117,86 +117,117 @@ $$X(t) = X_{\text{start}} + (X_{\text{end}} - X_{\text{start}}) \cdot t, \quad Y
 
 ```
 📂 RubikSync (Root)
-├── 🤖 androidApp (Android Native Runner)
-├── 🍏 iosApp (iOS Native Runner)
-├── 💻 desktopApp (Desktop JVM Native Runner)
-└── 📦 shared (KMP Shared Core Module)
-    └── 📂 src/commonMain/kotlin/com/vahitkeskin/rubiksync
-        ├── 🌌 App.kt (Global UI Root & Screen NavHost)
-        ├── 📡 Platform.kt (expect/actual Kamera, Ses, Dosya, Shake API)
-        ├── 🎨 cube/ (3D Renderer, Projections & Image Processing Engine)
-        │   ├── 📐 CubeRenderer.kt (3D Canvas Draw Loop & Lambertian Shading)
-        │   ├── 🎥 CubeScreenProjector.kt (3D → 2D Perspektif Projeksiyon)
-        │   ├── 🧭 CubeRotationGuide.kt (Scanner Guide Assistant & Idle Breathing)
-        │   ├── 🌈 RubikImageProcessor.kt (sRGB→LAB, CIEDE2000, Hungarian)
-        │   ├── 🧮 Math3D.kt (Rodrigues Formülü & Vektör İşlemleri)
-        │   ├── 🎬 CubeEasing.kt (Animasyon Easing Fonksiyonları)
-        │   ├── 🔳 CubeStickerGeometry.kt (Rounded Sticker Köşe Noktaları)
-        │   ├── 🔄 CubieTransform.kt (Konum & Yönelim Matrisleri)
-        │   ├── 🖱️ GestureHandler.kt (Tek/İki Parmak Dokunma Yönetimi)
-        │   ├── 🎯 LayerMoveSelector.kt (Katman Seçim & Dönüş Tespit)
-        │   ├── 📏 MoveMathHelper.kt (Dönüş Eksenleri & Açı Hesaplama)
-        │   └── 🧊 RubikCube.kt (27 Cubie State Machine & Move Executor)
-        ├── 💾 data/ (Room Database & DataStore Preferences Persistence)
-        │   └── 📁 repository/
-        │       ├── 🗄️ CubeRepositoryImpl.kt (Küp Durumu CRUD)
-        │       └── ⚙️ SettingsRepositoryImpl.kt (Ayarlar Kalıcılığı)
-        ├── 🔌 di/ (Koin Dependency Injection Configuration)
-        │   └── 💉 Koin.kt (16 UseCase + Repository Factory Tanımları)
-        ├── 👑 domain/ (Core Cube Constants & Color Enumerations)
-        │   ├── 📁 repository/ (Repository Interfaces)
-        │   └── 📁 usecase/ (16 Clean Architecture Use Case)
-        │       ├── 🎯 GetCubeStateUseCase.kt
-        │       ├── 💾 SaveCubeStateUseCase.kt
-        │       ├── 🎨 SaveThemeUseCase.kt
-        │       ├── 🌐 SaveLanguageUseCase.kt
-        │       ├── 🔊 SaveSoundEnabledUseCase.kt
-        │       ├── 📳 SaveShakeToScrambleUseCase.kt
-        │       ├── 📷 SaveCameraSettingsUseCase.kt
-        │       ├── 🏆 SaveSolveSessionUseCase.kt
-        │       └── 🎓 SaveShowcaseCompletedUseCase.kt (+ 7 diğer)
-        ├── 🚀 solver/ (Kociemba Two-Phase Optimal Search Solver)
-        │   ├── 🔑 RubikSolver.kt (IDA* Coset Search Engine — 34KB)
-        │   ├── 📸 CubeSnapshot.kt (Küp Anlık Durum Çıkarımı)
-        │   ├── 🔍 Bfs.kt (Breadth-First Search Pruning Table Üreteci)
-        │   ├── ✂️ OptimizeMoves.kt & OptimizeAnnotatedMoves.kt
-        │   ├── 🗜️ CompressMoves.kt & CompressAnnotatedMoves.kt
-        │   └── 🧪 ParseAlgorithm.kt (Notasyon Ayrıştırıcı)
-        ├── 🎭 ui/ (Compose Screens, Custom Balloons, Theme & L10n Strings)
-        │   ├── 💬 components/
-        │   │   ├── 💭 AuraBalloon.kt (Tooltip & Showcase Balloon Sistemi)
-        │   │   ├── 🔮 FloatingMiniCube.kt (PiP 3D Çözüm İzleme)
-        │   │   ├── 📢 FeedbackOverlay.kt (Hata/Başarı/Info Bannerleri)
-        │   │   └── 🔧 RubikToolbar.kt (Özel Başlık Çubuğu)
-        │   ├── 🎮 controlpanel/
-        │   │   ├── 🕹️ ControlPanel.kt (Hareketler, Eylemler, AI Sekmeleri)
-        │   │   ├── 🔢 MovesGrid.kt (U/D/L/R/F/B Hamle Izgarası)
-        │   │   ├── ⏯️ PlaybackController.kt (Çözüm Animasyon Kontrolcüsü)
-        │   │   └── ⏱️ SpeedControl.kt (Hamle Hızı Ayarı)
-        │   ├── 🧊 cube/
-        │   │   ├── 🎬 CubeAnimationFrameSync.kt (Kare Senkronizasyonu)
-        │   │   ├── 🎨 FaceGrid.kt (2D Yüz Izgarası)
-        │   │   └── 🖥️ InteractiveCubeCanvas.kt (3D Dokunmatik Küp)
-        │   ├── 📊 dashboard/
-        │   │   └── 🏠 DashboardHeader.kt (Ana Ekran Başlığı & Kontroller)
-        │   ├── 🖼️ icons/ (Özel İkon Bileşenleri)
-        │   ├── 📁 screens/
-        │   │   ├── 🚀 splash/ → SplashScreen.kt
-        │   │   ├── ⚙️ settings/ → SettingsScreen.kt + ThemeOptionCard.kt
-        │   │   ├── 🎨 editor/ → EditorScreen.kt + 9 Alt Bileşen
-        │   │   └── 📷 scanner/ → ScannerScreen.kt + 7 Alt Bileşen
-        │   ├── 🏛️ state/
-        │   │   ├── 🧠 RubikAppState.kt (Global Uygulama Durumu — 27KB)
-        │   │   ├── 🎨 Color.kt (154 Satırlık Profesyonel Palet Sistemi)
-        │   │   ├── 🌙 RubikColors.kt (Dark/Light Tema Renk Şeması)
-        │   │   ├── 🖥️ PipManager.kt (PiP Durum Yönetimi)
-        │   │   └── 🎭 ThemeMode.kt (Light/Dark/System Enum)
-        │   └── 🌐 strings/ (19 Dil Dosyası × 148 String = 2,812 Çeviri)
-        └── 🛠️ utils/
-            ├── 👆 ClickExtensions.kt (Long-Press & Click Yardımcıları)
-            ├── 🔗 Extensions.kt (Utility Extensions)
-            ├── 💾 Persistence.kt (Platform Kalıcılık Arayüzü)
-            └── 🔄 RubikStateParser.kt (Küp Durumu Ayrıştırıcı)
+├── 🤖 androidApp (Android Platform Runner & Database)
+│   └── 📂 src
+│       ├── 📂 main/kotlin/com/vahitkeskin/rubiksync
+│       │   ├── 📱 MainActivity.kt (Entry Point & UI Host)
+│       │   ├── 🚀 RubikSyncApplication.kt (Koin initialization)
+│       │   └── 💾 persistence/ (Room Database Implementation)
+│       │       ├── 🗄️ RubikDatabase.kt
+│       │       ├── 🧱 RoomCubeState.kt
+│       │       └── 💾 AndroidRubikPersistence.kt
+│       └── 📂 androidTest/kotlin/com/vahitkeskin/rubiksync
+│           └── 🧪 RubikAndroidUiTest.kt (11-Adımlı Showcase UI Testi)
+├── 🍏 iosApp (iOS Native SwiftUI App)
+│   └── 📂 iosApp
+│       ├── 🚀 iOSApp.swift (SwiftUI Entry Point)
+│       └── 🖥️ ContentView.swift (Compose UI Bridge Host)
+├── 💻 desktopApp (Desktop JVM Runner)
+│   └── 📂 src/main/kotlin/com/vahitkeskin/rubiksync
+│       └── 🖥️ main.kt (JVM Desktop App Launch point)
+└── 📦 shared (KMP Core Module)
+    └── 📂 src
+        ├── 📂 commonMain/
+        │   ├── 📂 composeResources/drawable/app_icon.png (Uygulama İkonu)
+        │   └── 📂 kotlin/com/vahitkeskin/rubiksync
+        │       ├── 🌌 App.kt (Global UI Root & NavHost)
+        │       ├── 📡 Platform.kt (expect/actual API tanımları)
+        │       ├── 🎨 cube/ (3D Renderer, Projections & Image Processing Engine)
+        │       │   ├── 📐 CubeRenderer.kt (3D Canvas Draw Loop & Lambertian Shading)
+        │       │   ├── 🎥 CubeScreenProjector.kt (3D → 2D Perspektif Projeksiyon)
+        │       │   ├── 🧭 CubeRotationGuide.kt (Scanner Guide Assistant & Idle Breathing)
+        │       │   ├── 🌈 RubikImageProcessor.kt (sRGB→LAB, CIEDE2000, Hungarian)
+        │       │   ├── 🧮 Math3D.kt (Rodrigues Formülü & Vektör İşlemleri)
+        │       │   ├── 🎬 CubeEasing.kt (Animasyon Easing Fonksiyonları)
+        │       │   ├── 🔳 CubeStickerGeometry.kt (Rounded Sticker Köşe Noktaları)
+        │       │   ├── 🔄 CubieTransform.kt (Konum & Yönelim Matrisleri)
+        │       │   ├── 🖱️ GestureHandler.kt (Tek/İki Parmak Dokunma Yönetimi)
+        │       │   ├── 🎯 LayerMoveSelector.kt (Katman Seçim & Dönüş Tespit)
+        │       │   ├── 📏 MoveMathHelper.kt (Dönüş Eksenleri & Açı Hesaplama)
+        │       │   └── 🧊 RubikCube.kt (27 Cubie State Machine & Move Executor)
+        │       ├── 💾 data/ (Room Database & DataStore Preferences Persistence)
+        │       │   └── 📁 repository/
+        │       │       ├── 🗄️ CubeRepositoryImpl.kt (Küp Durumu CRUD)
+        │       │       └── ⚙️ SettingsRepositoryImpl.kt (Ayarlar Kalıcılığı)
+        │       ├── 🔌 di/ (Koin Dependency Injection Configuration)
+        │       │   └── 💉 Koin.kt (16 UseCase + Repository Factory Tanımları)
+        │       ├── 👑 domain/ (Core Cube Constants & Color Enumerations)
+        │       │   ├── 📁 repository/ (Repository Interfaces)
+        │       │   └── 📁 usecase/ (16 Clean Architecture Use Case)
+        │       │       ├── 🎯 GetCubeStateUseCase.kt
+        │       │       ├── 💾 SaveCubeStateUseCase.kt
+        │       │       ├── 🎨 SaveThemeUseCase.kt
+        │       │       ├── 🌐 SaveLanguageUseCase.kt
+        │       │       ├── 🔊 SaveSoundEnabledUseCase.kt
+        │       │       ├── 📳 SaveShakeToScrambleUseCase.kt
+        │       │       ├── 📷 SaveCameraSettingsUseCase.kt
+        │       │       ├── 🏆 SaveSolveSessionUseCase.kt
+        │       │       └── 🎓 SaveShowcaseCompletedUseCase.kt (+ 7 diğer)
+        │       ├── 🚀 solver/ (Kociemba Two-Phase Optimal Search Solver)
+        │       │   ├── 🔑 RubikSolver.kt (IDA* Coset Search Engine — 34KB)
+        │       │   ├── 📸 CubeSnapshot.kt (Küp Anlık Durum Çıkarımı)
+        │       │   ├── 🔍 Bfs.kt (Breadth-First Search Pruning Table Üreteci)
+        │       │   ├── ✂️ OptimizeMoves.kt & OptimizeAnnotatedMoves.kt
+        │       │   ├── 🗜️ CompressMoves.kt & CompressAnnotatedMoves.kt
+        │       │   └── 🧪 ParseAlgorithm.kt (Notasyon Ayrıştırıcı)
+        │       ├── 🎭 ui/ (Compose Screens, Custom Balloons, Theme & L10n Strings)
+        │       │   ├── 💬 components/
+        │       │   │   ├── 💭 AuraBalloon.kt (Tooltip & Showcase Balloon Sistemi)
+        │       │   │   ├── 🔮 FloatingMiniCube.kt (PiP 3D Çözüm İzleme)
+        │       │   │   ├── 📢 FeedbackOverlay.kt (Hata/Başarı/Info Bannerleri)
+        │       │   │   └── 🔧 RubikToolbar.kt (Özel Başlık Çubuğu)
+        │       │   ├── 🎮 controlpanel/
+        │       │   │   ├── 🕹️ ControlPanel.kt (Hareketler, Eylemler, AI Sekmeleri)
+        │       │   │   ├── 🔢 MovesGrid.kt (U/D/L/R/F/B Hamle Izgarası)
+        │       │   │   ├── ⏯️ PlaybackController.kt (Çözüm Animasyon Kontrolcüsü)
+        │       │   │   └── ⏱️ SpeedControl.kt (Hamle Hızı Ayarı)
+        │       │   ├── 🧊 cube/
+        │       │   │   ├── 🎬 CubeAnimationFrameSync.kt (Kare Senkronizasyonu)
+        │       │   │   ├── 🎨 FaceGrid.kt (2D Yüz Izgarası)
+        │       │   │   └── 🖥️ InteractiveCubeCanvas.kt (3D Dokunmatik Küp)
+        │       │   ├── 📊 dashboard/
+        │       │   │   └── 🏠 DashboardHeader.kt (Ana Ekran Başlığı & Kontroller)
+        │       │   ├── 🖼️ icons/ (Özel İkon Bileşenleri)
+        │       │   ├── 📁 screens/
+        │       │   │   ├── 🚀 splash/ → SplashScreen.kt
+        │       │   │   ├── ⚙️ settings/ → SettingsScreen.kt + ThemeOptionCard.kt
+        │       │   │   ├── 🎨 editor/ → EditorScreen.kt + 9 Alt Bileşen
+        │       │   │   └── 📷 scanner/ → ScannerScreen.kt + 7 Alt Bileşen
+        │       │   ├── 🏛️ state/
+        │       │   │   ├── 🧠 RubikAppState.kt (Global Uygulama Durumu — 27KB)
+        │       │   │   ├── 🎨 Color.kt (154 Satırlık Profesyonel Palet Sistemi)
+        │       │   │   ├── 🌙 RubikColors.kt (Dark/Light Tema Renk Şeması)
+        │       │   │   ├── 🖥️ PipManager.kt (PiP Durum Yönetimi)
+        │       │   │   └── 🎭 ThemeMode.kt (Light/Dark/System Enum)
+        │       │   └── 🌐 strings/ (19 Dil Dosyası × 148 String = 2,812 Çeviri)
+        │       └── 🛠️ utils/
+        │           ├── 👆 ClickExtensions.kt (Long-Press & Click Yardımcıları)
+        │           ├── 🔗 Extensions.kt (Utility Extensions)
+        │           ├── 💾 Persistence.kt (Platform Kalıcılık Arayüzü)
+        │           └── 🔄 RubikStateParser.kt (Küp Durumu Ayrıştırıcı)
+        ├── 📂 androidMain/kotlin/com/vahitkeskin/rubiksync
+        │   ├── 📡 Platform.android.kt (CameraX, audio player & Room path implementations)
+        │   └── 🎨 ui/state/SystemAppearance.kt (Android status bar/navigation colors)
+        ├── 📂 iosMain/kotlin/com/vahitkeskin/rubiksync
+        │   ├── 📡 Platform.ios.kt (AVFoundation camera, audio synth & directory path implementations)
+        │   ├── 🎨 ui/state/SystemAppearance.kt (iOS status bar theme)
+        │   └── 🖥️ MainViewController.kt (iOS UIViewController bridge)
+        ├── 📂 jvmMain/kotlin/com/vahitkeskin/rubiksync
+        │   ├── 📡 Platform.jvm.kt (Desktop JVM folder path & audio synth stub)
+        │   └── 🎨 ui/state/SystemAppearance.kt (Desktop window frame colors)
+        └── 📂 commonTest/kotlin/com/vahitkeskin/rubiksync
+            ├── 🧪 RubikUnitTest.kt (Logic / Domain UseCases Tests)
+            └── 🧪 RubikUiTest.kt (Compose UI Component & Navigation Tests)
 ```
 
 ---

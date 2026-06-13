@@ -59,6 +59,7 @@
 * ❌ **Kapatma Butonu:** Sağ üst köşede ✕ butonu ile çözüm iptal edilip PiP kapatılabilir.
 * 🎨 **Tema Uyumlu:** Karanlık temada yarı saydam (`alpha = 0.85`), aydınlık temada opak arka plan. Gölge yüksekliği de temaya göre ayarlanır (Dark: 8dp, Light: 2dp).
 * 🔄 **Otomatik Sıfırlama:** PiP tam kapandığında (`transitionProgress = 0`) sürükleme offset'leri otomatik sıfırlanır.
+* 🔙 **Geri Tuşu Entegrasyonu:** Küp çözülürken kullanıcının sistem "Geri" (Back) tuşuna basması durumunda da uygulamanın arka plana atılarak PiP moduna geçmesini sağlamak amacıyla `BindDashboardBackHandler` güncellenmiştir. Doğrudan `activity.moveTaskToBack(true)` çağrılarak, sistemin standart `onUserLeaveHint()` tetiklemesi sağlanmış ve Home butonu ile arka plana geçme akışıyla %100 aynı, kusursuz ve pürüzsüz bir PiP geçişi elde edilmiştir.
 
 #### 🧮 FloatingMiniCube Matematik Modeli
 📐 PiP penceresinin boyut ve konum geçişi parametrik bir enterpolasyon fonksiyonu ile hesaplanır:

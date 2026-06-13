@@ -715,14 +715,7 @@ actual fun BindDashboardBackHandler(enabled: Boolean) {
             else -> null
         }
         if (activity != null && com.vahitkeskin.rubiksync.ui.state.PipManager.isSolvingActive) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                val params = android.app.PictureInPictureParams.Builder()
-                    .setAspectRatio(android.util.Rational(1, 1))
-                    .build()
-                activity.enterPictureInPictureMode(params)
-            } else {
-                activity.moveTaskToBack(true)
-            }
+            activity.moveTaskToBack(true)
         }
     }
 }

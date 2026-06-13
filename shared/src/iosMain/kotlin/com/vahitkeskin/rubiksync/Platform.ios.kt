@@ -850,6 +850,11 @@ actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
 }
 
 @Composable
+actual fun BindDashboardBackHandler(enabled: Boolean) {
+    // No-op on iOS
+}
+
+@Composable
 actual fun rememberShakeDetector(enabled: Boolean, onShake: () -> Unit) {
     // No-op on iOS
 }

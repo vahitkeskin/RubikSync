@@ -29,6 +29,7 @@ import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.ui.components.FeedbackOverlay
 import com.vahitkeskin.rubiksync.ui.cube.InteractiveCubeCanvas
 import com.vahitkeskin.rubiksync.rememberShakeDetector
+import com.vahitkeskin.rubiksync.BindDashboardBackHandler
 import com.vahitkeskin.rubiksync.ui.controlpanel.ControlPanel
 import com.vahitkeskin.rubiksync.ui.controlpanel.PlaybackController
 import com.vahitkeskin.rubiksync.ui.dashboard.DashboardHeader
@@ -42,6 +43,9 @@ fun DashboardScreen(
     cubeState: RubikCubeState,
     navController: NavController
 ) {
+    val isSolving = appState.activeSolution != null && appState.currentSolutionStep < (appState.activeSolution?.size ?: 0)
+    BindDashboardBackHandler(enabled = isSolving)
+
     val overlayAlpha by animateFloatAsState(
         targetValue = if (appState.showcaseStep != 0 && !appState.isShowcaseCompleted) 0.85f else 0f,
         animationSpec = tween(durationMillis = 1000)

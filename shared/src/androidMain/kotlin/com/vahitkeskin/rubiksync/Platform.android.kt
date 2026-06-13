@@ -695,6 +695,39 @@ actual fun BindBackHandler(enabled: Boolean, onBack: () -> Unit) {
 }
 
 @Composable
+actual fun BindDashboardBackHandler(enabled: Boolean) {
+    val context = LocalContext.current
+    BackHandler(enabled = enabled) {
+        val activity = when (context) {
+            is Activity -> context
+            is android.content.ContextWrapper -> {
+                var currentContext = context
+                var act: Activity? = null
+                while (currentContext is android.content.ContextWrapper) {
+                    if (currentContext is Activity) {
+                        act = currentContext
+                        break
+                    }
+                    currentContext = currentContext.baseContext
+                }
+                act
+            }
+            else -> null
+        }
+        if (activity != null && com.vahitkeskin.rubiksync.ui.state.PipManager.isSolvingActive) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                val params = android.app.PictureInPictureParams.Builder()
+                    .setAspectRatio(android.util.Rational(1, 1))
+                    .build()
+                activity.enterPictureInPictureMode(params)
+            } else {
+                activity.moveTaskToBack(true)
+            }
+        }
+    }
+}
+
+@Composable
 actual fun rememberShakeDetector(enabled: Boolean, onShake: () -> Unit) {
     if (!enabled) return
 

@@ -49,9 +49,7 @@ class RubikSolver {
             IntVector3(0, -1, -1),
             IntVector3(-1, -1, 0)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val redEdgeIds = redEdges.map { findId(state, it) }
+        val redEdgeIds = redEdges.map { getCubieIdFromOriginalPos(it) }
         val basicMoves = MoveType.entries
 
         for (i in redEdges.indices) {
@@ -77,9 +75,7 @@ class RubikSolver {
             IntVector3(-1, -1, -1),
             IntVector3(-1, -1, 1)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val redCornerIds = redCorners.map { findId(state, it) }
+        val redCornerIds = redCorners.map { getCubieIdFromOriginalPos(it) }
 
         val crossPreservingMoves = listOf(
             MoveType.U, MoveType.U_PRIME,
@@ -126,9 +122,7 @@ class RubikSolver {
             IntVector3(-1, 0, -1),
             IntVector3(-1, 0, 1)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val middleEdgeIds = middleEdges.map { findId(state, it) }
+        val middleEdgeIds = middleEdges.map { getCubieIdFromOriginalPos(it) }
 
         // parseAlgorithm fonksiyonu ile string algoritma parse ediliyor
         val middleMacros = listOf(
@@ -165,9 +159,7 @@ class RubikSolver {
             IntVector3(0, 1, -1),
             IntVector3(-1, 1, 0)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val topEdgeIds = topEdges.map { findId(state, it) }
+        val topEdgeIds = topEdges.map { getCubieIdFromOriginalPos(it) }
 
         // parseAlgorithm fonksiyonu ile string algoritma parse ediliyor
         val ollMacros = listOf(
@@ -229,9 +221,7 @@ class RubikSolver {
             IntVector3(-1, 1, -1),
             IntVector3(-1, 1, 1)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val topCornerIds = topCorners.map { findId(state, it) }
+        val topCornerIds = topCorners.map { getCubieIdFromOriginalPos(it) }
 
         // parseAlgorithm fonksiyonu ile string algoritma parse ediliyor
         val pllCornerMacros = listOf(
@@ -400,9 +390,7 @@ class RubikSolver {
             IntVector3(0, -1, -1),
             IntVector3(-1, -1, 0)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val redEdgeIds = redEdges.map { findId(state, it) }
+        val redEdgeIds = redEdges.map { getCubieIdFromOriginalPos(it) }
         val basicMoves = MoveType.entries
 
         val phase1Name = "Alt Artı Oluşturma"
@@ -433,9 +421,7 @@ class RubikSolver {
             IntVector3(-1, -1, -1),
             IntVector3(-1, -1, 1)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val redCornerIds = redCorners.map { findId(state, it) }
+        val redCornerIds = redCorners.map { getCubieIdFromOriginalPos(it) }
 
         val crossPreservingMoves = listOf(
             MoveType.U, MoveType.U_PRIME,
@@ -487,9 +473,7 @@ class RubikSolver {
             IntVector3(-1, 0, -1),
             IntVector3(-1, 0, 1)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val middleEdgeIds = middleEdges.map { findId(state, it) }
+        val middleEdgeIds = middleEdges.map { getCubieIdFromOriginalPos(it) }
 
         // parseAlgorithm fonksiyonu ile string algoritma parse ediliyor
         val middleMacros = listOf(
@@ -531,9 +515,7 @@ class RubikSolver {
             IntVector3(0, 1, -1),
             IntVector3(-1, 1, 0)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val topEdgeIds = topEdges.map { findId(state, it) }
+        val topEdgeIds = topEdges.map { getCubieIdFromOriginalPos(it) }
 
         // parseAlgorithm fonksiyonu ile string algoritma parse ediliyor
         val ollMacros = listOf(
@@ -605,9 +587,7 @@ class RubikSolver {
             IntVector3(-1, 1, -1),
             IntVector3(-1, 1, 1)
         )
-
-        // findId fonksiyonu ile küp kimliği bulunuyor
-        val topCornerIds = topCorners.map { findId(state, it) }
+        val topCornerIds = topCorners.map { getCubieIdFromOriginalPos(it) }
 
         // parseAlgorithm fonksiyonu ile string algoritma parse ediliyor
         val pllCornerMacros = listOf(
@@ -736,8 +716,8 @@ class RubikSolver {
             return null
         }
 
-        // compressAnnotatedMoves fonksiyonu ile çözülen adımlar sadeleştiriliyor
-        return compressAnnotatedMoves(allMoves)
+        // optimizeAnnotatedMoves fonksiyonu ile çözülen adımlar sadeleştiriliyor
+        return optimizeAnnotatedMoves(allMoves)
     }
 
     private fun isCubeSolved(snap: CubeSnapshot): Boolean {

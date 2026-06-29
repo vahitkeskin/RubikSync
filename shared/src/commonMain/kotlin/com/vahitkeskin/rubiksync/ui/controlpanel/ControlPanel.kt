@@ -718,10 +718,14 @@ fun ControlPanel(
                                                                     appState.updateActiveSolutionDetails(
                                                                         lblDetails
                                                                     )
+                                                                    if (lblDetails == null) {
+                                                                        appState.updateErrorMessage(appState.strings.solutionNotFound)
+                                                                    }
                                                                     appState.updateRecalculating(false)
                                                                 }
                                                             } catch (e: Throwable) {
                                                                 withContext(Dispatchers.Main) {
+                                                                    appState.updateErrorMessage(appState.strings.solutionNotFound)
                                                                     appState.updateRecalculating(false)
                                                                 }
                                                             }

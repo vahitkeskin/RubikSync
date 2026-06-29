@@ -7,6 +7,31 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+// Generates a common Kotlin constant from the single source of truth in
+// gradle/libs.versions.toml so every platform reflects the real app version.
+val generateAppVersion = tasks.register("generateAppVersion") {
+    description = "Generates AppVersion.kt from the version catalog."
+    val versionName = libs.versions.appVersionName.get()
+    val outputDir = layout.buildDirectory.dir("generated/appVersion/commonMain/kotlin")
+    inputs.property("versionName", versionName)
+    outputs.dir(outputDir)
+    doLast {
+        val pkgDir = outputDir.get().asFile.resolve("com/vahitkeskin/rubiksync")
+        pkgDir.mkdirs()
+        pkgDir.resolve("AppVersion.kt").writeText(
+            """
+            package com.vahitkeskin.rubiksync
+
+            // Generated from gradle/libs.versions.toml — do not edit by hand.
+            object AppVersion {
+                const val NAME: String = "$versionName"
+            }
+
+            """.trimIndent() + "\n"
+        )
+    }
+}
+
 kotlin {
     listOf(
         iosArm64(),
@@ -37,6 +62,9 @@ kotlin {
     }
     
     sourceSets {
+        commonMain {
+            kotlin.srcDir(generateAppVersion)
+        }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)

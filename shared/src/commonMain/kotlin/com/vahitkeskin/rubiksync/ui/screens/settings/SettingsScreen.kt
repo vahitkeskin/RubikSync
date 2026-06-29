@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.ThemeMode
+import com.vahitkeskin.rubiksync.AppVersion
 import com.vahitkeskin.rubiksync.getCurrentYear
 import com.vahitkeskin.rubiksync.BindBackHandler
 import com.vahitkeskin.rubiksync.ui.components.RubikToolbar
@@ -400,7 +401,7 @@ fun SettingsScreen(
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
-                                text = "1.0.0",
+                                text = AppVersion.NAME,
                                 color = textPrimary,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold

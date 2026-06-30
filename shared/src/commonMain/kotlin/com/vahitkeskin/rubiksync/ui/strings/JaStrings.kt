@@ -165,4 +165,6 @@ val JaStrings = AppStrings(
     skinShinySilverDesc = "Futuristic chrome look",
     skinNeonDesc = "Vibrant glowing hues",
     skinPastelDesc = "Soft and clean tones",
+    showPreview = "Show Preview",
+    closePreview = "Close Preview",
 )

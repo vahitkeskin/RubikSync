@@ -52,11 +52,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.screens.settings.components.ThemeOptionCard
 import com.vahitkeskin.rubiksync.ui.screens.settings.components.SkinOptionCard
 import com.vahitkeskin.rubiksync.cube.CubeSkin
+import com.vahitkeskin.rubiksync.cube.RubikCubeState
+import com.vahitkeskin.rubiksync.cube.CubeRenderer
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.vahitkeskin.rubiksync.ui.navigation.Screen
 import com.vahitkeskin.rubiksync.utils.RubikConstants
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.runtime.withFrameMillis
+import androidx.compose.ui.geometry.Offset
 
 @Composable
 fun SettingsScreen(
@@ -76,6 +83,22 @@ fun SettingsScreen(
     val textSecondary = RubikTheme.colors.textSecondary
     val borderColor = RubikTheme.colors.borderPrimary
     val cardBorder = RubikTheme.colors.cardBorder
+
+    var showPreview by remember { mutableStateOf(false) }
+    var previewYaw by remember { mutableStateOf(-0.55f) }
+    var previewPitch by remember { mutableStateOf(0.40f) }
+    var isAutoRotating by remember { mutableStateOf(true) }
+    val previewCubeState = remember { RubikCubeState() }
+
+    if (showPreview && isAutoRotating) {
+        LaunchedEffect(Unit) {
+            while (true) {
+                withFrameMillis { time ->
+                    previewYaw = (time * 0.0003f) % (2f * kotlin.math.PI.toFloat())
+                }
+            }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -187,23 +210,114 @@ fun SettingsScreen(
                         .padding(16.dp)
                 ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "🎨", fontSize = 16.sp)
-                        Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "🎨", fontSize = 16.sp)
+                            Column {
+                                Text(
+                                    text = appState.strings.cubeSkinTitle,
+                                    color = textPrimary,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = appState.strings.cubeSkinSubtitle,
+                                    color = textSecondary,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+
+                        // Collapsible preview toggle button
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(bgTertiary)
+                                .clickable { showPreview = !showPreview }
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
                             Text(
-                                text = appState.strings.cubeSkinTitle,
-                                color = textPrimary,
-                                fontSize = 15.sp,
+                                text = if (showPreview) appState.strings.closePreview else appState.strings.showPreview,
+                                color = AccentOrange,
+                                fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
-                            Text(
-                                text = appState.strings.cubeSkinSubtitle,
-                                color = textSecondary,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium
-                            )
+                        }
+                    }
+
+                    // 3D Expandable Interactive/Rotating Preview
+                    AnimatedVisibility(
+                        visible = showPreview,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(160.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(bgTertiary)
+                                    .border(0.5.dp, cardBorder, RoundedCornerShape(12.dp))
+                                    .padding(8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                // Dynamic glow backdrop
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(
+                                            Brush.radialGradient(
+                                                colors = listOf(
+                                                    RubikTheme.colors.glowOrange,
+                                                    Color.Transparent
+                                                ),
+                                                radius = 300f
+                                            )
+                                        )
+                                )
+
+                                Canvas(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .pointerInput(Unit) {
+                                            detectDragGestures(
+                                                onDragStart = { isAutoRotating = false },
+                                                onDragEnd = { isAutoRotating = true },
+                                                onDragCancel = { isAutoRotating = true },
+                                                onDrag = { change, dragAmount ->
+                                                    change.consume()
+                                                    previewYaw = (previewYaw - dragAmount.x * 0.01f) % (2f * kotlin.math.PI.toFloat())
+                                                    previewPitch = (previewPitch - dragAmount.y * 0.01f).coerceIn(-1.4f, 1.4f)
+                                                }
+                                            )
+                                        }
+                                ) {
+                                    val renderer = CubeRenderer(
+                                        state = previewCubeState,
+                                        yaw = previewYaw,
+                                        pitch = previewPitch,
+                                        cameraDistance = 7.0f,
+                                        isDark = !isDarkTheme,
+                                        cubeSkin = appState.cubeSkin
+                                    )
+                                    renderer.draw(this, size.width, size.height)
+                                }
+                            }
                         }
                     }
 

@@ -165,4 +165,6 @@ val TrStrings = AppStrings(
     skinShinySilverDesc = "Gelecekçi krom görünüm",
     skinNeonDesc = "Canlı parlayan tonlar",
     skinPastelDesc = "Yumuşak ve temiz tonlar",
+    showPreview = "Önizlemeyi Göster",
+    closePreview = "Önizlemeyi Kapat",
 )

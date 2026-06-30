@@ -165,6 +165,8 @@ data class AppStrings(
     val skinShinySilverDesc: String,
     val skinNeonDesc: String,
     val skinPastelDesc: String,
+    val showPreview: String,
+    val closePreview: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

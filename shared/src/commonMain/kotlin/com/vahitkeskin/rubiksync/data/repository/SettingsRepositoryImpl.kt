@@ -16,6 +16,14 @@ class SettingsRepositoryImpl(
         return persistence.loadThemeMode()
     }
 
+    override suspend fun saveCubeSkin(skin: String) {
+        persistence.saveCubeSkin(skin)
+    }
+
+    override suspend fun loadCubeSkin(): String? {
+        return persistence.loadCubeSkin()
+    }
+
     override suspend fun saveLanguage(langCode: String) {
         persistence.saveLanguage(langCode)
     }

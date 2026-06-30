@@ -4,6 +4,7 @@ import com.vahitkeskin.rubiksync.ui.state.*
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -20,7 +21,8 @@ class CubeRenderer(
     private val cameraDistance: Float = 7.0f,
     private val panX: Float = 0f,
     private val panY: Float = 0f,
-    private val isDark: Boolean = true
+    private val isDark: Boolean = true,
+    private val cubeSkin: CubeSkin = CubeSkin.CLASSIC
 ) {
     // 3D outline of a rounded square centered at origin in the XY plane.
     // Size = 1.0f (from -0.5 to 0.5), corner radius = 0.15f for cubies
@@ -231,41 +233,108 @@ class CubeRenderer(
 
         // Step 3: Draw faces in sorted order
         renderFaces.forEach { rf ->
-            // Calculate Lighting/Shading factors (brightened to remove the gray/muddy filter look)
-            // Disable lighting to preserve true sticker colors
-            val ambient = 1.0f
-            val diffuse = 0.0f
-            val spec = 0.0f
-            val totalLight = 1.0f
+            // Calculate Lighting/Shading factors (with shininess for glass skins)
+            val ambient = 0.8f
+            val diffuse = 0.25f
+            val specVal = 0.7f
+
+            val dotNL = rf.worldNormal.dot(lightDir).coerceAtLeast(0f)
+            val totalLight = if (cubeSkin == CubeSkin.CLASSIC) {
+                1.0f
+            } else {
+                ambient + diffuse * dotNL
+            }
+
+            val dotNH = rf.worldNormal.dot(halfway).coerceAtLeast(0f)
+            val specFactor = if (cubeSkin == CubeSkin.CLASSIC) {
+                0f
+            } else {
+                dotNH.pow(12f) // Gloss exponent
+            }
+            val specHighlight = specVal * specFactor
 
             // Draw Premium Cubie Body (Contrast adjusted: dark in light mode, light in dark mode)
-            val bodyColor = if (isDark) {
-                val bodyBase = 0.80f
-                Color(
-                    red = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f),
-                    green = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f),
-                    blue = (bodyBase * totalLight + spec * 0.15f).coerceIn(0f, 1f)
-                )
+            val bodyColor = if (cubeSkin == CubeSkin.CLASSIC) {
+                if (isDark) {
+                    val bodyBase = 0.80f
+                    Color(
+                        red = (bodyBase * totalLight + specHighlight * 0.15f).coerceIn(0f, 1f),
+                        green = (bodyBase * totalLight + specHighlight * 0.15f).coerceIn(0f, 1f),
+                        blue = (bodyBase * totalLight + specHighlight * 0.15f).coerceIn(0f, 1f)
+                    )
+                } else {
+                    LightCubeBody
+                }
             } else {
-                // Premium dark slate body for light mode to contrast against light background
-                LightCubeBody
+                val baseBody = cubeSkin.getBodyColor(isDark)
+                Color(
+                    red = (baseBody.red * totalLight + specHighlight * 0.15f).coerceIn(0f, 1f),
+                    green = (baseBody.green * totalLight + specHighlight * 0.15f).coerceIn(0f, 1f),
+                    blue = (baseBody.blue * totalLight + specHighlight * 0.15f).coerceIn(0f, 1f),
+                    alpha = baseBody.alpha
+                )
             }
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyColor, style = Fill)
 
             // Draw a subtle border around the cubie body for 3D depth and separation
-            val bodyOutlineColor = if (isDark) {
-                DarkOutline
+            val bodyOutlineColor = if (cubeSkin == CubeSkin.CLASSIC) {
+                if (isDark) {
+                    DarkOutline
+                } else {
+                    LightCubeOutline
+                }
             } else {
-                // Subtle light border to separate the dark cubie bodies in light mode
-                LightCubeOutline
+                cubeSkin.getOutlineColor(isDark)
             }
             drawPolygon(drawScope, rf.projectedBodyPoints, bodyOutlineColor, style = Stroke(width = 0.5f))
 
             // Draw Colored Sticker
-            // Use exact sticker color without lighting modifications
-            val stickerColor = Color(rf.face.color.rgb)
+            val stickerBaseColor = cubeSkin.getStickerColor(rf.face.color)
+            val stickerColor = if (cubeSkin == CubeSkin.CLASSIC) {
+                stickerBaseColor
+            } else {
+                Color(
+                    red = (stickerBaseColor.red * totalLight + specHighlight).coerceIn(0f, 1f),
+                    green = (stickerBaseColor.green * totalLight + specHighlight).coerceIn(0f, 1f),
+                    blue = (stickerBaseColor.blue * totalLight + specHighlight).coerceIn(0f, 1f),
+                    alpha = stickerBaseColor.alpha
+                )
+            }
 
             drawPolygon(drawScope, rf.projectedStickerPoints, stickerColor, style = Fill)
+
+            // If metallic/shiny skin, overlay diagonal glass reflection gradient
+            if (cubeSkin != CubeSkin.CLASSIC && rf.projectedStickerPoints.isNotEmpty()) {
+                var minX = Float.MAX_VALUE
+                var minY = Float.MAX_VALUE
+                var maxX = Float.MIN_VALUE
+                var maxY = Float.MIN_VALUE
+                rf.projectedStickerPoints.forEach { pt ->
+                    if (pt.x < minX) minX = pt.x
+                    if (pt.y < minY) minY = pt.y
+                    if (pt.x > maxX) maxX = pt.x
+                    if (pt.y > maxY) maxY = pt.y
+                }
+
+                val path = Path()
+                path.moveTo(rf.projectedStickerPoints[0].x, rf.projectedStickerPoints[0].y)
+                for (i in 1 until rf.projectedStickerPoints.size) {
+                    path.lineTo(rf.projectedStickerPoints[i].x, rf.projectedStickerPoints[i].y)
+                }
+                path.close()
+
+                val shineAlpha = if (cubeSkin == CubeSkin.SHINY_GOLD || cubeSkin == CubeSkin.SHINY_SILVER) 0.50f else 0.35f
+                val shineBrush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = shineAlpha),
+                        Color.White.copy(alpha = 0.05f),
+                        Color.Transparent
+                    ),
+                    start = Offset(minX, minY),
+                    end = Offset(maxX, maxY)
+                )
+                drawScope.drawPath(path, shineBrush, style = Fill)
+            }
 
             // Draw a distinct, elegant border around the sticker to keep colors highly distinct
             val stickerBorderColor = if (isDark) DarkStickerBorder else BlackAlpha40

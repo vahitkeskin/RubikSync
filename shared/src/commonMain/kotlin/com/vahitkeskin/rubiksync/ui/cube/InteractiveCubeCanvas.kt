@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.*
 import com.vahitkeskin.rubiksync.cube.CubeRenderer
+import com.vahitkeskin.rubiksync.cube.CubeSkin
 import com.vahitkeskin.rubiksync.cube.GestureHandler
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
@@ -195,7 +196,8 @@ fun InteractiveCubeCanvas(
                 cameraDistance = appState.cameraDistance,
                 panX = appState.panX,
                 panY = appState.panY,
-                isDark = isDarkTheme
+                isDark = isDarkTheme,
+                cubeSkin = appState.cubeSkin
             )
             renderer.draw(this, size.width, size.height)
         }

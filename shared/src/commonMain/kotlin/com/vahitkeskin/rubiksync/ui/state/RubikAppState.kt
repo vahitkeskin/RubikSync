@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
 import com.vahitkeskin.rubiksync.cube.CubeColor
+import com.vahitkeskin.rubiksync.cube.CubeSkin
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
@@ -42,7 +43,8 @@ class RubikAppState(
     private val saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase,
     private val saveScrambleSoundTooltipShownUseCase: SaveScrambleSoundTooltipShownUseCase,
     private val saveSolveSessionUseCase: SaveSolveSessionUseCase,
-    private val getSolveSessionsUseCase: GetSolveSessionsUseCase
+    private val getSolveSessionsUseCase: GetSolveSessionsUseCase,
+    private val saveCubeSkinUseCase: SaveCubeSkinUseCase
 ) {
     var solveStartTime by mutableStateOf<Long?>(null)
         private set
@@ -82,6 +84,17 @@ class RubikAppState(
     // Theme mode state
     var themeMode by mutableStateOf(ThemeMode.SYSTEM)
         private set
+
+    // Cube skin state
+    var cubeSkin by mutableStateOf(CubeSkin.CLASSIC)
+        private set
+
+    fun updateCubeSkin(skin: CubeSkin) {
+        cubeSkin = skin
+        coroutineScope.launch(Dispatchers.Default) {
+            saveCubeSkinUseCase(skin.id)
+        }
+    }
 
     // Theme loading state
     var isThemeLoaded by mutableStateOf(false)
@@ -577,6 +590,9 @@ class RubikAppState(
                     if (settings.isEditorShowcaseCompleted != null) isEditorShowcaseCompleted = settings.isEditorShowcaseCompleted
                     if (settings.isScannerShowcaseCompleted != null) isScannerShowcaseCompleted = settings.isScannerShowcaseCompleted
                     if (settings.isScrambleSoundTooltipShown != null) isScrambleSoundTooltipShown = settings.isScrambleSoundTooltipShown
+                    if (settings.cubeSkin != null) {
+                        cubeSkin = try { CubeSkin.entries.find { it.id == settings.cubeSkin } ?: CubeSkin.CLASSIC } catch (_: Exception) { CubeSkin.CLASSIC }
+                    }
                 }
 
                 val saved = getCubeStateUseCase()
@@ -650,13 +666,15 @@ fun rememberRubikAppState(
     saveShakeToScrambleUseCase: SaveShakeToScrambleUseCase = koinInject(),
     saveScrambleSoundTooltipShownUseCase: SaveScrambleSoundTooltipShownUseCase = koinInject(),
     saveSolveSessionUseCase: SaveSolveSessionUseCase = koinInject(),
-    getSolveSessionsUseCase: GetSolveSessionsUseCase = koinInject()
+    getSolveSessionsUseCase: GetSolveSessionsUseCase = koinInject(),
+    saveCubeSkinUseCase: SaveCubeSkinUseCase = koinInject()
 ) = remember(
     cubeState, coroutineScope, getCubeStateUseCase, saveCubeStateUseCase, getSettingsUseCase,
     saveThemeUseCase, saveLanguageUseCase, saveSoundEnabledUseCase, saveCubeEditableUseCase,
     saveShowcaseCompletedUseCase, saveEditorShowcaseCompletedUseCase, saveScannerShowcaseCompletedUseCase,
     getCameraSettingsUseCase, saveCameraSettingsUseCase, saveShakeToScrambleUseCase,
-    saveScrambleSoundTooltipShownUseCase, saveSolveSessionUseCase, getSolveSessionsUseCase
+    saveScrambleSoundTooltipShownUseCase, saveSolveSessionUseCase, getSolveSessionsUseCase,
+    saveCubeSkinUseCase
 ) {
     RubikAppState(
         cubeState = cubeState,
@@ -676,6 +694,7 @@ fun rememberRubikAppState(
         saveShakeToScrambleUseCase = saveShakeToScrambleUseCase,
         saveScrambleSoundTooltipShownUseCase = saveScrambleSoundTooltipShownUseCase,
         saveSolveSessionUseCase = saveSolveSessionUseCase,
-        getSolveSessionsUseCase = getSolveSessionsUseCase
+        getSolveSessionsUseCase = getSolveSessionsUseCase,
+        saveCubeSkinUseCase = saveCubeSkinUseCase
     )
 }

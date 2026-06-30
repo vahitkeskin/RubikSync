@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vahitkeskin.rubiksync.cube.CubeRenderer
+import com.vahitkeskin.rubiksync.cube.CubeSkin
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
 import com.vahitkeskin.rubiksync.ui.state.RubikTheme
 import com.vahitkeskin.rubiksync.ui.state.AccentOrange
@@ -188,7 +189,8 @@ fun FloatingMiniCube(
                         cameraDistance = appState.cameraDistance + 2f, // Zoom out slightly to sit nicely inside bounds
                         panX = appState.panX,
                         panY = appState.panY,
-                        isDark = isDarkTheme
+                        isDark = isDarkTheme,
+                        cubeSkin = appState.cubeSkin
                     )
                     renderer.draw(this, size.width, size.height)
                 }

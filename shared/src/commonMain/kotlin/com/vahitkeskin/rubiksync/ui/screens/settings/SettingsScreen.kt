@@ -43,12 +43,15 @@ import androidx.compose.runtime.LaunchedEffect
 import com.vahitkeskin.rubiksync.ui.strings.AppLanguage
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.ui.screens.settings.components.ThemeOptionCard
+import com.vahitkeskin.rubiksync.ui.screens.settings.components.SkinOptionCard
+import com.vahitkeskin.rubiksync.cube.CubeSkin
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -169,6 +172,73 @@ fun SettingsScreen(
                             onClick = { appState.updateThemeMode(ThemeMode.SYSTEM) },
                             modifier = Modifier.weight(1f)
                         )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Küp Tasarımı Bölümü
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(bgSecondary)
+                        .border(0.5.dp, cardBorder, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(text = "🎨", fontSize = 16.sp)
+                        Column {
+                            Text(
+                                text = appState.strings.cubeSkinTitle,
+                                color = textPrimary,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = appState.strings.cubeSkinSubtitle,
+                                color = textSecondary,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CubeSkin.entries.forEach { skin ->
+                            val label = when (skin) {
+                                CubeSkin.CLASSIC -> appState.strings.skinClassic
+                                CubeSkin.SHINY_GOLD -> appState.strings.skinShinyGold
+                                CubeSkin.SHINY_SILVER -> appState.strings.skinShinySilver
+                                CubeSkin.NEON -> appState.strings.skinNeon
+                                CubeSkin.PASTEL -> appState.strings.skinPastel
+                            }
+                            val description = when (skin) {
+                                CubeSkin.CLASSIC -> appState.strings.skinClassicDesc
+                                CubeSkin.SHINY_GOLD -> appState.strings.skinShinyGoldDesc
+                                CubeSkin.SHINY_SILVER -> appState.strings.skinShinySilverDesc
+                                CubeSkin.NEON -> appState.strings.skinNeonDesc
+                                CubeSkin.PASTEL -> appState.strings.skinPastelDesc
+                            }
+                            SkinOptionCard(
+                                skin = skin,
+                                label = label,
+                                description = description,
+                                isSelected = appState.cubeSkin == skin,
+                                onClick = { appState.updateCubeSkin(skin) },
+                                modifier = Modifier.width(108.dp)
+                            )
+                        }
                     }
                 }
 

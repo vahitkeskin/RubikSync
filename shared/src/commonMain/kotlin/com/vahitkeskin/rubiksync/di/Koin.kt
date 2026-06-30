@@ -24,6 +24,7 @@ val appModule = module {
     factory { SaveCubeStateUseCase(get()) }
     factory { GetSettingsUseCase(get()) }
     factory { SaveThemeUseCase(get()) }
+    factory { SaveCubeSkinUseCase(get()) }
     factory { SaveLanguageUseCase(get()) }
     factory { SaveSoundEnabledUseCase(get()) }
     factory { SaveCubeEditableUseCase(get()) }

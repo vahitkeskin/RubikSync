@@ -6,6 +6,9 @@ interface SettingsRepository {
     suspend fun saveThemeMode(mode: String)
     suspend fun loadThemeMode(): String?
 
+    suspend fun saveCubeSkin(skin: String)
+    suspend fun loadCubeSkin(): String?
+
     suspend fun saveLanguage(langCode: String)
     suspend fun loadLanguage(): String?
 

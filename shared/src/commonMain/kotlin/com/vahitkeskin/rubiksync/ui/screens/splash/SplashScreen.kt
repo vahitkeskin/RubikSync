@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.vahitkeskin.rubiksync.cube.CubeRenderer
+import com.vahitkeskin.rubiksync.cube.CubeSkin
 import com.vahitkeskin.rubiksync.cube.MoveType
 import com.vahitkeskin.rubiksync.cube.RubikCubeState
 import com.vahitkeskin.rubiksync.ui.state.RubikAppState
@@ -139,7 +140,8 @@ fun SplashScreen(
                         state = splashCubeState,
                         yaw = yaw,
                         pitch = pitch,
-                        cameraDistance = 7.2f
+                        cameraDistance = 7.2f,
+                        cubeSkin = appState.cubeSkin
                     )
                     renderer.draw(this, size.width, size.height)
                 }

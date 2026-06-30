@@ -52,6 +52,9 @@ private class FakeRubikPersistence : RubikPersistence {
     override suspend fun saveThemeMode(mode: String) {}
     override suspend fun loadThemeMode(): String? = "SYSTEM"
 
+    override suspend fun saveCubeSkin(skin: String) {}
+    override suspend fun loadCubeSkin(): String? = "classic"
+
     override suspend fun saveLanguage(langCode: String) {}
     override suspend fun loadLanguage(): String? = "en"
 
@@ -98,6 +101,9 @@ private class FakeCubeRepository : CubeRepository {
 private class FakeSettingsRepository : SettingsRepository {
     override suspend fun saveThemeMode(mode: String) {}
     override suspend fun loadThemeMode(): String? = "SYSTEM"
+
+    override suspend fun saveCubeSkin(skin: String) {}
+    override suspend fun loadCubeSkin(): String? = "classic"
 
     override suspend fun saveLanguage(langCode: String) {}
     override suspend fun loadLanguage(): String? = "en"
@@ -160,7 +166,8 @@ fun rememberPreviewRubikAppState(
             saveShakeToScrambleUseCase = SaveShakeToScrambleUseCase(settingsRepo),
             saveScrambleSoundTooltipShownUseCase = SaveScrambleSoundTooltipShownUseCase(settingsRepo),
             saveSolveSessionUseCase = SaveSolveSessionUseCase(),
-            getSolveSessionsUseCase = GetSolveSessionsUseCase()
+            getSolveSessionsUseCase = GetSolveSessionsUseCase(),
+            saveCubeSkinUseCase = SaveCubeSkinUseCase(settingsRepo)
         ).apply {
             // Mark theme as loaded to bypass loading screens
             updateShowSplashScreen(false)

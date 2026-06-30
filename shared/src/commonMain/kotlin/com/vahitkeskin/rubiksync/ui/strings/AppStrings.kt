@@ -153,6 +153,18 @@ data class AppStrings(
     val permissionLater: String,
     val permissionGrant: String,
     val cameraPermissionDenied: String,
+    val cubeSkinTitle: String,
+    val cubeSkinSubtitle: String,
+    val skinClassic: String,
+    val skinShinyGold: String,
+    val skinShinySilver: String,
+    val skinNeon: String,
+    val skinPastel: String,
+    val skinClassicDesc: String,
+    val skinShinyGoldDesc: String,
+    val skinShinySilverDesc: String,
+    val skinNeonDesc: String,
+    val skinPastelDesc: String,
 )
 
 enum class AppLanguage(val code: String, val displayName: String, val flag: String) {

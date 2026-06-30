@@ -54,6 +54,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.vahitkeskin.rubiksync.ui.components.FloatingMiniCube
 import com.vahitkeskin.rubiksync.cube.FaceName
 import com.vahitkeskin.rubiksync.cube.CubeRenderer
+import com.vahitkeskin.rubiksync.cube.CubeSkin
 import com.vahitkeskin.rubiksync.cube.getMoveMathDetails
 import com.vahitkeskin.rubiksync.di.appModule
 import com.vahitkeskin.rubiksync.ui.screens.settings.SettingsScreen
@@ -296,7 +297,8 @@ fun App() {
                                     cameraDistance = appState.cameraDistance + 2f,
                                     panX = appState.panX,
                                     panY = appState.panY,
-                                    isDark = isDarkTheme
+                                    isDark = isDarkTheme,
+                                    cubeSkin = appState.cubeSkin
                                 )
                                 renderer.draw(this, size.width, size.height)
                             }

@@ -349,7 +349,12 @@ fun SettingsScreen(
                                 label = label,
                                 description = description,
                                 isSelected = appState.cubeSkin == skin,
-                                onClick = { appState.updateCubeSkin(skin) },
+                                onClick = { 
+                                    appState.updateCubeSkin(skin)
+                                    if (!showPreview) {
+                                        showPreview = true
+                                    }
+                                },
                                 modifier = Modifier.width(108.dp)
                             )
                         }
